@@ -109,7 +109,7 @@ export default function Numerology() {
           </div>
 
           <div className="mt-6">
-            {loading ? <Loader /> : matches.length === 0 ? (
+            {loading ? <Loader variant="cards" /> : matches.length === 0 ? (
               <p className="text-center text-muted-foreground">No matching numbers right now. <Link to="/shop" className="text-gold-dark">Browse all numbers</Link></p>
             ) : (
               <>

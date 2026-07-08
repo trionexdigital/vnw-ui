@@ -22,6 +22,8 @@ import BuyerDashboard from '@/pages/dashboard/Dashboard';
 import Orders from '@/pages/orders/Orders';
 import OrderDetail from '@/pages/orders/OrderDetail';
 import Profile from '@/pages/settings/Settings';
+import ChangePassword from '@/pages/settings/ChangePassword';
+import Notifications from '@/pages/settings/Notifications';
 import Referrals from '@/pages/referrals/Referrals';
 import SellNumber from '@/pages/sell/SellNumber';
 
@@ -91,6 +93,8 @@ export default function AppRoutes() {
         <Route path="/orders" element={<Orders />} />
         <Route path="/orders/:id" element={<OrderDetail />} />
         <Route path="/account" element={<Profile />} />
+        <Route path="/account/change-password" element={<ChangePassword />} />
+        <Route path="/notifications" element={<Notifications />} />
         <Route path="/referrals" element={<Referrals />} />
         <Route path="/sell" element={<RoleGuard permission="user.sell"><SellNumber /></RoleGuard>} />
 

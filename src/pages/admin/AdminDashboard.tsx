@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Users2, Crown, ShoppingBag, IndianRupee, Store, Hourglass } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { adminAPI } from '@/core/api/vnwAPI';
-import { PageHeader, StatCard, Loader, StatusBadge, Money } from '@/shared/components/ui-bits';
+import { PageHeader, StatCard, Loader, StatusBadge, Money, Table } from '@/shared/components/ui-bits';
 
 export default function AdminDashboard() {
   const [d, setD] = useState<any>(null);
@@ -14,7 +14,7 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      <PageHeader title="Admin Dashboard" subtitle="VIP Number World — business overview" />
+      <PageHeader title="Admin Dashboard" subtitle="VIP Number World - business overview" />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         <StatCard label="Revenue" value={<Money value={k.revenue ?? 0} />} icon={<IndianRupee className="h-5 w-5" />} accent />
         <StatCard label="Orders" value={k.orders ?? 0} icon={<ShoppingBag className="h-5 w-5" />} />
@@ -67,23 +67,17 @@ export default function AdminDashboard() {
           <h3 className="font-semibold text-foreground">Recent Orders</h3>
           <Link to="/admin/orders" className="text-sm text-primary hover:underline">View all</Link>
         </div>
-        <div className="vnw-card overflow-x-auto p-0">
-          <table className="w-full text-sm">
-            <thead><tr className="border-b border-card-border text-left text-xs uppercase text-muted-foreground">
-              <th className="px-4 py-3">Order</th><th className="px-4 py-3">Customer</th><th className="px-4 py-3">Total</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Date</th></tr></thead>
-            <tbody>
-              {(d?.recent_orders || []).map((o: any) => (
-                <tr key={o.order_id} className="border-b border-card-border last:border-0">
-                  <td className="px-4 py-3 font-medium text-foreground">{o.order_no}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{o.full_name || '—'}</td>
-                  <td className="px-4 py-3"><Money value={o.total} /></td>
-                  <td className="px-4 py-3"><StatusBadge status={o.status} /></td>
-                  <td className="px-4 py-3 text-muted-foreground">{String(o.created_at).slice(0, 10)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <Table head={['Order', 'Customer', 'Total', 'Status', 'Date']}>
+          {(d?.recent_orders || []).map((o: any) => (
+            <tr key={o.order_id} className="border-b border-card-border last:border-0">
+              <td className="px-4 py-3 font-medium text-foreground">{o.order_no}</td>
+              <td className="px-4 py-3 text-muted-foreground">{o.full_name || '-'}</td>
+              <td className="px-4 py-3"><Money value={o.total} /></td>
+              <td className="px-4 py-3"><StatusBadge status={o.status} /></td>
+              <td className="px-4 py-3 text-muted-foreground">{String(o.created_at).slice(0, 10)}</td>
+            </tr>
+          ))}
+        </Table>
       </div>
     </div>
   );

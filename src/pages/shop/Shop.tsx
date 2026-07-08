@@ -124,7 +124,7 @@ export default function Shop() {
               <p className="mt-1 text-sm text-muted-foreground">{aiInfo.explanation} <span className="font-bold text-[#7c2cff]">({aiInfo.mode === 'openai' ? 'OpenAI agent' : 'local DB agent'})</span></p>
             </div>
           )}
-          {loading ? <Loader /> : items.length === 0 ? (
+          {loading ? <Loader variant="cards" /> : items.length === 0 ? (
             <div className="vnw-card py-20 text-center text-muted-foreground">No numbers match your filters.</div>
           ) : (
             <>

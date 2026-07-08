@@ -10,6 +10,7 @@ import NumberCard, { NumberItem } from '@/shared/components/NumberCard';
 import { Loader } from '@/shared/components/ui-bits';
 import { getRecentlyViewed } from '@/core/lib/recentlyViewed';
 import { FamilyPackCard } from '@/shared/components/PremiumShowcaseCards';
+import { Logo as BrandLogo } from '@/shared/components/Logo';
 
 const POPULAR = ['9999', '7777', '7878', '0001', '1234'];
 const FLOATING_NUMBERS = ['7777', '9999', '786', '5555', '108', '1111'];
@@ -40,22 +41,39 @@ function Countdown() {
 
 function HeroVisual() {
   return (
-    <div className="relative mx-auto min-h-[360px] w-full max-w-[560px]">
-      <div className="absolute inset-x-12 bottom-2 h-24 rounded-[50%] bg-gradient-to-r from-[#e4d7ff] via-[#ffc7f3] to-[#fff3c7] blur-xl" />
-      <div className="animate-float-soft absolute left-1/2 top-12 grid h-72 w-72 -translate-x-1/2 place-items-center rounded-[2rem] border border-white/80 bg-white/35 shadow-[0_30px_90px_-46px_rgba(93,44,159,.65)] backdrop-blur-md sm:h-80 sm:w-80">
-        <div className="absolute inset-3 rounded-[1.6rem] border border-white/70 bg-gradient-to-br from-white/30 via-[#f0ddff]/30 to-[#ffc6ef]/25" />
-        <Crown className="absolute top-10 h-20 w-20 text-[#d9a31b] drop-shadow" />
-        <div className="relative mt-16 text-center">
-          <div className="text-7xl font-black tracking-tight text-gold sm:text-8xl">VNW</div>
-          <div className="mt-1 text-lg font-black uppercase tracking-[.16em] text-[#b57908]">VIP Number World</div>
+    <div className="relative mx-auto flex min-h-[420px] w-full max-w-[610px] items-center justify-center overflow-visible py-8 lg:min-h-[520px]">
+      <div className="absolute inset-x-8 bottom-10 h-24 rounded-full bg-gradient-to-r from-[#ffd66f]/45 via-[#f2b7ff]/55 to-[#b9fff0]/40 blur-2xl" />
+      <div className="absolute left-4 top-8 hidden w-32 rounded-2xl border border-white/75 bg-white/72 p-3 shadow-[0_20px_60px_-38px_rgba(29,24,48,.62)] backdrop-blur md:block">
+        <div className="text-[10px] font-black uppercase text-muted-foreground">Best Seller</div>
+        <div className="mt-1 text-2xl font-black text-[#b57908]">9999</div>
+      </div>
+      <div className="absolute bottom-14 right-0 hidden w-36 rounded-2xl border border-white/75 bg-white/75 p-3 shadow-[0_20px_60px_-38px_rgba(29,24,48,.62)] backdrop-blur sm:block">
+        <div className="text-[10px] font-black uppercase text-muted-foreground">Lucky Pick</div>
+        <div className="mt-1 text-2xl font-black text-[#7c2cff]">786</div>
+      </div>
+
+      <div className="relative w-full max-w-[430px] rounded-[2rem] border border-white/80 bg-white/52 p-4 shadow-[0_38px_110px_-58px_rgba(75,35,146,.86)] backdrop-blur-2xl sm:p-5">
+        <div className="rounded-[1.45rem] border border-white/75 bg-gradient-to-br from-white/72 via-[#fff6fd]/54 to-[#fff2c8]/38 p-6 text-center">
+          <div className="mx-auto grid h-28 w-28 place-items-center rounded-full border border-[#f2d67b]/50 bg-[#130f20] shadow-[0_24px_60px_-38px_rgba(0,0,0,.9)] sm:h-32 sm:w-32">
+            <BrandLogo className="h-24 w-24 rounded-full object-contain sm:h-28 sm:w-28" />
+          </div>
+          <Crown className="mx-auto mt-5 h-12 w-12 text-[#d9a31b]" />
+          <div className="mt-4 text-6xl font-black text-gold sm:text-[5.5rem]">VNW</div>
+          <div className="mt-2 text-sm font-black uppercase text-[#9a6808] sm:text-base">VIP Number World</div>
+          <div className="mx-auto mt-5 grid max-w-xs grid-cols-3 gap-2">
+            {['1111', '5555', '7777'].map((n) => (
+              <span key={n} className="rounded-2xl border border-white/80 bg-white/72 px-3 py-2 text-sm font-black text-[#1d1830] shadow-sm">{n}</span>
+            ))}
+          </div>
         </div>
       </div>
+
       {FLOATING_NUMBERS.map((n, i) => {
         const pos = [
-          'left-4 top-16', 'right-2 top-20', 'left-5 top-44', 'right-0 top-48', 'left-8 bottom-8', 'right-8 bottom-11',
+          'left-0 top-28', 'right-6 top-16', 'left-8 bottom-28', 'right-10 top-56', 'left-20 top-4', 'right-24 bottom-7',
         ][i];
         return (
-          <span key={n} className={`absolute ${pos} animate-float-soft-delayed rounded-2xl border border-white/75 bg-white/45 px-5 py-3 text-xl font-black text-[#b57908] shadow-lg backdrop-blur`}>
+          <span key={n} className={`absolute ${pos} animate-float-soft-delayed rounded-2xl border border-white/80 bg-white/68 px-4 py-2 text-base font-black text-[#b57908] shadow-lg backdrop-blur sm:px-5 sm:py-3 sm:text-xl`}>
             {n}
           </span>
         );
@@ -101,66 +119,87 @@ export default function Home() {
 
   return (
     <div>
-      <section className="relative mx-auto max-w-7xl px-4 pb-8 pt-4">
-        <div className="grid items-center gap-8 lg:grid-cols-[1fr_1.05fr]">
-          <div className="animate-rise-in">
-            <div className="chip mb-5 text-[#7c2cff]"><Sparkles className="h-4 w-4 text-[#d9a31b]" /> India's Most Trusted VIP Number Marketplace <ArrowRight className="h-3.5 w-3.5" /></div>
-            <h1 className="text-4xl font-black leading-[1.05] tracking-tight text-[#11101d] sm:text-6xl">
-              Your Identity.<br />
-              <span className="text-gradient-vnw">Your Signature Number.</span>
+      <section className="relative overflow-hidden px-4 pb-10 pt-6 sm:pt-8 lg:pb-14">
+        <div className="absolute left-[-12rem] top-16 h-72 w-72 rounded-full bg-[#ffd66f]/20 blur-3xl" />
+        <div className="absolute right-[-10rem] top-0 h-80 w-80 rounded-full bg-[#b99cff]/22 blur-3xl" />
+        <div className="mx-auto grid min-h-[calc(100vh-13rem)] max-w-7xl items-center gap-8 lg:grid-cols-[1fr_.92fr]">
+          <div className="animate-rise-in text-center lg:text-left">
+            <div className="chip mb-5 text-[#6c27ee]">
+              <Sparkles className="h-4 w-4 text-[#d9a31b]" />
+              India's Most Trusted VIP Number Marketplace
+              <ArrowRight className="h-3.5 w-3.5" />
+            </div>
+            <h1 className="mx-auto max-w-4xl text-5xl font-black leading-[1.03] text-[#11101d] sm:text-6xl lg:mx-0 lg:text-7xl">
+              Own a number people remember.
+              <span className="mt-2 block text-gradient-vnw">Carry it like a signature.</span>
             </h1>
-            <p className="mt-5 max-w-xl text-lg font-medium leading-8 text-muted-foreground">Discover exclusive VIP & premium mobile numbers that speak success and status.</p>
-            <div className="mt-7 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <p className="mx-auto mt-6 max-w-2xl text-base font-medium leading-8 text-muted-foreground sm:text-lg lg:mx-0">
+              Discover verified VIP, fancy, lucky, and premium mobile numbers for business identity, personal status, and memorable first impressions.
+            </p>
+            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
+              <Link to="/shop" className="btn-royal min-h-12 px-6">Explore VIP Numbers <ArrowRight className="h-4 w-4" /></Link>
+              <a href="#vip-search" className="btn-gold-outline min-h-12 px-6">Search by Digits <Search className="h-4 w-4" /></a>
+            </div>
+            <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               {[
-                [Shield, 'Genuine Numbers'],
-                [Lock, '100% Secure'],
-                [Truck, 'Pan India Delivery'],
-                [RotateCcw, 'Easy Returns'],
+                [Shield, 'Verified numbers'],
+                [Lock, 'Secure payment'],
+                [Truck, 'Pan India delivery'],
+                [RotateCcw, 'Easy returns'],
               ].map(([Icon, label]: any) => (
-                <span key={label} className="glass-panel flex items-center gap-2 rounded-2xl px-3 py-2 text-xs font-bold text-[#1d1830]/74"><Icon className="h-4 w-4 text-[#7c2cff]" /> {label}</span>
+                <span key={label} className="flex min-h-14 items-center justify-center gap-2 rounded-2xl border border-white/75 bg-white/58 px-4 py-3 text-sm font-black text-[#1d1830]/78 shadow-sm backdrop-blur lg:justify-start">
+                  <Icon className="h-4 w-4 shrink-0 text-[#7c2cff]" /> {label}
+                </span>
               ))}
             </div>
           </div>
           <HeroVisual />
         </div>
+      </section>
 
-        <form onSubmit={submit} className="glass-panel relative z-10 mx-auto -mt-2 max-w-5xl rounded-[1.7rem] p-3 sm:p-4">
-          <div className="mb-3 flex items-center justify-between gap-3 px-1">
-            <div>
-              <div className="text-sm font-black text-[#1d1830]">Find your VIP number</div>
-              <div className="text-xs text-muted-foreground">Search by digits, pattern, numerology, or natural language</div>
-            </div>
-            <span className="hidden rounded-2xl bg-white/60 px-3 py-1.5 text-xs font-black text-[#7c2cff] sm:inline-flex"><Sparkles className="mr-1 h-3.5 w-3.5" /> AI Ready</span>
+      <section id="vip-search" className="relative mx-auto max-w-7xl px-4 pb-8">
+        <form onSubmit={submit} className="glass-panel mx-auto grid gap-5 rounded-[1.6rem] p-4 sm:p-5 lg:grid-cols-[.78fr_1.22fr] lg:items-center">
+          <div className="rounded-[1.15rem] border border-white/75 bg-white/48 p-4 sm:p-5">
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/72 px-3 py-1 text-xs font-black uppercase text-[#7c2cff]">
+              <Sparkles className="h-3.5 w-3.5 text-[#d9a31b]" /> Smart Search
+            </span>
+            <h2 className="mt-4 text-2xl font-black leading-tight text-[#1d1830] sm:text-3xl">Find your perfect VIP number</h2>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">Search by exact digits, repeating patterns, numerology values, or describe what you want in plain words.</p>
           </div>
-          <div className="mb-3 grid grid-cols-4 gap-1.5 rounded-[1.25rem] border border-white/70 bg-white/35 p-1 text-[10px] font-black text-muted-foreground sm:text-sm">
-            {[
-              ['number', Phone, 'Number'],
-              ['pattern', Wand2, 'Pattern'],
-              ['numerology', Hash, 'Numerology'],
-              ['ai', Sparkles, 'AI Search'],
-            ].map(([key, Icon, label]: any) => (
-                <button key={key} type="button" onClick={() => setSearchMode(key)} className={`flex min-h-10 items-center justify-center gap-1.5 rounded-2xl px-1.5 py-2 text-center leading-tight transition sm:px-3 ${searchMode === key ? 'bg-white text-[#1d1830] shadow-sm' : 'hover:bg-white/50'}`}>
-                  <Icon className="h-4 w-4 shrink-0 text-[#7c2cff]" /> <span className="truncate">{label}</span>
+
+          <div className="min-w-0">
+            <div className="mb-3 grid grid-cols-2 gap-2 rounded-[1.15rem] border border-white/70 bg-white/36 p-1 text-xs font-black text-muted-foreground sm:grid-cols-4 sm:text-sm">
+              {[
+                ['number', Phone, 'Number'],
+                ['pattern', Wand2, 'Pattern'],
+                ['numerology', Hash, 'Numerology'],
+                ['ai', Sparkles, 'AI Search'],
+              ].map(([key, Icon, label]: any) => (
+                <button key={key} type="button" onClick={() => setSearchMode(key)} className={`flex min-h-11 items-center justify-center gap-1.5 rounded-2xl px-2 py-2 text-center leading-tight transition sm:px-3 ${searchMode === key ? 'bg-white text-[#1d1830] shadow-sm' : 'hover:bg-white/55'}`}>
+                  <Icon className="h-4 w-4 shrink-0 text-[#7c2cff]" /> <span>{label}</span>
                 </button>
-            ))}
-          </div>
-          <div className="grid gap-2 rounded-[1.35rem] border border-white/70 bg-white/45 p-2 md:grid-cols-[170px_1fr_180px]">
-            <select className="h-12 rounded-2xl border border-[#d8cae9] bg-white/70 px-4 text-sm font-bold text-[#1d1830] outline-none">
-              <option>All Operators</option>
-              <option>Jio</option>
-              <option>Airtel</option>
-              <option>Vi</option>
-            </select>
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#7c2cff]" />
-              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={searchMode === 'ai' ? 'Try: lucky business number under 50000' : 'Enter your dream number...'} className="h-12 w-full rounded-2xl border border-[#d8cae9] bg-white/70 pl-11 pr-4 text-sm font-semibold outline-none focus:border-[#d923c6]" />
+              ))}
             </div>
-            <button className="btn-royal h-12 !rounded-2xl">Search</button>
-          </div>
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
-            <span className="font-black text-[#1d1830]">Popular</span>
-            {POPULAR.map((p) => <button type="button" key={p} onClick={() => go(p)} className="rounded-2xl border border-white/70 bg-white/55 px-4 py-1.5 font-bold text-[#1d1830]/72 shadow-sm">{p}</button>)}
-            <button type="button" onClick={() => { setSearchMode('ai'); setQ('premium number under 50000'); }} className="rounded-2xl border border-[#d923c6]/20 bg-[#fce7ff]/70 px-4 py-1.5 font-black text-[#7c2cff]">premium under 50000</button>
+
+            <div className="grid gap-3 rounded-[1.25rem] border border-white/70 bg-white/50 p-3 md:grid-cols-[170px_1fr_150px] lg:grid-cols-[180px_1fr_160px]">
+              <select aria-label="Operator" className="h-12 rounded-2xl border border-[#d8cae9] bg-white/78 px-4 text-sm font-bold text-[#1d1830] outline-none">
+                <option>All Operators</option>
+                <option>Jio</option>
+                <option>Airtel</option>
+                <option>Vi</option>
+              </select>
+              <div className="relative min-w-0">
+                <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#7c2cff]" />
+                <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={searchMode === 'ai' ? 'Try: lucky business number under 50000' : 'Enter your dream number...'} className="h-12 w-full rounded-2xl border border-[#d8cae9] bg-white/78 pl-11 pr-4 text-sm font-semibold outline-none focus:border-[#d923c6]" />
+              </div>
+              <button className="btn-royal h-12 !rounded-2xl">Search</button>
+            </div>
+
+            <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+              <span className="font-black text-[#1d1830]">Popular</span>
+              {POPULAR.map((p) => <button type="button" key={p} onClick={() => go(p)} className="rounded-2xl border border-white/75 bg-white/62 px-4 py-2 font-bold text-[#1d1830]/75 shadow-sm transition hover:-translate-y-0.5">{p}</button>)}
+              <button type="button" onClick={() => { setSearchMode('ai'); setQ('premium number under 50000'); }} className="rounded-2xl border border-[#d923c6]/20 bg-[#fce7ff]/75 px-4 py-2 font-black text-[#7c2cff] shadow-sm">premium under 50000</button>
+            </div>
           </div>
         </form>
       </section>
@@ -198,7 +237,7 @@ export default function Home() {
           <h2 className="text-2xl font-black text-[#1d1830]">Featured <span className="text-gradient-vnw">VIP</span> Numbers</h2>
           <Link to="/shop" className="text-sm font-black text-[#1d1830]">View All Numbers <ArrowRight className="inline h-4 w-4" /></Link>
         </div>
-        {loading ? <Loader /> : numbers.length === 0 ? (
+        {loading ? <Loader variant="cards" /> : numbers.length === 0 ? (
           <p className="py-12 text-center text-muted-foreground">No numbers found yet.</p>
         ) : (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{numbers.map((n) => <NumberCard key={n.number_id} item={n} />)}</div>
