@@ -11,18 +11,13 @@ import { localService } from '@/core/services/local';
 import { APP_CONFIG } from '@/core/config/app.config';
 import BottomNav from './BottomNav';
 import NewsletterForm from '@/shared/components/NewsletterForm';
-import { Logo as BrandLogo } from '@/shared/components/Logo';
+import { Logo as BrandLogo, Slogan } from '@/shared/components/Logo';
 
 function Logo() {
   return (
-    <Link to="/" className="flex min-w-0 shrink items-center gap-2">
-      <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full bg-[#130f20] ring-1 ring-[#f0d679]/45 sm:h-11 sm:w-11">
-        <BrandLogo className="h-9 w-9 object-contain sm:h-10 sm:w-10" />
-      </span>
-      <span className="hidden min-w-0 leading-tight sm:block">
-        <span className="block truncate text-lg font-black text-gold">VNW</span>
-        <span className="block text-[9px] font-bold uppercase text-[#1d1830]/68">VIP Number World</span>
-      </span>
+    <Link to="/" className="flex min-w-0 shrink items-center gap-1 sm:gap-0">
+      <BrandLogo className="h-10 w-10 shrink-0 object-contain sm:h-12 sm:w-12" />
+      <Slogan className="block h-8 w-[132px] min-w-0 translate-y-1 object-contain sm:h-10 sm:w-[166px] sm:-translate-x-2 xl:w-[198px]" />
     </Link>
   );
 }

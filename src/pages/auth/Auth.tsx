@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Eye, EyeOff, Loader2, Crown, Sparkles } from 'lucide-react';
-import { Logo } from '@/shared/components/Logo';
+import { BrandLockup } from '@/shared/components/Logo';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { login, registerUser } from '@/app/authSlice';
 import { forgotPassword } from '@/core/api/authAPI';
@@ -65,9 +65,8 @@ export default function Auth({ mode }: { mode: Mode }) {
       <div className="glass-panel relative hidden flex-col justify-between overflow-hidden rounded-[2rem] p-12 lg:flex">
         <div className="absolute -right-20 top-20 h-72 w-72 rounded-full bg-[#ffc7f3]/45 blur-3xl" />
         <div className="absolute bottom-14 left-14 h-72 w-72 rounded-full bg-[#d8cbff]/45 blur-3xl" />
-        <Link to="/" className="relative flex items-center gap-2">
-          <Logo className="h-14 w-20 object-contain" />
-          <span className="text-lg font-black text-[#1d1830]"><span className="text-gold">VNW</span> VIP NUMBER WORLD</span>
+        <Link to="/" className="relative flex items-center">
+          <BrandLockup logoClassName="h-14 w-14" sloganClassName="h-12 w-64" />
         </Link>
         <div className="relative">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-white/58 px-4 py-2 text-sm font-black text-[#7c2cff]"><Sparkles className="h-4 w-4 text-[#d9a31b]" /> Premium Access</div>
@@ -80,9 +79,8 @@ export default function Auth({ mode }: { mode: Mode }) {
 
       <div className="flex items-center justify-center p-4 sm:p-6">
         <form onSubmit={submit} className="glass-panel w-full max-w-md rounded-[2rem] p-6 sm:p-8">
-          <Link to="/" className="mb-6 flex items-center justify-center gap-2 lg:hidden">
-            <Logo className="h-12 w-16 object-contain" />
-            <span className="font-black"><span className="text-gold">VNW</span> VIP NUMBER WORLD</span>
+          <Link to="/" className="mb-6 flex items-center justify-center lg:hidden">
+            <BrandLockup logoClassName="h-12 w-12" sloganClassName="h-10 w-52" />
           </Link>
           <h1 className="text-3xl font-black text-[#1d1830]">{title}</h1>
           <p className="mb-6 mt-1 text-sm text-muted-foreground">

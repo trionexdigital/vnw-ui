@@ -10,7 +10,7 @@ import NumberCard, { NumberItem } from '@/shared/components/NumberCard';
 import { Loader } from '@/shared/components/ui-bits';
 import { getRecentlyViewed } from '@/core/lib/recentlyViewed';
 import { FamilyPackCard } from '@/shared/components/PremiumShowcaseCards';
-import { Logo as BrandLogo } from '@/shared/components/Logo';
+import { Logo as BrandLogo, Slogan } from '@/shared/components/Logo';
 
 const POPULAR = ['9999', '7777', '7878', '0001', '1234'];
 const FLOATING_NUMBERS = ['7777', '9999', '786', '5555', '108', '1111'];
@@ -54,12 +54,11 @@ function HeroVisual() {
 
       <div className="relative w-full max-w-[430px] rounded-[2rem] border border-white/80 bg-white/52 p-4 shadow-[0_38px_110px_-58px_rgba(75,35,146,.86)] backdrop-blur-2xl sm:p-5">
         <div className="rounded-[1.45rem] border border-white/75 bg-gradient-to-br from-white/72 via-[#fff6fd]/54 to-[#fff2c8]/38 p-6 text-center">
-          <div className="mx-auto grid h-28 w-28 place-items-center rounded-full border border-[#f2d67b]/50 bg-[#130f20] shadow-[0_24px_60px_-38px_rgba(0,0,0,.9)] sm:h-32 sm:w-32">
-            <BrandLogo className="h-24 w-24 rounded-full object-contain sm:h-28 sm:w-28" />
+          <div className="mx-auto grid h-28 w-28 place-items-center sm:h-32 sm:w-32">
+            <BrandLogo className="h-28 w-28 object-contain sm:h-32 sm:w-32" />
           </div>
           <Crown className="mx-auto mt-5 h-12 w-12 text-[#d9a31b]" />
-          <div className="mt-4 text-6xl font-black text-gold sm:text-[5.5rem]">VNW</div>
-          <div className="mt-2 text-sm font-black uppercase text-[#9a6808] sm:text-base">VIP Number World</div>
+          <Slogan className="mx-auto mt-3 h-20 w-full max-w-[360px] object-contain sm:h-24" />
           <div className="mx-auto mt-5 grid max-w-xs grid-cols-3 gap-2">
             {['1111', '5555', '7777'].map((n) => (
               <span key={n} className="rounded-2xl border border-white/80 bg-white/72 px-3 py-2 text-sm font-black text-[#1d1830] shadow-sm">{n}</span>

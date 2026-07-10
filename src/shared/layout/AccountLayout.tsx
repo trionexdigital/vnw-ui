@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { logout } from '@/app/authSlice';
 import { cn } from '@/core/lib/utils';
 import { hasPermission } from '@/core/lib/permissions';
-import { Logo as BrandLogo } from '@/shared/components/Logo';
+import { Logo as BrandLogo, Slogan } from '@/shared/components/Logo';
 
 interface MenuItem { to: string; label: string; icon: any; end?: boolean; perm?: string; }
 
@@ -165,13 +165,11 @@ export default function AccountLayout() {
       mobile ? 'rounded-r-[1.6rem]' : 'rounded-none'
     )}>
       <div className={cn('flex items-center gap-3 px-4 py-4', collapsed && !mobile ? 'justify-center' : 'justify-between')}>
-        <Link to={homePath} onClick={onItem} className={cn('flex min-w-0 items-center gap-3', collapsed && !mobile && 'justify-center')}>
-          <span className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-full bg-[#130f20] ring-1 ring-[#f0d679]/45">
-            <BrandLogo className="h-11 w-11 object-contain" />
-          </span>
+        <Link to={homePath} onClick={onItem} className={cn('flex min-w-0 items-center gap-1', collapsed && !mobile && 'justify-center')}>
+          <BrandLogo className="h-12 w-12 shrink-0 object-contain" />
           {(!collapsed || mobile) && (
             <span className="min-w-0 leading-tight">
-              <span className="block truncate text-lg font-black text-gold">VNW</span>
+              <Slogan className="block h-9 w-44 min-w-0 object-contain" />
               <span className="block text-[10px] font-bold capitalize text-[#1d1830]/58">{role.toLowerCase()} panel</span>
             </span>
           )}

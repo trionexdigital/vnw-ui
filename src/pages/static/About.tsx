@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
 import { ShieldCheck, BadgeIndianRupee, Lock, RefreshCw } from 'lucide-react';
-import { Logo } from '@/shared/components/Logo';
+import { BrandLockup } from '@/shared/components/Logo';
 
 export default function About() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-12">
       <div className="text-center">
-        <Logo className="mx-auto h-14 w-14 rounded-2xl" />
+        <BrandLockup className="justify-center" logoClassName="h-14 w-14" sloganClassName="h-12 w-64 max-w-[70vw]" />
         <h1 className="mt-5 text-4xl font-extrabold" style={{ fontFamily: 'Playfair Display, serif' }}>About <span className="text-gold">VIP Number World</span></h1>
         <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
           VIP Number World is India's premium marketplace for buying and selling exclusive VIP, fancy and lucky mobile numbers.
