@@ -53,7 +53,7 @@ export default function AdminSellRequests() {
         <Table head={['Number', 'Customer', 'Asking', 'Status', 'Submitted', 'Actions']}>
           {rows.map((r) => (
             <tr key={r.request_id} className="border-b border-card-border last:border-0">
-              <td className="px-4 py-3 text-foreground">{r.display_number}<br /><span className="text-xs text-muted-foreground">{r.operator} · {r.category_name || '—'}</span></td>
+              <td className="px-4 py-3 text-foreground">{r.display_number}<br /><span className="text-xs text-muted-foreground">{r.category_name || '—'}</span></td>
               <td className="px-4 py-3 text-xs text-muted-foreground">{r.full_name}<br />{r.email}<br />{r.contact_phone || r.user_phone}</td>
               <td className="px-4 py-3"><Money value={r.asking_price} /></td>
               <td className="px-4 py-3"><StatusBadge status={r.status} /></td>

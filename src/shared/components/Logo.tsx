@@ -26,7 +26,7 @@ export function BrandLockup({
   sloganClassName?: string;
 }) {
   return (
-    <span className={cn('inline-flex min-w-0 items-center gap-1', className)}>
+    <span className={cn('inline-flex min-w-0 items-center gap-2', className)}>
       <Logo className={cn('h-10 w-10 shrink-0', logoClassName)} />
       <Slogan className={cn('h-10 w-40 min-w-0', sloganClassName)} />
     </span>

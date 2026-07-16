@@ -57,9 +57,23 @@ export const testimonialsAPI = {
   list: () => post('testimonials/list', {}),
 };
 
-export const bannersAPI = {
-  list: () => post('banners/list', {}),
+export interface CarouselSlide {
+  banner_id: number;
+  title?: string | null;
+  subtitle?: string | null;
+  image: string;
+  cta_text?: string | null;
+  cta_link?: string | null;
+  is_active: boolean | number;
+  sort_order: number;
+}
+
+export const carouselAPI = {
+  list: () => post<CarouselSlide[]>('banners/list', {}),
 };
+
+// Backward-compatible export for existing banner consumers.
+export const bannersAPI = carouselAPI;
 
 export const referralAPI = {
   validate: (code: string) => postRaw('referral/validate', { code }),
@@ -74,8 +88,15 @@ export const contactAPI = {
   submit: (p: any) => postRaw('contact/submit', p),
 };
 
+export interface HeroStats {
+  delivered_numbers: number;
+  available_numbers: number;
+  customers_served: number;
+}
+
 export const siteAPI = {
   settings: () => post('site/settings', {}),
+  heroStats: () => post<HeroStats>('site/hero-stats', {}),
   subscribe: (email: string, source = 'footer') => postRaw('site/newsletter', { email, source }),
   enquiry: (p: any) => postRaw('site/enquiry', p),
 };
@@ -163,8 +184,8 @@ export const adminAPI = {
   testimonialsList: () => post('admin/testimonials/list', {}),
   testimonialSave: (p: any) => post('admin/testimonials/save', p),
   testimonialDelete: (testimonial_id: number) => post('admin/testimonials/delete', { testimonial_id }),
-  bannersList: () => post('admin/banners/list', {}),
-  bannerSave: (p: any) => post('admin/banners/save', p),
+  bannersList: () => post<CarouselSlide[]>('admin/banners/list', {}),
+  bannerSave: (p: Partial<CarouselSlide>) => post<{ banner_id: number }>('admin/banners/save', p),
   bannerDelete: (banner_id: number) => post('admin/banners/delete', { banner_id }),
   messagesList: () => post('admin/messages/list', {}),
   couponsList: () => post('admin/coupons/list', {}),

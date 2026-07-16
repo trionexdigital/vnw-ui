@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { sellAPI, categoriesAPI } from '@/core/api/vnwAPI';
 import { useToast } from '@/shared/hooks/use-toast';
 import { PageHeader, Panel, Loader, StatusBadge, Table, EmptyState, Money } from '@/shared/components/ui-bits';
-import { operatorOptions } from '@/core/lib/format';
 import WalletPanel from '@/shared/components/WalletPanel';
 
 export default function SellNumber() {
@@ -11,7 +10,7 @@ export default function SellNumber() {
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
-  const [f, setF] = useState<any>({ display_number: '', operator: 'Jio', category_id: '', asking_price: '', contact_phone: '', description: '' });
+  const [f, setF] = useState<any>({ display_number: '', operator: 'Any', category_id: '', asking_price: '', contact_phone: '', description: '' });
 
   const input = 'w-full rounded-lg border border-card-border bg-secondary px-3 py-2.5 text-sm outline-none focus:border-primary';
   const set = (k: string, v: any) => setF((p: any) => ({ ...p, [k]: v }));
@@ -29,7 +28,7 @@ export default function SellNumber() {
         asking_price: Number(f.asking_price),
       });
       toast({ title: 'Request submitted', description: 'Your number is pending admin review.' });
-      setF({ display_number: '', operator: 'Jio', category_id: '', asking_price: '', contact_phone: '', description: '' });
+      setF({ display_number: '', operator: 'Any', category_id: '', asking_price: '', contact_phone: '', description: '' });
       load();
     } catch (e: any) { toast({ title: 'Error', description: e.message, variant: 'destructive' }); }
     finally { setBusy(false); }
@@ -47,10 +46,6 @@ export default function SellNumber() {
         <form onSubmit={submit} className="grid gap-3 sm:grid-cols-2">
           <div className="sm:col-span-2"><label className="mb-1 block text-xs text-muted-foreground">Your Number (with spaces)</label>
             <input required className={input} placeholder="9876 543 210" value={f.display_number} onChange={(e) => set('display_number', e.target.value)} /></div>
-          <div><label className="mb-1 block text-xs text-muted-foreground">Operator</label>
-            <select className={input} value={f.operator} onChange={(e) => set('operator', e.target.value)}>
-              {operatorOptions.map((o) => <option key={o} value={o}>{o}</option>)}
-            </select></div>
           <div><label className="mb-1 block text-xs text-muted-foreground">Suggested Category</label>
             <select className={input} value={f.category_id} onChange={(e) => set('category_id', e.target.value)}>
               <option value="">Select</option>

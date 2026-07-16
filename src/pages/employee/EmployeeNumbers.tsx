@@ -3,7 +3,6 @@ import { employeeAPI, categoriesAPI } from '@/core/api/vnwAPI';
 import { useToast } from '@/shared/hooks/use-toast';
 import { PageHeader, Loader, StatusBadge, Table, Money } from '@/shared/components/ui-bits';
 import Modal from '@/shared/components/Modal';
-import { operatorOptions } from '@/core/lib/format';
 
 /**
  * Employee number management. All mutations are submitted to the admin approval
@@ -15,7 +14,7 @@ export default function EmployeeNumbers() {
   const [cats, setCats] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [f, setF] = useState<any>({ display_number: '', category_id: '', operator: 'Jio', mrp: '', offer_price: '' });
+  const [f, setF] = useState<any>({ display_number: '', category_id: '', operator: 'Any', mrp: '', offer_price: '' });
 
   const input = 'w-full rounded-lg border border-card-border bg-secondary px-3 py-2.5 text-sm outline-none focus:border-primary';
   const set = (k: string, v: any) => setF((p: any) => ({ ...p, [k]: v }));
@@ -36,7 +35,7 @@ export default function EmployeeNumbers() {
       category_id: f.category_id || null, operator: f.operator,
       mrp: Number(f.mrp), offer_price: Number(f.offer_price),
     }, `Create ${f.display_number}`);
-    setShowForm(false); setF({ display_number: '', category_id: '', operator: 'Jio', mrp: '', offer_price: '' });
+    setShowForm(false); setF({ display_number: '', category_id: '', operator: 'Any', mrp: '', offer_price: '' });
   };
 
   return (
@@ -76,10 +75,6 @@ export default function EmployeeNumbers() {
               <select className={input} value={f.category_id} onChange={(e) => set('category_id', e.target.value)}>
                 <option value="">Select</option>
                 {cats.map((c) => <option key={c.category_id} value={c.category_id}>{c.name}</option>)}
-              </select></div>
-            <div><label className="mb-1 block text-xs text-muted-foreground">Operator</label>
-              <select className={input} value={f.operator} onChange={(e) => set('operator', e.target.value)}>
-                {operatorOptions.map((o) => <option key={o} value={o}>{o}</option>)}
               </select></div>
             <div><label className="mb-1 block text-xs text-muted-foreground">MRP (₹)</label>
               <input required type="number" className={input} value={f.mrp} onChange={(e) => set('mrp', e.target.value)} /></div>

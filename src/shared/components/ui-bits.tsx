@@ -6,12 +6,9 @@ import { formatINR } from '@/core/lib/format';
 
 export function PageHeader({ title, subtitle, action }: { title: string; subtitle?: string; action?: ReactNode }) {
   return (
-    <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+    <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
       <div>
-        <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/58 px-3 py-1 text-[11px] font-black uppercase tracking-wide text-[#7c2cff] shadow-sm">
-          <Sparkles className="h-3.5 w-3.5 text-[#d9a31b]" /> VNW Console
-        </div>
-        <h1 className="text-2xl font-black text-[#1d1830] sm:text-3xl">{title}</h1>
+        <h1 className="text-xl font-black text-stone-950 sm:text-2xl">{title}</h1>
         {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
       </div>
       {action}
@@ -20,17 +17,17 @@ export function PageHeader({ title, subtitle, action }: { title: string; subtitl
 }
 
 export function Panel({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cn('vnw-card p-5', className)}>{children}</div>;
+  return <div className={cn('vnw-card p-4', className)}>{children}</div>;
 }
 
 export function StatCard({ label, value, icon, accent }: { label: string; value: ReactNode; icon?: ReactNode; accent?: boolean }) {
   return (
-    <div className="vnw-card vnw-card-hover p-5">
+    <div className="vnw-card vnw-card-hover p-4">
       <div className="flex items-center justify-between">
         <span className="text-xs font-black uppercase tracking-wide text-muted-foreground">{label}</span>
-        {icon && <span className="grid h-10 w-10 place-items-center rounded-2xl bg-white/62 text-[#7c2cff] shadow-sm">{icon}</span>}
+        {icon && <span className="grid h-9 w-9 place-items-center rounded-lg bg-amber-50 text-amber-800">{icon}</span>}
       </div>
-      <div className={cn('mt-3 text-3xl font-black', accent ? 'text-gradient-vnw' : 'text-[#1d1830]')}>{value}</div>
+      <div className={cn('mt-2 text-2xl font-black tabular-nums', accent ? 'text-amber-700' : 'text-stone-950')}>{value}</div>
     </div>
   );
 }

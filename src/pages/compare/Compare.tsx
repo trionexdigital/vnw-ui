@@ -36,7 +36,6 @@ export default function Compare() {
     ['MRP', (n) => formatINR(n.mrp)],
     ['Discount', (n) => `${n.discount_pct || 0}%`],
     ['Category', (n) => n.category_name || '—'],
-    ['Operator', (n) => n.operator || '—'],
     ['Numerology Sum', (n) => n.numerology_sum ?? '—'],
     ['Badge', (n) => BADGE_META[n.badge || 'NONE'].label || '—'],
     ['Status', (n) => n.status],

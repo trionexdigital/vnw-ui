@@ -34,7 +34,7 @@ export default function BottomNav() {
       {searchOpen && (
         <div className="fixed inset-0 z-[70] lg:hidden">
           <div className="absolute inset-0 bg-[#1d1830]/35 backdrop-blur-sm" onClick={() => setSearchOpen(false)} />
-          <form onSubmit={submit} className="glass-panel absolute inset-x-3 bottom-20 rounded-[1.5rem] p-4 animate-rise-in">
+          <form onSubmit={submit} className="glass-panel absolute inset-x-3 bottom-20 rounded-xl p-4 animate-rise-in">
             <div className="mb-3 flex items-center justify-between">
               <div>
                 <div className="text-base font-black text-[#1d1830]">Search VIP Numbers</div>
@@ -66,19 +66,19 @@ export default function BottomNav() {
             <NavLink key={i} to={it.to} end={it.end}
               onClick={(e) => { if (it.action) { e.preventDefault(); it.action(); } }}
               className={({ isActive }) => cn(
-                'relative flex flex-col items-center gap-1 py-2 text-[10px] font-bold transition-colors',
-                isActive && !it.action ? 'text-[#7c2cff]' : 'text-muted-foreground')}>
+                'relative flex min-h-14 flex-col items-center justify-center gap-1 py-1.5 text-[10px] font-bold transition-colors',
+                isActive && !it.action ? 'text-amber-800' : 'text-muted-foreground')}>
               {({ isActive }) => (
                 <>
                   <span className={cn(
-                    'relative grid place-items-center rounded-2xl transition',
-                    it.center ? '-mt-5 h-14 w-14 bg-gradient-to-br from-[#6c27ee] to-[#d923c6] text-white shadow-xl shadow-fuchsia-500/25' : 'h-8 w-8',
+                    'relative grid place-items-center rounded-lg transition',
+                    it.center ? 'h-8 w-8 bg-stone-900 text-white shadow-sm' : 'h-8 w-8',
                     isActive && !it.action && !it.center && 'scale-110 bg-white/70 shadow-sm'
                   )}>
-                    <it.icon className={it.center ? 'h-7 w-7' : 'h-5 w-5'} />
+                    <it.icon className="h-5 w-5" />
                     {it.badge ? <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-gradient-to-br from-[#ff8a21] to-[#d923c6] px-1 text-[9px] font-bold text-white">{it.badge}</span> : null}
                   </span>
-                  <span className={it.center ? '-mt-0.5 text-[#7c2cff]' : ''}>{it.label}</span>
+                  <span className={it.center ? 'text-stone-700' : ''}>{it.label}</span>
                 </>
               )}
             </NavLink>

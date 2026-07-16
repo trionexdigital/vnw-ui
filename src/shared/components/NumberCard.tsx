@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Heart, ShoppingCart, Zap, BarChart2, Crown, Star, IndianRupee } from 'lucide-react';
+import { Heart, ShoppingCart, BarChart2, Crown, Star, IndianRupee, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
 import { cartAPI, wishlistAPI } from '@/core/api/vnwAPI';
 import { useStore } from '@/shared/store/useStore';
@@ -7,6 +7,7 @@ import { localService } from '@/core/services/local';
 import { useToast } from '@/shared/hooks/use-toast';
 import { formatINR, BADGE_META, digitTotal, numerologySum } from '@/core/lib/format';
 import { cn } from '@/core/lib/utils';
+import { motion, useReducedMotion } from 'framer-motion';
 
 export interface NumberItem {
   number_id: number;
@@ -35,6 +36,7 @@ export default function NumberCard({ item, onWishlistChange }: { item: NumberIte
   const { refreshCounts, compare, toggleCompare } = useStore();
   const [wished, setWished] = useState(false);
   const [busy, setBusy] = useState(false);
+  const reduceMotion = useReducedMotion();
   const badge = BADGE_META[item.badge || 'NONE'];
   const inCompare = compare.includes(item.number_id);
   const total = digitTotal(item.display_number);
@@ -71,66 +73,67 @@ export default function NumberCard({ item, onWishlistChange }: { item: NumberIte
   };
 
   return (
-    <div className="premium-card vnw-card-hover group relative flex min-h-[196px] flex-col overflow-hidden rounded-[1.35rem] p-3 animate-rise-in">
-      <div className="absolute -right-12 -top-12 h-24 w-24 rounded-full bg-[#fff2a8]/60 blur-2xl transition-transform group-hover:scale-125" />
+    <motion.article
+      className="premium-card vnw-card-hover group relative flex min-h-[184px] flex-col overflow-hidden rounded-xl p-3"
+      initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={reduceMotion ? undefined : { y: -2 }}
+      transition={{ duration: reduceMotion ? 0 : 0.22, ease: [0.16, 1, 0.3, 1] }}
+    >
+      <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-amber-600 to-transparent opacity-75" />
       <div className="relative mb-2 flex items-center justify-between gap-2">
         {badge.label
-          ? <span className={cn('chip chip-emerald !rounded-lg !px-2 !py-0.5 text-[9px]', badge.className)}><Star className="h-2.5 w-2.5" fill="currentColor" />{badge.label}</span>
-          : <span className="chip chip-emerald !rounded-lg !px-2 !py-0.5 text-[9px]"><Star className="h-2.5 w-2.5" fill="currentColor" />VIP</span>}
+          ? <span className={cn('chip !rounded-md !px-2 !py-0.5 text-[9px]', badge.className)}><Star className="h-2.5 w-2.5" fill="currentColor" />{badge.label}</span>
+          : <span className="chip !rounded-md !px-2 !py-0.5 text-[9px]"><Star className="h-2.5 w-2.5" fill="currentColor" />VIP</span>}
         <button onClick={toggleWish} aria-label="wishlist"
-          className={cn('grid h-8 w-8 place-items-center rounded-xl border border-[#d9a31b]/35 bg-white/70 text-[#063d2a] shadow-sm transition hover:scale-105', wished && 'text-rose-500')}>
+          className={cn('grid h-8 w-8 place-items-center rounded-lg border border-stone-200 bg-white text-stone-700 shadow-sm transition hover:border-amber-600 hover:text-amber-800', wished && 'border-rose-200 bg-rose-50 text-rose-600')}>
           <Heart className="h-4 w-4" fill={wished ? 'currentColor' : 'none'} />
         </button>
       </div>
 
       <button onClick={() => navigate(`/number/${item.number_id}`)} className="relative text-center">
-        <div className="mb-0.5 flex items-center justify-center gap-1.5 truncate text-[11px] font-bold text-[#063d2a]/80">
-          <Crown className="h-3.5 w-3.5 shrink-0 text-[#d9a31b]" /> <span className="truncate">{item.title_label || item.category_name || 'Signature VIP Number'}</span>
+        <div className="mb-1 flex items-center justify-center gap-1.5 truncate text-[10px] font-bold text-stone-500">
+          <Crown className="h-3.5 w-3.5 shrink-0 text-amber-700" /> <span className="truncate">{item.title_label || item.category_name || 'Signature VIP Number'}</span>
         </div>
-        <div className="truncate text-[1.36rem] font-black tracking-wide text-[#063d2a] drop-shadow-[0_1px_0_rgba(217,163,27,.45)] sm:text-[1.48rem]">
+        <div className="truncate text-[1.32rem] font-black tabular-nums tracking-wide text-stone-950 sm:text-[1.42rem]">
           {formatNumberParts(item.display_number)}
         </div>
       </button>
 
-      <div className="relative my-2 flex items-center justify-center gap-2 text-[#b57908]">
-        <span className="h-px flex-1 bg-gradient-to-r from-transparent via-[#d9a31b]/55 to-[#d9a31b]/25" />
-        <span className="max-w-[7rem] truncate text-[10px] font-black uppercase tracking-wide">{item.operator || item.category_name || 'Premium'}</span>
-        <span className="h-px flex-1 bg-gradient-to-l from-transparent via-[#d9a31b]/55 to-[#d9a31b]/25" />
+      <div className="relative my-2 flex items-center justify-center gap-1.5 border-y border-stone-100 py-1.5 text-emerald-700">
+        <ShieldCheck className="h-3.5 w-3.5" />
+        <span className="text-[10px] font-bold">Verified &amp; available on any operator</span>
       </div>
 
       <div className="relative grid grid-cols-4 gap-1.5">
-        <div className="rounded-xl border border-[#d9a31b]/20 bg-white/56 py-1.5 text-center">
-          <div className="text-[9px] text-[#33233c]/60">Total</div>
-          <div className="text-sm font-black text-[#063d2a]">{total}</div>
+        <div className="rounded-lg border border-stone-200 bg-stone-50 py-1.5 text-center">
+          <div className="text-[9px] text-stone-500">Total</div>
+          <div className="text-sm font-black text-stone-900">{total}</div>
         </div>
-        <div className="rounded-xl border border-[#d9a31b]/20 bg-white/56 py-1.5 text-center">
-          <div className="text-[9px] text-[#33233c]/60">Sum</div>
-          <div className="text-sm font-black text-[#063d2a]">{sum}</div>
+        <div className="rounded-lg border border-stone-200 bg-stone-50 py-1.5 text-center">
+          <div className="text-[9px] text-stone-500">Sum</div>
+          <div className="text-sm font-black text-stone-900">{sum}</div>
         </div>
-        <div className="col-span-2 rounded-xl border border-[#d9a31b]/20 bg-white/56 px-2 py-1.5">
+        <div className="col-span-2 rounded-lg border border-amber-200 bg-amber-50 px-2 py-1.5">
           <div className="flex items-center justify-between gap-1">
-            <span className="text-[9px] text-[#33233c]/60 line-through">{formatINR(item.mrp)}</span>
-            {discountPct > 0 && <span className="rounded-full bg-[#fff7d1] px-1.5 py-0.5 text-[9px] font-black text-[#b57908]">{discountPct}%</span>}
+            <span className="text-[9px] text-stone-500 line-through">{formatINR(item.mrp)}</span>
+            {discountPct > 0 && <span className="rounded-full bg-white px-1.5 py-0.5 text-[9px] font-black text-amber-800">{discountPct}%</span>}
           </div>
-          <div className="flex items-center justify-end gap-0.5 text-base font-black leading-none text-[#063d2a]"><IndianRupee className="h-3.5 w-3.5" />{Number(item.offer_price).toLocaleString('en-IN')}</div>
+          <div className="flex items-center justify-end gap-0.5 text-base font-black leading-none text-stone-950"><IndianRupee className="h-3.5 w-3.5" />{Number(item.offer_price).toLocaleString('en-IN')}</div>
         </div>
       </div>
 
       <div className="relative mt-2 grid grid-cols-[1fr_auto_auto] gap-1.5">
-        <button className="emerald-gradient-bg h-9 rounded-xl px-3 text-xs font-black text-white shadow-lg shadow-emerald-900/15 transition hover:-translate-y-0.5 disabled:opacity-50" onClick={buyNow} disabled={!!sold}>{sold ? 'Sold' : 'Buy Now'}</button>
-        <button aria-label="add to cart" className="grid h-9 w-10 place-items-center rounded-xl border border-[#063d2a]/55 bg-white/70 text-[#063d2a] transition hover:-translate-y-0.5 disabled:opacity-50" onClick={addToCart} disabled={busy || !!sold}>
+        <button className="h-9 rounded-lg bg-stone-900 px-3 text-xs font-black text-white shadow-sm transition hover:bg-stone-800 disabled:opacity-50" onClick={buyNow} disabled={!!sold}>{sold ? 'Sold' : 'Buy Now'}</button>
+        <button aria-label="add to cart" className="grid h-9 w-10 place-items-center rounded-lg border border-stone-300 bg-white text-stone-800 transition hover:border-amber-700 hover:text-amber-800 disabled:opacity-50" onClick={addToCart} disabled={busy || !!sold}>
           <ShoppingCart className="h-4 w-4" />
         </button>
         <button onClick={() => toggleCompare(item.number_id)}
           aria-label="compare"
-          className={cn('grid h-9 w-10 place-items-center rounded-xl border border-[#d9a31b]/35 bg-white/70 transition hover:-translate-y-0.5', inCompare ? 'text-[#d9a31b]' : 'text-[#063d2a]')}>
+          className={cn('grid h-9 w-10 place-items-center rounded-lg border border-stone-300 bg-white transition hover:border-amber-700', inCompare ? 'border-amber-600 bg-amber-50 text-amber-800' : 'text-stone-800')}>
           <BarChart2 className="h-4 w-4" />
         </button>
       </div>
-
-      <div className="relative mt-1.5 flex items-center justify-center gap-1 text-[10px] font-bold text-[#b57908]">
-        <Zap className="h-3 w-3" /> {sold ? 'Unavailable' : `Only ${item.stock ?? 1} left`}
-      </div>
-    </div>
+    </motion.article>
   );
 }

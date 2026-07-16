@@ -10,6 +10,8 @@ import { logout } from '@/app/authSlice';
 import { cn } from '@/core/lib/utils';
 import { hasPermission } from '@/core/lib/permissions';
 import { Logo as BrandLogo, Slogan } from '@/shared/components/Logo';
+import { AnimatePresence, motion } from 'framer-motion';
+import { MotionPage } from '@/shared/motion/MotionPrimitives';
 
 interface MenuItem { to: string; label: string; icon: any; end?: boolean; perm?: string; }
 
@@ -49,7 +51,7 @@ const ADMIN_MENU: MenuItem[] = [
   { to: '/admin/payouts', label: 'Payouts', icon: BadgeIndianRupee },
   { to: '/admin/reviews', label: 'Reviews', icon: Star },
   { to: '/admin/testimonials', label: 'Testimonials', icon: MessageSquare },
-  { to: '/admin/banners', label: 'Banners', icon: Image },
+  { to: '/admin/carousel', label: 'Carousel', icon: Image },
   { to: '/admin/coupons', label: 'Coupons', icon: Ticket },
   { to: '/admin/subscribers', label: 'Subscribers', icon: Mail },
   { to: '/admin/messages', label: 'Messages', icon: MessageSquare },
@@ -58,7 +60,7 @@ const ADMIN_MENU: MenuItem[] = [
 
 const ADMIN_GROUPS = [
   { label: 'Overview', items: ['Dashboard'] },
-  { label: 'Catalog', items: ['Numbers', 'Categories', 'Banners', 'Coupons'] },
+  { label: 'Catalog', items: ['Numbers', 'Categories', 'Carousel', 'Coupons'] },
   { label: 'Operations', items: ['Orders', 'Sell Requests', 'Approvals', 'Payouts'] },
   { label: 'People', items: ['Users', 'Dealers', 'Subscribers'] },
   { label: 'Trust', items: ['Reviews', 'Testimonials', 'Messages', 'Settings'] },
@@ -125,7 +127,7 @@ export default function AccountLayout() {
   }, []);
 
   const NavList = ({ onItem, compact = false }: { onItem?: () => void; compact?: boolean }) => (
-    <nav className="flex-1 overflow-y-auto px-3 py-3 [scrollbar-width:thin]">
+    <nav className="flex-1 overflow-y-auto px-2.5 py-2 [scrollbar-width:thin]">
       {groupedMenu.map((group) => (
         <div key={group.label} className="mb-4 last:mb-0">
           {!compact && (
@@ -137,15 +139,15 @@ export default function AccountLayout() {
             {group.links.map((m) => (
               <NavLink key={m.to} to={m.to} end={m.end} onClick={onItem} title={compact ? m.label : undefined}
                 className={({ isActive }) => cn(
-                  'group relative flex min-h-11 items-center rounded-2xl text-sm font-bold transition-all',
+                  'group relative flex min-h-10 items-center rounded-lg text-sm font-bold transition-all',
                   compact ? 'justify-center px-2' : 'gap-3 px-3',
                   isActive
-                    ? 'bg-gradient-to-r from-[#6c27ee] to-[#d923c6] text-white shadow-lg shadow-fuchsia-500/15'
-                    : 'text-[#1d1830]/70 hover:bg-white/62 hover:text-[#1d1830]'
+                    ? 'bg-stone-900 text-white shadow-sm'
+                    : 'text-stone-600 hover:bg-amber-50 hover:text-stone-950'
                 )}>
                 {({ isActive }) => (
                   <>
-                    <span className={cn('grid h-8 w-8 shrink-0 place-items-center rounded-xl transition', isActive ? 'bg-white/18 text-white' : 'bg-white/55 text-[#6c27ee] group-hover:bg-white/80')}>
+                    <span className={cn('grid h-8 w-8 shrink-0 place-items-center rounded-lg transition', isActive ? 'bg-white/10 text-amber-300' : 'bg-stone-100 text-amber-800 group-hover:bg-white')}>
                       <m.icon className="h-4 w-4" />
                     </span>
                     {!compact && <span className="min-w-0 truncate">{m.label}</span>}
@@ -161,15 +163,15 @@ export default function AccountLayout() {
 
   const SidebarInner = ({ onItem, mobile = false }: { onItem?: () => void; mobile?: boolean }) => (
     <div className={cn(
-      'flex h-full flex-col overflow-hidden bg-white/58 shadow-[22px_0_80px_-56px_rgba(83,35,150,.82)] backdrop-blur-2xl',
+      'flex h-full flex-col overflow-hidden border-r border-stone-200 bg-white shadow-sm',
       mobile ? 'rounded-r-[1.6rem]' : 'rounded-none'
     )}>
-      <div className={cn('flex items-center gap-3 px-4 py-4', collapsed && !mobile ? 'justify-center' : 'justify-between')}>
+      <div className={cn('flex items-center gap-3 border-b border-stone-100 px-3 py-3', collapsed && !mobile ? 'justify-center' : 'justify-between')}>
         <Link to={homePath} onClick={onItem} className={cn('flex min-w-0 items-center gap-1', collapsed && !mobile && 'justify-center')}>
-          <BrandLogo className="h-12 w-12 shrink-0 object-contain" />
+          <BrandLogo className="h-10 w-10 shrink-0 object-contain" />
           {(!collapsed || mobile) && (
             <span className="min-w-0 leading-tight">
-              <Slogan className="block h-9 w-44 min-w-0 object-contain" />
+              <Slogan className="block h-8 w-40 min-w-0 object-contain" />
               <span className="block text-[10px] font-bold capitalize text-[#1d1830]/58">{role.toLowerCase()} panel</span>
             </span>
           )}
@@ -216,21 +218,23 @@ export default function AccountLayout() {
 
   return (
     <div className="app-shell-bg flex min-h-screen bg-background text-[#1d1830]">
-      <aside className={cn('sticky top-0 hidden h-screen shrink-0 transition-[width] duration-300 lg:block', collapsed ? 'w-[72px]' : 'w-[268px]')}>
+      <aside className={cn('sticky top-0 hidden h-screen shrink-0 transition-[width] duration-300 lg:block', collapsed ? 'w-[68px]' : 'w-[244px]')}>
         <SidebarInner />
       </aside>
 
+      <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-[#1d1830]/28 backdrop-blur-sm" onClick={() => setOpen(false)} />
-          <div className="absolute left-0 top-0 h-full w-[min(300px,84vw)] p-2 pr-0">
+        <motion.div className="fixed inset-0 z-50 lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <div className="absolute inset-0 bg-stone-950/30" onClick={() => setOpen(false)} />
+          <motion.div className="absolute left-0 top-0 h-full w-[min(300px,84vw)] p-2 pr-0" initial={{ x: -28 }} animate={{ x: 0 }} exit={{ x: -28 }} transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}>
             <SidebarInner onItem={() => setOpen(false)} mobile />
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
+      </AnimatePresence>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 border-b border-white/60 bg-white/72 px-3 py-2.5 shadow-[0_18px_48px_-38px_rgba(72,34,132,.55)] backdrop-blur-2xl lg:px-5">
+        <header className="sticky top-0 z-30 border-b border-stone-200 bg-white/95 px-3 py-2 shadow-sm backdrop-blur-lg lg:px-4">
           <div className="flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
               <button onClick={() => setOpen(true)} className="grid h-10 w-10 place-items-center rounded-2xl border border-white/70 bg-white/70 text-[#1d1830] shadow-sm lg:hidden" aria-label="Open sidebar">
@@ -315,8 +319,10 @@ export default function AccountLayout() {
           </div>
         </header>
 
-        <main className="flex-1 p-3 pb-24 sm:p-4 lg:p-6 lg:pb-6">
-          <Outlet />
+        <main className="flex-1 p-3 pb-24 sm:p-4 lg:p-5 lg:pb-5">
+          <MotionPage routeKey={location.pathname + location.search}>
+            <Outlet />
+          </MotionPage>
         </main>
       </div>
 

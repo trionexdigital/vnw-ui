@@ -4,9 +4,9 @@ import { adminAPI, categoriesAPI } from '@/core/api/vnwAPI';
 import { useToast } from '@/shared/hooks/use-toast';
 import { PageHeader, Loader, StatusBadge, Money, Table } from '@/shared/components/ui-bits';
 import Modal from '@/shared/components/Modal';
-import { badgeOptions, operatorOptions, statusOptions, numerologySum } from '@/core/lib/format';
+import { badgeOptions, statusOptions, numerologySum } from '@/core/lib/format';
 
-const empty = { display_number: '', category_id: '', title_label: 'Business VIP Number', badge: 'NONE', mrp: '', offer_price: '', numerology_sum: '', operator: 'Airtel', description: '', stock: 1, status: 'AVAILABLE', is_featured: false };
+const empty = { display_number: '', category_id: '', title_label: 'Business VIP Number', badge: 'NONE', mrp: '', offer_price: '', numerology_sum: '', operator: 'Any', description: '', stock: 1, status: 'AVAILABLE', is_featured: false };
 
 export default function AdminNumbers() {
   const { toast } = useToast();
@@ -87,13 +87,9 @@ export default function AdminNumbers() {
           <select className={input} value={form.badge} onChange={(e) => set('badge', e.target.value)}>
             {badgeOptions.map((b) => <option key={b.value} value={b.value}>{b.label}</option>)}
           </select>
-          <select className={input} value={form.operator} onChange={(e) => set('operator', e.target.value)}>
-            {operatorOptions.map((o) => <option key={o} value={o}>{o}</option>)}
-          </select>
           <input type="number" className={input} placeholder="MRP" value={form.mrp} onChange={(e) => set('mrp', e.target.value)} required />
           <input type="number" className={input} placeholder="Offer Price" value={form.offer_price} onChange={(e) => set('offer_price', e.target.value)} required />
           <input type="number" className={input} placeholder="Numerology (auto)" value={form.numerology_sum} onChange={(e) => set('numerology_sum', e.target.value)} />
-          <input type="number" className={input} placeholder="Stock" value={form.stock} onChange={(e) => set('stock', e.target.value)} />
           <select className={input} value={form.status} onChange={(e) => set('status', e.target.value)}>
             {statusOptions.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>

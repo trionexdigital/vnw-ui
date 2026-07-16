@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { dealerAPI, categoriesAPI, numbersAPI } from '@/core/api/vnwAPI';
 import { useToast } from '@/shared/hooks/use-toast';
 import { PageHeader, Panel } from '@/shared/components/ui-bits';
-import { operatorOptions, numerologySum, formatINR } from '@/core/lib/format';
+import { numerologySum, formatINR } from '@/core/lib/format';
 
 export default function DealerListingForm() {
   const { id } = useParams();
@@ -16,7 +16,7 @@ export default function DealerListingForm() {
   // Final price = sale_price − discount_amount; the % shown on cards is derived from these.
   const [f, setF] = useState<any>({
     display_number: '', category_id: '', title_label: 'Fancy VIP Number', sale_price: '', discount_amount: '',
-    numerology_sum: '', operator: 'Jio', description: '',
+    numerology_sum: '', operator: 'Any', description: '',
   });
 
   useEffect(() => { categoriesAPI.list().then(setCats).catch(() => {}); }, []);
@@ -24,7 +24,7 @@ export default function DealerListingForm() {
     if (editing) numbersAPI.detail(Number(id)).then((n) => setF({
       display_number: n.display_number, category_id: n.category_id || '', title_label: n.title_label,
       sale_price: n.mrp, discount_amount: Math.max(0, Number(n.mrp) - Number(n.offer_price)),
-      numerology_sum: n.numerology_sum || '', operator: n.operator || 'Jio', description: n.description || '',
+      numerology_sum: n.numerology_sum || '', operator: 'Any', description: n.description || '',
     })).catch(() => {});
   }, [id]);
 
@@ -78,10 +78,6 @@ export default function DealerListingForm() {
             <input required type="number" min="0" className={input} value={f.sale_price} onChange={(e) => set('sale_price', e.target.value)} /></div>
           <div><label className="mb-1 block text-xs text-muted-foreground">Discount Amount (₹)</label>
             <input type="number" min="0" className={input} value={f.discount_amount} onChange={(e) => set('discount_amount', e.target.value)} /></div>
-          <div><label className="mb-1 block text-xs text-muted-foreground">Operator</label>
-            <select className={input} value={f.operator} onChange={(e) => set('operator', e.target.value)}>
-              {operatorOptions.map((o) => <option key={o} value={o}>{o}</option>)}
-            </select></div>
           <div><label className="mb-1 block text-xs text-muted-foreground">Numerology Sum (auto)</label>
             <input type="number" className={input} placeholder={String(numerologySum(f.display_number) || '')} value={f.numerology_sum} onChange={(e) => set('numerology_sum', e.target.value)} /></div>
 

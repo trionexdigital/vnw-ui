@@ -1,72 +1,75 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { lazy, Suspense, type ReactNode } from 'react';
 import { RoleGuard } from './RoleGuard';
 import PublicLayout from '@/shared/layout/PublicLayout';
 import AccountLayout from '@/shared/layout/AccountLayout';
+import { MotionPage } from '@/shared/motion/MotionPrimitives';
 
-// Public
-import Home from '@/pages/home/Home';
-import Shop from '@/pages/shop/Shop';
-import NumberDetail from '@/pages/shop/NumberDetail';
-import Cart from '@/pages/cart/Cart';
-import Wishlist from '@/pages/wishlist/Wishlist';
-import Compare from '@/pages/compare/Compare';
-import Checkout from '@/pages/checkout/Checkout';
-import About from '@/pages/static/About';
-import Contact from '@/pages/static/Contact';
-import Numerology from '@/pages/numerology/Numerology';
-import Auth from '@/pages/auth/Auth';
-import NotFound from '@/pages/not-found';
+// Route-level splitting keeps the storefront fast while preserving every console screen.
+const Home = lazy(() => import('@/pages/home/Home'));
+const Shop = lazy(() => import('@/pages/shop/Shop'));
+const NumberDetail = lazy(() => import('@/pages/shop/NumberDetail'));
+const Cart = lazy(() => import('@/pages/cart/Cart'));
+const Wishlist = lazy(() => import('@/pages/wishlist/Wishlist'));
+const Compare = lazy(() => import('@/pages/compare/Compare'));
+const Checkout = lazy(() => import('@/pages/checkout/Checkout'));
+const About = lazy(() => import('@/pages/static/About'));
+const Contact = lazy(() => import('@/pages/static/Contact'));
+const Numerology = lazy(() => import('@/pages/numerology/Numerology'));
+const Auth = lazy(() => import('@/pages/auth/Auth'));
 
-// Buyer
-import BuyerDashboard from '@/pages/dashboard/Dashboard';
-import Orders from '@/pages/orders/Orders';
-import OrderDetail from '@/pages/orders/OrderDetail';
-import Profile from '@/pages/settings/Settings';
-import ChangePassword from '@/pages/settings/ChangePassword';
-import Notifications from '@/pages/settings/Notifications';
-import Referrals from '@/pages/referrals/Referrals';
-import SellNumber from '@/pages/sell/SellNumber';
+const BuyerDashboard = lazy(() => import('@/pages/dashboard/Dashboard'));
+const Orders = lazy(() => import('@/pages/orders/Orders'));
+const OrderDetail = lazy(() => import('@/pages/orders/OrderDetail'));
+const Profile = lazy(() => import('@/pages/settings/Settings'));
+const ChangePassword = lazy(() => import('@/pages/settings/ChangePassword'));
+const Notifications = lazy(() => import('@/pages/settings/Notifications'));
+const Referrals = lazy(() => import('@/pages/referrals/Referrals'));
+const SellNumber = lazy(() => import('@/pages/sell/SellNumber'));
 
-// Employee
-import EmployeeDashboard from '@/pages/employee/EmployeeDashboard';
-import EmployeeNumbers from '@/pages/employee/EmployeeNumbers';
-import EmployeeSellRequests from '@/pages/employee/EmployeeSellRequests';
-import EmployeeUsers from '@/pages/employee/EmployeeUsers';
-import EmployeeSubmissions from '@/pages/employee/EmployeeSubmissions';
+const EmployeeDashboard = lazy(() => import('@/pages/employee/EmployeeDashboard'));
+const EmployeeNumbers = lazy(() => import('@/pages/employee/EmployeeNumbers'));
+const EmployeeSellRequests = lazy(() => import('@/pages/employee/EmployeeSellRequests'));
+const EmployeeUsers = lazy(() => import('@/pages/employee/EmployeeUsers'));
+const EmployeeSubmissions = lazy(() => import('@/pages/employee/EmployeeSubmissions'));
 
-// Dealer
-import DealerDashboard from '@/pages/dealer/DealerDashboard';
-import DealerListings from '@/pages/dealer/DealerListings';
-import DealerListingForm from '@/pages/dealer/DealerListingForm';
-import DealerSales from '@/pages/dealer/DealerSales';
-import DealerPayouts from '@/pages/dealer/DealerPayouts';
-import DealerProfile from '@/pages/dealer/DealerProfile';
+const DealerDashboard = lazy(() => import('@/pages/dealer/DealerDashboard'));
+const DealerListings = lazy(() => import('@/pages/dealer/DealerListings'));
+const DealerListingForm = lazy(() => import('@/pages/dealer/DealerListingForm'));
+const DealerSales = lazy(() => import('@/pages/dealer/DealerSales'));
+const DealerPayouts = lazy(() => import('@/pages/dealer/DealerPayouts'));
+const DealerProfile = lazy(() => import('@/pages/dealer/DealerProfile'));
 
-// Admin
-import AdminDashboard from '@/pages/admin/AdminDashboard';
-import AdminNumbers from '@/pages/admin/AdminNumbers';
-import AdminCategories from '@/pages/admin/AdminCategories';
-import AdminOrders from '@/pages/admin/AdminOrders';
-import AdminUsers from '@/pages/admin/AdminUsers';
-import AdminDealers from '@/pages/admin/AdminDealers';
-import AdminPayouts from '@/pages/admin/AdminPayouts';
-import AdminReviews from '@/pages/admin/AdminReviews';
-import AdminTestimonials from '@/pages/admin/AdminTestimonials';
-import AdminBanners from '@/pages/admin/AdminBanners';
-import AdminMessages from '@/pages/admin/AdminMessages';
-import AdminCoupons from '@/pages/admin/AdminCoupons';
-import AdminSubscribers from '@/pages/admin/AdminSubscribers';
-import AdminSettings from '@/pages/admin/AdminSettings';
-import AdminSellRequests from '@/pages/admin/AdminSellRequests';
-import AdminApprovals from '@/pages/admin/AdminApprovals';
-import AdminCreateDealer from '@/pages/admin/AdminCreateDealer';
+const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'));
+const AdminNumbers = lazy(() => import('@/pages/admin/AdminNumbers'));
+const AdminCategories = lazy(() => import('@/pages/admin/AdminCategories'));
+const AdminOrders = lazy(() => import('@/pages/admin/AdminOrders'));
+const AdminUsers = lazy(() => import('@/pages/admin/AdminUsers'));
+const AdminDealers = lazy(() => import('@/pages/admin/AdminDealers'));
+const AdminPayouts = lazy(() => import('@/pages/admin/AdminPayouts'));
+const AdminReviews = lazy(() => import('@/pages/admin/AdminReviews'));
+const AdminTestimonials = lazy(() => import('@/pages/admin/AdminTestimonials'));
+const AdminBanners = lazy(() => import('@/pages/admin/AdminBanners'));
+const AdminMessages = lazy(() => import('@/pages/admin/AdminMessages'));
+const AdminCoupons = lazy(() => import('@/pages/admin/AdminCoupons'));
+const AdminSubscribers = lazy(() => import('@/pages/admin/AdminSubscribers'));
+const AdminSettings = lazy(() => import('@/pages/admin/AdminSettings'));
+const AdminSellRequests = lazy(() => import('@/pages/admin/AdminSellRequests'));
+const AdminApprovals = lazy(() => import('@/pages/admin/AdminApprovals'));
+const AdminCreateDealer = lazy(() => import('@/pages/admin/AdminCreateDealer'));
 
 const dealerRoles = ['DEALER', 'ADMIN'];
 const adminRoles = ['ADMIN'];
 const employeeRoles = ['EMPLOYEE', 'ADMIN'];
 
+function StandalonePage({ children }: { children: ReactNode }) {
+  const location = useLocation();
+  return <MotionPage routeKey={location.pathname}>{children}</MotionPage>;
+}
+
 export default function AppRoutes() {
   return (
+    <Suspense fallback={<div className="grid min-h-[45vh] place-items-center bg-stone-50"><div className="text-center"><div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-stone-200 border-t-amber-700" /><p className="mt-3 text-sm font-bold text-stone-600">Loading screen…</p></div></div>}>
     <Routes>
       {/* Storefront */}
       <Route element={<PublicLayout />}>
@@ -83,9 +86,9 @@ export default function AppRoutes() {
       </Route>
 
       {/* Auth */}
-      <Route path="/login" element={<Auth mode="login" />} />
-      <Route path="/register" element={<Auth mode="register" />} />
-      <Route path="/forgot" element={<Auth mode="forgot" />} />
+      <Route path="/login" element={<StandalonePage><Auth mode="login" /></StandalonePage>} />
+      <Route path="/register" element={<StandalonePage><Auth mode="register" /></StandalonePage>} />
+      <Route path="/forgot" element={<StandalonePage><Auth mode="forgot" /></StandalonePage>} />
 
       {/* Account / dashboards */}
       <Route element={<RoleGuard><AccountLayout /></RoleGuard>}>
@@ -127,6 +130,7 @@ export default function AppRoutes() {
         <Route path="/admin/payouts" element={<RoleGuard roles={adminRoles}><AdminPayouts /></RoleGuard>} />
         <Route path="/admin/reviews" element={<RoleGuard roles={adminRoles}><AdminReviews /></RoleGuard>} />
         <Route path="/admin/testimonials" element={<RoleGuard roles={adminRoles}><AdminTestimonials /></RoleGuard>} />
+        <Route path="/admin/carousel" element={<RoleGuard roles={adminRoles}><AdminBanners /></RoleGuard>} />
         <Route path="/admin/banners" element={<RoleGuard roles={adminRoles}><AdminBanners /></RoleGuard>} />
         <Route path="/admin/coupons" element={<RoleGuard roles={adminRoles}><AdminCoupons /></RoleGuard>} />
         <Route path="/admin/subscribers" element={<RoleGuard roles={adminRoles}><AdminSubscribers /></RoleGuard>} />
@@ -136,5 +140,6 @@ export default function AppRoutes() {
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </Suspense>
   );
 }
