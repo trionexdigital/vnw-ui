@@ -9,6 +9,7 @@ import { useToast } from '@/shared/hooks/use-toast';
 import { localService } from '@/core/services/local';
 import { roleHome } from '@/core/lib/permissions';
 import { APP_CONFIG } from '@/core/config/app.config';
+import { ThemeControl } from '@/shared/components/ThemeControl';
 
 type Mode = 'login' | 'register' | 'forgot';
 const homeFor = (role?: string) => roleHome(role);
@@ -61,28 +62,31 @@ export default function Auth({ mode }: { mode: Mode }) {
   const title = mode === 'login' ? 'Sign In' : mode === 'register' ? 'Create Account' : 'Reset Password';
 
   return (
-    <div className="app-shell-bg grid min-h-screen p-3 lg:grid-cols-2 lg:gap-3">
+    <div className="app-shell-bg relative grid min-h-screen bg-background p-3 text-foreground lg:grid-cols-2 lg:gap-3">
+      <div className="absolute right-5 top-5 z-20">
+        <ThemeControl />
+      </div>
       <div className="glass-panel relative hidden flex-col justify-between overflow-hidden rounded-[2rem] p-12 lg:flex">
-        <div className="absolute -right-20 top-20 h-72 w-72 rounded-full bg-[#ffc7f3]/45 blur-3xl" />
-        <div className="absolute bottom-14 left-14 h-72 w-72 rounded-full bg-[#d8cbff]/45 blur-3xl" />
-        <Link to="/" className="relative flex items-center">
+        <div className="absolute -right-20 top-20 h-72 w-72 rounded-full bg-accent/10 blur-3xl" />
+        <div className="absolute bottom-14 left-14 h-72 w-72 rounded-full bg-info/10 blur-3xl" />
+        <Link to="/" className="relative flex w-fit items-center rounded-xl bg-white p-2">
           <BrandLockup logoClassName="h-14 w-14" sloganClassName="h-12 w-64" />
         </Link>
         <div className="relative">
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-white/58 px-4 py-2 text-sm font-black text-[#7c2cff]"><Sparkles className="h-4 w-4 text-[#d9a31b]" /> Premium Access</div>
-          <h2 className="text-5xl font-black leading-tight text-[#1d1830]">Your Number.<br /><span className="text-gradient-vnw">Your Identity.</span></h2>
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-card/70 px-4 py-2 text-sm font-black text-accent"><Sparkles className="h-4 w-4" /> Premium Access</div>
+          <h2 className="text-5xl font-black leading-tight text-foreground">Your Number.<br /><span className="text-gradient-vnw">Your Identity.</span></h2>
           <p className="mt-4 max-w-sm text-muted-foreground">Buy & sell premium VIP, fancy and lucky mobile numbers on India's most trusted marketplace.</p>
-          <Crown className="mt-10 h-24 w-24 text-[#d9a31b]" />
+          <Crown className="mt-10 h-24 w-24 text-accent" />
         </div>
         <p className="relative text-xs text-muted-foreground">© {new Date().getFullYear()} {APP_CONFIG.name}</p>
       </div>
 
       <div className="flex items-center justify-center p-4 sm:p-6">
         <form onSubmit={submit} className="glass-panel w-full max-w-md rounded-[2rem] p-6 sm:p-8">
-          <Link to="/" className="mb-6 flex items-center justify-center lg:hidden">
+          <Link to="/" className="mx-auto mb-6 flex w-fit items-center justify-center rounded-xl bg-white p-2 lg:hidden">
             <BrandLockup logoClassName="h-12 w-12" sloganClassName="h-10 w-52" />
           </Link>
-          <h1 className="text-3xl font-black text-[#1d1830]">{title}</h1>
+          <h1 className="text-3xl font-black text-foreground">{title}</h1>
           <p className="mb-6 mt-1 text-sm text-muted-foreground">
             {mode === 'login' ? 'Sign in to your account' : mode === 'register' ? (form.role === 'DEALER' ? 'Register as a dealer to sell numbers' : 'Join VIP Number World') : 'We will review your request'}
           </p>
@@ -110,7 +114,7 @@ export default function Auth({ mode }: { mode: Mode }) {
                 <div className="flex gap-2 text-xs">
                   {['USER', 'DEALER'].map((r) => (
                     <button type="button" key={r} onClick={() => set('role', r)}
-                      className={`flex-1 rounded-2xl border px-3 py-2 font-bold ${form.role === r ? 'border-[#7c2cff] bg-white/70 text-[#7c2cff]' : 'border-white/70 text-muted-foreground'}`}>
+                      className={`flex-1 rounded-2xl border px-3 py-2 font-bold ${form.role === r ? 'border-accent bg-accent/10 text-accent' : 'border-border bg-card/40 text-muted-foreground hover:bg-muted'}`}>
                       {r === 'USER' ? 'Buyer' : 'Dealer / Seller'}
                     </button>
                   ))}
@@ -126,11 +130,11 @@ export default function Auth({ mode }: { mode: Mode }) {
 
           <div className="mt-5 text-center text-sm text-muted-foreground">
             {mode === 'login' && (<>
-              <Link to="/forgot" className="text-[#7c2cff] hover:underline">Forgot password?</Link>
-              <div className="mt-2">No account? <Link to="/register" className="text-[#7c2cff] hover:underline">Create one</Link></div>
+              <Link to="/forgot" className="text-accent hover:underline">Forgot password?</Link>
+              <div className="mt-2">No account? <Link to="/register" className="text-accent hover:underline">Create one</Link></div>
             </>)}
-            {mode === 'register' && (<>Already have an account? <Link to="/login" className="text-[#7c2cff] hover:underline">Sign in</Link></>)}
-            {mode === 'forgot' && (<>Remembered it? <Link to="/login" className="text-[#7c2cff] hover:underline">Sign in</Link></>)}
+            {mode === 'register' && (<>Already have an account? <Link to="/login" className="text-accent hover:underline">Sign in</Link></>)}
+            {mode === 'forgot' && (<>Remembered it? <Link to="/login" className="text-accent hover:underline">Sign in</Link></>)}
           </div>
         </form>
       </div>

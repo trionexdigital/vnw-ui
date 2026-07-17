@@ -10,6 +10,7 @@ import { logout } from '@/app/authSlice';
 import { cn } from '@/core/lib/utils';
 import { hasPermission } from '@/core/lib/permissions';
 import { Logo as BrandLogo, Slogan } from '@/shared/components/Logo';
+import { ThemeControl } from '@/shared/components/ThemeControl';
 import { AnimatePresence, motion } from 'framer-motion';
 import { MotionPage } from '@/shared/motion/MotionPrimitives';
 
@@ -131,7 +132,7 @@ export default function AccountLayout() {
       {groupedMenu.map((group) => (
         <div key={group.label} className="mb-4 last:mb-0">
           {!compact && (
-            <div className="mb-2 px-3 text-[10px] font-black uppercase text-[#8c849b]">
+            <div className="mb-2 px-3 text-[10px] font-black uppercase text-muted-foreground">
               {group.label}
             </div>
           )}
@@ -142,12 +143,12 @@ export default function AccountLayout() {
                   'group relative flex min-h-10 items-center rounded-lg text-sm font-bold transition-all',
                   compact ? 'justify-center px-2' : 'gap-3 px-3',
                   isActive
-                    ? 'bg-stone-900 text-white shadow-sm'
-                    : 'text-stone-600 hover:bg-amber-50 hover:text-stone-950'
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                 )}>
                 {({ isActive }) => (
                   <>
-                    <span className={cn('grid h-8 w-8 shrink-0 place-items-center rounded-lg transition', isActive ? 'bg-white/10 text-amber-300' : 'bg-stone-100 text-amber-800 group-hover:bg-white')}>
+                    <span className={cn('grid h-8 w-8 shrink-0 place-items-center rounded-lg transition', isActive ? 'bg-primary-foreground/10 text-primary-foreground' : 'bg-sidebar-accent text-sidebar-primary group-hover:bg-card')}>
                       <m.icon className="h-4 w-4" />
                     </span>
                     {!compact && <span className="min-w-0 truncate">{m.label}</span>}
@@ -163,40 +164,40 @@ export default function AccountLayout() {
 
   const SidebarInner = ({ onItem, mobile = false }: { onItem?: () => void; mobile?: boolean }) => (
     <div className={cn(
-      'flex h-full flex-col overflow-hidden border-r border-stone-200 bg-white shadow-sm',
+      'flex h-full flex-col overflow-hidden border-r border-sidebar-border bg-sidebar text-sidebar-foreground shadow-sm',
       mobile ? 'rounded-r-[1.6rem]' : 'rounded-none'
     )}>
-      <div className={cn('flex items-center gap-3 border-b border-stone-100 px-3 py-3', collapsed && !mobile ? 'justify-center' : 'justify-between')}>
+      <div className={cn('flex items-center gap-3 border-b border-sidebar-border px-3 py-3', collapsed && !mobile ? 'justify-center' : 'justify-between')}>
         <Link to={homePath} onClick={onItem} className={cn('flex min-w-0 items-center gap-1', collapsed && !mobile && 'justify-center')}>
           <BrandLogo className="h-10 w-10 shrink-0 object-contain" />
           {(!collapsed || mobile) && (
             <span className="min-w-0 leading-tight">
-              <Slogan className="block h-8 w-40 min-w-0 object-contain" />
-              <span className="block text-[10px] font-bold capitalize text-[#1d1830]/58">{role.toLowerCase()} panel</span>
+              <span className="block rounded-lg bg-white px-1"><Slogan className="block h-8 w-40 min-w-0 object-contain" /></span>
+              <span className="block text-[10px] font-bold capitalize text-muted-foreground">{role.toLowerCase()} panel</span>
             </span>
           )}
         </Link>
-        {mobile && <button onClick={onItem} className="grid h-10 w-10 place-items-center rounded-2xl bg-white/60 text-[#1d1830]/70"><X className="h-5 w-5" /></button>}
+        {mobile && <button onClick={onItem} className="grid h-10 w-10 place-items-center rounded-2xl bg-sidebar-accent text-sidebar-accent-foreground"><X className="h-5 w-5" /></button>}
       </div>
 
       <NavList onItem={onItem} compact={collapsed && !mobile} />
 
       <div className="space-y-2 p-3">
         {(!collapsed || mobile) && (
-          <Link to="/account" onClick={onItem} className="flex items-center gap-3 rounded-2xl border border-white/70 bg-white/56 p-3 shadow-sm transition hover:bg-white/78">
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl royal-gradient-bg text-sm font-black text-white">{initials}</span>
+          <Link to="/account" onClick={onItem} className="flex items-center gap-3 rounded-2xl border border-sidebar-border bg-sidebar-accent p-3 shadow-sm transition hover:bg-sidebar-accent/80">
+            <span className="royal-gradient-bg grid h-10 w-10 shrink-0 place-items-center rounded-2xl text-sm font-black text-primary-foreground">{initials}</span>
             <span className="min-w-0">
-              <span className="block truncate text-sm font-black text-[#1d1830]">{userName}</span>
+              <span className="block truncate text-sm font-black text-sidebar-foreground">{userName}</span>
               <span className="block truncate text-xs text-muted-foreground">{userEmail}</span>
             </span>
           </Link>
         )}
         <Link to="/" onClick={onItem} title={collapsed && !mobile ? 'Back to Store' : undefined}
-          className={cn('flex min-h-11 items-center rounded-2xl bg-white/48 text-sm font-bold text-[#1d1830]/70 shadow-sm transition hover:bg-white/70', collapsed && !mobile ? 'justify-center px-2' : 'gap-3 px-3')}>
+          className={cn('flex min-h-11 items-center rounded-2xl bg-sidebar-accent text-sm font-bold text-sidebar-accent-foreground shadow-sm transition hover:bg-sidebar-accent/80', collapsed && !mobile ? 'justify-center px-2' : 'gap-3 px-3')}>
           <ArrowLeft className="h-4 w-4" /> {(!collapsed || mobile) && 'Back to Store'}
         </Link>
         <button onClick={doLogout} title={collapsed && !mobile ? 'Logout' : undefined}
-          className={cn('flex min-h-11 w-full items-center rounded-2xl bg-white/48 text-sm font-bold text-rose-500 shadow-sm transition hover:bg-rose-50', collapsed && !mobile ? 'justify-center px-2' : 'gap-3 px-3')}>
+          className={cn('flex min-h-11 w-full items-center rounded-2xl bg-sidebar-accent text-sm font-bold text-destructive shadow-sm transition hover:bg-destructive/10', collapsed && !mobile ? 'justify-center px-2' : 'gap-3 px-3')}>
           <LogOut className="h-4 w-4" /> {(!collapsed || mobile) && 'Logout'}
         </button>
       </div>
@@ -217,7 +218,7 @@ export default function AccountLayout() {
   ];
 
   return (
-    <div className="app-shell-bg flex min-h-screen bg-background text-[#1d1830]">
+    <div className="app-shell-bg flex min-h-screen bg-background text-foreground">
       <aside className={cn('sticky top-0 hidden h-screen shrink-0 transition-[width] duration-300 lg:block', collapsed ? 'w-[68px]' : 'w-[244px]')}>
         <SidebarInner />
       </aside>
@@ -225,7 +226,7 @@ export default function AccountLayout() {
       <AnimatePresence>
       {open && (
         <motion.div className="fixed inset-0 z-50 lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-          <div className="absolute inset-0 bg-stone-950/30" onClick={() => setOpen(false)} />
+          <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} />
           <motion.div className="absolute left-0 top-0 h-full w-[min(300px,84vw)] p-2 pr-0" initial={{ x: -28 }} animate={{ x: 0 }} exit={{ x: -28 }} transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}>
             <SidebarInner onItem={() => setOpen(false)} mobile />
           </motion.div>
@@ -234,54 +235,56 @@ export default function AccountLayout() {
       </AnimatePresence>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 border-b border-stone-200 bg-white/95 px-3 py-2 shadow-sm backdrop-blur-lg lg:px-4">
+        <header className="sticky top-0 z-30 border-b border-border bg-background/95 px-3 py-2 shadow-sm backdrop-blur-lg lg:px-4">
           <div className="flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
-              <button onClick={() => setOpen(true)} className="grid h-10 w-10 place-items-center rounded-2xl border border-white/70 bg-white/70 text-[#1d1830] shadow-sm lg:hidden" aria-label="Open sidebar">
+              <button onClick={() => setOpen(true)} className="grid h-10 w-10 place-items-center rounded-2xl border border-border bg-card text-foreground shadow-sm lg:hidden" aria-label="Open sidebar">
                 <Menu className="h-5 w-5" />
               </button>
-              <button onClick={() => setCollapsed((v) => !v)} className="hidden h-10 w-10 place-items-center rounded-2xl border border-white/70 bg-white/70 text-[#1d1830] shadow-sm transition hover:-translate-y-0.5 lg:grid" aria-label="Toggle sidebar">
+              <button onClick={() => setCollapsed((v) => !v)} className="hidden h-10 w-10 place-items-center rounded-2xl border border-border bg-card text-foreground shadow-sm transition hover:-translate-y-0.5 lg:grid" aria-label="Toggle sidebar">
                 {collapsed ? <PanelLeftOpen className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
               </button>
-              <div className="hidden h-8 w-px bg-white/70 sm:block" />
+              <div className="hidden h-8 w-px bg-border sm:block" />
               <div className="min-w-0">
                 <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground sm:text-sm">
-                  <Link to={homePath} className="hover:text-[#7c2cff]">Home</Link>
+                  <Link to={homePath} className="hover:text-accent">Home</Link>
                   <ChevronRight className="h-4 w-4 shrink-0" />
-                  <span className="truncate font-black text-[#1d1830]">{pageLabel}</span>
+                  <span className="truncate font-black text-foreground">{pageLabel}</span>
                 </div>
-                <div className="mt-0.5 hidden text-xs text-muted-foreground sm:block">Welcome back, <span className="font-black text-[#1d1830]">{userName}</span></div>
+                <div className="mt-0.5 hidden text-xs text-muted-foreground sm:block">Welcome back, <span className="font-black text-foreground">{userName}</span></div>
               </div>
             </div>
 
             <div className="flex shrink-0 items-center gap-2">
-              <button className="hidden h-10 items-center gap-2 rounded-2xl border border-white/70 bg-white/70 px-4 text-sm font-black text-[#1d1830] shadow-sm transition hover:-translate-y-0.5 xl:inline-flex" onClick={() => navigate(isAdmin ? '/admin/numbers' : homePath)}>
-                <Search className="h-4 w-4 text-[#7c2cff]" /> Quick Find
+              <button className="hidden h-10 items-center gap-2 rounded-2xl border border-border bg-card px-4 text-sm font-black text-foreground shadow-sm transition hover:-translate-y-0.5 xl:inline-flex" onClick={() => navigate(isAdmin ? '/admin/numbers' : homePath)}>
+                <Search className="h-4 w-4 text-accent" /> Quick Find
               </button>
 
+              <ThemeControl />
+
               <div className="relative" ref={notificationsRef}>
-                <button onClick={() => { setNotificationsOpen((v) => !v); setProfileOpen(false); }} aria-label="Notifications" className="relative grid h-10 w-10 place-items-center rounded-2xl border border-white/70 bg-white/70 text-[#1d1830] shadow-sm transition hover:-translate-y-0.5">
+                <button onClick={() => { setNotificationsOpen((v) => !v); setProfileOpen(false); }} aria-label="Notifications" className="relative grid h-10 w-10 place-items-center rounded-2xl border border-border bg-card text-foreground shadow-sm transition hover:-translate-y-0.5">
                   <Bell className="h-5 w-5" />
                   <span className="absolute right-1 top-1 grid h-5 min-w-5 place-items-center rounded-full bg-gradient-to-br from-[#ff8a21] to-[#d923c6] px-1 text-[10px] font-black text-white">3</span>
                 </button>
                 {notificationsOpen && (
-                  <div className="fixed left-3 right-3 top-[68px] z-40 rounded-[1.25rem] border border-[#e7dff0] bg-white p-2.5 shadow-[0_26px_80px_-42px_rgba(29,24,48,.75)] sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-3 sm:w-[360px]">
+                  <div className="fixed left-3 right-3 top-[68px] z-40 rounded-[1.25rem] border border-popover-border bg-popover p-2.5 text-popover-foreground shadow-xl sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-3 sm:w-[360px]">
                     <div className="mb-2 flex items-center justify-between px-1">
-                      <b className="text-sm text-[#1d1830]">Notifications</b>
-                      <span className="rounded-full bg-[#fce7ff] px-2 py-1 text-[10px] font-black text-[#7c2cff]">3 new</span>
+                      <b className="text-sm text-popover-foreground">Notifications</b>
+                      <span className="rounded-full bg-accent/15 px-2 py-1 text-[10px] font-black text-accent">3 new</span>
                     </div>
                     <div className="space-y-2">
                       {notifications.map((n) => (
-                        <button key={n.title} className="w-full rounded-2xl bg-[#faf7ff] p-3 text-left transition hover:bg-[#f5efff]">
+                        <button key={n.title} className="w-full rounded-2xl bg-muted p-3 text-left transition hover:bg-accent/10">
                           <span className="flex items-center justify-between gap-3">
-                            <span className="text-sm font-black text-[#1d1830]">{n.title}</span>
+                            <span className="text-sm font-black text-foreground">{n.title}</span>
                             <span className="text-[10px] font-bold text-muted-foreground">{n.time}</span>
                           </span>
                           <span className="mt-1 block text-xs leading-5 text-muted-foreground">{n.text}</span>
                         </button>
                       ))}
                     </div>
-                    <button onClick={() => { setNotificationsOpen(false); navigate('/notifications'); }} className="mt-2 flex h-10 w-full items-center justify-center rounded-2xl bg-[#1d1830] text-xs font-black text-white transition hover:bg-[#33264f]">
+                    <button onClick={() => { setNotificationsOpen(false); navigate('/notifications'); }} className="mt-2 flex h-10 w-full items-center justify-center rounded-2xl bg-primary text-xs font-black text-primary-foreground transition hover:bg-primary/90">
                       View all notifications
                     </button>
                   </div>
@@ -289,28 +292,28 @@ export default function AccountLayout() {
               </div>
 
               <div className="relative" ref={profileRef}>
-                <button onClick={() => { setProfileOpen((v) => !v); setNotificationsOpen(false); }} className="flex h-10 items-center gap-2 rounded-2xl border border-white/70 bg-white/70 px-1.5 pr-2.5 shadow-sm transition hover:-translate-y-0.5">
-                  <span className="grid h-8 w-8 place-items-center rounded-xl royal-gradient-bg text-xs font-black text-white">{initials}</span>
+                <button onClick={() => { setProfileOpen((v) => !v); setNotificationsOpen(false); }} className="flex h-10 items-center gap-2 rounded-2xl border border-border bg-card px-1.5 pr-2.5 shadow-sm transition hover:-translate-y-0.5">
+                  <span className="royal-gradient-bg grid h-8 w-8 place-items-center rounded-xl text-xs font-black text-primary-foreground">{initials}</span>
                   <span className="hidden text-left leading-tight md:block">
-                    <span className="block max-w-28 truncate text-xs font-black text-[#1d1830]">{userName}</span>
+                    <span className="block max-w-28 truncate text-xs font-black text-foreground">{userName}</span>
                     <span className="block text-[10px] font-bold text-muted-foreground">{role}</span>
                   </span>
                 </button>
                 {profileOpen && (
-                  <div className="fixed left-3 right-3 top-[68px] z-40 rounded-[1.25rem] border border-[#e7dff0] bg-white p-2.5 shadow-[0_26px_80px_-42px_rgba(29,24,48,.75)] sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-3 sm:w-72">
-                    <div className="rounded-2xl bg-[#faf7ff] p-3">
+                  <div className="fixed left-3 right-3 top-[68px] z-40 rounded-[1.25rem] border border-popover-border bg-popover p-2.5 text-popover-foreground shadow-xl sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-3 sm:w-72">
+                    <div className="rounded-2xl bg-muted p-3">
                       <div className="flex items-center gap-3">
-                        <span className="grid h-11 w-11 place-items-center rounded-2xl royal-gradient-bg text-sm font-black text-white">{initials}</span>
+                        <span className="royal-gradient-bg grid h-11 w-11 place-items-center rounded-2xl text-sm font-black text-primary-foreground">{initials}</span>
                         <div className="min-w-0">
-                          <div className="truncate text-sm font-black text-[#1d1830]">{userName}</div>
+                          <div className="truncate text-sm font-black text-foreground">{userName}</div>
                           <div className="truncate text-xs text-muted-foreground">{userEmail}</div>
                         </div>
                       </div>
                     </div>
                     <div className="mt-2 grid gap-1">
-                      <button onClick={() => { setProfileOpen(false); navigate('/account'); }} className="flex items-center gap-2 rounded-2xl px-3 py-2 text-left text-sm font-bold text-[#1d1830]/76 hover:bg-[#faf7ff]"><UserCircle className="h-4 w-4 text-[#7c2cff]" /> Profile</button>
-                      <button className="flex items-center gap-2 rounded-2xl px-3 py-2 text-left text-sm font-bold text-[#1d1830]/76 hover:bg-white/62"><ShieldCheck className="h-4 w-4 text-[#17a873]" /> Account secure</button>
-                      <button onClick={doLogout} className="flex items-center gap-2 rounded-2xl px-3 py-2 text-left text-sm font-bold text-rose-500 hover:bg-rose-50"><LogOut className="h-4 w-4" /> Logout</button>
+                      <button onClick={() => { setProfileOpen(false); navigate('/account'); }} className="flex items-center gap-2 rounded-2xl px-3 py-2 text-left text-sm font-bold text-foreground/80 hover:bg-muted"><UserCircle className="h-4 w-4 text-accent" /> Profile</button>
+                      <button className="flex items-center gap-2 rounded-2xl px-3 py-2 text-left text-sm font-bold text-foreground/80 hover:bg-muted"><ShieldCheck className="h-4 w-4 text-success" /> Account secure</button>
+                      <button onClick={doLogout} className="flex items-center gap-2 rounded-2xl px-3 py-2 text-left text-sm font-bold text-destructive hover:bg-destructive/10"><LogOut className="h-4 w-4" /> Logout</button>
                     </div>
                   </div>
                 )}
@@ -326,13 +329,13 @@ export default function AccountLayout() {
         </main>
       </div>
 
-      <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-white/70 bg-white/78 shadow-[0_-18px_50px_-34px_rgba(93,44,159,.55)] backdrop-blur-2xl lg:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+      <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-border bg-card/90 shadow-lg backdrop-blur-2xl lg:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
         {bottomItems.map((m) => (
           <NavLink key={m.to} to={m.to} end={m.end}
-            className={({ isActive }) => cn('flex flex-col items-center gap-1 py-2 text-[10px] font-bold', isActive ? 'text-[#7c2cff]' : 'text-muted-foreground')}>
+            className={({ isActive }) => cn('flex flex-col items-center gap-1 py-2 text-[10px] font-bold', isActive ? 'text-accent' : 'text-muted-foreground')}>
             {({ isActive }) => (
               <>
-                <span className={cn('grid h-8 w-8 place-items-center rounded-2xl transition', isActive && 'bg-white/80 shadow-sm')}>
+                <span className={cn('grid h-8 w-8 place-items-center rounded-2xl transition', isActive && 'bg-accent/10 shadow-sm')}>
                   <m.icon className="h-5 w-5" />
                 </span>
                 <span>{m.label.split(' ')[0]}</span>

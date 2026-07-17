@@ -54,11 +54,11 @@ export default function EmployeeNumbers() {
                 <div className="flex flex-wrap gap-2 text-xs">
                   {n.status === 'PENDING_APPROVAL' && (
                     <>
-                      <button onClick={() => submitAction('numbers.approve', { number_id: n.number_id }, `Approve ${n.display_number}`)} className="text-emerald-400 hover:underline">Approve</button>
-                      <button onClick={() => submitAction('numbers.reject', { number_id: n.number_id }, `Reject ${n.display_number}`)} className="text-amber-400 hover:underline">Reject</button>
+                      <button onClick={() => submitAction('numbers.approve', { number_id: n.number_id }, `Approve ${n.display_number}`)} className="text-success hover:underline">Approve</button>
+                      <button onClick={() => submitAction('numbers.reject', { number_id: n.number_id }, `Reject ${n.display_number}`)} className="text-warning hover:underline">Reject</button>
                     </>
                   )}
-                  <button onClick={() => submitAction('numbers.delete', { number_id: n.number_id }, `Delete ${n.display_number}`)} className="text-rose-400 hover:underline">Delete</button>
+                  <button onClick={() => submitAction('numbers.delete', { number_id: n.number_id }, `Delete ${n.display_number}`)} className="text-destructive hover:underline">Delete</button>
                 </div>
               </td>
             </tr>

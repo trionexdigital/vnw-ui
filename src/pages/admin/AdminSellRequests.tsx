@@ -44,7 +44,7 @@ export default function AdminSellRequests() {
       <div className="mb-4 flex flex-wrap gap-2">
         {STATUS_TABS.map((s) => (
           <button key={s} onClick={() => setTab(s)}
-            className={`rounded-full px-3 py-1.5 text-xs font-semibold ${tab === s ? 'gold-gradient-bg text-royal' : 'border border-card-border text-muted-foreground'}`}>{s}</button>
+            className={`rounded-full px-3 py-1.5 text-xs font-semibold ${tab === s ? 'gold-gradient-bg text-accent-foreground' : 'border border-card-border text-muted-foreground'}`}>{s}</button>
         ))}
       </div>
       {loading ? <Loader /> : rows.length === 0 ? (
@@ -61,8 +61,8 @@ export default function AdminSellRequests() {
               <td className="px-4 py-3">
                 {r.status === 'PENDING' ? (
                   <div className="flex gap-2 text-xs">
-                    <button onClick={() => { setApprove(r); setOffer(String(r.asking_price)); setBuy(String(r.asking_price)); }} className="text-emerald-400 hover:underline">Approve</button>
-                    <button onClick={() => doReject(r.request_id)} className="text-rose-400 hover:underline">Reject</button>
+                    <button onClick={() => { setApprove(r); setOffer(String(r.asking_price)); setBuy(String(r.asking_price)); }} className="text-success hover:underline">Approve</button>
+                    <button onClick={() => doReject(r.request_id)} className="text-destructive hover:underline">Reject</button>
                   </div>
                 ) : <span className="text-xs text-muted-foreground">{r.admin_note || '—'}</span>}
               </td>

@@ -20,13 +20,13 @@ export function FormSection({
   columns = 2,
 }: FormSectionProps) {
   return (
-    <div className="bg-white rounded-lg p-3 sm:p-4 md:p-6 border border-gray-200 mb-4 sm:mb-6">
+    <div className="mb-4 rounded-lg border border-card-border bg-card p-3 text-card-foreground sm:mb-6 sm:p-4 md:p-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
-        <h3 className="text-base sm:text-lg font-semibold text-gray-900">{title}</h3>
+        <h3 className="text-base font-semibold text-foreground sm:text-lg">{title}</h3>
         {onEdit && (
           <Button
             onClick={onEdit}
-            className="bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 w-full sm:w-auto"
+            className="w-full border-info/35 bg-info-soft text-info hover:bg-info/15 sm:w-auto"
             variant="outline"
             size="sm"
           >
@@ -47,10 +47,10 @@ export function FormSection({
       >
         {fields.map((field, index) => (
           <div key={index}>
-            <label className="text-xs sm:text-sm text-gray-600 block mb-1 sm:mb-2 font-medium">
+            <label className="mb-1 block text-xs font-medium text-muted-foreground sm:mb-2 sm:text-sm">
               {field.label}
             </label>
-            <p className="text-sm sm:text-base text-gray-900 font-medium break-words">{field.value}</p>
+            <p className="break-words text-sm font-medium text-foreground sm:text-base">{field.value}</p>
           </div>
         ))}
       </div>

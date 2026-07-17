@@ -56,7 +56,7 @@ export default function Compare() {
                 <th key={n.number_id} className="px-4 py-4 text-center">
                   <div className="flex flex-col items-center gap-2">
                     <button onClick={() => toggleCompare(n.number_id)} className="self-end text-muted-foreground hover:text-rose-400"><X className="h-4 w-4" /></button>
-                    <button onClick={() => navigate(`/number/${n.number_id}`)} className="text-lg font-extrabold text-royal">{n.display_number}</button>
+                    <button onClick={() => navigate(`/number/${n.number_id}`)} className="text-lg font-extrabold text-foreground">{n.display_number}</button>
                   </div>
                 </th>
               ))}

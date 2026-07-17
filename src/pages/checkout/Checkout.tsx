@@ -98,10 +98,10 @@ export default function Checkout() {
           {items.map((it) => (
             <div key={it.number_id} className="flex items-center justify-between border-b border-card-border py-2 last:border-0">
               <div>
-                <div className="text-lg font-bold text-royal">{it.display_number}</div>
+                <div className="text-lg font-bold text-foreground">{it.display_number}</div>
                 <div className="text-xs text-muted-foreground">{it.title_label || it.category_name}</div>
               </div>
-              <span className="font-semibold text-royal">{formatINR(it.offer_price)}</span>
+              <span className="font-semibold text-foreground">{formatINR(it.offer_price)}</span>
             </div>
           ))}
         </div>
@@ -114,7 +114,7 @@ export default function Checkout() {
 
         <div className="mt-5 flex justify-between border-t border-card-border pt-4">
           <span className="text-muted-foreground">Total Payable</span>
-          <span className="text-2xl font-extrabold text-royal">{formatINR(subtotal)}</span>
+          <span className="text-2xl font-extrabold text-foreground">{formatINR(subtotal)}</span>
         </div>
 
         <button onClick={pay} disabled={paying} className="btn-gold mt-5 w-full">

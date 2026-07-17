@@ -53,16 +53,16 @@ export default function Notifications() {
         {items.map((n, index) => {
           const Icon = icons[n.type] || Bell;
           return (
-            <article key={n.id || index} className="flex gap-3 rounded-2xl bg-white/66 p-3 shadow-sm">
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[#f4edff] text-[#7c2cff]"><Icon className="h-5 w-5" /></span>
+            <article key={n.id || index} className="flex gap-3 rounded-2xl bg-muted/65 p-3 shadow-sm">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-accent/10 text-accent"><Icon className="h-5 w-5" /></span>
               <div className="min-w-0 flex-1">
                 <div className="flex items-start justify-between gap-3">
-                  <h3 className="text-sm font-black text-[#1d1830]">{n.title || n.heading || 'Notification'}</h3>
+                  <h3 className="text-sm font-black text-foreground">{n.title || n.heading || 'Notification'}</h3>
                   <span className="shrink-0 text-[10px] font-black text-muted-foreground">{n.time || n.created_at || ''}</span>
                 </div>
                 <p className="mt-1 text-sm leading-6 text-muted-foreground">{n.message || n.text || n.content}</p>
               </div>
-              {!n.read && <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-[#d923c6]" />}
+              {!n.read && <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-accent" />}
             </article>
           );
         })}

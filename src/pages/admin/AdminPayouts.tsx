@@ -33,9 +33,9 @@ export default function AdminPayouts() {
               <td className="px-4 py-3 text-muted-foreground">{String(r.requested_at).slice(0, 10)}</td>
               <td className="px-4 py-3">
                 <div className="flex gap-2 text-xs">
-                  <button onClick={() => update(r.payout_id, 'APPROVED')} className="text-sky-400 hover:underline">Approve</button>
-                  <button onClick={() => update(r.payout_id, 'PAID')} className="text-emerald-400 hover:underline">Mark Paid</button>
-                  <button onClick={() => update(r.payout_id, 'REJECTED')} className="text-rose-400 hover:underline">Reject</button>
+                  <button onClick={() => update(r.payout_id, 'APPROVED')} className="text-info hover:underline">Approve</button>
+                  <button onClick={() => update(r.payout_id, 'PAID')} className="text-success hover:underline">Mark Paid</button>
+                  <button onClick={() => update(r.payout_id, 'REJECTED')} className="text-destructive hover:underline">Reject</button>
                 </div>
               </td>
             </tr>

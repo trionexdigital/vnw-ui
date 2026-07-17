@@ -69,7 +69,7 @@ function StandalonePage({ children }: { children: ReactNode }) {
 
 export default function AppRoutes() {
   return (
-    <Suspense fallback={<div className="grid min-h-[45vh] place-items-center bg-stone-50"><div className="text-center"><div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-stone-200 border-t-amber-700" /><p className="mt-3 text-sm font-bold text-stone-600">Loading screen…</p></div></div>}>
+    <Suspense fallback={<div className="grid min-h-[45vh] place-items-center bg-background text-foreground"><div className="text-center"><div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-border border-t-accent" /><p className="mt-3 text-sm font-bold text-muted-foreground">Loading screen…</p></div></div>}>
     <Routes>
       {/* Storefront */}
       <Route element={<PublicLayout />}>

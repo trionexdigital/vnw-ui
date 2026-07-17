@@ -85,9 +85,9 @@ export default function DealerListingForm() {
           <div className="sm:col-span-2 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-card-border bg-secondary/50 px-4 py-3">
             <div className="text-sm">
               <span className="text-muted-foreground line-through">{formatINR(salePrice)}</span>
-              <span className="ml-2 text-lg font-extrabold text-[#d23b3b]">{formatINR(finalPrice)}</span>
+              <span className="ml-2 text-lg font-extrabold text-destructive">{formatINR(finalPrice)}</span>
             </div>
-            <span className="rounded-full bg-[#d23b3b] px-3 py-1 text-xs font-bold text-white">{discountPct}% OFF</span>
+            <span className="rounded-full bg-destructive px-3 py-1 text-xs font-bold text-destructive-foreground">{discountPct}% OFF</span>
           </div>
 
           <div className="sm:col-span-2"><label className="mb-1 block text-xs text-muted-foreground">Description</label>

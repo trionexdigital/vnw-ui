@@ -39,7 +39,7 @@ export default function AdminTestimonials() {
               <td className="px-4 py-3 text-right">
                 <div className="flex justify-end gap-2">
                   <button onClick={() => { setForm({ ...t, is_active: !!t.is_active }); setOpen(true); }} className="text-muted-foreground hover:text-primary"><Pencil className="h-4 w-4" /></button>
-                  <button onClick={() => del(t.testimonial_id)} className="text-muted-foreground hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
+                  <button onClick={() => del(t.testimonial_id)} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-4 w-4" /></button>
                 </div>
               </td>
             </tr>

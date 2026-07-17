@@ -18,7 +18,7 @@ export default function AdminCoupons() {
   useEffect(() => { load(); }, []);
 
   const set = (k: string, v: any) => setForm((p: any) => ({ ...p, [k]: v }));
-  const input = 'w-full rounded-lg border border-card-border bg-secondary px-3 py-2 text-sm outline-none focus:border-gold';
+  const input = 'w-full rounded-lg border border-card-border bg-secondary px-3 py-2 text-sm text-foreground outline-none focus:border-accent';
 
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,16 +35,16 @@ export default function AdminCoupons() {
         <Table head={['Code', 'Type', 'Value', 'Min Order', 'Used', 'Active', '']}>
           {items.map((c) => (
             <tr key={c.coupon_id} className="border-b border-card-border last:border-0">
-              <td className="px-4 py-3 font-bold text-royal">{c.code}</td>
+              <td className="px-4 py-3 font-bold text-foreground">{c.code}</td>
               <td className="px-4 py-3 text-muted-foreground">{c.type}</td>
-              <td className="px-4 py-3 text-royal">{c.type === 'PERCENT' ? `${c.value}%` : <Money value={c.value} />}</td>
+              <td className="px-4 py-3 text-foreground">{c.type === 'PERCENT' ? `${c.value}%` : <Money value={c.value} />}</td>
               <td className="px-4 py-3"><Money value={c.min_order} /></td>
               <td className="px-4 py-3 text-muted-foreground">{c.used_count}{c.usage_limit ? ` / ${c.usage_limit}` : ''}</td>
               <td className="px-4 py-3"><StatusBadge status={c.is_active ? 'ACTIVE' : 'INACTIVE'} /></td>
               <td className="px-4 py-3 text-right">
                 <div className="flex justify-end gap-2">
-                  <button onClick={() => { setForm({ ...c, is_active: !!c.is_active, expires_at: c.expires_at ? String(c.expires_at).slice(0, 10) : '' }); setOpen(true); }} className="text-muted-foreground hover:text-gold-dark"><Pencil className="h-4 w-4" /></button>
-                  <button onClick={() => del(c.coupon_id)} className="text-muted-foreground hover:text-rose-500"><Trash2 className="h-4 w-4" /></button>
+                  <button onClick={() => { setForm({ ...c, is_active: !!c.is_active, expires_at: c.expires_at ? String(c.expires_at).slice(0, 10) : '' }); setOpen(true); }} className="text-muted-foreground hover:text-accent"><Pencil className="h-4 w-4" /></button>
+                  <button onClick={() => del(c.coupon_id)} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-4 w-4" /></button>
                 </div>
               </td>
             </tr>

@@ -23,16 +23,16 @@ export default function AdminReviews() {
         <Table head={['Number', 'User', 'Rating', 'Comment', 'Status', 'Actions']}>
           {rows.map((r) => (
             <tr key={r.review_id} className="border-b border-card-border last:border-0">
-              <td className="px-4 py-3 font-bold text-royal">{r.display_number}</td>
+              <td className="px-4 py-3 font-bold text-foreground">{r.display_number}</td>
               <td className="px-4 py-3 text-muted-foreground">{r.full_name}</td>
               <td className="px-4 py-3"><span className="flex gap-0.5 text-primary">{Array.from({ length: r.rating }).map((_, i) => <Star key={i} className="h-3 w-3" fill="currentColor" />)}</span></td>
               <td className="px-4 py-3 max-w-xs text-muted-foreground">{r.comment}</td>
               <td className="px-4 py-3"><StatusBadge status={r.status} /></td>
               <td className="px-4 py-3">
                 <div className="flex gap-2 text-xs">
-                  <button onClick={() => mod(r.review_id, 'APPROVED')} className="text-emerald-400 hover:underline">Approve</button>
-                  <button onClick={() => mod(r.review_id, 'REJECTED')} className="text-amber-400 hover:underline">Reject</button>
-                  <button onClick={() => mod(r.review_id, 'DELETE')} className="text-rose-400 hover:underline">Delete</button>
+                  <button onClick={() => mod(r.review_id, 'APPROVED')} className="text-success hover:underline">Approve</button>
+                  <button onClick={() => mod(r.review_id, 'REJECTED')} className="text-warning hover:underline">Reject</button>
+                  <button onClick={() => mod(r.review_id, 'DELETE')} className="text-destructive hover:underline">Delete</button>
                 </div>
               </td>
             </tr>

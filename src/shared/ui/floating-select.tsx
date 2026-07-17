@@ -36,7 +36,7 @@ export function FloatingSelect({
     <div className={containerClassName}>
       <div className="relative">
         {icon && (
-          <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 z-10">
+          <span className="pointer-events-none absolute left-2.5 top-1/2 z-10 -translate-y-1/2 text-muted-foreground">
             {icon}
           </span>
         )}
@@ -46,14 +46,13 @@ export function FloatingSelect({
           onBlur={onBlur}
           disabled={disabled}
           className={cn(
-            "w-full appearance-none rounded-lg border bg-white pr-7 text-sm text-gray-900 outline-none transition-colors cursor-pointer",
+            "w-full cursor-pointer appearance-none rounded-lg border bg-background pr-7 text-sm text-foreground outline-none transition-colors",
             dense ? "h-9" : "h-10",
             icon ? "pl-8" : "pl-3",
-            "dark:bg-gray-900 dark:text-white",
             isError
-              ? "border-red-400 focus:border-red-400"
-              : "border-gray-200 focus:border-sky-400 dark:border-gray-700 dark:focus:border-sky-500",
-            disabled && "opacity-60 cursor-not-allowed bg-gray-50 dark:bg-gray-800",
+              ? "border-destructive focus:border-destructive"
+              : "border-input focus:border-primary focus:ring-2 focus:ring-ring/20",
+            disabled && "cursor-not-allowed bg-muted opacity-60",
             className
           )}
         >
@@ -65,10 +64,10 @@ export function FloatingSelect({
               )
             : children}
         </select>
-        <span className="pointer-events-none absolute left-3 top-0 -translate-y-1/2 z-10 select-none px-1 text-[0.65rem] font-medium bg-white dark:bg-gray-900 text-sky-500 dark:text-sky-400">
+        <span className="pointer-events-none absolute left-3 top-0 z-10 -translate-y-1/2 select-none bg-background px-1 text-[0.65rem] font-medium text-primary">
           {label}
         </span>
-        <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-3 w-3 text-slate-400" />
+        <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-muted-foreground" />
       </div>
       <FieldError msg={error} />
     </div>

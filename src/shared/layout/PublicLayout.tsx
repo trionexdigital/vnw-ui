@@ -12,12 +12,13 @@ import { APP_CONFIG } from '@/core/config/app.config';
 import BottomNav from './BottomNav';
 import NewsletterForm from '@/shared/components/NewsletterForm';
 import { Logo as BrandLogo, Slogan } from '@/shared/components/Logo';
+import { ThemeControl } from '@/shared/components/ThemeControl';
 import { AnimatePresence, motion } from 'framer-motion';
 import { MotionPage } from '@/shared/motion/MotionPrimitives';
 
 function Logo() {
   return (
-    <Link to="/" className="relative z-10 flex min-w-0 shrink items-center gap-1.5 sm:gap-2">
+    <Link to="/" className="relative z-10 flex min-w-0 shrink items-center gap-1.5 rounded-xl sm:gap-2 dark:bg-[#fbfaf7]/95 dark:px-1.5 dark:py-1">
       <BrandLogo className="h-10 w-10 shrink-0 object-contain sm:h-12 sm:w-12" />
       <Slogan className="block h-8 w-[132px] min-w-0 translate-y-1 object-contain sm:h-10 sm:w-[165px] xl:w-[155px] 2xl:w-[195px]" />
     </Link>
@@ -79,20 +80,20 @@ function Header() {
   const AccountMenu = (
     token && user ? (
       <div className="group relative">
-        <button aria-label="Open account menu" className="grid h-10 w-10 place-items-center rounded-xl border border-stone-200 bg-white text-stone-900 shadow-sm transition hover:border-amber-600 hover:bg-amber-50"><User className="h-5 w-5" /></button>
+        <button aria-label="Open account menu" className="grid h-10 w-10 place-items-center rounded-xl border border-border bg-card text-foreground shadow-sm transition hover:border-primary hover:bg-accent"><User className="h-5 w-5" /></button>
         <div className="invisible absolute right-0 top-full w-52 pt-3 opacity-0 transition-all group-hover:visible group-hover:opacity-100">
           <div className="glass-panel rounded-xl p-2">
             <div className="px-3 py-2 text-xs text-muted-foreground">Hi, {(user.name || 'User').split(' ')[0]}</div>
-            <Link to={dash} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-stone-800 hover:bg-stone-50"><LayoutDashboard className="h-4 w-4 text-amber-700" /> Dashboard</Link>
-            <Link to="/orders" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-stone-800 hover:bg-stone-50"><ShoppingCart className="h-4 w-4 text-amber-700" /> My Orders</Link>
-            <Link to="/account" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-stone-800 hover:bg-stone-50"><User className="h-4 w-4 text-amber-700" /> Profile</Link>
-            <button onClick={() => dispatch(logout())} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-rose-700 hover:bg-rose-50"><LogOut className="h-4 w-4" /> Logout</button>
+            <Link to={dash} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground hover:bg-accent"><LayoutDashboard className="h-4 w-4 text-primary" /> Dashboard</Link>
+            <Link to="/orders" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground hover:bg-accent"><ShoppingCart className="h-4 w-4 text-primary" /> My Orders</Link>
+            <Link to="/account" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground hover:bg-accent"><User className="h-4 w-4 text-primary" /> Profile</Link>
+            <button onClick={() => dispatch(logout())} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-destructive hover:bg-destructive/10"><LogOut className="h-4 w-4" /> Logout</button>
           </div>
         </div>
       </div>
     ) : (
       <>
-        <Link to="/login" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-stone-200 bg-white/85 px-3 py-2 text-xs font-bold text-stone-800 shadow-[0_8px_18px_-12px_rgba(31,29,26,.35)] transition hover:border-amber-500 hover:bg-amber-50 2xl:px-4 2xl:text-sm"><User className="h-5 w-5" />Sign In</Link>
+        <Link to="/login" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-border bg-card/85 px-3 py-2 text-xs font-bold text-foreground shadow-sm transition hover:border-primary hover:bg-accent 2xl:px-4 2xl:text-sm"><User className="h-5 w-5" />Sign In</Link>
         <Link to="/register" className="public-header__register inline-flex min-h-11 items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-white shadow-[0_10px_22px_-12px_rgba(63,21,133,.8)] transition hover:-translate-y-0.5 2xl:px-4 2xl:text-sm"><Crown className="h-5 w-5 text-amber-300" />Register</Link>
       </>
     )
@@ -100,27 +101,27 @@ function Header() {
 
   const MobileAccount = (
     token && user ? (
-      <div className="rounded-xl border border-stone-200 bg-white p-3 shadow-sm">
-        <div className="mb-2 flex items-center gap-3 rounded-xl bg-stone-50 p-3">
-          <span className="grid h-10 w-10 place-items-center rounded-xl bg-stone-900 text-sm font-black text-white">
+      <div className="rounded-xl border border-border bg-card p-3 shadow-sm">
+        <div className="mb-2 flex items-center gap-3 rounded-xl bg-muted p-3">
+          <span className="grid h-10 w-10 place-items-center rounded-xl bg-foreground text-sm font-black text-background">
             {(user.name || 'U').slice(0, 2).toUpperCase()}
           </span>
           <div className="min-w-0">
-            <div className="truncate text-sm font-black text-stone-900">Hi, {(user.name || 'User').split(' ')[0]}</div>
+            <div className="truncate text-sm font-black text-foreground">Hi, {(user.name || 'User').split(' ')[0]}</div>
             <div className="truncate text-xs text-muted-foreground">{user.email || user.phone || 'Welcome back'}</div>
           </div>
         </div>
         <div className="grid gap-1">
-          <Link to={dash} onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-bold text-stone-700 hover:bg-stone-50"><LayoutDashboard className="h-4 w-4 text-amber-700" /> Dashboard</Link>
-          <Link to="/orders" onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-bold text-stone-700 hover:bg-stone-50"><ShoppingCart className="h-4 w-4 text-amber-700" /> My Orders</Link>
-          <Link to="/account" onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-bold text-stone-700 hover:bg-stone-50"><User className="h-4 w-4 text-amber-700" /> Profile</Link>
-          <button onClick={() => { dispatch(logout()); setOpen(false); }} className="flex items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-bold text-rose-700 hover:bg-rose-50"><LogOut className="h-4 w-4" /> Logout</button>
+          <Link to={dash} onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-bold text-foreground hover:bg-accent"><LayoutDashboard className="h-4 w-4 text-primary" /> Dashboard</Link>
+          <Link to="/orders" onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-bold text-foreground hover:bg-accent"><ShoppingCart className="h-4 w-4 text-primary" /> My Orders</Link>
+          <Link to="/account" onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-bold text-foreground hover:bg-accent"><User className="h-4 w-4 text-primary" /> Profile</Link>
+          <button onClick={() => { dispatch(logout()); setOpen(false); }} className="flex items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-bold text-destructive hover:bg-destructive/10"><LogOut className="h-4 w-4" /> Logout</button>
         </div>
       </div>
     ) : (
       <div className="grid grid-cols-2 gap-2">
-        <Link to="/login" onClick={() => setOpen(false)} className="rounded-xl border border-stone-200 bg-white px-4 py-3 text-center text-sm font-black text-stone-800 shadow-sm">Sign In</Link>
-        <Link to="/register" onClick={() => setOpen(false)} className="rounded-xl bg-stone-900 px-4 py-3 text-center text-sm font-black text-white">Register</Link>
+        <Link to="/login" onClick={() => setOpen(false)} className="rounded-xl border border-border bg-card px-4 py-3 text-center text-sm font-black text-foreground shadow-sm">Sign In</Link>
+        <Link to="/register" onClick={() => setOpen(false)} className="rounded-xl bg-foreground px-4 py-3 text-center text-sm font-black text-background">Register</Link>
       </div>
     )
   );
@@ -152,33 +153,34 @@ function Header() {
             ))}
           </div>
           <Logo />
-          <nav className="relative z-10 ml-auto hidden min-w-0 flex-nowrap items-center gap-0 whitespace-nowrap text-xs font-bold text-stone-700 xl:flex 2xl:gap-1 2xl:text-sm" aria-label="Primary navigation">
+          <nav className="relative z-10 ml-auto hidden min-w-0 flex-nowrap items-center gap-0 whitespace-nowrap text-xs font-bold text-foreground xl:flex 2xl:gap-1 2xl:text-sm" aria-label="Primary navigation">
             <Link
               to="/"
               aria-current={location.pathname === '/' ? 'page' : undefined}
               className={location.pathname === '/'
-                ? 'rounded-xl border border-amber-200 bg-amber-50/90 px-2.5 py-2.5 text-amber-700 shadow-sm 2xl:px-3.5'
-                : 'rounded-xl px-2.5 py-2.5 transition hover:bg-amber-50 hover:text-amber-800 2xl:px-3.5'}
+                ? 'rounded-xl border border-primary/30 bg-primary/10 px-2.5 py-2.5 text-primary shadow-sm 2xl:px-3.5'
+                : 'rounded-xl px-2.5 py-2.5 transition hover:bg-accent hover:text-primary 2xl:px-3.5'}
             >
               Home
             </Link>
             <div className="group relative">
-              <button className="rounded-xl px-2.5 py-2.5 transition hover:bg-amber-50 hover:text-amber-800 2xl:px-3.5">Explore</button>
+              <button className="rounded-xl px-2.5 py-2.5 transition hover:bg-accent hover:text-primary 2xl:px-3.5">Explore</button>
               <div className="invisible absolute left-0 top-full z-50 w-56 pt-4 opacity-0 transition-all group-hover:visible group-hover:opacity-100">
                 <div className="glass-panel rounded-xl p-2">
-                  {NUMBER_CATS.map((c) => <Link key={c.label} to={c.to} className="block rounded-lg px-3 py-2 text-sm text-stone-800 hover:bg-stone-50 hover:text-amber-800">{c.label}</Link>)}
+                  {NUMBER_CATS.map((c) => <Link key={c.label} to={c.to} className="block rounded-lg px-3 py-2 text-sm text-foreground hover:bg-accent hover:text-primary">{c.label}</Link>)}
                 </div>
               </div>
             </div>
-            {nav.slice(1).map((n) => <Link key={n.label} to={n.to} className="rounded-xl px-2.5 py-2.5 transition hover:bg-amber-50 hover:text-amber-800 2xl:px-3.5">{n.label}</Link>)}
+            {nav.slice(1).map((n) => <Link key={n.label} to={n.to} className="rounded-xl px-2.5 py-2.5 transition hover:bg-accent hover:text-primary 2xl:px-3.5">{n.label}</Link>)}
           </nav>
           <div className="relative z-10 ml-auto flex shrink-0 items-center gap-1 xl:ml-2 2xl:gap-1.5">
-            <Link to="/shop" className="hidden h-11 items-center gap-1.5 rounded-xl border border-amber-500 bg-white/85 px-3 text-xs font-black text-amber-800 shadow-[0_8px_18px_-12px_rgba(161,98,7,.5)] transition hover:bg-amber-50 xl:inline-flex 2xl:text-sm"><Search className="h-5 w-5" /> Search</Link>
-            <Link to="/wishlist" aria-label="Wishlist" className="relative hidden h-11 w-11 place-items-center rounded-xl border border-stone-200 bg-white/85 text-stone-800 shadow-[0_8px_18px_-12px_rgba(31,29,26,.35)] transition hover:border-amber-500 hover:bg-amber-50 md:grid"><Heart className="h-5 w-5" /><CountBadge n={wishlistCount} /></Link>
-            <Link to="/cart" aria-label="Cart" className="relative grid h-11 w-11 place-items-center rounded-xl border border-stone-200 bg-white/85 text-stone-800 shadow-[0_8px_18px_-12px_rgba(31,29,26,.35)] transition hover:border-amber-500 hover:bg-amber-50"><ShoppingCart className="h-5 w-5" /><CountBadge n={cartCount} /></Link>
-            <button aria-label="Notifications" className="relative hidden h-11 w-11 place-items-center rounded-xl border border-stone-200 bg-white/85 text-stone-800 shadow-[0_8px_18px_-12px_rgba(31,29,26,.35)] transition hover:border-amber-500 hover:bg-amber-50 md:grid"><Bell className="h-5 w-5" /><span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-amber-600" /></button>
+            <Link to="/shop" className="hidden h-11 items-center gap-1.5 rounded-xl border border-primary bg-card/85 px-3 text-xs font-black text-primary shadow-sm transition hover:bg-accent xl:inline-flex 2xl:text-sm"><Search className="h-5 w-5" /> Search</Link>
+            <Link to="/wishlist" aria-label="Wishlist" className="relative hidden h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm transition hover:border-primary hover:bg-accent md:grid"><Heart className="h-5 w-5" /><CountBadge n={wishlistCount} /></Link>
+            <Link to="/cart" aria-label="Cart" className="relative grid h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm transition hover:border-primary hover:bg-accent"><ShoppingCart className="h-5 w-5" /><CountBadge n={cartCount} /></Link>
+            <button aria-label="Notifications" className="relative hidden h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm transition hover:border-primary hover:bg-accent md:grid"><Bell className="h-5 w-5" /><span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-amber-600" /></button>
+            <ThemeControl className="hidden sm:inline-flex" />
             <div className="hidden items-center gap-2 sm:flex">{AccountMenu}</div>
-            <button onClick={() => setOpen(true)} aria-label="Open navigation menu" className="grid h-11 w-11 place-items-center rounded-xl border border-stone-200 bg-white/85 text-stone-800 shadow-sm transition hover:border-amber-600 hover:bg-amber-50 xl:hidden"><Menu className="h-5 w-5" /></button>
+            <button onClick={() => setOpen(true)} aria-label="Open navigation menu" className="grid h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm transition hover:border-primary hover:bg-accent xl:hidden"><Menu className="h-5 w-5" /></button>
           </div>
         </div>
       </header>
@@ -192,17 +194,20 @@ function Header() {
             initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 24 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-4 flex items-center justify-between gap-2">
               <Logo />
-              <button onClick={() => setOpen(false)} aria-label="Close navigation menu" className="grid h-10 w-10 place-items-center rounded-xl border border-stone-200 bg-white text-stone-800"><X className="h-5 w-5" /></button>
+              <div className="ml-auto flex items-center gap-2">
+                <ThemeControl />
+                <button onClick={() => setOpen(false)} aria-label="Close navigation menu" className="grid h-10 w-10 place-items-center rounded-xl border border-border bg-card text-foreground"><X className="h-5 w-5" /></button>
+              </div>
             </div>
-            <form onSubmit={submit} className="mb-4 flex items-center gap-2 rounded-xl border border-stone-200 bg-white px-3 py-2">
-              <Search className="h-4 w-4 text-amber-700" />
+            <form onSubmit={submit} className="mb-4 flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2">
+              <Search className="h-4 w-4 text-primary" />
               <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search dream number..." className="min-w-0 flex-1 bg-transparent text-sm outline-none" />
             </form>
             <div className="grid gap-2">
               {[{ label: 'Home', to: '/' }, { label: 'Explore Numbers', to: '/shop' }, { label: 'Numerology', to: '/numerology' }, { label: 'How It Works', to: '/about' }, { label: 'About Us', to: '/about' }, { label: 'Contact Us', to: '/contact' }].map((n) => (
-                <Link key={n.label} to={n.to} onClick={() => setOpen(false)} className="rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm font-bold text-stone-800 shadow-sm hover:border-amber-600 hover:bg-amber-50">{n.label}</Link>
+                <Link key={n.label} to={n.to} onClick={() => setOpen(false)} className="rounded-xl border border-border bg-card px-4 py-3 text-sm font-bold text-foreground shadow-sm hover:border-primary hover:bg-accent">{n.label}</Link>
               ))}
             </div>
             <div className="mt-4 sm:hidden">{MobileAccount}</div>
@@ -242,11 +247,11 @@ function Footer() {
             <Logo />
             <p className="mt-4 max-w-sm text-sm text-muted-foreground">India's trusted VIP number marketplace with genuine numbers, secure payments, and pan-India delivery.</p>
             <div className="mt-4 flex gap-2">
-              {[Facebook, Instagram, MessageCircle, Youtube].map((I, i) => <span key={i} className="grid h-10 w-10 place-items-center rounded-2xl bg-white/62 text-[#7c2cff] shadow-sm"><I className="h-4 w-4" /></span>)}
+              {[Facebook, Instagram, MessageCircle, Youtube].map((I, i) => <span key={i} className="grid h-10 w-10 place-items-center rounded-2xl bg-card/70 text-primary shadow-sm"><I className="h-4 w-4" /></span>)}
             </div>
           </div>
           <div>
-            <h4 className="mb-3 font-black text-[#1d1830]">Quick Links</h4>
+            <h4 className="mb-3 font-black text-foreground">Quick Links</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link to="/shop">VIP Numbers</Link></li>
               <li><Link to="/numerology">Numerology</Link></li>
@@ -255,21 +260,21 @@ function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className="mb-3 font-black text-[#1d1830]">Contact</h4>
+            <h4 className="mb-3 font-black text-foreground">Contact</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2"><Phone className="h-4 w-4 text-[#7c2cff]" /> {APP_CONFIG.contactPhone}</li>
-              <li className="flex items-center gap-2"><Mail className="h-4 w-4 text-[#7c2cff]" /> {APP_CONFIG.contactEmail}</li>
-              <li className="flex items-center gap-2"><Globe className="h-4 w-4 text-[#7c2cff]" /> vipnumberworld.com</li>
-              <li className="flex items-center gap-2"><MapPin className="h-4 w-4 text-[#7c2cff]" /> Pan India Delivery</li>
+              <li className="flex items-center gap-2"><Phone className="h-4 w-4 text-primary" /> {APP_CONFIG.contactPhone}</li>
+              <li className="flex items-center gap-2"><Mail className="h-4 w-4 text-primary" /> {APP_CONFIG.contactEmail}</li>
+              <li className="flex items-center gap-2"><Globe className="h-4 w-4 text-primary" /> vipnumberworld.com</li>
+              <li className="flex items-center gap-2"><MapPin className="h-4 w-4 text-primary" /> Pan India Delivery</li>
             </ul>
           </div>
           <div>
-            <h4 className="mb-3 font-black text-[#1d1830]">Exclusive Drops</h4>
+            <h4 className="mb-3 font-black text-foreground">Exclusive Drops</h4>
             <p className="mb-3 text-sm text-muted-foreground">Get premium number alerts and limited deals.</p>
             <NewsletterForm />
           </div>
         </div>
-        <div className="relative z-10 flex flex-col items-center justify-between gap-3 border-t border-white/60 px-6 py-4 text-xs text-muted-foreground sm:flex-row">
+        <div className="relative z-10 flex flex-col items-center justify-between gap-3 border-t border-border px-6 py-4 text-xs text-muted-foreground sm:flex-row">
           <span>&copy; {new Date().getFullYear()} VNW - VIP Number World. All rights reserved.</span>
           <span className="flex items-center gap-1"><Sparkles className="h-3.5 w-3.5 text-[#d923c6]" /> Follow Us</span>
         </div>
@@ -285,10 +290,10 @@ function PromoBar() {
   if (hidden || !text) return null;
   return (
     <div className="px-3 pt-2">
-      <div className="relative mx-auto max-w-7xl rounded-2xl bg-gradient-to-r from-[#fff2bd] via-[#ffe7fb] to-[#e7dcff] px-8 py-2 text-center text-xs font-black text-[#1d1830] shadow-sm sm:text-sm">
+      <div className="relative mx-auto max-w-7xl rounded-2xl border border-border bg-accent px-8 py-2 text-center text-xs font-black text-accent-foreground shadow-sm sm:text-sm">
         <Link to="/shop?badge=HOT_DEAL">{text}</Link>
         <button onClick={() => { setHidden(true); sessionStorage.setItem('vnw_promo_hidden', '1'); }}
-          className="absolute right-5 text-[#1d1830]/70 hover:text-[#1d1830]">x</button>
+          className="absolute right-5 text-accent-foreground/70 hover:text-accent-foreground">x</button>
       </div>
     </div>
   );
@@ -306,7 +311,7 @@ function FloatingActions() {
     <div className="fixed bottom-24 right-4 z-40 flex flex-col gap-2 lg:bottom-6">
       {showTop && (
         <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} aria-label="Back to top"
-          className="grid h-11 w-11 place-items-center rounded-2xl border border-white/70 bg-white/80 text-[#7c2cff] shadow-lg backdrop-blur">
+          className="grid h-11 w-11 place-items-center rounded-2xl border border-border bg-card/85 text-primary shadow-lg backdrop-blur">
           <ChevronUp className="h-5 w-5" />
         </button>
       )}

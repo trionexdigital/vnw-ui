@@ -2,7 +2,7 @@
 
 Status: Master source of truth  
 Product: Premium VIP mobile-number marketplace  
-Theme policy: Light theme only  
+Theme policy: System, light, and dark
 Stack: React, TypeScript, Vite, Tailwind CSS, Radix/shadcn-style primitives, Lucide icons
 
 ## 1. Design Intent
@@ -11,9 +11,9 @@ VIP Number World must feel premium, trustworthy, fast, and commercially clear. T
 
 Primary design qualities:
 
-- Light-only interface.
-- Clean white and warm-neutral page backgrounds.
-- Deep charcoal text.
+- System-aware interface with explicit light and dark overrides.
+- Clean white/warm-neutral light surfaces and warm-charcoal dark surfaces.
+- Deep charcoal text in light mode and warm ivory text in dark mode.
 - Restrained gold brand accent.
 - Professional telecom and e-commerce appearance.
 - Search-first shopping experience.
@@ -23,8 +23,8 @@ Primary design qualities:
 
 Do not introduce:
 
-- Black or dark page backgrounds.
-- Dark luxury sections.
+- Pure black surfaces; dark mode uses the warm-charcoal semantic palette.
+- Isolated dark sections that ignore the selected application theme.
 - Purple or magenta gradients.
 - Excessive glassmorphism.
 - Excessive blur effects.
@@ -137,6 +137,23 @@ Use semantic tokens first. Component code should reference tokens through CSS va
   --vnw-chart-5: #7c3aed;
   --vnw-chart-grid: #e8e2d8;
 }
+
+.dark {
+  color-scheme: dark;
+
+  --vnw-page: #12100f;
+  --vnw-page-subtle: #171412;
+  --vnw-surface: #1d1916;
+  --vnw-surface-elevated: #25201c;
+  --vnw-surface-muted: #2c2621;
+  --vnw-text-primary: #f7f2e8;
+  --vnw-text-secondary: #bfb5a6;
+  --vnw-border: #3c342c;
+  --vnw-border-strong: #574a3c;
+  --vnw-gold: #e0ae45;
+  --vnw-gold-hover: #f0c467;
+  --vnw-purple-accent: #a985ff;
+}
 ```
 
 Allowed color roles:
@@ -145,7 +162,8 @@ Allowed color roles:
 - Charcoal is for text and primary action fill.
 - Blue is for informational dashboard data and links.
 - Green, amber, and red are reserved for status meaning.
-- Purple may appear only in existing charts if needed for categorical distinction. Do not use purple or magenta gradients for brand surfaces.
+- Purple remains a restrained secondary accent and categorical chart color; gold remains the primary interactive accent.
+- Brand artwork and uploaded creative keep their authored colors. Theme the surrounding canvas instead of filtering the asset.
 
 ### Typography Tokens
 
@@ -811,8 +829,9 @@ Recommended page and component order:
 
 ## 12. Final Quality Checklist
 
-- Light theme only.
-- No dark page backgrounds or dark luxury sections.
+- System, light, and dark modes work across every route and portal.
+- Dark mode uses warm charcoal rather than pure black.
+- Explicit preferences persist across reload, login, and logout without an initial light flash.
 - No purple or magenta gradients.
 - No excessive glassmorphism or blur.
 - No continuous decorative animation.

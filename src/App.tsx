@@ -5,18 +5,21 @@ import AppRoutes from "./app/router/AppRoutes";
 import { Provider } from "react-redux";
 import { StrictMode } from "react";
 import { store } from './app/store';
+import { ThemeProvider } from '@/shared/theme';
 
 export default function App() {
   return (
     <StrictMode>
-      <Provider store={store}>
-        <BrowserRouter>
-          <TooltipProvider>
-            <Toaster />
-            <AppRoutes />
-          </TooltipProvider>
-        </BrowserRouter>
-      </Provider>
+      <ThemeProvider>
+        <Provider store={store}>
+          <BrowserRouter>
+            <TooltipProvider>
+              <Toaster />
+              <AppRoutes />
+            </TooltipProvider>
+          </BrowserRouter>
+        </Provider>
+      </ThemeProvider>
     </StrictMode>
   );
 }

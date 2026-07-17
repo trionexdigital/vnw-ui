@@ -73,7 +73,7 @@ export default function NumberDetail() {
   };
 
   if (loading) return <div className="mx-auto max-w-7xl px-4 py-10"><Loader /></div>;
-  if (!data) return <div className="mx-auto max-w-7xl px-4 py-20 text-center text-muted-foreground">Number not found. <Link to="/shop" className="text-[#7c2cff]">Back to shop</Link></div>;
+  if (!data) return <div className="mx-auto max-w-7xl px-4 py-20 text-center text-muted-foreground">Number not found. <Link to="/shop" className="text-primary">Back to shop</Link></div>;
 
   const sold = data.status !== 'AVAILABLE';
   const wa = (site.WHATSAPP || '').replace(/\D/g, '');
@@ -82,8 +82,8 @@ export default function NumberDetail() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
       <div className="mb-5 flex items-center justify-between gap-3">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-sm font-bold text-muted-foreground hover:text-[#7c2cff]"><ArrowLeft className="h-4 w-4" /> Back</button>
-        <button onClick={share} className="flex items-center gap-2 rounded-2xl bg-white/58 px-4 py-2 text-sm font-bold text-muted-foreground shadow-sm hover:text-[#7c2cff]"><Share2 className="h-4 w-4" /> Share</button>
+        <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-sm font-bold text-muted-foreground hover:text-primary"><ArrowLeft className="h-4 w-4" /> Back</button>
+        <button onClick={share} className="flex items-center gap-2 rounded-2xl bg-card/60 px-4 py-2 text-sm font-bold text-muted-foreground shadow-sm hover:text-primary"><Share2 className="h-4 w-4" /> Share</button>
       </div>
 
       <PremiumNumberShowcaseCard
@@ -102,18 +102,18 @@ export default function NumberDetail() {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
         <div className="vnw-card p-6">
-          <h2 className="text-xl font-black text-[#1d1830]">Number Details</h2>
+          <h2 className="text-xl font-black text-foreground">Number Details</h2>
           <p className="mt-3 text-sm leading-7 text-muted-foreground">{data.description || 'A premium VIP number, ready for instant booking and secure ownership transfer.'}</p>
           <div className="mt-5 flex flex-wrap gap-3 text-xs font-bold text-muted-foreground">
-            <span className="rounded-2xl bg-white/58 px-4 py-2"><ShieldCheck className="mr-1 inline h-4 w-4 text-[#7c2cff]" /> 100% genuine</span>
-            <span className="rounded-2xl bg-white/58 px-4 py-2">Secure Razorpay payment</span>
-            <span className="rounded-2xl bg-white/58 px-4 py-2">Quick transfer support</span>
+            <span className="rounded-2xl bg-muted px-4 py-2"><ShieldCheck className="mr-1 inline h-4 w-4 text-primary" /> 100% genuine</span>
+            <span className="rounded-2xl bg-muted px-4 py-2">Secure Razorpay payment</span>
+            <span className="rounded-2xl bg-muted px-4 py-2">Quick transfer support</span>
           </div>
           {wa && <a className="mt-5 inline-flex items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-5 py-3 font-black text-white transition-all hover:brightness-105" href={waLink} target="_blank" rel="noreferrer"><MessageCircle className="h-4 w-4" /> WhatsApp Enquiry</a>}
         </div>
 
         <form onSubmit={submitEnquiry} className="vnw-card h-fit p-6">
-          <div className="mb-4 flex items-center gap-2 text-sm font-black text-[#1d1830]"><PhoneCall className="h-4 w-4 text-[#7c2cff]" /> Request a Callback</div>
+          <div className="mb-4 flex items-center gap-2 text-sm font-black text-foreground"><PhoneCall className="h-4 w-4 text-primary" /> Request a Callback</div>
           <div className="space-y-3">
             <input required placeholder="Your name" value={enq.name} onChange={(e) => setEnq({ ...enq, name: e.target.value })} className="input-luxury w-full" />
             <input required placeholder="Phone" value={enq.phone} onChange={(e) => setEnq({ ...enq, phone: e.target.value })} className="input-luxury w-full" />
@@ -124,18 +124,18 @@ export default function NumberDetail() {
 
       {related.length > 0 && (
         <div className="mt-10">
-          <h2 className="mb-4 text-xl font-black text-[#1d1830]">Similar Numbers</h2>
+          <h2 className="mb-4 text-xl font-black text-foreground">Similar Numbers</h2>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{related.map((n) => <NumberCard key={n.number_id} item={n} />)}</div>
         </div>
       )}
 
       <div className="mt-10">
-        <h2 className="mb-4 text-xl font-black text-[#1d1830]">Reviews</h2>
+        <h2 className="mb-4 text-xl font-black text-foreground">Reviews</h2>
         <div className="vnw-card mb-5 p-5">
           <div className="mb-2 flex items-center gap-2">
             {Array.from({ length: 5 }).map((_, i) => (
               <button key={i} onClick={() => setRating(i + 1)}>
-                <Star className={cn('h-5 w-5', i < rating ? 'text-[#d9a31b]' : 'text-muted-foreground')} fill={i < rating ? 'currentColor' : 'none'} />
+                <Star className={cn('h-5 w-5', i < rating ? 'text-primary' : 'text-muted-foreground')} fill={i < rating ? 'currentColor' : 'none'} />
               </button>
             ))}
           </div>
@@ -148,8 +148,8 @@ export default function NumberDetail() {
             {data.reviews.map((r: any) => (
               <div key={r.review_id} className="vnw-card p-4">
                 <div className="flex items-center justify-between">
-                  <span className="font-black text-[#1d1830]">{r.full_name || 'Customer'}</span>
-                  <span className="flex gap-0.5 text-[#d9a31b]">{Array.from({ length: r.rating }).map((_, i) => <Star key={i} className="h-3.5 w-3.5" fill="currentColor" />)}</span>
+                  <span className="font-black text-foreground">{r.full_name || 'Customer'}</span>
+                  <span className="flex gap-0.5 text-primary">{Array.from({ length: r.rating }).map((_, i) => <Star key={i} className="h-3.5 w-3.5" fill="currentColor" />)}</span>
                 </div>
                 {r.comment && <p className="mt-1 text-sm text-muted-foreground">{r.comment}</p>}
               </div>

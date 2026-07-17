@@ -14,11 +14,11 @@ export function InfoField({ label, value, icon, placeholder = "----", className 
   const empty = value == null || value === "";
   return (
     <div className={cn("min-w-0", className)}>
-      <div className="flex items-center gap-1 text-[0.62rem] font-semibold tracking-wide text-slate-400 uppercase">
-        {icon && <span className="text-slate-400">{icon}</span>}
+      <div className="flex items-center gap-1 text-[0.62rem] font-semibold uppercase tracking-wide text-muted-foreground">
+        {icon && <span className="text-muted-foreground">{icon}</span>}
         {label}
       </div>
-      <div className={cn("mt-0.5 text-sm font-medium truncate", empty ? "text-slate-300 dark:text-slate-600" : "text-slate-700 dark:text-slate-200")}>
+      <div className={cn("mt-0.5 truncate text-sm font-medium", empty ? "text-muted-foreground/60" : "text-foreground")}>
         {empty ? placeholder : value}
       </div>
     </div>

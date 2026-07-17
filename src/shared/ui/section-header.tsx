@@ -13,9 +13,9 @@ export interface SectionHeaderProps {
 export function SectionHeader({ icon, label, divider = true, className }: SectionHeaderProps) {
   return (
     <div className={cn("flex items-center gap-2 mb-2.5", className)}>
-      {icon && <span className="text-sky-500 shrink-0">{icon}</span>}
+      {icon && <span className="shrink-0 text-primary">{icon}</span>}
       <span className={ui.sectionTitle}>{label}</span>
-      {divider && <span className="flex-1 h-px bg-slate-100 dark:bg-slate-800" />}
+      {divider && <span className="h-px flex-1 bg-border" />}
     </div>
   );
 }

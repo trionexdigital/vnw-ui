@@ -23,7 +23,6 @@ export class LocalService {
 
   public removeToken() {
     localStorage.removeItem('token');
-    localStorage.clear();
   }
 
   // Storage Methods
@@ -45,8 +44,9 @@ export class LocalService {
   }
 
   public logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     localStorage.removeItem('remember_me_password');
-    localStorage.clear();
     window.location.href = '/';
   }
 }

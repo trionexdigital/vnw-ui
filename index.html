@@ -15,7 +15,39 @@
   <meta property="og:description" content="Premium VIP, fancy & lucky mobile numbers marketplace." />
   <meta property="og:type" content="website" />
 
-  <meta name="theme-color" content="#D4AF37" />
+  <meta name="theme-color" content="#FBFAF7" />
+  <script>
+    (function () {
+      var theme = 'system';
+      try {
+        var storedTheme = window.localStorage.getItem('vnw_theme');
+        if (storedTheme === 'light' || storedTheme === 'dark' || storedTheme === 'system') {
+          theme = storedTheme;
+        }
+      } catch (error) {
+        theme = 'system';
+      }
+
+      var resolvedTheme = theme;
+      if (theme === 'system') {
+        try {
+          resolvedTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        } catch (error) {
+          resolvedTheme = 'light';
+        }
+      }
+
+      var root = document.documentElement;
+      root.classList.toggle('dark', resolvedTheme === 'dark');
+      root.setAttribute('data-theme', resolvedTheme);
+      root.style.colorScheme = resolvedTheme;
+
+      var themeColor = document.querySelector('meta[name="theme-color"]');
+      if (themeColor) {
+        themeColor.setAttribute('content', resolvedTheme === 'dark' ? '#12100F' : '#FBFAF7');
+      }
+    })();
+  </script>
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   <meta name="apple-mobile-web-app-title" content="VIP Number World" />
 

@@ -5,6 +5,14 @@ export const CAROUSEL_OUTPUT_WIDTH = 1600;
 export const CAROUSEL_OUTPUT_HEIGHT = 500;
 export const CAROUSEL_MAX_SOURCE_BYTES = 10 * 1024 * 1024;
 export const CAROUSEL_MAX_DATA_URL_LENGTH = 4 * 1024 * 1024;
+export const DEFAULT_CAROUSEL_CONTENT_X = 25;
+export const DEFAULT_CAROUSEL_CONTENT_Y = 62;
+
+export function normalizeCarouselPosition(value: unknown, fallback: number) {
+  const position = Number(value);
+  if (!Number.isFinite(position)) return fallback;
+  return Math.round(Math.max(8, Math.min(92, position)));
+}
 
 const acceptedTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
 

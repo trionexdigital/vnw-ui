@@ -81,7 +81,7 @@ export default function SellNumber() {
               <td className="px-4 py-3 text-muted-foreground">{String(r.created_at).slice(0, 10)}</td>
               <td className="px-4 py-3">
                 {r.status === 'PENDING'
-                  ? <button onClick={() => cancel(r.request_id)} className="text-xs text-rose-400 hover:underline">Cancel</button>
+                  ? <button onClick={() => cancel(r.request_id)} className="text-xs text-destructive hover:underline">Cancel</button>
                   : <span className="text-xs text-muted-foreground">{r.admin_note || '—'}</span>}
               </td>
             </tr>

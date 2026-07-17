@@ -63,7 +63,7 @@ export default function Numerology() {
     <div className="mx-auto max-w-5xl px-4 py-10">
       <div className="text-center">
         <span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl royal-gradient-bg text-gold"><Hexagon className="h-7 w-7" /></span>
-        <h1 className="mt-4 text-3xl font-extrabold text-royal sm:text-4xl" style={{ fontFamily: 'Playfair Display, serif' }}>Free <span className="text-gold">Numerology</span> Calculator</h1>
+        <h1 className="mt-4 text-3xl font-extrabold text-foreground sm:text-4xl" style={{ fontFamily: 'Playfair Display, serif' }}>Free <span className="text-gold">Numerology</span> Calculator</h1>
         <p className="mx-auto mt-3 max-w-xl text-muted-foreground">Discover your lucky numbers and find VIP numbers that align with your destiny.</p>
       </div>
 
@@ -91,7 +91,7 @@ export default function Numerology() {
             </div>
             {result.mulank ? (
               <div className="mt-6 rounded-xl border border-card-border bg-secondary/40 p-4 text-center">
-                <p className="text-sm text-royal">Ruling Planet: <b>{INFO[result.mulank]?.planet}</b></p>
+                <p className="text-sm text-foreground">Ruling Planet: <b>{INFO[result.mulank]?.planet}</b></p>
                 <p className="mt-1 text-sm text-muted-foreground">{INFO[result.mulank]?.traits}</p>
                 <p className="mt-2 text-sm">Lucky digits: <span className="font-bold text-gold-dark">{INFO[result.mulank]?.lucky.join(', ')}</span></p>
               </div>
@@ -100,7 +100,7 @@ export default function Numerology() {
 
           {/* match selector */}
           <div className="mt-8 text-center">
-            <h2 className="text-xl font-bold text-royal">VIP Numbers matching your vibration</h2>
+            <h2 className="text-xl font-bold text-foreground">VIP Numbers matching your vibration</h2>
             <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
               {[result.mulank, result.bhagyank, result.nameNo].filter((x, i, a) => x && a.indexOf(x) === i).map((s) => (
                 <button key={s} onClick={() => loadMatches(s)} className={`rounded-full px-4 py-1.5 text-sm ${activeSum === s ? 'btn-gold' : 'btn-gold-outline'}`}>Sum {s}</button>

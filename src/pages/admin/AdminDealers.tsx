@@ -53,9 +53,9 @@ export default function AdminDealers() {
             <td className="px-4 py-3"><StatusBadge status={d.kyc_status} /></td>
             <td className="px-4 py-3">
               <div className="flex flex-wrap gap-2 text-xs">
-                <button onClick={() => openPerms(d)} className="text-gold hover:underline">Permissions</button>
-                <button onClick={() => kyc(d.dealer_id, 'VERIFIED')} className="text-emerald-400 hover:underline">Verify</button>
-                <button onClick={() => kyc(d.dealer_id, 'REJECTED')} className="text-rose-400 hover:underline">Reject</button>
+                <button onClick={() => openPerms(d)} className="text-accent hover:underline">Permissions</button>
+                <button onClick={() => kyc(d.dealer_id, 'VERIFIED')} className="text-success hover:underline">Verify</button>
+                <button onClick={() => kyc(d.dealer_id, 'REJECTED')} className="text-destructive hover:underline">Reject</button>
               </div>
             </td>
           </tr>
@@ -66,8 +66,8 @@ export default function AdminDealers() {
         <Modal open onClose={() => setEditing(null)} title={`Permissions — ${editing.business_name || editing.full_name}`} wide>
           <div className="grid gap-2 sm:grid-cols-2">
             {catalog.map((p) => (
-              <label key={p.perm_key} className="flex cursor-pointer items-start gap-3 rounded-lg border border-card-border p-3 hover:border-gold">
-                <input type="checkbox" checked={perms.has(p.perm_key)} onChange={() => toggle(p.perm_key)} className="mt-0.5 h-4 w-4 accent-[#b8860b]" />
+              <label key={p.perm_key} className="flex cursor-pointer items-start gap-3 rounded-lg border border-card-border p-3 hover:border-accent">
+                <input type="checkbox" checked={perms.has(p.perm_key)} onChange={() => toggle(p.perm_key)} className="mt-0.5 h-4 w-4 accent-accent" />
                 <span><span className="block text-sm font-medium text-foreground">{p.label}</span>
                   <span className="block text-xs text-muted-foreground">{p.description}</span></span>
               </label>

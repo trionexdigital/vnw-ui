@@ -55,7 +55,7 @@ export default function AdminNumbers() {
         <Table head={['Number', 'Category', 'Seller', 'MRP', 'Offer', 'Status', '']}>
           {items.map((n) => (
             <tr key={n.number_id} className="border-b border-card-border last:border-0">
-              <td className="px-4 py-3 font-bold text-royal">{n.display_number} {n.is_featured ? <Star className="ml-1 inline h-3 w-3 text-primary" fill="currentColor" /> : null}</td>
+              <td className="px-4 py-3 font-bold text-foreground">{n.display_number} {n.is_featured ? <Star className="ml-1 inline h-3 w-3 text-primary" fill="currentColor" /> : null}</td>
               <td className="px-4 py-3 text-muted-foreground">{n.category_name || '—'}</td>
               <td className="px-4 py-3 text-xs text-muted-foreground">{n.seller_type}</td>
               <td className="px-4 py-3"><Money value={n.mrp} /></td>
@@ -64,11 +64,11 @@ export default function AdminNumbers() {
               <td className="px-4 py-3">
                 <div className="flex justify-end gap-2">
                   {n.status === 'PENDING_APPROVAL' && (<>
-                    <button title="Approve" onClick={() => act(adminAPI.numberApprove(n.number_id), 'Approved')} className="text-emerald-400 hover:text-emerald-300"><Check className="h-4 w-4" /></button>
-                    <button title="Reject" onClick={() => act(adminAPI.numberReject(n.number_id), 'Rejected')} className="text-rose-400 hover:text-rose-300"><X className="h-4 w-4" /></button>
+                    <button title="Approve" onClick={() => act(adminAPI.numberApprove(n.number_id), 'Approved')} className="text-success hover:text-success/80"><Check className="h-4 w-4" /></button>
+                    <button title="Reject" onClick={() => act(adminAPI.numberReject(n.number_id), 'Rejected')} className="text-destructive hover:text-destructive/80"><X className="h-4 w-4" /></button>
                   </>)}
                   <button onClick={() => openEdit(n)} className="text-muted-foreground hover:text-primary"><Pencil className="h-4 w-4" /></button>
-                  <button onClick={() => confirm('Delete?') && act(adminAPI.numberDelete(n.number_id), 'Deleted')} className="text-muted-foreground hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
+                  <button onClick={() => confirm('Delete?') && act(adminAPI.numberDelete(n.number_id), 'Deleted')} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-4 w-4" /></button>
                 </div>
               </td>
             </tr>

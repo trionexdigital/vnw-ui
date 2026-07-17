@@ -37,13 +37,13 @@ export default function AdminDashboard() {
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={d?.trend || []}>
                 <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#D4AF37" stopOpacity={0.5} /><stop offset="100%" stopColor="#D4AF37" stopOpacity={0} />
+                  <stop offset="0%" stopColor="hsl(var(--chart-1))" stopOpacity={0.5} /><stop offset="100%" stopColor="hsl(var(--chart-1))" stopOpacity={0} />
                 </linearGradient></defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#ece6d8" />
-                <XAxis dataKey="month" stroke="#9b93a8" fontSize={11} />
-                <YAxis stroke="#9b93a8" fontSize={11} />
-                <Tooltip contentStyle={{ background: '#fff', border: '1px solid #ece6d8', borderRadius: 8, color: '#2e1a47' }} />
-                <Area type="monotone" dataKey="revenue" stroke="#D4AF37" fill="url(#g)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={11} />
+                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} />
+                <Tooltip contentStyle={{ background: 'hsl(var(--popover))', border: '1px solid hsl(var(--popover-border))', borderRadius: 8, color: 'hsl(var(--popover-foreground))' }} />
+                <Area type="monotone" dataKey="revenue" stroke="hsl(var(--chart-1))" fill="url(#g)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -54,7 +54,7 @@ export default function AdminDashboard() {
           <div className="space-y-2">
             {(d?.top_numbers || []).map((n: any) => (
               <div key={n.number_id} className="flex items-center justify-between text-sm">
-                <span className="font-bold text-royal">{n.display_number}</span>
+                <span className="font-bold text-foreground">{n.display_number}</span>
                 <span className="text-muted-foreground">{n.views} views</span>
               </div>
             ))}

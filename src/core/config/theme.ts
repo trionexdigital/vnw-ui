@@ -34,55 +34,54 @@ export const tokens = {
 
   /** Brand accent + state colours, as Tailwind colour names so utilities compose. */
   color: {
-    accent: "sky",      // sky-500 etc.
-    accentHex: "#0ea5e9",
-    error: "red",       // red-400/500
-    muted: "slate",
+    accent: "accent",
+    accentHex: "#A16207",
+    error: "destructive",
+    muted: "muted",
   },
 } as const;
 
 // ── Reusable class presets (the "PatientForm" look) ──────────────────────────
 export const ui = {
   /** Card surface used for form sections / panels. */
-  card: "bg-white dark:bg-gray-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm",
+  card: "rounded-xl border border-card-border bg-card text-card-foreground shadow-sm",
 
   /** Section title (icon + UPPERCASE label). */
   sectionTitle:
-    "text-[0.67rem] font-bold tracking-widest text-slate-400 uppercase whitespace-nowrap",
+    "text-[0.67rem] font-bold tracking-widest text-muted-foreground uppercase whitespace-nowrap",
 
   /** Small label sitting above a field (Settings screens). */
   topLabel:
-    "block mb-1 text-[0.7rem] font-semibold tracking-wide text-slate-500 dark:text-slate-400 uppercase",
+    "block mb-1 text-[0.7rem] font-semibold tracking-wide text-muted-foreground uppercase",
 
   /** Inline field error text. */
-  fieldError: "mt-0.5 pl-0.5 text-[0.62rem] text-red-500 leading-none",
+  fieldError: "mt-0.5 pl-0.5 text-[0.62rem] text-destructive leading-none",
 
   /** Base input box (height-10) — shared by floating-input / settings inputs. */
   input:
-    "h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition-colors " +
-    "focus:border-sky-400 dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:focus:border-sky-500",
+    "h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none transition-colors " +
+    "placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-ring/20",
 
   /** Compact input box (height-9) — used inside dense forms. */
   inputCompact:
-    "h-9 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition-colors " +
-    "focus:border-sky-400 dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:focus:border-sky-500",
+    "h-9 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none transition-colors " +
+    "placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-ring/20",
 
   /** Error border modifier for inputs. */
-  inputError: "border-red-400 focus:border-red-400",
+  inputError: "border-destructive focus:border-destructive",
 
   /** Dropdown menu surface (combobox / select popovers). */
   menu:
-    "absolute z-50 left-0 right-0 top-full mt-1 max-h-52 overflow-auto rounded-lg border border-gray-200 " +
-    "bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900",
+    "absolute z-50 left-0 right-0 top-full mt-1 max-h-52 overflow-auto rounded-lg border border-popover-border " +
+    "bg-popover text-popover-foreground shadow-lg",
 
   /** Dropdown menu row. */
   menuItem:
-    "w-full px-3 py-1.5 text-left text-sm text-gray-700 hover:bg-sky-50 hover:text-sky-700 " +
-    "dark:text-gray-200 dark:hover:bg-sky-950/50",
+    "w-full px-3 py-1.5 text-left text-sm text-popover-foreground hover:bg-accent hover:text-accent-foreground",
 
   /** Floating label colours when raised (has value / focused). */
   floatingLabelRaised:
-    "text-[0.65rem] font-medium px-1 bg-white dark:bg-gray-900 text-sky-500 dark:text-sky-400",
+    "text-[0.65rem] font-medium px-1 bg-background text-primary",
 } as const;
 
 export type UiPreset = keyof typeof ui;

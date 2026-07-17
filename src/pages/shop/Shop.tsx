@@ -75,10 +75,10 @@ export default function Shop() {
       <div className="mb-5">
         <div className="mb-2 text-xs font-black uppercase text-muted-foreground">Category</div>
         <div className={compact ? 'grid grid-cols-2 gap-2' : 'space-y-1'}>
-          <button onClick={() => update({ category: '' })} className={`rounded-xl px-3 py-2 text-left text-sm font-bold ${!category ? 'border border-amber-200 bg-amber-50 text-amber-800' : 'border border-transparent text-muted-foreground hover:bg-stone-50 hover:text-foreground'}`}>All</button>
+          <button onClick={() => update({ category: '' })} className={`rounded-xl px-3 py-2 text-left text-sm font-bold ${!category ? 'border border-primary/30 bg-primary/10 text-primary' : 'border border-transparent text-muted-foreground hover:bg-accent hover:text-foreground'}`}>All</button>
           {categories.map((c) => (
             <button key={c.category_id} onClick={() => update({ category: c.slug })}
-              className={`rounded-xl px-3 py-2 text-left text-sm font-bold ${category === c.slug ? 'border border-amber-200 bg-amber-50 text-amber-800' : 'border border-transparent text-muted-foreground hover:bg-stone-50 hover:text-foreground'}`}>{c.name}</button>
+              className={`rounded-xl px-3 py-2 text-left text-sm font-bold ${category === c.slug ? 'border border-primary/30 bg-primary/10 text-primary' : 'border border-transparent text-muted-foreground hover:bg-accent hover:text-foreground'}`}>{c.name}</button>
           ))}
         </div>
       </div>
@@ -109,36 +109,36 @@ export default function Shop() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6">
-      <div className="mb-5 rounded-2xl border border-stone-200 bg-white p-3 shadow-sm sm:p-4">
+      <div className="mb-5 rounded-2xl border border-border bg-card p-3 shadow-sm sm:p-4">
         <form onSubmit={submitSearch} className="grid gap-3 sm:grid-cols-[1fr_auto]">
           <label className="relative block">
             <span className="sr-only">Search mobile number digits</span>
-            <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-amber-700" />
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-primary" />
             <input
               type="search"
               inputMode="numeric"
               value={searchDraft}
               onChange={(event) => setSearchDraft(event.target.value)}
               placeholder="Search any digits or pattern, e.g. 9999 or 786"
-              className="h-12 w-full rounded-xl border border-stone-300 bg-white pl-11 pr-4 text-base font-medium text-stone-950 outline-none transition placeholder:text-stone-400 focus:border-amber-700 focus:ring-4 focus:ring-amber-700/10"
+              className="h-12 w-full rounded-xl border border-input bg-background pl-11 pr-4 text-base font-medium text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-ring/15"
             />
           </label>
-          <button className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-stone-900 px-5 text-sm font-black text-white transition hover:bg-stone-800">
+          <button className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-foreground px-5 text-sm font-black text-background transition hover:opacity-90">
             <Search className="h-4 w-4" /> Search numbers
           </button>
         </form>
-        <div className="mt-3 flex gap-2 overflow-x-auto pb-1 text-xs font-bold text-stone-600">
+        <div className="mt-3 flex gap-2 overflow-x-auto pb-1 text-xs font-bold text-muted-foreground">
           <span className="shrink-0 py-2">Quick search:</span>
           {['9999', '786', '0001', '1234'].map((term) => (
-            <button key={term} onClick={() => { setSearchDraft(term); update({ q: term }); }} className="shrink-0 rounded-full border border-stone-200 bg-stone-50 px-3 py-2 transition hover:border-amber-600 hover:bg-amber-50">{term}</button>
+            <button key={term} onClick={() => { setSearchDraft(term); update({ q: term }); }} className="shrink-0 rounded-full border border-border bg-muted px-3 py-2 transition hover:border-primary hover:bg-accent">{term}</button>
           ))}
         </div>
       </div>
 
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <div className="chip mb-2 text-amber-800">Premium marketplace</div>
-          <h1 className="text-2xl font-black text-stone-950">Browse <span className="text-amber-700">VIP numbers</span></h1>
+          <div className="chip mb-2 text-primary">Premium marketplace</div>
+          <h1 className="text-2xl font-black text-foreground">Browse <span className="text-primary">VIP numbers</span></h1>
           <p className="text-sm text-muted-foreground">{total} numbers available{category ? ` / ${category}` : ''}{q ? ` / "${q}"` : ''}{ai ? ` / AI: "${ai}"` : ''}</p>
         </div>
         <div className="flex w-full gap-2 sm:w-auto">
@@ -156,32 +156,32 @@ export default function Shop() {
       {activeFilters.length > 0 && (
         <div className="mb-4 flex flex-wrap items-center gap-2" aria-label="Active filters">
           {activeFilters.map((filter) => (
-            <button key={filter.key} onClick={() => update({ [filter.key]: '' })} className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 text-xs font-bold text-amber-900">
+            <button key={filter.key} onClick={() => update({ [filter.key]: '' })} className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 text-xs font-bold text-primary">
               {filter.label}<X className="h-3.5 w-3.5" />
             </button>
           ))}
-          <button onClick={() => setParams(new URLSearchParams())} className="inline-flex min-h-9 items-center gap-1.5 px-2 text-xs font-bold text-stone-600 hover:text-stone-950"><RotateCcw className="h-3.5 w-3.5" /> Reset all</button>
+          <button onClick={() => setParams(new URLSearchParams())} className="inline-flex min-h-9 items-center gap-1.5 px-2 text-xs font-bold text-muted-foreground hover:text-foreground"><RotateCcw className="h-3.5 w-3.5" /> Reset all</button>
         </div>
       )}
 
       <div className="grid gap-5 lg:grid-cols-[240px_1fr]">
         <aside className="vnw-card hidden h-fit p-4 lg:block">
-          <div className="mb-4 flex items-center gap-2 font-black text-stone-950"><SlidersHorizontal className="h-4 w-4 text-amber-700" /> Filters</div>
+          <div className="mb-4 flex items-center gap-2 font-black text-foreground"><SlidersHorizontal className="h-4 w-4 text-primary" /> Filters</div>
           <FilterContent />
         </aside>
 
         <div>
           {aiInfo && (
-            <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4">
-              <div className="text-sm font-black text-stone-950">AI search results</div>
-              <p className="mt-1 text-sm text-stone-600">{aiInfo.explanation} <span className="font-bold text-amber-800">({aiInfo.mode === 'openai' ? 'AI assisted' : 'smart matching'})</span></p>
+            <div className="mb-5 rounded-xl border border-primary/30 bg-primary/10 p-4">
+              <div className="text-sm font-black text-foreground">AI search results</div>
+              <p className="mt-1 text-sm text-muted-foreground">{aiInfo.explanation} <span className="font-bold text-primary">({aiInfo.mode === 'openai' ? 'AI assisted' : 'smart matching'})</span></p>
             </div>
           )}
           {loading ? <Loader variant="cards" /> : items.length === 0 ? (
             <div className="vnw-card px-5 py-14 text-center">
-              <Search className="mx-auto h-9 w-9 text-amber-700" />
-              <h2 className="mt-3 text-lg font-black text-stone-950">No exact match yet</h2>
-              <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-stone-600">Try fewer digits, a higher budget, or send your preferred pattern and budget to our team.</p>
+              <Search className="mx-auto h-9 w-9 text-primary" />
+              <h2 className="mt-3 text-lg font-black text-foreground">No exact match yet</h2>
+              <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">Try fewer digits, a higher budget, or send your preferred pattern and budget to our team.</p>
               <div className="mt-5 flex flex-col justify-center gap-2 sm:flex-row">
                 <button onClick={() => setParams(new URLSearchParams())} className="btn-royal">Clear filters</button>
                 <Link to="/contact?subject=choice-number" className="btn-gold-outline">Request a choice number</Link>
@@ -211,10 +211,10 @@ export default function Shop() {
           <motion.div className="glass-panel absolute inset-x-3 bottom-3 max-h-[82vh] overflow-y-auto rounded-xl p-4" initial={{ y: 28 }} animate={{ y: 0 }} exit={{ y: 28 }} transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}>
             <div className="mb-4 flex items-center justify-between">
               <div>
-                <div className="flex items-center gap-2 text-base font-black text-stone-950"><Sparkles className="h-4 w-4 text-amber-700" /> Smart filters</div>
+                <div className="flex items-center gap-2 text-base font-black text-foreground"><Sparkles className="h-4 w-4 text-primary" /> Smart filters</div>
                 <p className="text-xs text-muted-foreground">Optimized for mobile browsing</p>
               </div>
-              <button onClick={() => setFiltersOpen(false)} className="grid h-10 w-10 place-items-center rounded-2xl bg-white/70"><X className="h-5 w-5" /></button>
+              <button onClick={() => setFiltersOpen(false)} className="grid h-10 w-10 place-items-center rounded-2xl bg-card/70 text-foreground"><X className="h-5 w-5" /></button>
             </div>
             <FilterContent compact />
             <button onClick={() => setFiltersOpen(false)} className="btn-royal mt-3 w-full">Show results</button>

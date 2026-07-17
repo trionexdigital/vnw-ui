@@ -8,7 +8,7 @@ export function PageHeader({ title, subtitle, action }: { title: string; subtitl
   return (
     <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
       <div>
-        <h1 className="text-xl font-black text-stone-950 sm:text-2xl">{title}</h1>
+        <h1 className="text-xl font-black text-foreground sm:text-2xl">{title}</h1>
         {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
       </div>
       {action}
@@ -25,45 +25,45 @@ export function StatCard({ label, value, icon, accent }: { label: string; value:
     <div className="vnw-card vnw-card-hover p-4">
       <div className="flex items-center justify-between">
         <span className="text-xs font-black uppercase tracking-wide text-muted-foreground">{label}</span>
-        {icon && <span className="grid h-9 w-9 place-items-center rounded-lg bg-amber-50 text-amber-800">{icon}</span>}
+        {icon && <span className="grid h-9 w-9 place-items-center rounded-lg bg-warning-soft text-warning">{icon}</span>}
       </div>
-      <div className={cn('mt-2 text-2xl font-black tabular-nums', accent ? 'text-amber-700' : 'text-stone-950')}>{value}</div>
+      <div className={cn('mt-2 text-2xl font-black tabular-nums', accent ? 'text-accent' : 'text-foreground')}>{value}</div>
     </div>
   );
 }
 
 export function Money({ value, className }: { value: number | string; className?: string }) {
-  return <span className={cn('font-black text-[#063d2a]', className)}>{formatINR(value)}</span>;
+  return <span className={cn('font-black text-success', className)}>{formatINR(value)}</span>;
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  AVAILABLE: 'bg-emerald-500/15 text-emerald-700 border-emerald-500/20',
-  PENDING: 'bg-amber-500/15 text-amber-700 border-amber-500/20',
-  PENDING_APPROVAL: 'bg-amber-500/15 text-amber-700 border-amber-500/20',
-  PAID: 'bg-emerald-500/15 text-emerald-700 border-emerald-500/20',
-  PROCESSING: 'bg-sky-500/15 text-sky-700 border-sky-500/20',
-  COMPLETED: 'bg-emerald-600/15 text-emerald-700 border-emerald-500/20',
-  SOLD: 'bg-zinc-500/15 text-zinc-600 border-zinc-500/20',
-  RESERVED: 'bg-sky-500/15 text-sky-700 border-sky-500/20',
-  CANCELLED: 'bg-rose-500/15 text-rose-700 border-rose-500/20',
-  REJECTED: 'bg-rose-500/15 text-rose-700 border-rose-500/20',
-  REFUNDED: 'bg-rose-500/15 text-rose-700 border-rose-500/20',
-  UNPAID: 'bg-amber-500/15 text-amber-700 border-amber-500/20',
-  FAILED: 'bg-rose-500/15 text-rose-700 border-rose-500/20',
-  ACTIVE: 'bg-emerald-500/15 text-emerald-700 border-emerald-500/20',
-  BLOCKED: 'bg-rose-500/15 text-rose-700 border-rose-500/20',
-  INACTIVE: 'bg-zinc-500/15 text-zinc-600 border-zinc-500/20',
-  VERIFIED: 'bg-emerald-500/15 text-emerald-700 border-emerald-500/20',
-  APPROVED: 'bg-emerald-500/15 text-emerald-700 border-emerald-500/20',
+  AVAILABLE: 'bg-success-soft text-success border-success/25',
+  PENDING: 'bg-warning-soft text-warning border-warning/25',
+  PENDING_APPROVAL: 'bg-warning-soft text-warning border-warning/25',
+  PAID: 'bg-success-soft text-success border-success/25',
+  PROCESSING: 'bg-info-soft text-info border-info/25',
+  COMPLETED: 'bg-success-soft text-success border-success/25',
+  SOLD: 'bg-muted text-muted-foreground border-border',
+  RESERVED: 'bg-info-soft text-info border-info/25',
+  CANCELLED: 'bg-destructive/10 text-destructive border-destructive/25',
+  REJECTED: 'bg-destructive/10 text-destructive border-destructive/25',
+  REFUNDED: 'bg-destructive/10 text-destructive border-destructive/25',
+  UNPAID: 'bg-warning-soft text-warning border-warning/25',
+  FAILED: 'bg-destructive/10 text-destructive border-destructive/25',
+  ACTIVE: 'bg-success-soft text-success border-success/25',
+  BLOCKED: 'bg-destructive/10 text-destructive border-destructive/25',
+  INACTIVE: 'bg-muted text-muted-foreground border-border',
+  VERIFIED: 'bg-success-soft text-success border-success/25',
+  APPROVED: 'bg-success-soft text-success border-success/25',
 };
 
 export function StatusBadge({ status }: { status?: string }) {
   const s = (status || '').toUpperCase();
-  return <span className={cn('rounded-full border px-2.5 py-0.5 text-xs font-black', STATUS_COLORS[s] || 'border-white/70 bg-white/60 text-muted-foreground')}>{s.replace(/_/g, ' ') || '-'}</span>;
+  return <span className={cn('rounded-full border px-2.5 py-0.5 text-xs font-black', STATUS_COLORS[s] || 'border-border bg-muted text-muted-foreground')}>{s.replace(/_/g, ' ') || '-'}</span>;
 }
 
 function Wire({ className }: { className?: string }) {
-  return <div className={cn('wireframe-shimmer rounded-2xl bg-white/62', className)} />;
+  return <div className={cn('wireframe-shimmer rounded-2xl bg-muted', className)} />;
 }
 
 function HeaderWire() {
@@ -99,10 +99,10 @@ function StatWire({ count = 4 }: { count?: number }) {
 function TableWire({ rows = 6, cols = 5 }: { rows?: number; cols?: number }) {
   return (
     <div className="vnw-card overflow-hidden p-0">
-      <div className="hidden grid-cols-5 gap-4 border-b border-white/70 bg-white/40 p-4 md:grid">
+      <div className="hidden grid-cols-5 gap-4 border-b border-border bg-muted/60 p-4 md:grid">
         {Array.from({ length: cols }).map((_, i) => <Wire key={i} className="h-4 rounded-full" />)}
       </div>
-      <div className="hidden divide-y divide-white/60 md:block">
+      <div className="hidden divide-y divide-border md:block">
         {Array.from({ length: rows }).map((_, row) => (
           <div key={row} className="grid grid-cols-5 gap-4 p-4">
             {Array.from({ length: cols }).map((_, col) => <Wire key={col} className="h-5 rounded-full" />)}
@@ -111,7 +111,7 @@ function TableWire({ rows = 6, cols = 5 }: { rows?: number; cols?: number }) {
       </div>
       <div className="grid gap-3 p-3 md:hidden">
         {Array.from({ length: 4 }).map((_, row) => (
-          <div key={row} className="rounded-2xl border border-white/75 bg-white/62 p-4">
+          <div key={row} className="rounded-2xl border border-border bg-muted/60 p-4">
             <Wire className="h-5 w-36" />
             <div className="mt-4 grid gap-3">
               {Array.from({ length: 4 }).map((_, i) => (
@@ -227,8 +227,8 @@ function GenericWire({ label }: { label?: string }) {
   return (
     <div>
       <HeaderWire />
-      <div className="mb-3 flex items-center gap-2 text-xs font-black text-[#7c2cff]">
-        <Sparkles className="h-3.5 w-3.5 text-[#d9a31b]" /> {label || 'Loading content'}
+      <div className="mb-3 flex items-center gap-2 text-xs font-black text-accent">
+        <Sparkles className="h-3.5 w-3.5" /> {label || 'Loading content'}
       </div>
       <StatWire />
       <div className="mt-5"><TableWire /></div>
@@ -261,7 +261,7 @@ export function Loader({ label, variant }: { label?: string; variant?: 'dashboar
 export function EmptyState({ title, subtitle, action }: { title: string; subtitle?: string; action?: ReactNode }) {
   return (
     <div className="vnw-card flex flex-col items-center gap-2 py-16 text-center">
-      <p className="text-lg font-black text-[#1d1830]">{title}</p>
+      <p className="text-lg font-black text-foreground">{title}</p>
       {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
       {action && <div className="mt-3">{action}</div>}
     </div>
@@ -303,11 +303,11 @@ export function Table({ head, children }: { head: string[]; children: ReactNode 
     <div className="vnw-card overflow-hidden p-0">
       <table className="admin-responsive-table w-full text-sm">
         <thead>
-          <tr className="border-b border-white/70 bg-white/36 text-left text-xs uppercase text-muted-foreground">
+          <tr className="border-b border-border bg-muted/60 text-left text-xs uppercase text-muted-foreground">
             {head.map((h) => <th key={h} className="px-4 py-3 font-black">{h}</th>)}
           </tr>
         </thead>
-        <tbody className="[&_tr]:border-white/60 [&_td]:align-middle">{labeledChildren}</tbody>
+        <tbody className="[&_tr]:border-border [&_td]:align-middle">{labeledChildren}</tbody>
       </table>
     </div>
   );

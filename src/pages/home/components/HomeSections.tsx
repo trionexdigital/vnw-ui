@@ -41,16 +41,16 @@ export interface HomeTestimonial {
   rating?: number;
 }
 
-const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2';
+const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2';
 const primaryButton = cn(
-  'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-stone-900 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-stone-800 active:bg-stone-950',
+  'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-foreground px-5 py-3 text-sm font-bold text-background shadow-sm transition hover:opacity-90',
   focusRing,
 );
 const secondaryButton = cn(
-  'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-stone-300 bg-white px-5 py-3 text-sm font-bold text-stone-900 shadow-sm transition hover:border-amber-700 hover:bg-amber-50',
+  'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-border bg-card px-5 py-3 text-sm font-bold text-foreground shadow-sm transition hover:border-primary hover:bg-accent',
   focusRing,
 );
-const mutedCard = 'rounded-2xl border border-stone-200 bg-white shadow-sm';
+const mutedCard = 'rounded-2xl border border-border bg-card shadow-sm';
 
 export const popularPatterns = [
   { label: '9999', to: '/shop?q=9999', helper: 'Repeating pattern' },
@@ -77,9 +77,9 @@ export function SectionHeader({
   return (
     <div className={cn('mb-5 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-end sm:justify-between', centered && 'items-center text-center sm:items-center sm:justify-center')}>
       <div className={cn('max-w-2xl', centered && 'mx-auto')}>
-        {eyebrow && <p className="mb-2 text-xs font-bold uppercase tracking-wide text-amber-700">{eyebrow}</p>}
-        <h2 className="text-xl font-black leading-tight text-stone-950 sm:text-2xl">{title}</h2>
-        {description && <p className="mt-2 text-sm leading-6 text-stone-600 sm:text-base">{description}</p>}
+        {eyebrow && <p className="mb-2 text-xs font-bold uppercase tracking-wide text-primary">{eyebrow}</p>}
+        <h2 className="text-xl font-black leading-tight text-foreground sm:text-2xl">{title}</h2>
+        {description && <p className="mt-2 text-sm leading-6 text-muted-foreground sm:text-base">{description}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>
@@ -138,7 +138,16 @@ const orbitNumbers = [
   { value: 'Unique', left: '18%', top: '22%' },
 ];
 
-const heroButterflies = [
+type HeroButterfly = {
+  left: string;
+  top: string;
+  wings: [string, string];
+  delay: string;
+  duration: string;
+  reverse?: boolean;
+};
+
+const heroButterflies: HeroButterfly[] = [
   { left: '92%', top: '14%', wings: ['93', '39'], delay: '-2.4s', duration: '18s' },
   { left: '50%', top: '74%', wings: ['11', '22'], delay: '-13.8s', duration: '22s' },
   { left: '14%', top: '69%', wings: ['78', '87'], delay: '-9.2s', duration: '21s', reverse: true },
@@ -156,10 +165,19 @@ const heroButterflies = [
   { left: '91%', top: '67%', wings: ['999', '999'], delay: '-10.8s', duration: '24s', reverse: true },
 ];
 
-function HeroButterflyLayer({ mode }: { mode: 'ambient' | 'focus' }) {
+const mobileArtButterflies: HeroButterfly[] = [
+  { left: '12%', top: '24%', wings: ['108', '801'], delay: '-2.8s', duration: '19s' },
+  { left: '66%', top: '12%', wings: ['909', '909'], delay: '-8.4s', duration: '21s', reverse: true },
+  { left: '82%', top: '38%', wings: ['911', '1911'], delay: '-4.6s', duration: '20s', reverse: true },
+  { left: '70%', top: '72%', wings: ['121', '121'], delay: '-12.2s', duration: '23s' },
+  { left: '20%', top: '72%', wings: ['786', '687'], delay: '-16.1s', duration: '22s', reverse: true },
+  { left: '8%', top: '48%', wings: ['24', '42'], delay: '-10.5s', duration: '24s' },
+];
+
+function HeroButterflyLayer({ mode, butterflies = heroButterflies }: { mode: 'ambient' | 'focus' | 'mobile-art'; butterflies?: HeroButterfly[] }) {
   return (
     <div className={`home-showcase__butterflies home-showcase__butterflies--${mode} pointer-events-none absolute inset-0 overflow-hidden`} aria-hidden="true">
-      {heroButterflies.map((butterfly) => (
+      {butterflies.map((butterfly) => (
         <span
           key={`${mode}-${butterfly.left}-${butterfly.top}`}
           className={cn('home-hero__butterfly numeric-butterfly numeric-butterfly--background absolute', butterfly.reverse && 'home-hero__butterfly--reverse')}
@@ -216,20 +234,20 @@ export function HomeHero({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: reduceMotion ? 0 : 0.48, ease: [0.16, 1, 0.3, 1] }}
         >
-          <p className="home-showcase__eyebrow mb-3 inline-flex min-h-9 items-center gap-2 rounded-full border border-amber-500/70 bg-white/75 px-3.5 text-xs font-extrabold uppercase tracking-[0.14em] text-amber-800 shadow-sm sm:text-sm">
+          <p className="home-showcase__eyebrow mb-3 inline-flex min-h-9 items-center gap-2 rounded-full border border-primary/70 bg-card/75 px-3.5 text-xs font-extrabold uppercase tracking-[0.14em] text-primary shadow-sm sm:text-sm">
             <Crown className="h-4 w-4" aria-hidden="true" />
             India&apos;s premium VIP number marketplace
           </p>
-          <h1 id="home-hero-title" className="home-hero__title max-w-3xl text-[2.65rem] font-semibold leading-[.96] text-slate-950 sm:text-[3.35rem] lg:text-[3.75rem] xl:text-[4.05rem]">
-            Own a number that feels <span className="block text-amber-600">unmistakably yours.</span>
+          <h1 id="home-hero-title" className="home-hero__title max-w-3xl text-[2.65rem] font-semibold leading-[.96] text-foreground sm:text-[3.35rem] lg:text-[3.75rem] xl:text-[4.05rem]">
+            Own a number that feels <span className="block text-primary">unmistakably yours.</span>
           </h1>
           <div className="home-showcase__title-ornament mt-3" aria-hidden="true"><span /></div>
-          <p className="mt-3 max-w-[680px] text-base font-medium leading-6 text-stone-600 sm:text-[1.05rem] sm:leading-7">
+          <p className="mt-3 max-w-[680px] text-base font-medium leading-6 text-muted-foreground sm:text-[1.05rem] sm:leading-7">
             Discover rare, memorable VIP numbers through verified listings, secure checkout, and guided transfer support&mdash;crafted for identities that deserve to stand apart.
           </p>
-          <div className="mt-3 flex flex-wrap gap-2 text-xs font-bold text-stone-700 2xl:text-sm" aria-label="Marketplace promises">
+          <div className="mt-3 flex flex-wrap gap-2 text-xs font-bold text-foreground 2xl:text-sm" aria-label="Marketplace promises">
             {['Rare selections', 'Verified marketplace', 'Guided transfer'].map((item) => (
-              <span key={item} className="inline-flex min-h-9 items-center gap-2 rounded-full border border-amber-200/80 bg-white/65 px-3 shadow-sm">
+              <span key={item} className="inline-flex min-h-9 items-center gap-2 rounded-full border border-primary/30 bg-card/65 px-3 shadow-sm">
                 <CheckCircle2 className="h-4 w-4 fill-amber-600 text-white" aria-hidden="true" />
                 {item}
               </span>
@@ -241,19 +259,19 @@ export function HomeHero({
               Explore Numbers
               <span className="grid h-8 w-8 place-items-center rounded-full border border-white/75"><ArrowRight className="h-4 w-4" /></span>
             </Link>
-            <Link to="/about" className={cn('inline-flex min-h-12 items-center justify-center gap-3 rounded-xl border border-amber-300/80 bg-white/75 px-6 text-sm font-extrabold text-stone-900 shadow-sm transition hover:-translate-y-0.5 hover:bg-white', focusRing)}>
-              <CirclePlay className="h-6 w-6 text-amber-700" />
+            <Link to="/about" className={cn('inline-flex min-h-12 items-center justify-center gap-3 rounded-xl border border-primary/40 bg-card/75 px-6 text-sm font-extrabold text-foreground shadow-sm transition hover:-translate-y-0.5 hover:bg-accent', focusRing)}>
+              <CirclePlay className="h-6 w-6 text-primary" />
               How It Works
             </Link>
           </div>
 
-          <div className="home-showcase__metrics mt-4 min-h-[94px] rounded-2xl border border-white/90 bg-white/80 p-3 shadow-[0_18px_50px_-28px_rgba(77,47,20,.3)] backdrop-blur-sm">
+          <div className="home-showcase__metrics mt-4 min-h-[94px] rounded-2xl border border-border bg-card/85 p-3 shadow-lg backdrop-blur-sm">
             {statsError ? (
               <div className="grid grid-cols-3 divide-x divide-amber-200/80" role="status" aria-label="Marketplace trust highlights">
                 {trustFallback.map(({ Icon, label }) => (
                   <div key={label} className="min-w-0 px-2 sm:px-4">
-                    <Icon className="mb-2 h-6 w-6 text-amber-700" aria-hidden="true" />
-                    <p className="text-xs font-extrabold leading-5 text-stone-800 sm:text-sm">{label}</p>
+                    <Icon className="mb-2 h-6 w-6 text-primary" aria-hidden="true" />
+                    <p className="text-xs font-extrabold leading-5 text-foreground sm:text-sm">{label}</p>
                   </div>
                 ))}
               </div>
@@ -261,9 +279,9 @@ export function HomeHero({
               <div className="grid grid-cols-3 divide-x divide-amber-200/80" role="status" aria-label="Loading marketplace statistics">
                 {[0, 1, 2].map((item) => (
                   <div key={item} className="min-w-0 px-2 sm:px-4">
-                    <div className="h-10 w-10 rounded-full bg-stone-200" />
-                    <div className="mt-2 h-7 w-20 rounded-md bg-stone-200" />
-                    <div className="mt-2 h-3 w-full max-w-28 rounded bg-stone-200" />
+                    <div className="h-10 w-10 rounded-full bg-muted" />
+                    <div className="mt-2 h-7 w-20 rounded-md bg-muted" />
+                    <div className="mt-2 h-3 w-full max-w-28 rounded bg-muted" />
                   </div>
                 ))}
               </div>
@@ -271,12 +289,12 @@ export function HomeHero({
               <dl className="grid grid-cols-3 divide-x divide-amber-200/80">
                 {metricConfig.map(({ key, label, Icon }) => (
                   <div key={key} className="flex min-w-0 items-center gap-3 px-2 sm:px-4">
-                    <span className="hidden h-12 w-12 shrink-0 place-items-center rounded-full border border-amber-300 bg-amber-50 text-amber-700 sm:grid"><Icon className="h-6 w-6" /></span>
+                    <span className="hidden h-12 w-12 shrink-0 place-items-center rounded-full border border-primary/40 bg-primary/10 text-primary sm:grid"><Icon className="h-6 w-6" /></span>
                     <div className="min-w-0">
-                      <dd className="font-serif text-xl font-bold tabular-nums text-[#32116d] sm:text-2xl">
+                      <dd className="font-serif text-xl font-bold tabular-nums text-foreground sm:text-2xl">
                         <AnimatedHeroCount value={stats[key]} label={label} />
                       </dd>
-                      <dt className="mt-1 text-[10px] font-bold leading-4 text-stone-600 sm:text-xs">{label}</dt>
+                      <dt className="mt-1 text-[10px] font-bold leading-4 text-muted-foreground sm:text-xs">{label}</dt>
                     </div>
                   </div>
                 ))}
@@ -292,6 +310,7 @@ export function HomeHero({
           transition={{ duration: reduceMotion ? 0 : 0.58, delay: reduceMotion ? 0 : 0.08, ease: [0.16, 1, 0.3, 1] }}
           aria-hidden="true"
         >
+          <HeroButterflyLayer mode="mobile-art" butterflies={mobileArtButterflies} />
           <div className="brand-stage__aura absolute inset-[2%] rounded-full" />
           <div className="brand-stage__orbit brand-stage__orbit--wide absolute inset-[6%] rounded-[50%]" />
           <div className="brand-stage__orbit brand-stage__orbit--mid absolute inset-[17%] rounded-full" />
@@ -334,19 +353,19 @@ export function BudgetBandsSection() {
   ];
 
   return (
-    <MotionSection className="bg-white px-4 py-8 sm:px-6 lg:px-8">
+    <MotionSection className="bg-card px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeader eyebrow="Shop by budget" title="Find the right number faster" description="Popular price bands make a large catalogue easier to explore." />
         <MotionGrid className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {bands.map(([label, value, helper]) => (
             <MotionGridItem key={value}>
-              <Link to={`/shop?price_max=${value}&sort=price_asc`} className={cn(mutedCard, 'group flex items-center gap-4 p-4 transition hover:border-amber-700 hover:shadow-md', focusRing)}>
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-50 text-amber-800"><WalletCards className="h-5 w-5" /></span>
+              <Link to={`/shop?price_max=${value}&sort=price_asc`} className={cn(mutedCard, 'group flex items-center gap-4 p-4 transition hover:border-primary hover:shadow-md', focusRing)}>
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary"><WalletCards className="h-5 w-5" /></span>
                 <span className="min-w-0">
-                  <strong className="block text-sm font-black text-stone-950">{label}</strong>
-                  <span className="block truncate text-xs text-stone-600">{helper}</span>
+                  <strong className="block text-sm font-black text-foreground">{label}</strong>
+                  <span className="block truncate text-xs text-muted-foreground">{helper}</span>
                 </span>
-                <ArrowRight className="ml-auto h-4 w-4 shrink-0 text-amber-700 transition-transform group-hover:translate-x-0.5" />
+                <ArrowRight className="ml-auto h-4 w-4 shrink-0 text-primary transition-transform group-hover:translate-x-0.5" />
               </Link>
             </MotionGridItem>
           ))}
@@ -358,7 +377,7 @@ export function BudgetBandsSection() {
 
 export function PopularPatterns() {
   return (
-    <section className="bg-stone-50 px-4 pb-8 sm:px-6 lg:px-8">
+    <section className="bg-background px-4 pb-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeader
           eyebrow="Popular patterns"
@@ -370,10 +389,10 @@ export function PopularPatterns() {
             <Link
               key={pattern.label}
               to={pattern.to}
-              className={cn('min-w-[168px] rounded-2xl border border-stone-200 bg-white p-4 shadow-sm transition hover:border-amber-700 hover:shadow-md sm:min-w-0', focusRing)}
+              className={cn('min-w-[168px] rounded-2xl border border-border bg-card p-4 shadow-sm transition hover:border-primary hover:shadow-md sm:min-w-0', focusRing)}
             >
-              <span className="block text-lg font-black text-stone-950">{pattern.label}</span>
-              <span className="mt-1 block text-sm text-stone-600">{pattern.helper}</span>
+              <span className="block text-lg font-black text-foreground">{pattern.label}</span>
+              <span className="mt-1 block text-sm text-muted-foreground">{pattern.helper}</span>
             </Link>
           ))}
         </div>
@@ -400,19 +419,19 @@ export function NumberGridSection({
   action?: React.ReactNode;
 }) {
   return (
-    <section className="bg-stone-50 px-4 py-8 sm:px-6 lg:px-8">
+    <section className="bg-background px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeader title={title} description={description} action={action} />
         {loading ? (
           <Loader variant="cards" />
         ) : error ? (
           <div className={cn(mutedCard, 'p-6 text-center')}>
-            <p className="text-base font-bold text-stone-950">Unable to load numbers</p>
-            <p className="mt-1 text-sm text-stone-600">{error}</p>
+            <p className="text-base font-bold text-foreground">Unable to load numbers</p>
+            <p className="mt-1 text-sm text-muted-foreground">{error}</p>
           </div>
         ) : numbers.length === 0 ? (
           <div className={cn(mutedCard, 'p-8 text-center')}>
-            <p className="text-base font-bold text-stone-950">{emptyTitle}</p>
+            <p className="text-base font-bold text-foreground">{emptyTitle}</p>
             <Link to="/shop" className={cn('mt-4', secondaryButton)}>
               Browse numbers
             </Link>
@@ -436,7 +455,7 @@ export function WhyChooseSection() {
   ];
 
   return (
-    <section className="bg-white px-4 py-8 sm:px-6 lg:px-8">
+    <section className="bg-card px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeader
           eyebrow="Why choose VIP Number World"
@@ -446,9 +465,9 @@ export function WhyChooseSection() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {items.map(([Icon, title, text]: any) => (
             <div key={title} className={cn(mutedCard, 'p-5')}>
-              <Icon className="h-7 w-7 text-amber-700" aria-hidden="true" />
-              <h3 className="mt-4 text-base font-black text-stone-950">{title}</h3>
-              <p className="mt-2 text-sm leading-6 text-stone-600">{text}</p>
+              <Icon className="h-7 w-7 text-primary" aria-hidden="true" />
+              <h3 className="mt-4 text-base font-black text-foreground">{title}</h3>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{text}</p>
             </div>
           ))}
         </div>
@@ -466,7 +485,7 @@ export function HowItWorksSection() {
   ];
 
   return (
-    <section className="bg-stone-50 px-4 py-8 sm:px-6 lg:px-8">
+    <section className="bg-background px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeader
           eyebrow="How purchasing works"
@@ -477,11 +496,11 @@ export function HowItWorksSection() {
           {steps.map(([Icon, title, text]: any, index) => (
             <article key={title} className={cn(mutedCard, 'p-5')}>
               <div className="flex items-center gap-3">
-                <span className="grid h-10 w-10 place-items-center rounded-xl bg-amber-50 text-sm font-black text-amber-800">{index + 1}</span>
-                <Icon className="h-5 w-5 text-amber-700" aria-hidden="true" />
+                <span className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-sm font-black text-primary">{index + 1}</span>
+                <Icon className="h-5 w-5 text-primary" aria-hidden="true" />
               </div>
-              <h3 className="mt-4 text-lg font-black text-stone-950">{title}</h3>
-              <p className="mt-2 text-sm leading-6 text-stone-600">{text}</p>
+              <h3 className="mt-4 text-lg font-black text-foreground">{title}</h3>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{text}</p>
             </article>
           ))}
         </div>
@@ -495,7 +514,7 @@ export function CategorySection({ categories }: { categories: HomeCategory[] }) 
 
   if (!normalized.length) {
     return (
-      <section className="bg-white px-4 py-8 sm:px-6 lg:px-8">
+      <section className="bg-card px-4 py-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <SectionHeader
             eyebrow="Number categories"
@@ -508,9 +527,9 @@ export function CategorySection({ categories }: { categories: HomeCategory[] }) 
               ['Premium numbers', '/shop?category=premium', 'Open the existing premium category route.'],
               ['Numerology', '/numerology', 'Use the existing numerology page.'],
             ].map(([title, to, text]) => (
-              <Link key={title} to={to} className={cn(mutedCard, 'block p-5 transition hover:border-amber-700', focusRing)}>
-                <h3 className="text-base font-black text-stone-950">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-stone-600">{text}</p>
+              <Link key={title} to={to} className={cn(mutedCard, 'block p-5 transition hover:border-primary', focusRing)}>
+                <h3 className="text-base font-black text-foreground">{title}</h3>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{text}</p>
               </Link>
             ))}
           </div>
@@ -520,7 +539,7 @@ export function CategorySection({ categories }: { categories: HomeCategory[] }) 
   }
 
   return (
-    <section className="bg-white px-4 py-8 sm:px-6 lg:px-8">
+    <section className="bg-card px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeader
           eyebrow="Number categories"
@@ -532,11 +551,11 @@ export function CategorySection({ categories }: { categories: HomeCategory[] }) 
             <Link
               key={category.category_id || category.slug}
               to={`/shop?category=${encodeURIComponent(category.slug || '')}`}
-              className={cn(mutedCard, 'block p-5 transition hover:border-amber-700', focusRing)}
+              className={cn(mutedCard, 'block p-5 transition hover:border-primary', focusRing)}
             >
-              <h3 className="text-base font-black text-stone-950">{category.name}</h3>
-              {category.description && <p className="mt-2 line-clamp-2 text-sm leading-6 text-stone-600">{category.description}</p>}
-              <span className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-amber-800">
+              <h3 className="text-base font-black text-foreground">{category.name}</h3>
+              {category.description && <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">{category.description}</p>}
+              <span className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-primary">
                 View category <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </span>
             </Link>
@@ -549,24 +568,24 @@ export function CategorySection({ categories }: { categories: HomeCategory[] }) 
 
 export function ServiceCoverageSection() {
   return (
-    <section className="bg-stone-50 px-4 py-8 sm:px-6 lg:px-8">
+    <section className="bg-background px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
-        <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm lg:flex lg:items-center lg:justify-between lg:gap-8">
+        <div className="rounded-2xl border border-border bg-card p-6 shadow-sm lg:flex lg:items-center lg:justify-between lg:gap-8">
           <div>
-            <p className="text-xs font-bold uppercase tracking-wide text-amber-700">Service coverage</p>
-            <h2 className="mt-2 text-2xl font-black text-stone-950">Pan India delivery and support</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-600">
+            <p className="text-xs font-bold uppercase tracking-wide text-primary">Service coverage</p>
+            <h2 className="mt-2 text-2xl font-black text-foreground">Pan India delivery and support</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
               VIP Number World currently presents pan-India delivery and support contact paths through the existing site content and layout.
             </p>
           </div>
           <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:mt-0 lg:w-[420px]">
-            <div className="rounded-xl bg-stone-50 p-4">
-              <Truck className="h-5 w-5 text-amber-700" aria-hidden="true" />
-              <p className="mt-2 text-sm font-bold text-stone-950">Pan India delivery</p>
+            <div className="rounded-xl bg-muted p-4">
+              <Truck className="h-5 w-5 text-primary" aria-hidden="true" />
+              <p className="mt-2 text-sm font-bold text-foreground">Pan India delivery</p>
             </div>
-            <div className="rounded-xl bg-stone-50 p-4">
-              <Headphones className="h-5 w-5 text-amber-700" aria-hidden="true" />
-              <p className="mt-2 text-sm font-bold text-stone-950">Support contact available</p>
+            <div className="rounded-xl bg-muted p-4">
+              <Headphones className="h-5 w-5 text-primary" aria-hidden="true" />
+              <p className="mt-2 text-sm font-bold text-foreground">Support contact available</p>
             </div>
           </div>
         </div>
@@ -580,21 +599,21 @@ export function TestimonialsSection({ testimonials }: { testimonials: HomeTestim
   if (!visible.length) return null;
 
   return (
-    <section id="testimonials" className="bg-white px-4 py-8 sm:px-6 lg:px-8">
+    <section id="testimonials" className="bg-card px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeader centered eyebrow="Testimonials" title="Customer feedback" description="Showing testimonials returned by the existing API." />
         <div className="grid gap-4 md:grid-cols-3">
           {visible.map((testimonial, index) => (
             <article key={testimonial.testimonial_id || index} className={cn(mutedCard, 'p-5')}>
               {testimonial.rating ? (
-                <p className="mb-3 text-sm font-bold text-amber-800" aria-label={`${testimonial.rating} out of 5 stars`}>
+                <p className="mb-3 text-sm font-bold text-primary" aria-label={`${testimonial.rating} out of 5 stars`}>
                   {testimonial.rating}/5 rating
                 </p>
               ) : null}
-              {testimonial.content && <p className="text-sm leading-6 text-stone-700">"{testimonial.content}"</p>}
-              <div className="mt-4 border-t border-stone-100 pt-4">
-                <p className="font-black text-stone-950">{testimonial.name || 'Customer'}</p>
-                {testimonial.role && <p className="text-sm text-stone-600">{testimonial.role}</p>}
+              {testimonial.content && <p className="text-sm leading-6 text-foreground">"{testimonial.content}"</p>}
+              <div className="mt-4 border-t border-border pt-4">
+                <p className="font-black text-foreground">{testimonial.name || 'Customer'}</p>
+                {testimonial.role && <p className="text-sm text-muted-foreground">{testimonial.role}</p>}
               </div>
             </article>
           ))}
@@ -611,11 +630,11 @@ export function FinalEnquiryCta({ whatsapp }: { whatsapp?: string }) {
     : undefined;
 
   return (
-    <section className="bg-stone-50 px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl rounded-2xl border border-stone-200 bg-white p-6 text-center shadow-sm sm:p-8">
-        <p className="text-xs font-bold uppercase tracking-wide text-amber-700">Need help choosing?</p>
-        <h2 className="mt-2 text-2xl font-black text-stone-950 sm:text-3xl">Search the marketplace or send an enquiry</h2>
-        <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-stone-600">
+    <section className="bg-background px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl rounded-2xl border border-border bg-card p-6 text-center shadow-sm sm:p-8">
+        <p className="text-xs font-bold uppercase tracking-wide text-primary">Need help choosing?</p>
+        <h2 className="mt-2 text-2xl font-black text-foreground sm:text-3xl">Search the marketplace or send an enquiry</h2>
+        <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
           Use the existing shop search, contact page, or WhatsApp enquiry path to continue.
         </p>
         <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">

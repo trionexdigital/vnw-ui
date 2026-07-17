@@ -15,7 +15,7 @@ export default function DealerSales() {
           {rows.map((r) => (
             <tr key={r.order_item_id} className="border-b border-card-border last:border-0">
               <td className="px-4 py-3 text-foreground">{r.order_no}</td>
-              <td className="px-4 py-3 font-bold text-royal">{r.display_number}</td>
+              <td className="px-4 py-3 font-bold text-foreground">{r.display_number}</td>
               <td className="px-4 py-3"><Money value={r.price} /></td>
               <td className="px-4 py-3 text-muted-foreground">- <Money value={r.commission_amount} /></td>
               <td className="px-4 py-3"><Money value={Number(r.price) - Number(r.commission_amount)} /></td>

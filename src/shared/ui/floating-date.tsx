@@ -28,8 +28,8 @@ export function FloatingDate({
     <div className={containerClassName}>
       <div className="relative">
         {type === "time"
-          ? <Clock className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 z-10" />
-          : <Calendar className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 z-10" />}
+          ? <Clock className="pointer-events-none absolute left-2.5 top-1/2 z-10 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+          : <Calendar className="pointer-events-none absolute left-2.5 top-1/2 z-10 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />}
         <input
           type={type}
           value={value || ""}
@@ -39,18 +39,18 @@ export function FloatingDate({
           max={max}
           disabled={disabled}
           className={cn(
-            "w-full rounded-lg border bg-white pl-8 pr-2 text-sm text-gray-900 outline-none transition-colors dark:bg-gray-900 dark:text-white",
+            "w-full rounded-lg border bg-background pl-8 pr-2 text-sm text-foreground outline-none transition-colors",
             dense ? "h-9" : "h-10",
             error
-              ? "border-red-400 focus:border-red-400"
-              : "border-gray-200 focus:border-sky-400 dark:border-gray-700 dark:focus:border-sky-500",
-            disabled && "opacity-60 cursor-not-allowed bg-gray-50 dark:bg-gray-800"
+              ? "border-destructive focus:border-destructive"
+              : "border-input focus:border-primary focus:ring-2 focus:ring-ring/20",
+            disabled && "cursor-not-allowed bg-muted opacity-60"
           )}
         />
         <label
           className={cn(
-            "pointer-events-none absolute z-10 left-3 top-0 -translate-y-1/2 select-none text-[0.65rem] font-medium px-1 bg-white dark:bg-gray-900",
-            error ? "text-red-500" : value ? "text-sky-500 dark:text-sky-400" : "text-slate-400 dark:text-gray-500"
+            "pointer-events-none absolute left-3 top-0 z-10 -translate-y-1/2 select-none bg-background px-1 text-[0.65rem] font-medium",
+            error ? "text-destructive" : value ? "text-primary" : "text-muted-foreground"
           )}
         >
           {label}

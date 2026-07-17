@@ -4,7 +4,7 @@ import { changePassword } from '@/core/api/authAPI';
 import { useToast } from '@/shared/hooks/use-toast';
 import { PageHeader } from '@/shared/components/ui-bits';
 
-const inputClass = 'h-11 w-full rounded-2xl border border-[#e4d8ef] bg-white px-3 pr-10 text-sm font-semibold text-[#1d1830] outline-none transition focus:border-[#7c2cff] focus:ring-4 focus:ring-[#7c2cff]/10';
+const inputClass = 'h-11 w-full rounded-2xl border border-input bg-background px-3 pr-10 text-sm font-semibold text-foreground outline-none transition focus:border-ring focus:ring-4 focus:ring-ring/10';
 
 export default function ChangePassword() {
   const { toast } = useToast();
@@ -57,12 +57,12 @@ export default function ChangePassword() {
         </form>
 
         <aside className="vnw-card p-4">
-          <span className="grid h-12 w-12 place-items-center rounded-2xl bg-[#eafaf4] text-[#0f9f6e]"><ShieldCheck className="h-6 w-6" /></span>
-          <h3 className="mt-4 text-lg font-black text-[#1d1830]">Password tips</h3>
+          <span className="grid h-12 w-12 place-items-center rounded-2xl bg-success-soft text-success"><ShieldCheck className="h-6 w-6" /></span>
+          <h3 className="mt-4 text-lg font-black text-foreground">Password tips</h3>
           <div className="mt-3 grid gap-2 text-sm text-muted-foreground">
-            <p className="rounded-2xl bg-white/60 p-3">Use at least 8 characters with letters, numbers and symbols.</p>
-            <p className="rounded-2xl bg-white/60 p-3">Avoid using your phone number or business name.</p>
-            <p className="rounded-2xl bg-white/60 p-3">Change shared admin passwords regularly.</p>
+            <p className="rounded-2xl bg-muted p-3">Use at least 8 characters with letters, numbers and symbols.</p>
+            <p className="rounded-2xl bg-muted p-3">Avoid using your phone number or business name.</p>
+            <p className="rounded-2xl bg-muted p-3">Change shared admin passwords regularly.</p>
           </div>
         </aside>
       </div>

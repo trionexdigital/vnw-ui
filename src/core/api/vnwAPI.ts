@@ -59,11 +59,14 @@ export const testimonialsAPI = {
 
 export interface CarouselSlide {
   banner_id: number;
+  eyebrow?: string | null;
   title?: string | null;
   subtitle?: string | null;
   image: string;
   cta_text?: string | null;
   cta_link?: string | null;
+  content_x?: number | null;
+  content_y?: number | null;
   is_active: boolean | number;
   sort_order: number;
 }

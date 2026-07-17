@@ -30,7 +30,7 @@ export default function AdminApprovals() {
       <div className="mb-4 flex flex-wrap gap-2">
         {STATUS_TABS.map((s) => (
           <button key={s} onClick={() => setTab(s)}
-            className={`rounded-full px-3 py-1.5 text-xs font-semibold ${tab === s ? 'gold-gradient-bg text-royal' : 'border border-card-border text-muted-foreground'}`}>{s}</button>
+            className={`rounded-full px-3 py-1.5 text-xs font-semibold ${tab === s ? 'gold-gradient-bg text-accent-foreground' : 'border border-card-border text-muted-foreground'}`}>{s}</button>
         ))}
       </div>
       {loading ? <Loader /> : rows.length === 0 ? (
@@ -51,8 +51,8 @@ export default function AdminApprovals() {
               <td className="px-4 py-3">
                 {r.status === 'PENDING' ? (
                   <div className="flex gap-2 text-xs">
-                    <button onClick={() => approve(r.approval_id)} className="text-emerald-400 hover:underline">Approve</button>
-                    <button onClick={() => reject(r.approval_id)} className="text-rose-400 hover:underline">Reject</button>
+                    <button onClick={() => approve(r.approval_id)} className="text-success hover:underline">Approve</button>
+                    <button onClick={() => reject(r.approval_id)} className="text-destructive hover:underline">Reject</button>
                   </div>
                 ) : <span className="text-xs text-muted-foreground">{r.review_note || '—'}</span>}
               </td>

@@ -20,7 +20,7 @@ export function Field({ label, required, error, htmlFor, className, children }: 
     <div className={className}>
       <label htmlFor={htmlFor} className={ui.topLabel}>
         {label}
-        {required && <span className="text-red-500 ml-0.5">*</span>}
+        {required && <span className="ml-0.5 text-destructive">*</span>}
       </label>
       {children}
       <FieldError msg={error} />

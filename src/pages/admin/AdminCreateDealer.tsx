@@ -66,8 +66,8 @@ export default function AdminCreateDealer() {
           <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted-foreground">Dealer Permissions</h2>
           <div className="grid gap-2 sm:grid-cols-2">
             {catalog.map((p) => (
-              <label key={p.perm_key} className="flex cursor-pointer items-start gap-3 rounded-lg border border-card-border p-3 hover:border-gold">
-                <input type="checkbox" checked={perms.has(p.perm_key)} onChange={() => toggle(p.perm_key)} className="mt-0.5 h-4 w-4 accent-[#b8860b]" />
+              <label key={p.perm_key} className="flex cursor-pointer items-start gap-3 rounded-lg border border-card-border p-3 hover:border-accent">
+                <input type="checkbox" checked={perms.has(p.perm_key)} onChange={() => toggle(p.perm_key)} className="mt-0.5 h-4 w-4 accent-accent" />
                 <span><span className="block text-sm font-medium text-foreground">{p.label}</span>
                   <span className="block text-xs text-muted-foreground">{p.description}</span></span>
               </label>

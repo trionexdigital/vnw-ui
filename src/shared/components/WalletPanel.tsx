@@ -34,7 +34,7 @@ export default function WalletPanel({ showWithdraw = true, onChange }: Props) {
     <Panel className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="grid h-11 w-11 place-items-center rounded-xl gold-gradient-bg text-royal"><WalletIcon className="h-5 w-5" /></span>
+          <span className="gold-gradient-bg grid h-11 w-11 place-items-center rounded-xl text-accent-foreground"><WalletIcon className="h-5 w-5" /></span>
           <div>
             <div className="text-xs uppercase tracking-wide text-muted-foreground">Wallet Balance</div>
             <div className="text-2xl font-extrabold text-gold">{formatINR(balance)}</div>

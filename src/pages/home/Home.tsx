@@ -88,7 +88,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="bg-stone-50 text-stone-950">
+    <div className="bg-background text-foreground">
       <HomeHero stats={heroStats} statsLoading={heroStatsLoading} statsError={heroStatsError} />
 
       <HomeCarousel slides={carouselSlides} loading={carouselLoading} />
@@ -105,7 +105,7 @@ export default function Home() {
         error={featuredError}
         emptyTitle="No featured numbers are available right now."
         action={
-          <Link to="/shop" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-bold text-stone-900 shadow-sm transition hover:border-amber-700 hover:bg-amber-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2">
+          <Link to="/shop" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-2 text-sm font-bold text-foreground shadow-sm transition hover:border-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
             View all numbers
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
@@ -121,13 +121,13 @@ export default function Home() {
       <ServiceCoverageSection />
 
       {trending.length > 0 && (
-        <section className="bg-white px-4 py-8 sm:px-6 lg:px-8">
+        <section className="bg-card px-4 py-8 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <SectionHeader
               title="Trending now"
               description="Numbers returned by the existing popular-number feed."
               action={
-                <Link to="/shop?sort=popular" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-bold text-stone-900 shadow-sm transition hover:border-amber-700 hover:bg-amber-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2">
+                <Link to="/shop?sort=popular" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-2 text-sm font-bold text-foreground shadow-sm transition hover:border-primary hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
                   See more
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
@@ -141,7 +141,7 @@ export default function Home() {
       )}
 
       {recent.length > 0 && (
-        <section className="bg-stone-50 px-4 py-8 sm:px-6 lg:px-8">
+        <section className="bg-background px-4 py-8 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <SectionHeader title="Recently viewed" description="Continue from numbers you viewed earlier on this device." />
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

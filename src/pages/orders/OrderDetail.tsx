@@ -22,7 +22,7 @@ export default function OrderDetail() {
 
       {success && (
         <div className="vnw-card mb-5 flex items-center gap-3 border-emerald-500/40 p-4">
-          <CheckCircle2 className="h-6 w-6 text-emerald-400" />
+          <CheckCircle2 className="h-6 w-6 text-success" />
           <div><div className="font-semibold text-foreground">Payment successful!</div>
             <div className="text-sm text-muted-foreground">Your number transfer will begin shortly.</div></div>
         </div>
@@ -41,7 +41,7 @@ export default function OrderDetail() {
           {order.items?.map((it: any) => (
             <div key={it.order_item_id} className="flex items-center justify-between py-3">
               <div>
-                <div className="text-lg font-bold text-royal">{it.display_number}</div>
+                <div className="text-lg font-bold text-foreground">{it.display_number}</div>
                 <div className="text-xs text-muted-foreground">{it.category_name} · <StatusBadge status={it.item_status} /></div>
               </div>
               <Money value={it.price} />

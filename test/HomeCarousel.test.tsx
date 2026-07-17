@@ -8,11 +8,14 @@ import type { CarouselSlide } from '@/core/api/vnwAPI';
 const slides: CarouselSlide[] = [
   {
     banner_id: 1,
+    eyebrow: 'Curated drop',
     title: 'Signature number collection',
     subtitle: 'Discover memorable premium combinations.',
     image: 'data:image/webp;base64,AAAA',
     cta_text: 'Explore numbers',
     cta_link: '/shop',
+    content_x: 36,
+    content_y: 54,
     is_active: 1,
     sort_order: 0,
   },
@@ -34,12 +37,18 @@ describe('HomeCarousel', () => {
   afterEach(cleanup);
 
   it('renders an accessible managed slide and its internal CTA', () => {
-    renderCarousel();
+    const { container } = renderCarousel();
 
-    expect(screen.getByRole('region', { name: 'Featured promotions' })).toHaveAttribute('aria-roledescription', 'carousel');
+    const region = screen.getByRole('region', { name: 'Featured promotions' });
+    expect(region).toHaveAttribute('aria-roledescription', 'carousel');
+    expect(region.className).not.toMatch(/\bpy-/);
     expect(screen.getByRole('img', { name: 'Signature number collection' })).toBeInTheDocument();
+    expect(screen.getByText('Curated drop')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /explore numbers/i })).toHaveAttribute('href', '/shop');
     expect(screen.getByRole('button', { name: /pause carousel autoplay/i })).toBeInTheDocument();
+    expect(container.querySelector('.home-carousel__copy')).toHaveStyle({ '--carousel-content-x': '36%', '--carousel-content-y': '54%' });
+    expect(container.querySelector('.home-carousel__frame')).toHaveClass('h-[420px]', 'xl:h-[560px]');
+    expect(container.querySelector('.home-carousel__frame')).not.toHaveClass('border');
   });
 
   it('moves to the next managed slide with the carousel control', async () => {

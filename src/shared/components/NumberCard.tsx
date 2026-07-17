@@ -86,51 +86,51 @@ export default function NumberCard({ item, onWishlistChange }: { item: NumberIte
           ? <span className={cn('chip !rounded-md !px-2 !py-0.5 text-[9px]', badge.className)}><Star className="h-2.5 w-2.5" fill="currentColor" />{badge.label}</span>
           : <span className="chip !rounded-md !px-2 !py-0.5 text-[9px]"><Star className="h-2.5 w-2.5" fill="currentColor" />VIP</span>}
         <button onClick={toggleWish} aria-label="wishlist"
-          className={cn('grid h-8 w-8 place-items-center rounded-lg border border-stone-200 bg-white text-stone-700 shadow-sm transition hover:border-amber-600 hover:text-amber-800', wished && 'border-rose-200 bg-rose-50 text-rose-600')}>
+          className={cn('grid h-8 w-8 place-items-center rounded-lg border border-border bg-card text-muted-foreground shadow-sm transition hover:border-primary hover:text-primary', wished && 'border-rose-400/50 bg-rose-500/10 text-rose-600 dark:text-rose-400')}>
           <Heart className="h-4 w-4" fill={wished ? 'currentColor' : 'none'} />
         </button>
       </div>
 
       <button onClick={() => navigate(`/number/${item.number_id}`)} className="relative text-center">
-        <div className="mb-1 flex items-center justify-center gap-1.5 truncate text-[10px] font-bold text-stone-500">
-          <Crown className="h-3.5 w-3.5 shrink-0 text-amber-700" /> <span className="truncate">{item.title_label || item.category_name || 'Signature VIP Number'}</span>
+        <div className="mb-1 flex items-center justify-center gap-1.5 truncate text-[10px] font-bold text-muted-foreground">
+          <Crown className="h-3.5 w-3.5 shrink-0 text-primary" /> <span className="truncate">{item.title_label || item.category_name || 'Signature VIP Number'}</span>
         </div>
-        <div className="truncate text-[1.32rem] font-black tabular-nums tracking-wide text-stone-950 sm:text-[1.42rem]">
+        <div className="truncate text-[1.32rem] font-black tabular-nums tracking-wide text-foreground sm:text-[1.42rem]">
           {formatNumberParts(item.display_number)}
         </div>
       </button>
 
-      <div className="relative my-2 flex items-center justify-center gap-1.5 border-y border-stone-100 py-1.5 text-emerald-700">
+      <div className="relative my-2 flex items-center justify-center gap-1.5 border-y border-border py-1.5 text-emerald-700 dark:text-emerald-400">
         <ShieldCheck className="h-3.5 w-3.5" />
         <span className="text-[10px] font-bold">Verified &amp; available on any operator</span>
       </div>
 
       <div className="relative grid grid-cols-4 gap-1.5">
-        <div className="rounded-lg border border-stone-200 bg-stone-50 py-1.5 text-center">
-          <div className="text-[9px] text-stone-500">Total</div>
-          <div className="text-sm font-black text-stone-900">{total}</div>
+        <div className="rounded-lg border border-border bg-muted py-1.5 text-center">
+          <div className="text-[9px] text-muted-foreground">Total</div>
+          <div className="text-sm font-black text-foreground">{total}</div>
         </div>
-        <div className="rounded-lg border border-stone-200 bg-stone-50 py-1.5 text-center">
-          <div className="text-[9px] text-stone-500">Sum</div>
-          <div className="text-sm font-black text-stone-900">{sum}</div>
+        <div className="rounded-lg border border-border bg-muted py-1.5 text-center">
+          <div className="text-[9px] text-muted-foreground">Sum</div>
+          <div className="text-sm font-black text-foreground">{sum}</div>
         </div>
-        <div className="col-span-2 rounded-lg border border-amber-200 bg-amber-50 px-2 py-1.5">
+        <div className="col-span-2 rounded-lg border border-primary/30 bg-primary/10 px-2 py-1.5">
           <div className="flex items-center justify-between gap-1">
-            <span className="text-[9px] text-stone-500 line-through">{formatINR(item.mrp)}</span>
-            {discountPct > 0 && <span className="rounded-full bg-white px-1.5 py-0.5 text-[9px] font-black text-amber-800">{discountPct}%</span>}
+            <span className="text-[9px] text-muted-foreground line-through">{formatINR(item.mrp)}</span>
+            {discountPct > 0 && <span className="rounded-full bg-card px-1.5 py-0.5 text-[9px] font-black text-primary">{discountPct}%</span>}
           </div>
-          <div className="flex items-center justify-end gap-0.5 text-base font-black leading-none text-stone-950"><IndianRupee className="h-3.5 w-3.5" />{Number(item.offer_price).toLocaleString('en-IN')}</div>
+          <div className="flex items-center justify-end gap-0.5 text-base font-black leading-none text-foreground"><IndianRupee className="h-3.5 w-3.5" />{Number(item.offer_price).toLocaleString('en-IN')}</div>
         </div>
       </div>
 
       <div className="relative mt-2 grid grid-cols-[1fr_auto_auto] gap-1.5">
-        <button className="h-9 rounded-lg bg-stone-900 px-3 text-xs font-black text-white shadow-sm transition hover:bg-stone-800 disabled:opacity-50" onClick={buyNow} disabled={!!sold}>{sold ? 'Sold' : 'Buy Now'}</button>
-        <button aria-label="add to cart" className="grid h-9 w-10 place-items-center rounded-lg border border-stone-300 bg-white text-stone-800 transition hover:border-amber-700 hover:text-amber-800 disabled:opacity-50" onClick={addToCart} disabled={busy || !!sold}>
+        <button className="h-9 rounded-lg bg-foreground px-3 text-xs font-black text-background shadow-sm transition hover:opacity-90 disabled:opacity-50" onClick={buyNow} disabled={!!sold}>{sold ? 'Sold' : 'Buy Now'}</button>
+        <button aria-label="add to cart" className="grid h-9 w-10 place-items-center rounded-lg border border-border bg-card text-foreground transition hover:border-primary hover:text-primary disabled:opacity-50" onClick={addToCart} disabled={busy || !!sold}>
           <ShoppingCart className="h-4 w-4" />
         </button>
         <button onClick={() => toggleCompare(item.number_id)}
           aria-label="compare"
-          className={cn('grid h-9 w-10 place-items-center rounded-lg border border-stone-300 bg-white transition hover:border-amber-700', inCompare ? 'border-amber-600 bg-amber-50 text-amber-800' : 'text-stone-800')}>
+          className={cn('grid h-9 w-10 place-items-center rounded-lg border border-border bg-card transition hover:border-primary', inCompare ? 'border-primary bg-accent text-primary' : 'text-foreground')}>
           <BarChart2 className="h-4 w-4" />
         </button>
       </div>

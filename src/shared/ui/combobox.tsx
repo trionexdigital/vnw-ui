@@ -63,7 +63,7 @@ export function Combobox<T>({
     <div ref={wrapRef} className={containerClassName}>
       <div className="relative">
         {icon && (
-          <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 z-10">
+          <span className="pointer-events-none absolute left-2.5 top-1/2 z-10 -translate-y-1/2 text-muted-foreground">
             {icon}
           </span>
         )}
@@ -75,29 +75,29 @@ export function Combobox<T>({
           onBlur={onBlur}
           placeholder=" "
           className={cn(
-            "peer w-full rounded-lg border bg-white pr-3 text-sm text-gray-900 outline-none transition-colors dark:bg-gray-900 dark:text-white",
+            "peer w-full rounded-lg border bg-background pr-3 text-sm text-foreground outline-none transition-colors",
             dense ? "h-9" : "h-10",
             icon ? "pl-8" : "pl-3",
             error
-              ? "border-red-400 focus:border-red-400"
-              : "border-gray-200 focus:border-sky-400 dark:border-gray-700 dark:focus:border-sky-500",
-            disabled && "opacity-60 cursor-not-allowed bg-gray-50 dark:bg-gray-800"
+              ? "border-destructive focus:border-destructive"
+              : "border-input focus:border-primary focus:ring-2 focus:ring-ring/20",
+            disabled && "cursor-not-allowed bg-muted opacity-60"
           )}
         />
         <label
           className={cn(
             "pointer-events-none absolute z-10 transition-all duration-150 select-none",
             isFloating
-              ? cn("left-3 top-0 -translate-y-1/2 text-[0.65rem] font-medium px-1 bg-white dark:bg-gray-900",
-                  error ? "text-red-500" : "text-sky-500 dark:text-sky-400")
-              : cn(icon ? "left-8" : "left-3", "top-1/2 -translate-y-1/2 text-sm text-slate-400 dark:text-gray-500")
+              ? cn("left-3 top-0 -translate-y-1/2 bg-background px-1 text-[0.65rem] font-medium",
+                  error ? "text-destructive" : "text-primary")
+              : cn(icon ? "left-8" : "left-3", "top-1/2 -translate-y-1/2 text-sm text-muted-foreground")
           )}
         >
           {label}
         </label>
 
         {open && (header || filtered.length > 0 || query) && (
-          <div className="absolute z-50 left-0 right-0 top-full mt-1 max-h-56 overflow-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900">
+          <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-56 overflow-auto rounded-lg border border-popover-border bg-popover text-popover-foreground shadow-lg">
             {typeof header === "function" ? header(close) : header}
             {filtered.map((it) => (
               <button
@@ -109,14 +109,14 @@ export function Combobox<T>({
                   setQuery("");
                   setOpen(false);
                 }}
-                className="w-full px-3 py-1.5 text-left text-sm text-gray-700 hover:bg-sky-50 hover:text-sky-700 dark:text-gray-200 dark:hover:bg-sky-950/50"
+                className="w-full px-3 py-1.5 text-left text-sm text-popover-foreground hover:bg-accent hover:text-accent-foreground"
               >
                 {renderOption ? renderOption(it) : getLabel(it)}
               </button>
             ))}
             {query && filtered.length === 0 && (
               emptyContent ? emptyContent(query, close)
-                : emptyText ? <div className="px-3 py-2 text-sm text-slate-400">{emptyText}</div>
+                : emptyText ? <div className="px-3 py-2 text-sm text-muted-foreground">{emptyText}</div>
                 : null
             )}
           </div>

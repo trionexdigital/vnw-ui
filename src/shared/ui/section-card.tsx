@@ -14,8 +14,8 @@ export function SectionCard({ title, actions, className, bodyClassName, children
   return (
     <div className={cn(ui.card, className)} {...props}>
       {(title || actions) && (
-        <div className="flex items-center justify-between gap-2 px-4 py-3 border-b border-slate-100 dark:border-slate-800">
-          {title && <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-100">{title}</h2>}
+        <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-3">
+          {title && <h2 className="text-sm font-semibold text-foreground">{title}</h2>}
           {actions && <div className="flex items-center gap-2">{actions}</div>}
         </div>
       )}

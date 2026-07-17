@@ -26,11 +26,10 @@ export function FloatingTextarea({
           rows={rows}
           placeholder=" "
           className={cn(
-            "peer w-full rounded-lg border bg-white px-3 pt-4 pb-2 text-sm text-gray-900 outline-none transition-colors resize-none",
-            "dark:bg-gray-900 dark:text-white",
+            "peer w-full resize-none rounded-lg border bg-background px-3 pb-2 pt-4 text-sm text-foreground outline-none transition-colors",
             isError
-              ? "border-red-400 focus:border-red-400"
-              : "border-gray-200 focus:border-sky-400 dark:border-gray-700 dark:focus:border-sky-500",
+              ? "border-destructive focus:border-destructive"
+              : "border-input focus:border-primary focus:ring-2 focus:ring-ring/20",
             className
           )}
           {...props}
@@ -38,15 +37,15 @@ export function FloatingTextarea({
         <label
           className={cn(
             "pointer-events-none absolute z-10 left-3 transition-all duration-150 select-none",
-            "top-0 -translate-y-1/2 text-[0.65rem] font-medium px-1 bg-white dark:bg-gray-900",
-            isError ? "text-red-500" : "text-sky-500 dark:text-sky-400",
+            "top-0 -translate-y-1/2 bg-background px-1 text-[0.65rem] font-medium",
+            isError ? "text-destructive" : "text-primary",
             "peer-placeholder-shown:top-3 peer-placeholder-shown:translate-y-0",
-            "peer-placeholder-shown:text-sm peer-placeholder-shown:font-normal peer-placeholder-shown:text-slate-400 dark:peer-placeholder-shown:text-gray-500",
+            "peer-placeholder-shown:text-sm peer-placeholder-shown:font-normal peer-placeholder-shown:text-muted-foreground",
             "peer-placeholder-shown:bg-transparent peer-placeholder-shown:px-0",
             "peer-focus:top-0 peer-focus:-translate-y-1/2",
             "peer-focus:text-[0.65rem] peer-focus:font-medium peer-focus:px-1",
-            "peer-focus:bg-white dark:peer-focus:bg-gray-900",
-            isError ? "peer-focus:text-red-500" : "peer-focus:text-sky-500 dark:peer-focus:text-sky-400"
+            "peer-focus:bg-background",
+            isError ? "peer-focus:text-destructive" : "peer-focus:text-primary"
           )}
         >
           {label}
