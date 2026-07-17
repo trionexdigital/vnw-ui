@@ -217,8 +217,27 @@ function Header() {
 function Footer() {
   return (
     <footer className="px-3 pb-3">
-      <div className="glass-panel mx-auto max-w-7xl overflow-hidden rounded-[1.5rem]">
-        <div className="grid gap-6 px-6 py-8 md:grid-cols-[1.1fr_1fr] lg:grid-cols-[1.2fr_1fr_1fr_1fr]">
+      <div className="glass-panel relative isolate mx-auto max-w-7xl overflow-hidden rounded-[1.5rem]">
+        <div className="footer__butterflies pointer-events-none absolute inset-0 z-0" aria-hidden="true">
+          {HEADER_BUTTERFLIES.map((butterfly) => (
+            <span
+              key={`footer-${butterfly.left}-${butterfly.top}`}
+              className="header-hero-butterfly numeric-butterfly numeric-butterfly--background absolute"
+              style={{
+                left: butterfly.left,
+                top: butterfly.top,
+                animationDelay: butterfly.delay,
+                animationDuration: butterfly.duration,
+                '--flutter-delay': butterfly.delay,
+              } as React.CSSProperties}
+            >
+              <span className="numeric-butterfly__wing numeric-butterfly__wing--left">{butterfly.wings[0]}</span>
+              <span className="numeric-butterfly__body" />
+              <span className="numeric-butterfly__wing numeric-butterfly__wing--right">{butterfly.wings[1]}</span>
+            </span>
+          ))}
+        </div>
+        <div className="relative z-10 grid gap-6 px-6 py-8 md:grid-cols-[1.1fr_1fr] lg:grid-cols-[1.2fr_1fr_1fr_1fr]">
           <div>
             <Logo />
             <p className="mt-4 max-w-sm text-sm text-muted-foreground">India's trusted VIP number marketplace with genuine numbers, secure payments, and pan-India delivery.</p>
@@ -250,7 +269,7 @@ function Footer() {
             <NewsletterForm />
           </div>
         </div>
-        <div className="flex flex-col items-center justify-between gap-3 border-t border-white/60 px-6 py-4 text-xs text-muted-foreground sm:flex-row">
+        <div className="relative z-10 flex flex-col items-center justify-between gap-3 border-t border-white/60 px-6 py-4 text-xs text-muted-foreground sm:flex-row">
           <span>&copy; {new Date().getFullYear()} VNW - VIP Number World. All rights reserved.</span>
           <span className="flex items-center gap-1"><Sparkles className="h-3.5 w-3.5 text-[#d923c6]" /> Follow Us</span>
         </div>

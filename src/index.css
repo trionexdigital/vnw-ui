@@ -548,8 +548,11 @@
 
   .public-header {
     padding-inline: 0;
+    padding-top: 0;
     background: transparent;
-    transition: padding-inline 260ms cubic-bezier(.2,0,0,1);
+    transition:
+      padding-inline 260ms cubic-bezier(.2,0,0,1),
+      padding-top 260ms cubic-bezier(.2,0,0,1);
   }
   .public-header__panel {
     max-width: none;
@@ -569,6 +572,7 @@
   }
   .public-header.is-scrolled {
     padding-inline: .75rem;
+    padding-top: .75rem;
   }
   .public-header.is-scrolled .public-header__panel {
     max-width: 1880px;
@@ -579,7 +583,8 @@
     box-shadow: 0 2px 8px rgba(31,29,26,.06);
     backdrop-filter: blur(12px);
   }
-  .public-header__butterflies {
+  .public-header__butterflies,
+  .footer__butterflies {
     overflow: hidden;
     border-radius: inherit;
   }
@@ -964,7 +969,8 @@
     animation-play-state: paused;
   }
   .home-hero.is-motion-active .numeric-butterfly__wing { animation-play-state: running; }
-  .public-header .numeric-butterfly__wing { animation-play-state: running; }
+  .public-header .numeric-butterfly__wing,
+  .footer__butterflies .numeric-butterfly__wing { animation-play-state: running; }
   .numeric-butterfly__wing--left {
     border-radius: 70% 36% 62% 30%;
     transform: rotate(-16deg) skewY(4deg);
@@ -1019,7 +1025,11 @@
     z-index: 0;
   }
   .home-showcase__butterflies--ambient .home-hero__butterfly {
-    opacity: .16;
+    opacity: .18;
+    animation-name: homeHeroButterflyFlightAmbient;
+  }
+  .home-showcase__butterflies--ambient .home-hero__butterfly.home-hero__butterfly--reverse {
+    animation-name: homeHeroButterflyFlightAmbientReverse;
   }
   .home-showcase__butterflies--focus {
     z-index: 1;
@@ -1075,16 +1085,29 @@
     62% { transform: translate3d(4vw, 13px, 0) rotate(-4deg) scale(.96); }
     84% { transform: translate3d(1.5vw, -10px, 0) rotate(6deg) scale(1); }
   }
+  @keyframes homeHeroButterflyFlightAmbient {
+    0% { opacity: .06; transform: translate3d(0, 8px, 0) rotate(-7deg) scale(.92); }
+    30% { opacity: .18; transform: translate3d(2vw, -18px, 0) rotate(5deg) scale(1.02); }
+    64% { opacity: .13; transform: translate3d(4vw, 13px, 0) rotate(-4deg) scale(.96); }
+    100% { opacity: .04; transform: translate3d(0, 8px, 0) rotate(-7deg) scale(.92); }
+  }
   @keyframes homeHeroButterflyFlightReverse {
     0%, 100% { transform: translate3d(0, -7px, 0) rotate(6deg) scale(.94); }
     32% { transform: translate3d(-2vw, 16px, 0) rotate(-5deg) scale(1.03); }
     68% { transform: translate3d(-4vw, -14px, 0) rotate(4deg) scale(.97); }
     86% { transform: translate3d(-1.5vw, 9px, 0) rotate(-6deg) scale(1); }
   }
+  @keyframes homeHeroButterflyFlightAmbientReverse {
+    0% { opacity: .06; transform: translate3d(0, -7px, 0) rotate(6deg) scale(.94); }
+    30% { opacity: .18; transform: translate3d(-2vw, 16px, 0) rotate(-5deg) scale(1.03); }
+    64% { opacity: .13; transform: translate3d(-4vw, -14px, 0) rotate(4deg) scale(.97); }
+    100% { opacity: .04; transform: translate3d(0, -7px, 0) rotate(6deg) scale(.94); }
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .header-hero-butterfly,
-    .public-header .numeric-butterfly__wing {
+    .public-header .numeric-butterfly__wing,
+    .footer__butterflies .numeric-butterfly__wing {
       animation: none !important;
     }
   }

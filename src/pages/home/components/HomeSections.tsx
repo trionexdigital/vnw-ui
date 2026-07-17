@@ -139,18 +139,21 @@ const orbitNumbers = [
 ];
 
 const heroButterflies = [
-  { left: '2%', top: '13%', wings: ['93', '39'], delay: '-2.4s', duration: '18s' },
-  { left: '8%', top: '44%', wings: ['11', '22'], delay: '-13.8s', duration: '22s' },
+  { left: '92%', top: '14%', wings: ['93', '39'], delay: '-2.4s', duration: '18s' },
+  { left: '50%', top: '74%', wings: ['11', '22'], delay: '-13.8s', duration: '22s' },
   { left: '14%', top: '69%', wings: ['78', '87'], delay: '-9.2s', duration: '21s', reverse: true },
   { left: '24%', top: '88%', wings: ['55', '99'], delay: '-17.2s', duration: '24s', reverse: true },
-  { left: '31%', top: '31%', wings: ['7', '77'], delay: '-5.8s', duration: '19s' },
-  { left: '39%', top: '9%', wings: ['108', '801'], delay: '-11.4s', duration: '23s' },
+  { left: '47%', top: '40%', wings: ['7', '77'], delay: '-5.8s', duration: '19s' },
+  { left: '52%', top: '14%', wings: ['108', '801'], delay: '-11.4s', duration: '23s' },
   { left: '45%', top: '82%', wings: ['99', '66'], delay: '-12.6s', duration: '23s', reverse: true },
   { left: '53%', top: '58%', wings: ['131', '313'], delay: '-19.1s', duration: '25s' },
   { left: '60%', top: '17%', wings: ['786', '687'], delay: '-7.7s', duration: '22s' },
   { left: '74%', top: '72%', wings: ['0001', '1000'], delay: '-15.4s', duration: '24s', reverse: true },
   { left: '82%', top: '10%', wings: ['909', '909'], delay: '-8.6s', duration: '21s', reverse: true },
   { left: '88%', top: '38%', wings: ['911', '1911'], delay: '-4.1s', duration: '20s', reverse: true },
+  { left: '66%', top: '39%', wings: ['24', '42'], delay: '-16.6s', duration: '23s' },
+  { left: '78%', top: '88%', wings: ['121', '121'], delay: '-6.9s', duration: '22s', reverse: true },
+  { left: '91%', top: '67%', wings: ['999', '999'], delay: '-10.8s', duration: '24s', reverse: true },
 ];
 
 function HeroButterflyLayer({ mode }: { mode: 'ambient' | 'focus' }) {
