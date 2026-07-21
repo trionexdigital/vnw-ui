@@ -1,28 +1,27 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { dealerAPI, categoriesAPI, numbersAPI } from '@/core/api/vnwAPI';
+import { dealerAPI, numbersAPI } from '@/core/api/vnwAPI';
 import { useToast } from '@/shared/hooks/use-toast';
 import { PageHeader, Panel } from '@/shared/components/ui-bits';
 import { numerologySum, formatINR } from '@/core/lib/format';
+import DetectedCategories from '@/shared/components/DetectedCategories';
 
 export default function DealerListingForm() {
   const { id } = useParams();
   const editing = !!id;
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [cats, setCats] = useState<any[]>([]);
   const [busy, setBusy] = useState(false);
   // Pricing model: dealer enters a Sale Price and a flat Discount Amount.
   // Final price = sale_price − discount_amount; the % shown on cards is derived from these.
   const [f, setF] = useState<any>({
-    display_number: '', category_id: '', title_label: 'Fancy VIP Number', sale_price: '', discount_amount: '',
+    display_number: '', title_label: 'Fancy VIP Number', sale_price: '', discount_amount: '',
     numerology_sum: '', operator: 'Any', description: '',
   });
 
-  useEffect(() => { categoriesAPI.list().then(setCats).catch(() => {}); }, []);
   useEffect(() => {
     if (editing) numbersAPI.detail(Number(id)).then((n) => setF({
-      display_number: n.display_number, category_id: n.category_id || '', title_label: n.title_label,
+      display_number: n.display_number, title_label: n.title_label,
       sale_price: n.mrp, discount_amount: Math.max(0, Number(n.mrp) - Number(n.offer_price)),
       numerology_sum: n.numerology_sum || '', operator: 'Any', description: n.description || '',
     })).catch(() => {});
@@ -44,7 +43,6 @@ export default function DealerListingForm() {
       const payload = {
         display_number: f.display_number,
         number_value: f.display_number.replace(/\s+/g, ''),
-        category_id: f.category_id || null,
         title_label: f.title_label,
         operator: f.operator,
         description: f.description,
@@ -67,11 +65,7 @@ export default function DealerListingForm() {
         <form onSubmit={submit} className="grid gap-3 sm:grid-cols-2">
           <div className="sm:col-span-2"><label className="mb-1 block text-xs text-muted-foreground">Number (with spaces)</label>
             <input required className={input} placeholder="9876 543 210" value={f.display_number} onChange={(e) => set('display_number', e.target.value)} /></div>
-          <div><label className="mb-1 block text-xs text-muted-foreground">Category</label>
-            <select className={input} value={f.category_id} onChange={(e) => set('category_id', e.target.value)}>
-              <option value="">Select</option>
-              {cats.map((c) => <option key={c.category_id} value={c.category_id}>{c.name}</option>)}
-            </select></div>
+          <DetectedCategories number={f.display_number} className="sm:col-span-2" />
           <div><label className="mb-1 block text-xs text-muted-foreground">Label</label>
             <input className={input} value={f.title_label} onChange={(e) => set('title_label', e.target.value)} /></div>
           <div><label className="mb-1 block text-xs text-muted-foreground">Sale Price (₹)</label>

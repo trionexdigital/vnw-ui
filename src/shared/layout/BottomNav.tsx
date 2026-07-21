@@ -23,7 +23,7 @@ export default function BottomNav() {
 
   const items = [
     { to: '/', label: 'Home', icon: Home, end: true },
-    { to: '/shop', label: 'Category', icon: Grid3X3 },
+    { to: '/categories', label: 'Category', icon: Grid3X3 },
     { to: '/shop', label: 'Search', icon: Search, action: () => setSearchOpen(true), center: true },
     { to: '/wishlist', label: 'Wishlist', icon: Heart, badge: wishlistCount },
     { to: authed ? '/account' : '/login', label: 'Account', icon: User },
@@ -51,7 +51,7 @@ export default function BottomNav() {
               <button className="btn-royal shrink-0 px-4">Go</button>
             </div>
             <div className="mt-3 flex flex-wrap gap-2">
-              {['9999', '7777', 'sum 9', 'business under 50000'].map((p) => (
+              {['9999', '786', 'sum 9', 'mirror under 50000'].map((p) => (
                 <button key={p} type="button" onClick={() => setQuery(p)} className="rounded-2xl bg-card/70 px-3 py-1.5 text-xs font-bold text-foreground/75">{p}</button>
               ))}
             </div>

@@ -1,71 +1,67 @@
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it } from 'vitest';
-import { MemoryRouter } from 'react-router-dom';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import HomeCarousel from '@/pages/home/components/HomeCarousel';
-import type { CarouselSlide } from '@/core/api/vnwAPI';
+import type { CarouselDocument, PublishedCarouselSlide } from '@/core/carousel/types';
 
-const slides: CarouselSlide[] = [
-  {
-    banner_id: 1,
-    eyebrow: 'Curated drop',
-    title: 'Signature number collection',
-    subtitle: 'Discover memorable premium combinations.',
-    image: 'data:image/webp;base64,AAAA',
-    cta_text: 'Explore numbers',
-    cta_link: '/shop',
-    content_x: 36,
-    content_y: 54,
-    is_active: 1,
-    sort_order: 0,
+vi.mock('@/core/api/vnwAPI', () => ({
+  carouselAPI: {
+    assetBlob: vi.fn(async () => new Blob(['asset'], { type: 'image/png' })),
+    previewBlob: vi.fn(async () => new Blob(['preview'], { type: 'image/jpeg' })),
   },
-  {
-    banner_id: 2,
-    title: 'Guided VIP transfer',
-    subtitle: 'Secure support from purchase to activation.',
-    image: 'data:image/webp;base64,BBBB',
-    is_active: 1,
-    sort_order: 1,
-  },
+}));
+
+vi.mock('@/shared/components/carousel/CarouselArtboard', () => ({
+  default: ({ document, previewUrl }: { document: CarouselDocument; previewUrl: string }) => <img alt={String(document.fabric.objects[0]?.vnwAriaLabel || 'Carousel artwork')} data-preview-ready={String(Boolean(previewUrl))} src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" />,
+  collectCarouselAssetIds: () => [],
+}));
+
+Object.defineProperties(URL, {
+  createObjectURL: { configurable: true, value: vi.fn(() => 'blob:carousel-preview') },
+  revokeObjectURL: { configurable: true, value: vi.fn() },
+});
+
+const desktop = (label: string): CarouselDocument => ({
+  version: 1,
+  artboard: { width: 1600, height: 900 },
+  settings: { background: '#111' },
+  fabric: { objects: [{ type: 'Rect', vnwId: label, vnwAriaLabel: label, width: 1600, height: 900 }] },
+});
+const mobile = (label: string): CarouselDocument => ({
+  version: 1,
+  artboard: { width: 1080, height: 1920 },
+  settings: { background: '#111' },
+  fabric: { objects: [{ type: 'Rect', vnwId: label, vnwAriaLabel: label, width: 1080, height: 1920 }] },
+});
+
+const slides: PublishedCarouselSlide[] = [
+  { carousel_id: 1, name: 'Signature collection', sort_order: 0, published_revision: 2, published_desktop: desktop('Signature artwork'), published_mobile: mobile('Signature mobile artwork'), published_desktop_preview_id: 11, published_mobile_preview_id: 12, transition_style: 'fade', autoplay_seconds: 6, published_at: '2026-01-01' },
+  { carousel_id: 2, name: 'Guided transfer', sort_order: 1, published_revision: 1, published_desktop: desktop('Transfer artwork'), published_mobile: mobile('Transfer mobile artwork'), published_desktop_preview_id: 21, published_mobile_preview_id: 22, transition_style: 'slide', autoplay_seconds: 6, published_at: '2026-01-02' },
 ];
-
-function renderCarousel(items = slides, loading = false) {
-  return render(<MemoryRouter><HomeCarousel slides={items} loading={loading} /></MemoryRouter>);
-}
 
 describe('HomeCarousel', () => {
   afterEach(cleanup);
 
-  it('renders an accessible managed slide and its internal CTA', () => {
-    const { container } = renderCarousel();
-
-    const region = screen.getByRole('region', { name: 'Featured promotions' });
-    expect(region).toHaveAttribute('aria-roledescription', 'carousel');
-    expect(region.className).not.toMatch(/\bpy-/);
-    expect(screen.getByRole('img', { name: 'Signature number collection' })).toBeInTheDocument();
-    expect(screen.getByText('Curated drop')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /explore numbers/i })).toHaveAttribute('href', '/shop');
-    expect(screen.getByRole('button', { name: /pause carousel autoplay/i })).toBeInTheDocument();
-    expect(container.querySelector('.home-carousel__copy')).toHaveStyle({ '--carousel-content-x': '36%', '--carousel-content-y': '54%' });
-    expect(container.querySelector('.home-carousel__frame')).toHaveClass('h-[420px]', 'xl:h-[560px]');
-    expect(container.querySelector('.home-carousel__frame')).not.toHaveClass('border');
+  it('renders the complete production artboard in an exact-ratio card', async () => {
+    const { container } = render(<HomeCarousel slides={slides} />);
+    expect(screen.getByRole('region', { name: 'Featured VIP number stories' })).toHaveAttribute('aria-roledescription', 'carousel');
+    await waitFor(() => expect(screen.getByRole('img', { name: 'Signature artwork' })).toHaveAttribute('data-preview-ready', 'true'));
+    expect((container.querySelector('[aria-roledescription="slide"]') as HTMLElement).style.aspectRatio).toBe('1600/900');
+    expect(container.querySelector('.object-cover')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Pause carousel' })).toBeInTheDocument();
   });
 
-  it('moves to the next managed slide with the carousel control', async () => {
+  it('moves to the next published slide', async () => {
     const user = userEvent.setup();
-    renderCarousel();
-
-    await user.click(screen.getByRole('button', { name: /show next promotion/i }));
-    await waitFor(() => expect(screen.getByRole('img', { name: 'Guided VIP transfer' })).toBeInTheDocument());
+    render(<HomeCarousel slides={slides} />);
+    await user.click(screen.getByRole('button', { name: 'Next slide' }));
+    await waitFor(() => expect(screen.getByRole('img', { name: 'Transfer artwork' })).toBeInTheDocument());
   });
 
-  it('reserves the carousel frame while loading', () => {
-    renderCarousel([], true);
-    expect(screen.getByRole('region', { name: /loading homepage carousel/i })).toBeInTheDocument();
-  });
-
-  it('renders nothing when no active image slides are returned', () => {
-    const { container } = renderCarousel([]);
+  it('reserves a no-crop frame while loading and renders nothing when empty', () => {
+    const { rerender, container } = render(<HomeCarousel slides={[]} loading />);
+    expect(screen.getByRole('region', { name: /loading/i })).toBeInTheDocument();
+    rerender(<HomeCarousel slides={[]} />);
     expect(container).toBeEmptyDOMElement();
   });
 });

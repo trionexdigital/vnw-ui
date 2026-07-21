@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { CheckCircle2, ArrowLeft } from 'lucide-react';
 import { ordersAPI } from '@/core/api/vnwAPI';
+import { getPrimaryCategory } from '@/core/categories/types';
 import { Loader, StatusBadge, Money } from '@/shared/components/ui-bits';
 
 export default function OrderDetail() {
@@ -42,7 +43,7 @@ export default function OrderDetail() {
             <div key={it.order_item_id} className="flex items-center justify-between py-3">
               <div>
                 <div className="text-lg font-bold text-foreground">{it.display_number}</div>
-                <div className="text-xs text-muted-foreground">{it.category_name} · <StatusBadge status={it.item_status} /></div>
+                <div className="text-xs text-muted-foreground">{getPrimaryCategory(it)?.name || 'Unique'} · <StatusBadge status={it.item_status} /></div>
               </div>
               <Money value={it.price} />
             </div>

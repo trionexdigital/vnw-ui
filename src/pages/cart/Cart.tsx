@@ -5,6 +5,7 @@ import { cartAPI } from '@/core/api/vnwAPI';
 import { useStore } from '@/shared/store/useStore';
 import { localService } from '@/core/services/local';
 import { formatINR } from '@/core/lib/format';
+import { getPrimaryCategory } from '@/core/categories/types';
 import { Loader, EmptyState } from '@/shared/components/ui-bits';
 
 export default function Cart() {
@@ -38,7 +39,7 @@ export default function Cart() {
                 <div>
                   <Link to={`/number/${it.number_id}`} className="text-xl font-extrabold text-foreground">{it.display_number}</Link>
                   <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
-                    <span>{it.title_label || it.category_name}</span>
+                    <span>{it.title_label || getPrimaryCategory(it)?.name || 'VIP Number'}</span>
                     <span className="flex items-center gap-1"><Sigma className="h-3 w-3" /> Sum {it.numerology_sum}</span>
                   </div>
                 </div>

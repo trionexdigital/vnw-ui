@@ -23,15 +23,11 @@ import NumberCard, { NumberItem } from '@/shared/components/NumberCard';
 import { Loader } from '@/shared/components/ui-bits';
 import { Logo, Slogan } from '@/shared/components/Logo';
 import type { HeroStats } from '@/core/api/vnwAPI';
+import type { NumberCategory } from '@/core/categories/types';
+import { getCategoryCount } from '@/core/categories/types';
 import { cn } from '@/core/lib/utils';
+import { CategoryGrid } from '@/shared/components/categories/CategoryCard';
 import { MotionGrid, MotionGridItem, MotionSection, motion, useReducedMotion } from '@/shared/motion/MotionPrimitives';
-
-export interface HomeCategory {
-  category_id?: number;
-  name?: string;
-  slug?: string;
-  description?: string;
-}
 
 export interface HomeTestimonial {
   testimonial_id?: number;
@@ -509,22 +505,65 @@ export function HowItWorksSection() {
   );
 }
 
-export function CategorySection({ categories }: { categories: HomeCategory[] }) {
-  const normalized = categories.filter((category) => category?.name && category?.slug).slice(0, 8);
+const FEATURED_CATEGORY_SLUGS = [
+  'mirror-numbers',
+  'semi-mirror-numbers',
+  'counting-numbers',
+  '786-numbers',
+  'ab-ab-xy-xy-numbers',
+  'triple-numbers',
+  'penta-numbers',
+  'without-248-numbers',
+];
 
-  if (!normalized.length) {
+export function CategorySection({ categories, loading = false }: { categories: NumberCategory[]; loading?: boolean }) {
+  const normalized = categories.filter((category) => category?.name && category?.slug);
+  const available = normalized.filter((category) => getCategoryCount(category) > 0);
+  const pool = available.length ? available : normalized;
+  const bySlug = new Map(pool.map((category) => [category.slug, category]));
+  const selected: NumberCategory[] = [];
+
+  for (const slug of FEATURED_CATEGORY_SLUGS) {
+    const category = bySlug.get(slug);
+    if (category) selected.push(category);
+  }
+  for (const category of pool) {
+    if (selected.length >= 8) break;
+    if (!selected.some((item) => item.slug === category.slug)) selected.push(category);
+  }
+
+  if (loading) {
     return (
-      <section className="bg-card px-4 py-8 sm:px-6 lg:px-8">
+      <section data-home-category-section className="bg-card px-4 py-8 sm:px-6 lg:px-8" aria-label="Loading number categories" aria-busy="true">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-5 h-8 w-72 max-w-full animate-pulse rounded bg-muted" />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, index) => (
+              <div key={index} className="min-h-[154px] animate-pulse rounded-2xl border border-border bg-background p-4 shadow-sm">
+                <div className="h-10 w-10 rounded-xl bg-muted" />
+                <div className="mt-4 h-4 w-2/3 rounded bg-muted" />
+                <div className="mt-3 h-3 w-1/2 rounded bg-muted" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!selected.length) {
+    return (
+      <section data-home-category-section className="bg-card px-4 py-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <SectionHeader
             eyebrow="Number categories"
-            title="Explore by route"
-            description="Use existing marketplace routes for broad browsing and numerology discovery."
+            title="Explore every VIP pattern"
+            description="Browse all available numbers or discover the complete automatic category catalog."
           />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {[
               ['All VIP numbers', '/shop', 'Browse the full marketplace.'],
-              ['Premium numbers', '/shop?category=premium', 'Open the existing premium category route.'],
+              ['Number categories', '/categories', 'Explore all automatically detected patterns.'],
               ['Numerology', '/numerology', 'Use the existing numerology page.'],
             ].map(([title, to, text]) => (
               <Link key={title} to={to} className={cn(mutedCard, 'block p-5 transition hover:border-primary', focusRing)}>
@@ -539,28 +578,19 @@ export function CategorySection({ categories }: { categories: HomeCategory[] }) 
   }
 
   return (
-    <section className="bg-card px-4 py-8 sm:px-6 lg:px-8">
+    <section data-home-category-section className="bg-card px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeader
           eyebrow="Number categories"
-          title="Browse current categories"
-          description="These categories come from the existing category API."
-        />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {normalized.map((category) => (
-            <Link
-              key={category.category_id || category.slug}
-              to={`/shop?category=${encodeURIComponent(category.slug || '')}`}
-              className={cn(mutedCard, 'block p-5 transition hover:border-primary', focusRing)}
-            >
-              <h3 className="text-base font-black text-foreground">{category.name}</h3>
-              {category.description && <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">{category.description}</p>}
-              <span className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-primary">
-                View category <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </span>
+          title="Find your perfect number pattern"
+          description="Each number is analysed automatically and assigned to its strongest matching pattern."
+          action={
+            <Link to="/categories" className={secondaryButton}>
+              View all categories <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
-          ))}
-        </div>
+          }
+        />
+        <CategoryGrid categories={selected} compact />
       </div>
     </section>
   );

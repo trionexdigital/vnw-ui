@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { numbersAPI, categoriesAPI, testimonialsAPI, siteAPI, carouselAPI, type CarouselSlide, type HeroStats } from '@/core/api/vnwAPI';
+import { numbersAPI, categoriesAPI, testimonialsAPI, siteAPI, carouselAPI, type HeroStats } from '@/core/api/vnwAPI';
+import type { PublishedCarouselSlide } from '@/core/carousel/types';
+import type { NumberCategory } from '@/core/categories/types';
 import NumberCard, { NumberItem } from '@/shared/components/NumberCard';
 import { getRecentlyViewed } from '@/core/lib/recentlyViewed';
 import { useStore } from '@/shared/store/useStore';
@@ -10,7 +12,6 @@ import {
   BudgetBandsSection,
   FinalEnquiryCta,
   HomeHero,
-  HomeCategory,
   HomeTestimonial,
   HowItWorksSection,
   NumberGridSection,
@@ -25,14 +26,15 @@ import HomeCarousel from './components/HomeCarousel';
 export default function Home() {
   const { site } = useStore();
   const [numbers, setNumbers] = useState<NumberItem[]>([]);
-  const [categories, setCategories] = useState<HomeCategory[]>([]);
+  const [categories, setCategories] = useState<NumberCategory[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [testimonials, setTestimonials] = useState<HomeTestimonial[]>([]);
   const [loading, setLoading] = useState(true);
   const [featuredError, setFeaturedError] = useState('');
   const [heroStats, setHeroStats] = useState<HeroStats | null>(null);
   const [heroStatsLoading, setHeroStatsLoading] = useState(true);
   const [heroStatsError, setHeroStatsError] = useState(false);
-  const [carouselSlides, setCarouselSlides] = useState<CarouselSlide[]>([]);
+  const [carouselSlides, setCarouselSlides] = useState<PublishedCarouselSlide[]>([]);
   const [carouselLoading, setCarouselLoading] = useState(true);
   const [trending, setTrending] = useState<NumberItem[]>([]);
   const [recent] = useState<NumberItem[]>(() => getRecentlyViewed() as NumberItem[]);
@@ -57,22 +59,16 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    (async () => {
-      try {
-        const [cats, tlist, trend] = await Promise.all([
-          categoriesAPI.list(),
-          testimonialsAPI.list(),
-          numbersAPI.list({ sort: 'popular', limit: 4 }),
-        ]);
-        setCategories(cats || []);
-        setTestimonials(tlist || []);
-        setTrending(trend.items || []);
-      } catch {
-        setCategories([]);
-        setTestimonials([]);
-        setTrending([]);
-      }
-    })();
+    categoriesAPI.list()
+      .then((data) => setCategories(data || []))
+      .catch(() => setCategories([]))
+      .finally(() => setCategoriesLoading(false));
+    testimonialsAPI.list()
+      .then((data) => setTestimonials(data || []))
+      .catch(() => setTestimonials([]));
+    numbersAPI.list({ sort: 'popular', limit: 4 })
+      .then((data) => setTrending(data.items || []))
+      .catch(() => setTrending([]));
   }, []);
 
   useEffect(() => {
@@ -92,6 +88,8 @@ export default function Home() {
       <HomeHero stats={heroStats} statsLoading={heroStatsLoading} statsError={heroStatsError} />
 
       <HomeCarousel slides={carouselSlides} loading={carouselLoading} />
+
+      <CategorySection categories={categories} loading={categoriesLoading} />
 
       <PopularPatterns />
 
@@ -115,8 +113,6 @@ export default function Home() {
       <WhyChooseSection />
 
       <HowItWorksSection />
-
-      <CategorySection categories={categories} />
 
       <ServiceCoverageSection />
 

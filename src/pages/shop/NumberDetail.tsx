@@ -11,6 +11,7 @@ import { pushRecentlyViewed } from '@/core/lib/recentlyViewed';
 import NumberCard from '@/shared/components/NumberCard';
 import { cn } from '@/core/lib/utils';
 import { PremiumNumberShowcaseCard } from '@/shared/components/PremiumShowcaseCards';
+import { getPrimaryCategory } from '@/core/categories/types';
 
 export default function NumberDetail() {
   const { id } = useParams();
@@ -30,8 +31,9 @@ export default function NumberDetail() {
     numbersAPI.detail(Number(id)).then((d) => {
       setData(d);
       pushRecentlyViewed(d);
-      if (d?.category_slug || d?.category_id) {
-        numbersAPI.list({ category: d.category_slug || d.category_id, limit: 5, status: 'AVAILABLE' })
+      const relatedCategory = getPrimaryCategory(d)?.slug;
+      if (relatedCategory) {
+        numbersAPI.list({ category: relatedCategory, limit: 5, status: 'AVAILABLE' })
           .then((r) => setRelated((r.items || []).filter((x: any) => x.number_id !== d.number_id).slice(0, 4))).catch(() => {});
       }
     }).catch(() => setData(null)).finally(() => setLoading(false));
@@ -89,7 +91,7 @@ export default function NumberDetail() {
       <PremiumNumberShowcaseCard
         number={data.display_number}
         title={data.title_label || 'Signature VIP Number'}
-        pattern={data.category_name || 'Hexa Pattern'}
+        pattern={getPrimaryCategory(data)?.name || 'Unique Number'}
         mrp={data.mrp}
         offerPrice={data.offer_price}
         discount={data.discount_pct || Math.round(((Number(data.mrp) - Number(data.offer_price)) / Number(data.mrp)) * 100)}

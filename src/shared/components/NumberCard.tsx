@@ -8,9 +8,13 @@ import { useToast } from '@/shared/hooks/use-toast';
 import { formatINR, BADGE_META, digitTotal, numerologySum } from '@/core/lib/format';
 import { cn } from '@/core/lib/utils';
 import { motion, useReducedMotion } from 'framer-motion';
+import type { CategorizedNumber } from '@/core/categories/types';
+import { getPrimaryCategory } from '@/core/categories/types';
+import HighlightedNumber from '@/shared/components/HighlightedNumber';
 
-export interface NumberItem {
+export interface NumberItem extends CategorizedNumber {
   number_id: number;
+  number_value?: string;
   display_number: string;
   title_label?: string;
   badge?: string;
@@ -19,15 +23,8 @@ export interface NumberItem {
   discount_pct?: number;
   numerology_sum?: number;
   operator?: string;
-  category_name?: string;
   stock?: number;
   status?: string;
-}
-
-function formatNumberParts(number: string) {
-  const clean = String(number || '').replace(/\s+/g, '');
-  if (clean.length === 10) return `${clean.slice(0, 4)} ${clean.slice(4, 7)} ${clean.slice(7)}`;
-  return String(number || '').trim();
 }
 
 export default function NumberCard({ item, onWishlistChange }: { item: NumberItem; onWishlistChange?: () => void }) {
@@ -44,6 +41,11 @@ export default function NumberCard({ item, onWishlistChange }: { item: NumberIte
   const sold = item.status && item.status !== 'AVAILABLE';
   const discountPct = item.discount_pct ?? (Number(item.mrp) > 0
     ? Math.round(((Number(item.mrp) - Number(item.offer_price)) / Number(item.mrp)) * 100) : 0);
+  const primaryCategory = getPrimaryCategory(item);
+  const titleLabel = String(item.title_label || '').trim();
+  const displayTitle = titleLabel && titleLabel.toLowerCase() !== primaryCategory?.name.toLowerCase()
+    ? titleLabel
+    : 'Signature VIP Number';
 
   const requireAuth = (): boolean => {
     if (!localService.getToken()) { navigate('/login'); return false; }
@@ -91,14 +93,25 @@ export default function NumberCard({ item, onWishlistChange }: { item: NumberIte
         </button>
       </div>
 
-      <button onClick={() => navigate(`/number/${item.number_id}`)} className="relative text-center">
-        <div className="mb-1 flex items-center justify-center gap-1.5 truncate text-[10px] font-bold text-muted-foreground">
-          <Crown className="h-3.5 w-3.5 shrink-0 text-primary" /> <span className="truncate">{item.title_label || item.category_name || 'Signature VIP Number'}</span>
+      <button onClick={() => navigate(`/number/${item.number_id}`)} className="relative w-full text-center">
+        <div className="mb-1 flex items-center justify-center gap-1.5 text-[10px] font-bold text-muted-foreground">
+          <Crown className="h-3.5 w-3.5 shrink-0 text-primary" /> <span>{displayTitle}</span>
         </div>
-        <div className="truncate text-[1.32rem] font-black tabular-nums tracking-wide text-foreground sm:text-[1.42rem]">
-          {formatNumberParts(item.display_number)}
-        </div>
+        <HighlightedNumber number={item.number_value || item.display_number} category={primaryCategory} />
       </button>
+
+      {primaryCategory && (
+        <div className="relative mt-2 flex min-w-0 items-center justify-center" aria-label="Automatic number category">
+          <button
+            type="button"
+            title={primaryCategory.name}
+            onClick={() => navigate(`/shop?category=${encodeURIComponent(primaryCategory.slug)}`)}
+            className="max-w-full rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[9px] font-black text-primary transition hover:border-primary/40 hover:bg-primary/20"
+          >
+            <span className="block truncate">{primaryCategory.name}</span>
+          </button>
+        </div>
+      )}
 
       <div className="relative my-2 flex items-center justify-center gap-1.5 border-y border-border py-1.5 text-emerald-700 dark:text-emerald-400">
         <ShieldCheck className="h-3.5 w-3.5" />

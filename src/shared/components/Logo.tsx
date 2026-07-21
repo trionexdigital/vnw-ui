@@ -26,9 +26,9 @@ export function BrandLockup({
   sloganClassName?: string;
 }) {
   return (
-    <span className={cn('inline-flex min-w-0 items-center gap-2', className)}>
-      <Logo className={cn('h-10 w-10 shrink-0', logoClassName)} />
-      <Slogan className={cn('h-10 w-40 min-w-0', sloganClassName)} />
+    <span className={cn('inline-flex min-w-0 shrink items-center gap-1.5 rounded-xl sm:gap-2 dark:bg-[#fbfaf7]/95 dark:px-1.5 dark:py-1', className)}>
+      <Logo className={cn('h-10 w-10 shrink-0 object-contain sm:h-12 sm:w-12', logoClassName)} />
+      <Slogan className={cn('block h-8 w-[132px] min-w-0 translate-y-1 object-contain sm:h-10 sm:w-[165px] xl:w-[155px] 2xl:w-[195px]', sloganClassName)} />
     </span>
   );
 }

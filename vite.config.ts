@@ -14,6 +14,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { configDefaults } from 'vitest/config';
 // import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
@@ -50,6 +51,7 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./test/setup.ts'],
+    exclude: [...configDefaults.exclude, 'e2e/**'],
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@shared': path.resolve(__dirname, './src/shared'),

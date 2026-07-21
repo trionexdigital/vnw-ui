@@ -7,10 +7,12 @@ import { Loader } from '@/shared/components/ui-bits';
 import { badgeOptions } from '@/core/lib/format';
 import { AnimatePresence, motion } from 'framer-motion';
 import { MotionGrid, MotionGridItem } from '@/shared/motion/MotionPrimitives';
+import type { NumberCategory } from '@/core/categories/types';
+import { getCategoryCount } from '@/core/categories/types';
 
 export default function Shop() {
   const [params, setParams] = useSearchParams();
-  const [categories, setCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<NumberCategory[]>([]);
   const [items, setItems] = useState<NumberItem[]>([]);
   const [total, setTotal] = useState(0);
   const [pages, setPages] = useState(1);
@@ -74,11 +76,14 @@ export default function Shop() {
     <>
       <div className="mb-5">
         <div className="mb-2 text-xs font-black uppercase text-muted-foreground">Category</div>
-        <div className={compact ? 'grid grid-cols-2 gap-2' : 'space-y-1'}>
+        <div className={compact ? 'grid grid-cols-2 gap-2' : 'max-h-[380px] space-y-1 overflow-y-auto pr-1 [scrollbar-width:thin]'}>
           <button onClick={() => update({ category: '' })} className={`rounded-xl px-3 py-2 text-left text-sm font-bold ${!category ? 'border border-primary/30 bg-primary/10 text-primary' : 'border border-transparent text-muted-foreground hover:bg-accent hover:text-foreground'}`}>All</button>
           {categories.map((c) => (
-            <button key={c.category_id} onClick={() => update({ category: c.slug })}
-              className={`rounded-xl px-3 py-2 text-left text-sm font-bold ${category === c.slug ? 'border border-primary/30 bg-primary/10 text-primary' : 'border border-transparent text-muted-foreground hover:bg-accent hover:text-foreground'}`}>{c.name}</button>
+            <button key={c.slug} onClick={() => update({ category: c.slug })}
+              className={`flex items-center justify-between gap-2 rounded-xl px-3 py-2 text-left text-sm font-bold ${category === c.slug ? 'border border-primary/30 bg-primary/10 text-primary' : 'border border-transparent text-muted-foreground hover:bg-accent hover:text-foreground'}`}>
+              <span className="min-w-0 truncate">{c.name}</span>
+              <span className="shrink-0 text-[10px] opacity-70">{getCategoryCount(c).toLocaleString('en-IN')}</span>
+            </button>
           ))}
         </div>
       </div>

@@ -6,6 +6,7 @@ import { useStore } from '@/shared/store/useStore';
 import { useAppSelector } from '@/app/hooks';
 import { useToast } from '@/shared/hooks/use-toast';
 import { formatINR } from '@/core/lib/format';
+import { getPrimaryCategory } from '@/core/categories/types';
 import { Loader, EmptyState } from '@/shared/components/ui-bits';
 
 export default function Checkout() {
@@ -99,7 +100,7 @@ export default function Checkout() {
             <div key={it.number_id} className="flex items-center justify-between border-b border-card-border py-2 last:border-0">
               <div>
                 <div className="text-lg font-bold text-foreground">{it.display_number}</div>
-                <div className="text-xs text-muted-foreground">{it.title_label || it.category_name}</div>
+                <div className="text-xs text-muted-foreground">{it.title_label || getPrimaryCategory(it)?.name || 'VIP Number'}</div>
               </div>
               <span className="font-semibold text-foreground">{formatINR(it.offer_price)}</span>
             </div>

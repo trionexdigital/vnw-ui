@@ -3,6 +3,7 @@ import { adminAPI } from '@/core/api/vnwAPI';
 import { useToast } from '@/shared/hooks/use-toast';
 import { PageHeader, Loader, StatusBadge, Table, EmptyState, Money } from '@/shared/components/ui-bits';
 import Modal from '@/shared/components/Modal';
+import { getPrimaryCategory } from '@/core/categories/types';
 
 const STATUS_TABS = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'];
 
@@ -25,7 +26,6 @@ export default function AdminSellRequests() {
         request_id: approve.request_id,
         offer_price: Number(offer) || undefined,
         buy_price: Number(buy) || undefined,
-        category_id: approve.category_id || undefined,
         admin_note: note || undefined,
       });
       toast({ title: 'Approved', description: 'Seller paid to wallet; listing created.' });
@@ -53,7 +53,7 @@ export default function AdminSellRequests() {
         <Table head={['Number', 'Customer', 'Asking', 'Status', 'Submitted', 'Actions']}>
           {rows.map((r) => (
             <tr key={r.request_id} className="border-b border-card-border last:border-0">
-              <td className="px-4 py-3 text-foreground">{r.display_number}<br /><span className="text-xs text-muted-foreground">{r.category_name || '—'}</span></td>
+              <td className="px-4 py-3 text-foreground">{r.display_number}<br /><span className="text-xs text-muted-foreground">{getPrimaryCategory(r)?.name || 'Unique'}</span></td>
               <td className="px-4 py-3 text-xs text-muted-foreground">{r.full_name}<br />{r.email}<br />{r.contact_phone || r.user_phone}</td>
               <td className="px-4 py-3"><Money value={r.asking_price} /></td>
               <td className="px-4 py-3"><StatusBadge status={r.status} /></td>

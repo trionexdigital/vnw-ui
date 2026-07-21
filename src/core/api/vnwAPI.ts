@@ -1,5 +1,14 @@
 import { httpService } from '../services/http';
 import { BASE_URL } from './baseURL';
+import type {
+  CarouselAsset,
+  CarouselDocument,
+  CarouselProject,
+  CarouselProjectSummary,
+  CarouselTransition,
+  PublishedCarouselSlide,
+} from '@/core/carousel/types';
+import type { CategoryClassification, NumberCategory } from '@/core/categories/types';
 
 /** POST helper that unwraps the MasterModel envelope. Throws on status !== 1. */
 async function post<T = any>(path: string, payload: any = {}): Promise<T> {
@@ -21,7 +30,8 @@ export const numbersAPI = {
 };
 
 export const categoriesAPI = {
-  list: () => post('categories/list', {}),
+  list: () => post<NumberCategory[]>('categories/list', {}),
+  classify: (number: string) => post<CategoryClassification>('categories/classify', { number }),
 };
 
 export const cartAPI = {
@@ -67,16 +77,62 @@ export interface CarouselSlide {
   cta_link?: string | null;
   content_x?: number | null;
   content_y?: number | null;
+  content_width?: number | null;
+  content_rotation?: number | null;
+  content_style?: 'light' | 'dark' | 'brand' | 'minimal' | null;
+  text_align?: 'left' | 'center' | 'right' | null;
+  font_style?: 'serif' | 'sans' | 'display' | null;
+  title_size?: 'small' | 'medium' | 'large' | null;
+  overlay_style?: 'soft' | 'dark' | 'light' | 'brand' | 'none' | null;
   is_active: boolean | number;
   sort_order: number;
 }
 
-export const carouselAPI = {
+export const bannersAPI = {
   list: () => post<CarouselSlide[]>('banners/list', {}),
 };
 
-// Backward-compatible export for existing banner consumers.
-export const bannersAPI = carouselAPI;
+export const carouselAPI = {
+  list: () => post<PublishedCarouselSlide[]>('carousel/list', {}),
+  assetBlob: (assetId: number) => httpService.downloadRequest(BASE_URL + `carousel/asset/${assetId}`),
+  previewBlob: (assetId: number) => httpService.downloadRequest(BASE_URL + `carousel/preview/${assetId}`),
+};
+
+export const adminCarouselAPI = {
+  list: () => post<CarouselProjectSummary[]>('admin/carousel/list', {}),
+  create: (name: string, desktop?: CarouselDocument, mobile?: CarouselDocument) =>
+    post<{ carousel_id: number; revision: number }>('admin/carousel/create', { name, desktop, mobile }),
+  get: (carousel_id: number) => post<CarouselProject>('admin/carousel/get', { carousel_id }),
+  saveDraftRaw: (payload: {
+    carousel_id: number;
+    revision: number;
+    name: string;
+    desktop: CarouselDocument;
+    mobile: CarouselDocument;
+    desktop_preview_id?: number | null;
+    mobile_preview_id?: number | null;
+    transition_style: CarouselTransition;
+    autoplay_seconds: number;
+  }) => postRaw('admin/carousel/draft/save', payload),
+  publishRaw: (carousel_id: number, revision: number) => postRaw('admin/carousel/publish', { carousel_id, revision }),
+  unpublish: (carousel_id: number) => post('admin/carousel/unpublish', { carousel_id }),
+  duplicate: (carousel_id: number) => post<{ carousel_id: number }>('admin/carousel/duplicate', { carousel_id }),
+  reorder: (carousel_ids: number[]) => post('admin/carousel/reorder', { carousel_ids }),
+  delete: (carousel_id: number) => post('admin/carousel/delete', { carousel_id }),
+  deleteAsset: (carousel_id: number, asset_id: number) => post('admin/carousel/asset/delete', { carousel_id, asset_id }),
+  uploadAsset: async (carouselId: number, file: File | Blob, purpose: CarouselAsset['purpose'], width: number, height: number, fileName?: string) => {
+    const form = new FormData();
+    form.append('carousel_id', String(carouselId));
+    form.append('purpose', purpose);
+    form.append('width', String(width));
+    form.append('height', String(height));
+    form.append('file', file, fileName || (file instanceof File ? file.name : `${purpose}.png`));
+    const response = await httpService.uploadRequest(BASE_URL + 'admin/carousel/asset/upload', form);
+    if (response?.status === 1) return response.data as CarouselAsset;
+    throw new Error(response?.info || 'Upload failed');
+  },
+  assetBlob: (assetId: number) => httpService.downloadRequest(BASE_URL + `admin/carousel/asset/${assetId}`),
+};
 
 export const referralAPI = {
   validate: (code: string) => postRaw('referral/validate', { code }),
@@ -143,7 +199,6 @@ export const employeeAPI = {
   ordersList: (p: any = {}) => post('employee/orders/list', p),
   usersList: (p: any = {}) => post('employee/users/list', p),
   dealersList: () => post('employee/dealers/list', {}),
-  categoriesList: () => post('employee/categories/list', {}),
   couponsList: () => post('employee/coupons/list', {}),
   sellList: (p: any = {}) => post('employee/sell/list', p),
   actions: () => post('employee/actions', {}),
@@ -158,9 +213,6 @@ export const adminAPI = {
   numberDelete: (number_id: number) => post('admin/numbers/delete', { number_id }),
   numberApprove: (number_id: number) => post('admin/numbers/approve', { number_id }),
   numberReject: (number_id: number) => post('admin/numbers/reject', { number_id }),
-  categoriesList: () => post('admin/categories/list', {}),
-  categorySave: (p: any) => post('admin/categories/save', p),
-  categoryDelete: (category_id: number) => post('admin/categories/delete', { category_id }),
   ordersList: (p: any = {}) => post('admin/orders/list', p),
   orderDetail: (order_id: number) => post('admin/orders/detail', { order_id }),
   orderUpdateStatus: (order_id: number, status: string) => post('admin/orders/update-status', { order_id, status }),

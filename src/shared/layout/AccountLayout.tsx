@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { logout } from '@/app/authSlice';
 import { cn } from '@/core/lib/utils';
 import { hasPermission } from '@/core/lib/permissions';
-import { Logo as BrandLogo, Slogan } from '@/shared/components/Logo';
+import { BrandLockup } from '@/shared/components/Logo';
 import { ThemeControl } from '@/shared/components/ThemeControl';
 import { AnimatePresence, motion } from 'framer-motion';
 import { MotionPage } from '@/shared/motion/MotionPrimitives';
@@ -43,7 +43,6 @@ const EMPLOYEE_MENU: MenuItem[] = [
 const ADMIN_MENU: MenuItem[] = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/admin/numbers', label: 'Numbers', icon: Crown },
-  { to: '/admin/categories', label: 'Categories', icon: Tag },
   { to: '/admin/orders', label: 'Orders', icon: ShoppingBag },
   { to: '/admin/sell-requests', label: 'Sell Requests', icon: Inbox },
   { to: '/admin/approvals', label: 'Approvals', icon: ClipboardList },
@@ -61,7 +60,7 @@ const ADMIN_MENU: MenuItem[] = [
 
 const ADMIN_GROUPS = [
   { label: 'Overview', items: ['Dashboard'] },
-  { label: 'Catalog', items: ['Numbers', 'Categories', 'Carousel', 'Coupons'] },
+  { label: 'Catalog', items: ['Numbers', 'Carousel', 'Coupons'] },
   { label: 'Operations', items: ['Orders', 'Sell Requests', 'Approvals', 'Payouts'] },
   { label: 'People', items: ['Users', 'Dealers', 'Subscribers'] },
   { label: 'Trust', items: ['Reviews', 'Testimonials', 'Messages', 'Settings'] },
@@ -168,14 +167,11 @@ export default function AccountLayout() {
       mobile ? 'rounded-r-[1.6rem]' : 'rounded-none'
     )}>
       <div className={cn('flex items-center gap-3 border-b border-sidebar-border px-3 py-3', collapsed && !mobile ? 'justify-center' : 'justify-between')}>
-        <Link to={homePath} onClick={onItem} className={cn('flex min-w-0 items-center gap-1', collapsed && !mobile && 'justify-center')}>
-          <BrandLogo className="h-10 w-10 shrink-0 object-contain" />
-          {(!collapsed || mobile) && (
-            <span className="min-w-0 leading-tight">
-              <span className="block rounded-lg bg-white px-1"><Slogan className="block h-8 w-40 min-w-0 object-contain" /></span>
-              <span className="block text-[10px] font-bold capitalize text-muted-foreground">{role.toLowerCase()} panel</span>
-            </span>
-          )}
+        <Link to={homePath} onClick={onItem} className={cn('flex min-w-0 flex-col items-start gap-0.5', collapsed && !mobile && 'items-center')}>
+          {collapsed && !mobile
+            ? <BrandLockup className="dark:px-1" logoClassName="sm:h-10 sm:w-10" sloganClassName="hidden" />
+            : <BrandLockup logoClassName="sm:h-10 sm:w-10" sloganClassName="h-8 w-[132px] sm:h-8 sm:w-[132px] xl:w-[132px] 2xl:w-[132px]" />}
+          {(!collapsed || mobile) && <span className="pl-1 text-[10px] font-bold capitalize text-muted-foreground">{role.toLowerCase()} panel</span>}
         </Link>
         {mobile && <button onClick={onItem} className="grid h-10 w-10 place-items-center rounded-2xl bg-sidebar-accent text-sidebar-accent-foreground"><X className="h-5 w-5" /></button>}
       </div>

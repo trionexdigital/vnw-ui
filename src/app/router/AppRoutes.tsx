@@ -7,6 +7,7 @@ import { MotionPage } from '@/shared/motion/MotionPrimitives';
 
 // Route-level splitting keeps the storefront fast while preserving every console screen.
 const Home = lazy(() => import('@/pages/home/Home'));
+const Categories = lazy(() => import('@/pages/categories/Categories'));
 const Shop = lazy(() => import('@/pages/shop/Shop'));
 const NumberDetail = lazy(() => import('@/pages/shop/NumberDetail'));
 const Cart = lazy(() => import('@/pages/cart/Cart'));
@@ -42,7 +43,6 @@ const DealerProfile = lazy(() => import('@/pages/dealer/DealerProfile'));
 
 const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'));
 const AdminNumbers = lazy(() => import('@/pages/admin/AdminNumbers'));
-const AdminCategories = lazy(() => import('@/pages/admin/AdminCategories'));
 const AdminOrders = lazy(() => import('@/pages/admin/AdminOrders'));
 const AdminUsers = lazy(() => import('@/pages/admin/AdminUsers'));
 const AdminDealers = lazy(() => import('@/pages/admin/AdminDealers'));
@@ -50,6 +50,7 @@ const AdminPayouts = lazy(() => import('@/pages/admin/AdminPayouts'));
 const AdminReviews = lazy(() => import('@/pages/admin/AdminReviews'));
 const AdminTestimonials = lazy(() => import('@/pages/admin/AdminTestimonials'));
 const AdminBanners = lazy(() => import('@/pages/admin/AdminBanners'));
+const CarouselEditor = lazy(() => import('@/pages/admin/carousel/CarouselEditor'));
 const AdminMessages = lazy(() => import('@/pages/admin/AdminMessages'));
 const AdminCoupons = lazy(() => import('@/pages/admin/AdminCoupons'));
 const AdminSubscribers = lazy(() => import('@/pages/admin/AdminSubscribers'));
@@ -74,6 +75,7 @@ export default function AppRoutes() {
       {/* Storefront */}
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/categories" element={<Categories />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/number/:id" element={<NumberDetail />} />
         <Route path="/cart" element={<Cart />} />
@@ -89,6 +91,10 @@ export default function AppRoutes() {
       <Route path="/login" element={<StandalonePage><Auth mode="login" /></StandalonePage>} />
       <Route path="/register" element={<StandalonePage><Auth mode="register" /></StandalonePage>} />
       <Route path="/forgot" element={<StandalonePage><Auth mode="forgot" /></StandalonePage>} />
+
+      {/* Distraction-free admin studio (intentionally outside AccountLayout) */}
+      <Route path="/admin/carousel/new" element={<RoleGuard roles={adminRoles}><CarouselEditor /></RoleGuard>} />
+      <Route path="/admin/carousel/:id/edit" element={<RoleGuard roles={adminRoles}><CarouselEditor /></RoleGuard>} />
 
       {/* Account / dashboards */}
       <Route element={<RoleGuard><AccountLayout /></RoleGuard>}>
@@ -120,7 +126,7 @@ export default function AppRoutes() {
         {/* Admin */}
         <Route path="/admin" element={<RoleGuard roles={adminRoles}><AdminDashboard /></RoleGuard>} />
         <Route path="/admin/numbers" element={<RoleGuard roles={adminRoles}><AdminNumbers /></RoleGuard>} />
-        <Route path="/admin/categories" element={<RoleGuard roles={adminRoles}><AdminCategories /></RoleGuard>} />
+        <Route path="/admin/categories" element={<RoleGuard roles={adminRoles}><Navigate to="/admin/numbers?notice=automatic-categories" replace /></RoleGuard>} />
         <Route path="/admin/orders" element={<RoleGuard roles={adminRoles}><AdminOrders /></RoleGuard>} />
         <Route path="/admin/users" element={<RoleGuard roles={adminRoles}><AdminUsers /></RoleGuard>} />
         <Route path="/admin/dealers" element={<RoleGuard roles={adminRoles}><AdminDealers /></RoleGuard>} />

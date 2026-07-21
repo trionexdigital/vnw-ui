@@ -1,7 +1,9 @@
+import type { CategorizedNumber } from '@/core/categories/types';
+
 const KEY = 'vnw_recent';
 const MAX = 8;
 
-export interface RecentItem {
+export interface RecentItem extends CategorizedNumber {
   number_id: number;
   display_number: string;
   title_label?: string;
@@ -11,7 +13,6 @@ export interface RecentItem {
   discount_pct?: number;
   numerology_sum?: number;
   operator?: string;
-  category_name?: string;
   stock?: number;
   status?: string;
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Pencil, Trash2 } from 'lucide-react';
 import { dealerAPI } from '@/core/api/vnwAPI';
+import { getPrimaryCategory } from '@/core/categories/types';
 import { useToast } from '@/shared/hooks/use-toast';
 import { PageHeader, Loader, StatusBadge, Money, EmptyState, Table } from '@/shared/components/ui-bits';
 
@@ -34,7 +35,7 @@ export default function DealerListings() {
           {items.map((n) => (
             <tr key={n.number_id} className="border-b border-card-border last:border-0">
               <td className="px-4 py-3 font-bold text-foreground">{n.display_number}</td>
-              <td className="px-4 py-3 text-muted-foreground">{n.category_name || '—'}</td>
+              <td className="px-4 py-3 text-muted-foreground">{getPrimaryCategory(n)?.name || '—'}</td>
               <td className="px-4 py-3"><Money value={n.mrp} /></td>
               <td className="px-4 py-3"><Money value={n.offer_price} /></td>
               <td className="px-4 py-3"><StatusBadge status={n.status} /></td>

@@ -11,16 +11,15 @@ import { localService } from '@/core/services/local';
 import { APP_CONFIG } from '@/core/config/app.config';
 import BottomNav from './BottomNav';
 import NewsletterForm from '@/shared/components/NewsletterForm';
-import { Logo as BrandLogo, Slogan } from '@/shared/components/Logo';
+import { BrandLockup } from '@/shared/components/Logo';
 import { ThemeControl } from '@/shared/components/ThemeControl';
 import { AnimatePresence, motion } from 'framer-motion';
 import { MotionPage } from '@/shared/motion/MotionPrimitives';
 
 function Logo() {
   return (
-    <Link to="/" className="relative z-10 flex min-w-0 shrink items-center gap-1.5 rounded-xl sm:gap-2 dark:bg-[#fbfaf7]/95 dark:px-1.5 dark:py-1">
-      <BrandLogo className="h-10 w-10 shrink-0 object-contain sm:h-12 sm:w-12" />
-      <Slogan className="block h-8 w-[132px] min-w-0 translate-y-1 object-contain sm:h-10 sm:w-[165px] xl:w-[155px] 2xl:w-[195px]" />
+    <Link to="/" className="relative z-10 min-w-0 shrink">
+      <BrandLockup />
     </Link>
   );
 }
@@ -32,9 +31,11 @@ function CountBadge({ n }: { n: number }) {
 
 const NUMBER_CATS = [
   { label: 'All VIP Numbers', to: '/shop' },
-  { label: 'Premium Numbers', to: '/shop?category=premium' },
+  { label: 'All Categories', to: '/categories' },
+  { label: 'Mirror Numbers', to: '/shop?category=mirror-numbers' },
+  { label: 'Counting Numbers', to: '/shop?category=counting-numbers' },
+  { label: '786 Numbers', to: '/shop?category=786-numbers' },
   { label: 'Numerology', to: '/numerology' },
-  { label: 'Family Packs', to: '/shop?category=family' },
 ];
 
 const HEADER_BUTTERFLIES = [
@@ -206,7 +207,7 @@ function Header() {
               <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search dream number..." className="min-w-0 flex-1 bg-transparent text-sm outline-none" />
             </form>
             <div className="grid gap-2">
-              {[{ label: 'Home', to: '/' }, { label: 'Explore Numbers', to: '/shop' }, { label: 'Numerology', to: '/numerology' }, { label: 'How It Works', to: '/about' }, { label: 'About Us', to: '/about' }, { label: 'Contact Us', to: '/contact' }].map((n) => (
+              {[{ label: 'Home', to: '/' }, { label: 'Explore Numbers', to: '/shop' }, { label: 'Number Categories', to: '/categories' }, { label: 'Numerology', to: '/numerology' }, { label: 'How It Works', to: '/about' }, { label: 'About Us', to: '/about' }, { label: 'Contact Us', to: '/contact' }].map((n) => (
                 <Link key={n.label} to={n.to} onClick={() => setOpen(false)} className="rounded-xl border border-border bg-card px-4 py-3 text-sm font-bold text-foreground shadow-sm hover:border-primary hover:bg-accent">{n.label}</Link>
               ))}
             </div>
@@ -254,6 +255,7 @@ function Footer() {
             <h4 className="mb-3 font-black text-foreground">Quick Links</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link to="/shop">VIP Numbers</Link></li>
+              <li><Link to="/categories">Number Categories</Link></li>
               <li><Link to="/numerology">Numerology</Link></li>
               <li><Link to="/about">About Us</Link></li>
               <li><Link to="/contact">Contact Us</Link></li>

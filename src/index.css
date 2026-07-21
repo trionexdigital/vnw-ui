@@ -782,20 +782,6 @@
   .home-showcase__title-ornament::after { left: 3.5rem; width: 2rem; height: 1px; top: -.05rem; transform: none; }
   .home-showcase__metrics { isolation: isolate; border-radius: 1.1rem !important; }
 
-  .home-carousel__copy {
-    left: var(--carousel-content-x, 25%);
-    top: var(--carousel-content-y, 62%);
-    width: min(34rem, 44vw);
-    transform: translate(-50%, -50%);
-  }
-  @media (max-width: 639px) {
-    .home-carousel__copy {
-      inset: auto 1rem 4.25rem;
-      width: auto;
-      transform: none;
-    }
-  }
-
   .header-hero-butterfly {
     opacity: .18;
     animation-name: headerButterflyFlight;
@@ -1170,6 +1156,10 @@
     .home-showcase__butterflies--ambient,
     .home-showcase__butterflies--focus { display: none; }
     .home-showcase__butterflies--mobile-art { display: block; }
+  }
+  @media (max-width: 767px) {
+    .public-header__butterflies { display: none; }
+    .home-showcase__butterflies--mobile-art { clip-path: inset(50% 0 0 50%); }
   }
   .home-showcase__butterflies--mobile-art .home-hero__butterfly { opacity: .9; }
   .home-showcase__butterflies--focus .numeric-butterfly--background {

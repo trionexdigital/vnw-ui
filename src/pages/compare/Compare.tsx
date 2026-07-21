@@ -4,6 +4,7 @@ import { X } from 'lucide-react';
 import { numbersAPI } from '@/core/api/vnwAPI';
 import { useStore } from '@/shared/store/useStore';
 import { formatINR, BADGE_META } from '@/core/lib/format';
+import { getPrimaryCategory } from '@/core/categories/types';
 import { Loader, EmptyState } from '@/shared/components/ui-bits';
 
 export default function Compare() {
@@ -35,7 +36,7 @@ export default function Compare() {
     ['Price', (n) => formatINR(n.offer_price)],
     ['MRP', (n) => formatINR(n.mrp)],
     ['Discount', (n) => `${n.discount_pct || 0}%`],
-    ['Category', (n) => n.category_name || '—'],
+    ['Category', (n) => getPrimaryCategory(n)?.name || '—'],
     ['Numerology Sum', (n) => n.numerology_sum ?? '—'],
     ['Badge', (n) => BADGE_META[n.badge || 'NONE'].label || '—'],
     ['Status', (n) => n.status],
