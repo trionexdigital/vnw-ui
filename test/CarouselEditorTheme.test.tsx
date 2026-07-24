@@ -31,5 +31,6 @@ describe('Carousel Studio theme', () => {
     expect(studio).toHaveAttribute('data-carousel-studio-theme', 'light');
     expect(studio).toHaveStyle({ colorScheme: 'light' });
     expect(screen.getByRole('heading', { name: 'Choose a starting point' })).toBeInTheDocument();
+    expect(studio.querySelector('.carousel-studio-chrome')).toBeInTheDocument();
   });
 });

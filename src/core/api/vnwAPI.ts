@@ -22,10 +22,44 @@ async function postRaw(path: string, payload: any = {}): Promise<any> {
   return httpService.postRequest(BASE_URL + path, payload);
 }
 
+export interface NumberSearchRequest {
+  starts_with?: string;
+  starts_with_pattern?: string;
+  anywhere?: string;
+  ends_with?: string;
+  ends_with_pattern?: string;
+  must_contain?: string[];
+  must_not_contain?: string[];
+  digit_sum?: number;
+  mid_sum?: number;
+  score_sum?: number;
+  exact_mask?: string;
+  digit_frequencies?: Array<{ digit: number; min?: number; max?: number }>;
+  include_alternatives?: boolean;
+}
+
+export interface NumberListRequest {
+  category?: string;
+  q?: string;
+  price_min?: string | number;
+  price_max?: string | number;
+  numerology?: string | number;
+  operator?: string;
+  badge?: string;
+  is_featured?: boolean | number;
+  seller_id?: number;
+  sort?: string;
+  page?: number;
+  limit?: number;
+  search?: NumberSearchRequest;
+  include_alternatives?: boolean;
+  [key: string]: unknown;
+}
+
 export const numbersAPI = {
-  list: (p: any) => post('numbers/list', p),
-  aiSearch: (p: any) => post('numbers/ai-search', p),
-  featured: (p: any = {}) => post('numbers/featured', p),
+  list: (p: NumberListRequest) => post('numbers/list', p),
+  aiSearch: (p: NumberListRequest & { query: string }) => post('numbers/ai-search', p),
+  featured: (p: NumberListRequest = {}) => post('numbers/featured', p),
   detail: (number_id: number) => post('numbers/detail', { number_id }),
 };
 

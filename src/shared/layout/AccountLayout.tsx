@@ -231,7 +231,7 @@ export default function AccountLayout() {
       </AnimatePresence>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 border-b border-border bg-background/95 px-3 py-2 shadow-sm backdrop-blur-lg lg:px-4">
+        <header className="vip-account-header sticky top-0 z-30 border-b border-border bg-background/95 px-3 py-2 shadow-sm backdrop-blur-lg lg:px-4">
           <div className="flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
               <button onClick={() => setOpen(true)} className="grid h-10 w-10 place-items-center rounded-2xl border border-border bg-card text-foreground shadow-sm lg:hidden" aria-label="Open sidebar">
@@ -261,7 +261,7 @@ export default function AccountLayout() {
               <div className="relative" ref={notificationsRef}>
                 <button onClick={() => { setNotificationsOpen((v) => !v); setProfileOpen(false); }} aria-label="Notifications" className="relative grid h-10 w-10 place-items-center rounded-2xl border border-border bg-card text-foreground shadow-sm transition hover:-translate-y-0.5">
                   <Bell className="h-5 w-5" />
-                  <span className="absolute right-1 top-1 grid h-5 min-w-5 place-items-center rounded-full bg-gradient-to-br from-[#ff8a21] to-[#d923c6] px-1 text-[10px] font-black text-white">3</span>
+                  <span className="absolute right-1 top-1 grid h-5 min-w-5 place-items-center rounded-full bg-primary px-1 text-[10px] font-black text-primary-foreground">3</span>
                 </button>
                 {notificationsOpen && (
                   <div className="fixed left-3 right-3 top-[68px] z-40 rounded-[1.25rem] border border-popover-border bg-popover p-2.5 text-popover-foreground shadow-xl sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-3 sm:w-[360px]">

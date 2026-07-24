@@ -39,7 +39,7 @@ export interface HomeTestimonial {
 
 const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2';
 const primaryButton = cn(
-  'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-foreground px-5 py-3 text-sm font-bold text-background shadow-sm transition hover:opacity-90',
+  'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90',
   focusRing,
 );
 const secondaryButton = cn(
@@ -161,16 +161,7 @@ const heroButterflies: HeroButterfly[] = [
   { left: '91%', top: '67%', wings: ['999', '999'], delay: '-10.8s', duration: '24s', reverse: true },
 ];
 
-const mobileArtButterflies: HeroButterfly[] = [
-  { left: '12%', top: '24%', wings: ['108', '801'], delay: '-2.8s', duration: '19s' },
-  { left: '66%', top: '12%', wings: ['909', '909'], delay: '-8.4s', duration: '21s', reverse: true },
-  { left: '82%', top: '38%', wings: ['911', '1911'], delay: '-4.6s', duration: '20s', reverse: true },
-  { left: '70%', top: '72%', wings: ['121', '121'], delay: '-12.2s', duration: '23s' },
-  { left: '20%', top: '72%', wings: ['786', '687'], delay: '-16.1s', duration: '22s', reverse: true },
-  { left: '8%', top: '48%', wings: ['24', '42'], delay: '-10.5s', duration: '24s' },
-];
-
-function HeroButterflyLayer({ mode, butterflies = heroButterflies }: { mode: 'ambient' | 'focus' | 'mobile-art'; butterflies?: HeroButterfly[] }) {
+function HeroButterflyLayer({ mode, butterflies = heroButterflies }: { mode: 'ambient' | 'focus'; butterflies?: HeroButterfly[] }) {
   return (
     <div className={`home-showcase__butterflies home-showcase__butterflies--${mode} pointer-events-none absolute inset-0 overflow-hidden`} aria-hidden="true">
       {butterflies.map((butterfly) => (
@@ -306,7 +297,6 @@ export function HomeHero({
           transition={{ duration: reduceMotion ? 0 : 0.58, delay: reduceMotion ? 0 : 0.08, ease: [0.16, 1, 0.3, 1] }}
           aria-hidden="true"
         >
-          <HeroButterflyLayer mode="mobile-art" butterflies={mobileArtButterflies} />
           <div className="brand-stage__aura absolute inset-[2%] rounded-full" />
           <div className="brand-stage__orbit brand-stage__orbit--wide absolute inset-[6%] rounded-[50%]" />
           <div className="brand-stage__orbit brand-stage__orbit--mid absolute inset-[17%] rounded-full" />

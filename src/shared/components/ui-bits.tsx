@@ -6,12 +6,12 @@ import { formatINR } from '@/core/lib/format';
 
 export function PageHeader({ title, subtitle, action }: { title: string; subtitle?: string; action?: ReactNode }) {
   return (
-    <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-      <div>
+    <div className="vip-page-header mb-4 flex flex-wrap items-center justify-between gap-3">
+      <div className="relative z-10">
         <h1 className="text-xl font-black text-foreground sm:text-2xl">{title}</h1>
         {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
       </div>
-      {action}
+      {action && <div className="relative z-10">{action}</div>}
     </div>
   );
 }
@@ -22,7 +22,7 @@ export function Panel({ children, className }: { children: ReactNode; className?
 
 export function StatCard({ label, value, icon, accent }: { label: string; value: ReactNode; icon?: ReactNode; accent?: boolean }) {
   return (
-    <div className="vnw-card vnw-card-hover p-4">
+    <div className="vip-stat-card vnw-card vnw-card-hover p-4">
       <div className="flex items-center justify-between">
         <span className="text-xs font-black uppercase tracking-wide text-muted-foreground">{label}</span>
         {icon && <span className="grid h-9 w-9 place-items-center rounded-lg bg-warning-soft text-warning">{icon}</span>}

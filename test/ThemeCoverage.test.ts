@@ -75,6 +75,19 @@ describe('theme coverage', () => {
     expect(css).toMatch(/\.app-shell-bg\s*\{\s*background:\s*var\(--vnw-page\);/);
   });
 
+  it('uses VIP gold for primary actions in both themes without legacy purple action colors', () => {
+    const css = readFileSync(resolve(sourceRoot, 'index.css'), 'utf8');
+    const source = listTsxFiles(sourceRoot).map((file) => readFileSync(file, 'utf8')).join('\n');
+    const legacyPurple = /#(?:7c2cff|d923c6|5b27ee|d119b9|7c3bb7|4c1d95|27105f|6c27ee|7c2bd1)\b/i;
+
+    expect(css).toMatch(/:root\s*\{[\s\S]*?--primary:\s*38 90% 33%;/);
+    expect(css).toMatch(/\.dark\s*\{[\s\S]*?--primary:\s*41 71% 57%;/);
+    expect(css).toContain('--vnw-action: var(--vnw-primitive-gold-600);');
+    expect(css).not.toMatch(legacyPurple);
+    expect(source).not.toMatch(legacyPurple);
+    expect(source).not.toMatch(/bg-foreground[^\n'"]*text-background/);
+  });
+
   it('keeps every route family inside a shell with the shared theme provider', () => {
     const app = readFileSync(resolve(sourceRoot, 'App.tsx'), 'utf8');
     const routes = readFileSync(resolve(sourceRoot, 'app/router/AppRoutes.tsx'), 'utf8');

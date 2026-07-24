@@ -22,6 +22,7 @@ import {
   WhyChooseSection,
 } from './components/HomeSections';
 import HomeCarousel from './components/HomeCarousel';
+import SearchWorkbench from '@/pages/shop/SearchWorkbench';
 
 export default function Home() {
   const { site } = useStore();
@@ -86,6 +87,8 @@ export default function Home() {
   return (
     <div className="bg-background text-foreground">
       <HomeHero stats={heroStats} statsLoading={heroStatsLoading} statsError={heroStatsError} />
+
+      <SearchWorkbench placement="home" />
 
       <HomeCarousel slides={carouselSlides} loading={carouselLoading} />
 

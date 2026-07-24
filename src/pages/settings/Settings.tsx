@@ -125,7 +125,7 @@ export default function Settings() {
                 <div className="grid h-24 w-24 place-items-center overflow-hidden rounded-[1.4rem] border border-primary/40 bg-primary text-2xl font-black text-primary-foreground shadow-lg">
                   {avatar ? <img src={avatar} alt="Profile logo" className="h-full w-full object-cover" /> : initials}
                 </div>
-                <button type="button" onClick={() => fileRef.current?.click()} className="absolute -bottom-2 -right-2 grid h-9 w-9 place-items-center rounded-2xl bg-gradient-to-br from-[#6c27ee] to-[#d923c6] text-white shadow-lg">
+                <button type="button" onClick={() => fileRef.current?.click()} className="absolute -bottom-2 -right-2 grid h-9 w-9 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-lg">
                   <Camera className="h-4 w-4" />
                 </button>
                 <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => pickImage(e.target.files?.[0])} />

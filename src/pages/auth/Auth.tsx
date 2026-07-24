@@ -66,7 +66,7 @@ export default function Auth({ mode }: { mode: Mode }) {
       <div className="absolute right-5 top-5 z-20">
         <ThemeControl />
       </div>
-      <div className="glass-panel relative hidden flex-col justify-between overflow-hidden rounded-[2rem] p-12 lg:flex">
+      <div className="vip-auth-panel glass-panel relative hidden flex-col justify-between overflow-hidden rounded-[2rem] p-12 lg:flex">
         <div className="absolute -right-20 top-20 h-72 w-72 rounded-full bg-accent/10 blur-3xl" />
         <div className="absolute bottom-14 left-14 h-72 w-72 rounded-full bg-info/10 blur-3xl" />
         <Link to="/" className="relative flex w-fit items-center rounded-xl bg-white p-2">
@@ -82,7 +82,7 @@ export default function Auth({ mode }: { mode: Mode }) {
       </div>
 
       <div className="flex items-center justify-center p-4 sm:p-6">
-        <form onSubmit={submit} className="glass-panel w-full max-w-md rounded-[2rem] p-6 sm:p-8">
+        <form onSubmit={submit} className="vip-auth-panel glass-panel w-full max-w-md rounded-[2rem] p-6 sm:p-8">
           <Link to="/" className="mx-auto mb-6 flex w-fit items-center justify-center rounded-xl bg-white p-2 lg:hidden">
             <BrandLockup logoClassName="h-12 w-12" sloganClassName="h-10 w-52" />
           </Link>

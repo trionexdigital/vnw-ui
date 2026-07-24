@@ -73,8 +73,14 @@ function Header() {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (q.trim()) navigate(`/shop?q=${encodeURIComponent(q.trim())}`);
-    else navigate('/shop');
+    const value = q.trim();
+    if (/^\d{1,10}$/.test(value)) {
+      navigate(`/shop?mode=global&global_scope=anywhere&q=${encodeURIComponent(value)}`);
+    } else if (value) {
+      navigate(`/shop?mode=ai&ai=${encodeURIComponent(value)}`);
+    } else {
+      navigate('/shop?focus=search');
+    }
     setOpen(false);
   };
 
@@ -95,7 +101,7 @@ function Header() {
     ) : (
       <>
         <Link to="/login" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-border bg-card/85 px-3 py-2 text-xs font-bold text-foreground shadow-sm transition hover:border-primary hover:bg-accent 2xl:px-4 2xl:text-sm"><User className="h-5 w-5" />Sign In</Link>
-        <Link to="/register" className="public-header__register inline-flex min-h-11 items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-white shadow-[0_10px_22px_-12px_rgba(63,21,133,.8)] transition hover:-translate-y-0.5 2xl:px-4 2xl:text-sm"><Crown className="h-5 w-5 text-amber-300" />Register</Link>
+        <Link to="/register" className="public-header__register inline-flex min-h-11 items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-white shadow-[0_10px_22px_-12px_rgba(133,77,14,.62)] transition hover:-translate-y-0.5 2xl:px-4 2xl:text-sm"><Crown className="h-5 w-5 text-amber-200" />Register</Link>
       </>
     )
   );
@@ -104,7 +110,7 @@ function Header() {
     token && user ? (
       <div className="rounded-xl border border-border bg-card p-3 shadow-sm">
         <div className="mb-2 flex items-center gap-3 rounded-xl bg-muted p-3">
-          <span className="grid h-10 w-10 place-items-center rounded-xl bg-foreground text-sm font-black text-background">
+          <span className="grid h-10 w-10 place-items-center rounded-xl bg-primary text-sm font-black text-primary-foreground">
             {(user.name || 'U').slice(0, 2).toUpperCase()}
           </span>
           <div className="min-w-0">
@@ -122,7 +128,7 @@ function Header() {
     ) : (
       <div className="grid grid-cols-2 gap-2">
         <Link to="/login" onClick={() => setOpen(false)} className="rounded-xl border border-border bg-card px-4 py-3 text-center text-sm font-black text-foreground shadow-sm">Sign In</Link>
-        <Link to="/register" onClick={() => setOpen(false)} className="rounded-xl bg-foreground px-4 py-3 text-center text-sm font-black text-background">Register</Link>
+        <Link to="/register" onClick={() => setOpen(false)} className="rounded-xl bg-primary px-4 py-3 text-center text-sm font-black text-primary-foreground">Register</Link>
       </div>
     )
   );
@@ -175,7 +181,7 @@ function Header() {
             {nav.slice(1).map((n) => <Link key={n.label} to={n.to} className="rounded-xl px-2.5 py-2.5 transition hover:bg-accent hover:text-primary 2xl:px-3.5">{n.label}</Link>)}
           </nav>
           <div className="relative z-10 ml-auto flex shrink-0 items-center gap-1 xl:ml-2 2xl:gap-1.5">
-            <Link to="/shop" className="hidden h-11 items-center gap-1.5 rounded-xl border border-primary bg-card/85 px-3 text-xs font-black text-primary shadow-sm transition hover:bg-accent xl:inline-flex 2xl:text-sm"><Search className="h-5 w-5" /> Search</Link>
+            <Link to="/shop?focus=search" className="hidden h-11 items-center gap-1.5 rounded-xl border border-primary bg-card/85 px-3 text-xs font-black text-primary shadow-sm transition hover:bg-accent xl:inline-flex 2xl:text-sm"><Search className="h-5 w-5" /> Search</Link>
             <Link to="/wishlist" aria-label="Wishlist" className="relative hidden h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm transition hover:border-primary hover:bg-accent md:grid"><Heart className="h-5 w-5" /><CountBadge n={wishlistCount} /></Link>
             <Link to="/cart" aria-label="Cart" className="relative grid h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm transition hover:border-primary hover:bg-accent"><ShoppingCart className="h-5 w-5" /><CountBadge n={cartCount} /></Link>
             <button aria-label="Notifications" className="relative hidden h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm transition hover:border-primary hover:bg-accent md:grid"><Bell className="h-5 w-5" /><span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-amber-600" /></button>
@@ -204,7 +210,7 @@ function Header() {
             </div>
             <form onSubmit={submit} className="mb-4 flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2">
               <Search className="h-4 w-4 text-primary" />
-              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search dream number..." className="min-w-0 flex-1 bg-transparent text-sm outline-none" />
+              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search dream number..." className="min-w-0 flex-1 bg-transparent text-base outline-none" />
             </form>
             <div className="grid gap-2">
               {[{ label: 'Home', to: '/' }, { label: 'Explore Numbers', to: '/shop' }, { label: 'Number Categories', to: '/categories' }, { label: 'Numerology', to: '/numerology' }, { label: 'How It Works', to: '/about' }, { label: 'About Us', to: '/about' }, { label: 'Contact Us', to: '/contact' }].map((n) => (
@@ -278,7 +284,7 @@ function Footer() {
         </div>
         <div className="relative z-10 flex flex-col items-center justify-between gap-3 border-t border-border px-6 py-4 text-xs text-muted-foreground sm:flex-row">
           <span>&copy; {new Date().getFullYear()} VNW - VIP Number World. All rights reserved.</span>
-          <span className="flex items-center gap-1"><Sparkles className="h-3.5 w-3.5 text-[#d923c6]" /> Follow Us</span>
+          <span className="flex items-center gap-1"><Sparkles className="h-3.5 w-3.5 text-primary" /> Follow Us</span>
         </div>
       </div>
     </footer>
@@ -338,7 +344,7 @@ export default function PublicLayout() {
         <PromoBar />
       </div>
       <main className="flex-1 pb-20 lg:pb-0">
-        <MotionPage routeKey={location.pathname + location.search}>
+        <MotionPage routeKey={location.pathname}>
           <Outlet />
         </MotionPage>
       </main>

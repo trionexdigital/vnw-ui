@@ -25,9 +25,9 @@ type Panel = 'design' | 'layers' | 'style' | 'animate';
 
 const EMOJIS = ['✨', '👑', '🔥', '💎', '🎉', '❤️', '⭐', '🚀', '✅', '📱', '🎯', '💫', '🪄', '🏆', '💰', '⚡'];
 
-const buttonClass = 'inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border border-[#d9dde5] bg-[#fff] px-2.5 text-xs font-semibold text-[#344054] shadow-sm transition hover:border-[#c9ced8] hover:bg-[#f4f6f8] disabled:cursor-not-allowed disabled:opacity-40';
-const iconButtonClass = 'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#d9dde5] bg-[#fff] text-[#475467] shadow-sm transition hover:border-[#c9ced8] hover:bg-[#f4f6f8] hover:text-[#101828] disabled:opacity-35';
-const inputClass = 'h-8 w-full rounded-lg border border-[#d9dde5] bg-[#fff] px-2.5 text-xs text-[#101828] outline-none transition focus:border-[#d89b12] focus:ring-2 focus:ring-[#f5bd42]/20';
+const buttonClass = 'inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border border-[#decfae] bg-[#fffdf7] px-2.5 text-xs font-semibold text-[#3f3426] shadow-sm transition hover:border-[#c88710] hover:bg-[#fff6dc] disabled:cursor-not-allowed disabled:opacity-40';
+const iconButtonClass = 'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#decfae] bg-[#fffdf7] text-[#5f513e] shadow-sm transition hover:border-[#c88710] hover:bg-[#fff6dc] hover:text-[#251602] disabled:opacity-35';
+const inputClass = 'h-8 w-full rounded-lg border border-[#decfae] bg-[#fffdf7] px-2.5 text-xs text-[#251f18] outline-none transition focus:border-[#d89b12] focus:ring-2 focus:ring-[#f5bd42]/20';
 const selectedControlClass = '!border-[#d89b12] !bg-[#fff6dc] !text-[#845400]';
 const primaryButtonClass = 'inline-flex h-8 items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-[#f5bd42] to-[#f59e0b] px-3 text-xs font-extrabold text-[#251602] shadow-sm transition hover:brightness-105 disabled:opacity-40';
 
@@ -58,9 +58,9 @@ function TemplateChooser() {
     } catch (reason: any) { setError(reason?.message || 'Could not create the carousel.'); setCreating(null); }
   };
   return (
-    <main className="min-h-screen bg-[#f4f5f7] px-5 py-5 text-[#101828]" style={{ colorScheme: 'light' }} data-carousel-studio-theme="light">
+    <main className="min-h-screen bg-[#fbfaf7] px-5 py-5 text-[#251f18]" style={{ colorScheme: 'light' }} data-carousel-studio-theme="light">
       <div className="mx-auto max-w-6xl">
-        <header className="mb-6 flex items-center justify-between gap-4">
+        <header className="carousel-studio-chrome mb-6 flex items-center justify-between gap-4 rounded-xl border border-[#eadfca] px-3 py-2">
           <button onClick={() => navigate('/admin/carousel')} className={buttonClass}><ArrowLeft className="h-4 w-4" /> Back</button>
           <BrandLockup className="dark:!bg-transparent dark:!p-0" logoClassName="h-9 w-9 sm:h-9 sm:w-9" sloganClassName="h-7 w-[116px] sm:h-7 sm:w-[116px]" />
           <div className="w-24" />
@@ -258,15 +258,15 @@ export default function CarouselEditor() {
   const updateSelectedProperties = (properties: Record<string, unknown>) => canvasRef.current?.updateSelection(properties);
 
   if (!id) return <TemplateChooser />;
-  if (loading) return <div className="grid min-h-screen place-items-center bg-[#f4f5f7] text-[#101828]" style={{ colorScheme: 'light' }} data-carousel-studio-theme="light"><div className="text-center"><div className="mx-auto h-9 w-9 animate-spin rounded-full border-2 border-[#d8dce3] border-t-[#d89b12]" /><p className="mt-3 text-sm font-semibold">Opening Carousel Studio…</p></div></div>;
-  if (!project || error && !ready) return <div className="grid min-h-screen place-items-center bg-[#f4f5f7] p-6 text-[#101828]" style={{ colorScheme: 'light' }} data-carousel-studio-theme="light"><div className="max-w-lg rounded-xl border border-[#f3b6b1] bg-[#fff] p-5 text-center shadow-lg"><p className="text-sm text-[#b42318]">{error || 'Carousel not found.'}</p><button className={`${buttonClass} mt-4`} onClick={() => navigate('/admin/carousel')}>Back to manager</button></div></div>;
+  if (loading) return <div className="grid min-h-screen place-items-center bg-[#fbfaf7] text-[#251f18]" style={{ colorScheme: 'light' }} data-carousel-studio-theme="light"><div className="text-center"><div className="mx-auto h-9 w-9 animate-spin rounded-full border-2 border-[#eadfca] border-t-[#d89b12]" /><p className="mt-3 text-sm font-semibold">Opening Carousel Studio…</p></div></div>;
+  if (!project || error && !ready) return <div className="grid min-h-screen place-items-center bg-[#fbfaf7] p-6 text-[#251f18]" style={{ colorScheme: 'light' }} data-carousel-studio-theme="light"><div className="max-w-lg rounded-xl border border-[#f3b6b1] bg-[#fffdf7] p-5 text-center shadow-lg"><p className="text-sm text-[#b42318]">{error || 'Carousel not found.'}</p><button className={`${buttonClass} mt-4`} onClick={() => navigate('/admin/carousel')}>Back to manager</button></div></div>;
 
   const statusLabel = saveStatus === 'saving' ? 'Saving…' : saveStatus === 'saved' ? 'Saved' : saveStatus === 'offline' ? 'Offline' : saveStatus === 'conflict' ? 'Conflict — reload required' : 'Save error';
   const activeDocument = documents[device];
 
   return (
-    <div className="flex h-screen min-w-[900px] flex-col overflow-hidden bg-[#f4f5f7] text-[#101828]" style={{ colorScheme: 'light' }} data-carousel-studio-theme="light">
-      <header className="z-40 flex h-12 shrink-0 items-center gap-2 border-b border-[#dfe3e8] bg-[#fff] px-3 shadow-sm">
+    <div className="flex h-screen min-w-[900px] flex-col overflow-hidden bg-[#fbfaf7] text-[#251f18]" style={{ colorScheme: 'light' }} data-carousel-studio-theme="light">
+      <header className="carousel-studio-chrome z-40 flex h-12 shrink-0 items-center gap-2 border-b border-[#eadfca] bg-[#fffdf7] px-3 shadow-sm">
         <button onClick={() => navigate('/admin/carousel')} className={iconButtonClass} title="Back to carousel manager" aria-label="Back to carousel manager"><ArrowLeft className="h-4 w-4" /></button>
         <BrandLockup className="dark:!bg-transparent dark:!p-0" logoClassName="h-8 w-8 sm:h-8 sm:w-8" sloganClassName="h-6 w-[105px] sm:h-6 sm:w-[105px]" />
         <div className="h-6 w-px bg-[#e3e6eb]" />
@@ -278,15 +278,15 @@ export default function CarouselEditor() {
       </header>
 
       <div className="flex min-h-0 flex-1">
-        <aside className="flex w-[54px] shrink-0 flex-col items-center gap-1 border-r border-[#dfe3e8] bg-[#fff] py-2">
+        <aside className="flex w-[54px] shrink-0 flex-col items-center gap-1 border-r border-[#eadfca] bg-[#fffdf7] py-2">
           {[['design', WandSparkles, 'Design'], ['layers', Layers, 'Layers'], ['style', Palette, 'Style'], ['animate', Play, 'Animate']].map(([value, Icon, label]) => (
             <button key={String(value)} onClick={() => setPanel(value as Panel)} aria-pressed={panel === value} className={`flex h-11 w-11 flex-col items-center justify-center gap-0.5 rounded-lg text-[9px] font-bold transition ${panel === value ? 'bg-[#fff1c7] text-[#845400]' : 'text-[#667085] hover:bg-[#f2f4f7] hover:text-[#101828]'}`}><Icon className="h-4 w-4" />{String(label)}</button>
           ))}
           <div className="my-1 h-px w-8 bg-[#e3e6eb]" />
-          <button onClick={() => { setDrawing((value) => { canvasRef.current?.setDrawing(!value); return !value; }); }} aria-pressed={drawing} className={`flex h-11 w-11 flex-col items-center justify-center gap-0.5 rounded-lg text-[9px] font-bold transition ${drawing ? 'bg-[#efe1ff] text-[#7a23a8]' : 'text-[#667085] hover:bg-[#f2f4f7]'}`}><Pencil className="h-4 w-4" />Draw</button>
+          <button onClick={() => { setDrawing((value) => { canvasRef.current?.setDrawing(!value); return !value; }); }} aria-pressed={drawing} className={`flex h-11 w-11 flex-col items-center justify-center gap-0.5 rounded-lg text-[9px] font-bold transition ${drawing ? 'bg-[#fff1c7] text-[#845400]' : 'text-[#667085] hover:bg-[#fff6dc]'}`}><Pencil className="h-4 w-4" />Draw</button>
         </aside>
 
-        <aside className="w-[252px] shrink-0 overflow-y-auto border-r border-[#dfe3e8] bg-[#fbfbfc] p-3">
+        <aside className="w-[252px] shrink-0 overflow-y-auto border-r border-[#eadfca] bg-[#fbf8f1] p-3">
           {panel === 'design' && (
             <div className="space-y-3">
               <PanelTitle title="Add" subtitle="Click an item, then edit it on canvas." />
@@ -351,7 +351,7 @@ export default function CarouselEditor() {
                   <div className="grid grid-cols-2 gap-1.5"><Field label="Fill"><input type="color" value={selection.fill || '#ffffff'} onChange={(e) => updateSelection('fill', e.target.value)} className="h-8 w-full cursor-pointer rounded-lg border border-[#d9dde5] bg-[#fff] p-1" /></Field><Field label="Border"><input type="color" value={selection.stroke || '#ffffff'} onChange={(e) => updateSelection('stroke', e.target.value)} className="h-8 w-full cursor-pointer rounded-lg border border-[#d9dde5] bg-[#fff] p-1" /></Field></div>
                   <Field label={`Opacity ${Math.round((selection.opacity ?? 1) * 100)}%`}><input type="range" min="0" max="1" step="0.05" value={selection.opacity ?? 1} onChange={(e) => updateSelection('opacity', Number(e.target.value))} className="w-full accent-[#d89b12]" /></Field>
                   <Field label={`Border width ${selection.strokeWidth || 0}`}><input type="range" min="0" max="30" value={selection.strokeWidth || 0} onChange={(e) => updateSelection('strokeWidth', Number(e.target.value))} className="w-full accent-[#d89b12]" /></Field>
-                  <Field label="Gradient"><div className="grid grid-cols-[1fr_1fr_auto] gap-1.5"><input id="gradient-a" type="color" defaultValue="#f5bd42" className="h-8 w-full cursor-pointer rounded-lg border border-[#d9dde5] bg-[#fff] p-1" /><input id="gradient-b" type="color" defaultValue="#7c2bd1" className="h-8 w-full cursor-pointer rounded-lg border border-[#d9dde5] bg-[#fff] p-1" /><button className={iconButtonClass} title="Apply gradient" aria-label="Apply gradient" onClick={() => canvasRef.current?.applyGradient((document.getElementById('gradient-a') as HTMLInputElement).value, (document.getElementById('gradient-b') as HTMLInputElement).value)}><Check className="h-4 w-4" /></button></div></Field>
+                  <Field label="Gradient"><div className="grid grid-cols-[1fr_1fr_auto] gap-1.5"><input id="gradient-a" type="color" defaultValue="#f5bd42" className="h-8 w-full cursor-pointer rounded-lg border border-[#d9dde5] bg-[#fff] p-1" /><input id="gradient-b" type="color" defaultValue="#a16207" className="h-8 w-full cursor-pointer rounded-lg border border-[#d9dde5] bg-[#fff] p-1" /><button className={iconButtonClass} title="Apply gradient" aria-label="Apply gradient" onClick={() => canvasRef.current?.applyGradient((document.getElementById('gradient-a') as HTMLInputElement).value, (document.getElementById('gradient-b') as HTMLInputElement).value)}><Check className="h-4 w-4" /></button></div></Field>
                 </div>
                 {selection.isImage && <div className="space-y-2.5 rounded-lg border border-[#e1e4e8] bg-[#fff] p-2.5"><div className="text-xs font-extrabold">Image</div><Field label="Filter"><select onChange={(e) => canvasRef.current?.applyFilter(e.target.value as any)} className={inputClass}><option value="none">Original</option><option value="grayscale">Grayscale</option><option value="sepia">Sepia</option><option value="bright">Bright</option><option value="contrast">Contrast</option></select></Field><Field label="Mask"><select onChange={(e) => canvasRef.current?.applyMask(e.target.value as any)} className={inputClass}><option value="none">None</option><option value="circle">Circle</option><option value="rounded">Rounded</option></select></Field><Field label="Crop X"><input type="range" min="0" max="500" value={selection.cropX || 0} onChange={(e) => updateSelection('cropX', Number(e.target.value))} className="w-full accent-[#d89b12]" /></Field><Field label="Crop Y"><input type="range" min="0" max="500" value={selection.cropY || 0} onChange={(e) => updateSelection('cropY', Number(e.target.value))} className="w-full accent-[#d89b12]" /></Field></div>}
                 <div className="space-y-2.5 rounded-lg border border-[#e1e4e8] bg-[#fff] p-2.5"><div className="text-xs font-extrabold">Interaction</div><Field label="Link"><input value={selection.link || ''} onChange={(e) => updateSelection('link', e.target.value)} placeholder="/shop or https://example.com" className={inputClass} /></Field><Field label="Accessibility label"><input value={selection.ariaLabel || ''} onChange={(e) => updateSelection('ariaLabel', e.target.value)} placeholder="Describe this linked item" className={inputClass} /></Field></div>
@@ -365,7 +365,7 @@ export default function CarouselEditor() {
         </aside>
 
         <main className="relative flex min-w-0 flex-1 flex-col bg-[#e9ecf1]">
-          <div className="flex h-11 shrink-0 items-center justify-between border-b border-[#dfe3e8] bg-[#fff] px-3">
+          <div className="carousel-studio-chrome flex h-11 shrink-0 items-center justify-between border-b border-[#eadfca] bg-[#fffdf7] px-3">
             <div className="flex gap-1.5"><button onClick={() => switchDevice('desktop')} className={`${buttonClass} ${device === 'desktop' ? selectedControlClass : ''}`} aria-pressed={device === 'desktop'}><Monitor className="h-4 w-4" /> Desktop <span className="text-[9px] font-medium text-[#667085]">1600×900</span></button><button onClick={() => switchDevice('mobile')} className={`${buttonClass} ${device === 'mobile' ? selectedControlClass : ''}`} aria-pressed={device === 'mobile'}><Smartphone className="h-4 w-4" /> Mobile <span className="text-[9px] font-medium text-[#667085]">1080×1920</span></button><button onClick={copyToMobile} className={buttonClass} title="Fit the desktop design onto the mobile artboard without cropping"><Copy className="h-4 w-4" /> Fit to mobile</button></div>
             <div className="flex gap-1"><button disabled={!history.canUndo} onClick={() => canvasRef.current?.undo()} className={iconButtonClass} title="Undo (Ctrl+Z)" aria-label="Undo"><Undo2 className="h-4 w-4" /></button><button disabled={!history.canRedo} onClick={() => canvasRef.current?.redo()} className={iconButtonClass} title="Redo (Ctrl+Shift+Z)" aria-label="Redo"><Redo2 className="h-4 w-4" /></button><button onClick={() => canvasRef.current?.reset()} className={iconButtonClass} title="Reset this artboard" aria-label="Reset this artboard"><RotateCcw className="h-4 w-4" /></button></div>
           </div>
@@ -383,7 +383,7 @@ export default function CarouselEditor() {
             </div>
           )}
 
-          <div className="flex h-9 shrink-0 items-center justify-between border-t border-[#dfe3e8] bg-[#fff] px-3">
+          <div className="carousel-studio-chrome flex h-9 shrink-0 items-center justify-between border-t border-[#eadfca] bg-[#fffdf7] px-3">
             <div className="flex gap-1"><AlignTool icon={AlignLeft} onClick={() => canvasRef.current?.align('left')} label="Align left" /><AlignTool icon={AlignCenter} onClick={() => canvasRef.current?.align('center')} label="Center" /><AlignTool icon={AlignRight} onClick={() => canvasRef.current?.align('right')} label="Align right" /><AlignTool icon={AlignHorizontalDistributeCenter} onClick={() => canvasRef.current?.distribute('horizontal')} label="Distribute horizontal" /><AlignTool icon={AlignVerticalDistributeCenter} onClick={() => canvasRef.current?.distribute('vertical')} label="Distribute vertical" /></div>
             <div className="flex items-center gap-1.5"><ZoomOut className="h-3.5 w-3.5 text-[#667085]" /><input type="range" min="0.18" max="0.8" step="0.02" value={zoom} onChange={(e) => setZoom(Number(e.target.value))} className="w-28 accent-[#d89b12]" aria-label="Canvas zoom" /><ZoomIn className="h-3.5 w-3.5 text-[#667085]" /><span className="w-10 text-right text-[10px] font-bold text-[#667085]">{Math.round(zoom * 100)}%</span></div>
           </div>

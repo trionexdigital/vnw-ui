@@ -17,7 +17,7 @@ const INFO: Record<number, { planet: string; traits: string; lucky: number[]; co
   4: { planet: 'Rahu', traits: 'Discipline, stability, hard work & structure.', lucky: [4, 8], color: 'from-stone-400 to-stone-600' },
   5: { planet: 'Mercury', traits: 'Communication, freedom, intellect & versatility.', lucky: [5, 6], color: 'from-emerald-400 to-green-600' },
   6: { planet: 'Venus', traits: 'Love, luxury, beauty & relationships.', lucky: [6, 9], color: 'from-pink-400 to-rose-500' },
-  7: { planet: 'Ketu', traits: 'Spirituality, research, wisdom & mystery.', lucky: [7, 2], color: 'from-indigo-400 to-purple-600' },
+  7: { planet: 'Ketu', traits: 'Spirituality, research, wisdom & mystery.', lucky: [7, 2], color: 'from-amber-400 to-yellow-700' },
   8: { planet: 'Saturn', traits: 'Power, wealth, ambition & karma.', lucky: [8, 4], color: 'from-zinc-500 to-zinc-800' },
   9: { planet: 'Mars', traits: 'Energy, courage, passion & determination.', lucky: [9, 3], color: 'from-red-500 to-rose-700' },
 };

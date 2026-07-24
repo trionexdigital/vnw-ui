@@ -56,10 +56,9 @@ describe('HomeHero', () => {
     expect(container.querySelectorAll('.brand-stage__number-plaque')).toHaveLength(8);
     expect(container.querySelector('.home-showcase__butterflies--ambient')).toHaveAttribute('aria-hidden', 'true');
     expect(container.querySelector('.home-showcase__butterflies--focus')).toHaveAttribute('aria-hidden', 'true');
-    expect(container.querySelector('.home-showcase__butterflies--mobile-art')).toHaveAttribute('aria-hidden', 'true');
+    expect(container.querySelector('.home-showcase__butterflies--mobile-art')).not.toBeInTheDocument();
     expect(container.querySelectorAll('.home-showcase__butterflies--ambient .home-hero__butterfly')).toHaveLength(15);
     expect(container.querySelectorAll('.home-showcase__butterflies--focus .home-hero__butterfly')).toHaveLength(15);
-    expect(container.querySelectorAll('.home-showcase__butterflies--mobile-art .home-hero__butterfly')).toHaveLength(6);
   });
 
   it('reserves the metric area while the API is loading', () => {

@@ -137,7 +137,7 @@ export default function NumberCard({ item, onWishlistChange }: { item: NumberIte
       </div>
 
       <div className="relative mt-2 grid grid-cols-[1fr_auto_auto] gap-1.5">
-        <button className="h-9 rounded-lg bg-foreground px-3 text-xs font-black text-background shadow-sm transition hover:opacity-90 disabled:opacity-50" onClick={buyNow} disabled={!!sold}>{sold ? 'Sold' : 'Buy Now'}</button>
+        <button className="h-9 rounded-lg bg-primary px-3 text-xs font-black text-primary-foreground shadow-sm transition hover:bg-primary/90 disabled:opacity-50" onClick={buyNow} disabled={!!sold}>{sold ? 'Sold' : 'Buy Now'}</button>
         <button aria-label="add to cart" className="grid h-9 w-10 place-items-center rounded-lg border border-border bg-card text-foreground transition hover:border-primary hover:text-primary disabled:opacity-50" onClick={addToCart} disabled={busy || !!sold}>
           <ShoppingCart className="h-4 w-4" />
         </button>
