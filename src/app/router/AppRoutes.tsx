@@ -43,6 +43,7 @@ const DealerProfile = lazy(() => import('@/pages/dealer/DealerProfile'));
 
 const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'));
 const AdminNumbers = lazy(() => import('@/pages/admin/AdminNumbers'));
+const AdminDealsOfDay = lazy(() => import('@/pages/admin/AdminDealsOfDay'));
 const AdminOrders = lazy(() => import('@/pages/admin/AdminOrders'));
 const AdminUsers = lazy(() => import('@/pages/admin/AdminUsers'));
 const AdminDealers = lazy(() => import('@/pages/admin/AdminDealers'));
@@ -126,6 +127,7 @@ export default function AppRoutes() {
         {/* Admin */}
         <Route path="/admin" element={<RoleGuard roles={adminRoles}><AdminDashboard /></RoleGuard>} />
         <Route path="/admin/numbers" element={<RoleGuard roles={adminRoles}><AdminNumbers /></RoleGuard>} />
+        <Route path="/admin/deals-of-day" element={<RoleGuard roles={adminRoles}><AdminDealsOfDay /></RoleGuard>} />
         <Route path="/admin/categories" element={<RoleGuard roles={adminRoles}><Navigate to="/admin/numbers?notice=automatic-categories" replace /></RoleGuard>} />
         <Route path="/admin/orders" element={<RoleGuard roles={adminRoles}><AdminOrders /></RoleGuard>} />
         <Route path="/admin/users" element={<RoleGuard roles={adminRoles}><AdminUsers /></RoleGuard>} />

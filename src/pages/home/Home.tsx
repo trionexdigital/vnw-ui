@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { numbersAPI, categoriesAPI, testimonialsAPI, siteAPI, carouselAPI, type HeroStats } from '@/core/api/vnwAPI';
+import { numbersAPI, categoriesAPI, testimonialsAPI, siteAPI, carouselAPI, type DealOfDayItem } from '@/core/api/vnwAPI';
 import type { PublishedCarouselSlide } from '@/core/carousel/types';
 import type { NumberCategory } from '@/core/categories/types';
 import NumberCard, { NumberItem } from '@/shared/components/NumberCard';
@@ -32,24 +32,37 @@ export default function Home() {
   const [testimonials, setTestimonials] = useState<HomeTestimonial[]>([]);
   const [loading, setLoading] = useState(true);
   const [featuredError, setFeaturedError] = useState('');
-  const [heroStats, setHeroStats] = useState<HeroStats | null>(null);
-  const [heroStatsLoading, setHeroStatsLoading] = useState(true);
-  const [heroStatsError, setHeroStatsError] = useState(false);
+  const [dealsOfDay, setDealsOfDay] = useState<DealOfDayItem[]>([]);
+  const [dealsLoading, setDealsLoading] = useState(true);
+  const [dealsError, setDealsError] = useState(false);
   const [carouselSlides, setCarouselSlides] = useState<PublishedCarouselSlide[]>([]);
   const [carouselLoading, setCarouselLoading] = useState(true);
   const [trending, setTrending] = useState<NumberItem[]>([]);
   const [recent] = useState<NumberItem[]>(() => getRecentlyViewed() as NumberItem[]);
 
   useEffect(() => {
-    setHeroStatsLoading(true);
-    setHeroStatsError(false);
-    siteAPI.heroStats()
-      .then((data) => setHeroStats(data))
-      .catch(() => {
-        setHeroStats(null);
-        setHeroStatsError(true);
+    setDealsLoading(true);
+    setDealsError(false);
+    siteAPI.dealsOfDay()
+      .then((data) => setDealsOfDay(data.items || []))
+      .catch(async () => {
+        try {
+          const fallback = await numbersAPI.featured({ limit: 8, sort: 'popular' });
+          setDealsOfDay((fallback.items || []).map((item: any, index: number) => ({
+            ...item,
+            deal_id: null,
+            hero_label: null,
+            hero_description: null,
+            sort_order: index,
+            is_active: true,
+            source: 'FEATURED_FALLBACK' as const,
+          })));
+        } catch {
+          setDealsOfDay([]);
+          setDealsError(true);
+        }
       })
-      .finally(() => setHeroStatsLoading(false));
+      .finally(() => setDealsLoading(false));
   }, []);
 
   useEffect(() => {
@@ -86,7 +99,7 @@ export default function Home() {
 
   return (
     <div className="bg-background text-foreground">
-      <HomeHero stats={heroStats} statsLoading={heroStatsLoading} statsError={heroStatsError} />
+      <HomeHero deals={dealsOfDay} dealsLoading={dealsLoading} dealsError={dealsError} />
 
       <SearchWorkbench placement="home" />
 

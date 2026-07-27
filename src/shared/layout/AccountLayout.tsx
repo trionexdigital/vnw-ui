@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   Crown, LayoutDashboard, ShoppingBag, Heart, Users2, User, LogOut, Store, ListPlus,
   Tag, BadgeIndianRupee, Star, Image, MessageSquare, Settings, Gift, Menu, ArrowLeft, ListChecks, X, Ticket, Mail,
-  ClipboardList, Inbox, Bell, ChevronRight, PanelLeftClose, PanelLeftOpen, ShieldCheck, Search, UserCircle,
+  ClipboardList, Inbox, Bell, ChevronRight, PanelLeftClose, PanelLeftOpen, ShieldCheck, Search, UserCircle, Sparkles,
 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { logout } from '@/app/authSlice';
@@ -43,6 +43,7 @@ const EMPLOYEE_MENU: MenuItem[] = [
 const ADMIN_MENU: MenuItem[] = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/admin/numbers', label: 'Numbers', icon: Crown },
+  { to: '/admin/deals-of-day', label: 'Deal of the Day', icon: Sparkles },
   { to: '/admin/orders', label: 'Orders', icon: ShoppingBag },
   { to: '/admin/sell-requests', label: 'Sell Requests', icon: Inbox },
   { to: '/admin/approvals', label: 'Approvals', icon: ClipboardList },
@@ -60,7 +61,7 @@ const ADMIN_MENU: MenuItem[] = [
 
 const ADMIN_GROUPS = [
   { label: 'Overview', items: ['Dashboard'] },
-  { label: 'Catalog', items: ['Numbers', 'Carousel', 'Coupons'] },
+  { label: 'Catalog', items: ['Numbers', 'Deal of the Day', 'Carousel', 'Coupons'] },
   { label: 'Operations', items: ['Orders', 'Sell Requests', 'Approvals', 'Payouts'] },
   { label: 'People', items: ['Users', 'Dealers', 'Subscribers'] },
   { label: 'Trust', items: ['Reviews', 'Testimonials', 'Messages', 'Settings'] },

@@ -8,7 +8,7 @@ import type {
   CarouselTransition,
   PublishedCarouselSlide,
 } from '@/core/carousel/types';
-import type { CategoryClassification, NumberCategory } from '@/core/categories/types';
+import type { CategorizedNumber, CategoryClassification, NumberCategory } from '@/core/categories/types';
 
 /** POST helper that unwraps the MasterModel envelope. Throws on status !== 1. */
 async function post<T = any>(path: string, payload: any = {}): Promise<T> {
@@ -187,9 +187,48 @@ export interface HeroStats {
   customers_served: number;
 }
 
+export type DealOfDaySource = 'CURATED' | 'FEATURED_FALLBACK';
+
+export interface DealOfDayItem extends CategorizedNumber {
+  deal_id: number | null;
+  number_id: number;
+  number_value?: string;
+  display_number: string;
+  title_label?: string | null;
+  badge?: string | null;
+  mrp: number;
+  offer_price: number;
+  discount_pct?: number;
+  numerology_sum?: number | null;
+  operator?: string | null;
+  description?: string | null;
+  stock?: number;
+  status?: string;
+  is_featured?: boolean | number;
+  hero_label?: string | null;
+  hero_description?: string | null;
+  sort_order: number;
+  is_active: boolean;
+  source: DealOfDaySource;
+}
+
+export interface DealOfDayResponse {
+  items: DealOfDayItem[];
+  source: DealOfDaySource;
+}
+
+export interface DealOfDaySaveInput {
+  deal_id?: number | null;
+  number_id: number;
+  hero_label?: string | null;
+  hero_description?: string | null;
+  is_active: boolean;
+}
+
 export const siteAPI = {
   settings: () => post('site/settings', {}),
   heroStats: () => post<HeroStats>('site/hero-stats', {}),
+  dealsOfDay: () => post<DealOfDayResponse>('site/deals-of-day', {}),
   subscribe: (email: string, source = 'footer') => postRaw('site/newsletter', { email, source }),
   enquiry: (p: any) => postRaw('site/enquiry', p),
 };
@@ -247,6 +286,10 @@ export const adminAPI = {
   numberDelete: (number_id: number) => post('admin/numbers/delete', { number_id }),
   numberApprove: (number_id: number) => post('admin/numbers/approve', { number_id }),
   numberReject: (number_id: number) => post('admin/numbers/reject', { number_id }),
+  dealsOfDayList: () => post<DealOfDayItem[]>('admin/deals-of-day/list', {}),
+  dealOfDaySave: (p: DealOfDaySaveInput) => post<{ deal_id: number }>('admin/deals-of-day/save', p),
+  dealsOfDayReorder: (deal_ids: number[]) => post('admin/deals-of-day/reorder', { deal_ids }),
+  dealOfDayDelete: (deal_id: number) => post('admin/deals-of-day/delete', { deal_id }),
   ordersList: (p: any = {}) => post('admin/orders/list', p),
   orderDetail: (order_id: number) => post('admin/orders/detail', { order_id }),
   orderUpdateStatus: (order_id: number, status: string) => post('admin/orders/update-status', { order_id, status }),

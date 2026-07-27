@@ -1,11 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight,
-  CheckCircle2,
-  CirclePlay,
   Crown,
-  Gem,
   Headphones,
   Lock,
   MessageCircle,
@@ -15,19 +12,19 @@ import {
   ShieldCheck,
   ShoppingCart,
   Truck,
-  Users,
   WalletCards,
 } from 'lucide-react';
-import { animate, useInView, useMotionValue, useTransform } from 'framer-motion';
+import { useInView } from 'framer-motion';
 import NumberCard, { NumberItem } from '@/shared/components/NumberCard';
 import { Loader } from '@/shared/components/ui-bits';
 import { Logo, Slogan } from '@/shared/components/Logo';
-import type { HeroStats } from '@/core/api/vnwAPI';
 import type { NumberCategory } from '@/core/categories/types';
 import { getCategoryCount } from '@/core/categories/types';
 import { cn } from '@/core/lib/utils';
 import { CategoryGrid } from '@/shared/components/categories/CategoryCard';
 import { MotionGrid, MotionGridItem, MotionSection, motion, useReducedMotion } from '@/shared/motion/MotionPrimitives';
+import type { DealOfDayItem } from '@/core/api/vnwAPI';
+import DealOfDayShowcase from './DealOfDayShowcase';
 
 export interface HomeTestimonial {
   testimonial_id?: number;
@@ -81,47 +78,6 @@ export function SectionHeader({
     </div>
   );
 }
-
-export function formatHeroCount(value: number) {
-  const safeValue = Math.max(0, Math.round(Number(value) || 0));
-  if (safeValue === 0) return '0';
-  if (safeValue < 1_000) return `${safeValue.toLocaleString('en-IN')}+`;
-  if (safeValue < 1_000_000) {
-    const thousands = safeValue / 1_000;
-    return `${thousands >= 100 || Number.isInteger(thousands) ? thousands.toFixed(0) : thousands.toFixed(1)}K+`;
-  }
-  const millions = safeValue / 1_000_000;
-  return `${millions >= 100 || Number.isInteger(millions) ? millions.toFixed(0) : millions.toFixed(1)}M+`;
-}
-
-function AnimatedHeroCount({ value, label }: { value: number; label: string }) {
-  const reduceMotion = useReducedMotion();
-  const count = useMotionValue(reduceMotion ? value : 0);
-  const display = useTransform(count, (latest) => formatHeroCount(latest));
-
-  useEffect(() => {
-    if (reduceMotion) {
-      count.set(value);
-      return;
-    }
-    count.set(0);
-    const controls = animate(count, value, { duration: 1.35, ease: [0.16, 1, 0.3, 1] });
-    return () => controls.stop();
-  }, [count, reduceMotion, value]);
-
-  return (
-    <>
-      <motion.span aria-hidden="true">{display}</motion.span>
-      <span className="sr-only">{`${value.toLocaleString('en-IN')} ${label}`}</span>
-    </>
-  );
-}
-
-const metricConfig = [
-  { key: 'available_numbers', label: 'Live premium numbers', Icon: Gem },
-  { key: 'delivered_numbers', label: 'VIP numbers delivered', Icon: ShieldCheck },
-  { key: 'customers_served', label: 'Happy customers', Icon: Users },
-] as const;
 
 const orbitNumbers = [
   { value: 'Mirror', left: '50%', top: '2%' },
@@ -185,20 +141,14 @@ function HeroButterflyLayer({ mode, butterflies = heroButterflies }: { mode: 'am
   );
 }
 
-const trustFallback = [
-  { Icon: ShieldCheck, label: 'Verified listings' },
-  { Icon: Lock, label: 'Secure purchase' },
-  { Icon: Truck, label: 'Pan-India support' },
-];
-
 export function HomeHero({
-  stats,
-  statsLoading = false,
-  statsError = false,
+  deals,
+  dealsLoading = false,
+  dealsError = false,
 }: {
-  stats: HeroStats | null;
-  statsLoading?: boolean;
-  statsError?: boolean;
+  deals: DealOfDayItem[];
+  dealsLoading?: boolean;
+  dealsError?: boolean;
 }) {
   const reduceMotion = useReducedMotion();
   const heroRef = useRef<HTMLElement>(null);
@@ -221,73 +171,7 @@ export function HomeHero({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: reduceMotion ? 0 : 0.48, ease: [0.16, 1, 0.3, 1] }}
         >
-          <p className="home-showcase__eyebrow mb-3 inline-flex min-h-9 items-center gap-2 rounded-full border border-primary/70 bg-card/75 px-3.5 text-xs font-extrabold uppercase tracking-[0.14em] text-primary shadow-sm sm:text-sm">
-            <Crown className="h-4 w-4" aria-hidden="true" />
-            India&apos;s premium VIP number marketplace
-          </p>
-          <h1 id="home-hero-title" className="home-hero__title max-w-3xl text-[2.65rem] font-semibold leading-[.96] text-foreground sm:text-[3.35rem] lg:text-[3.75rem] xl:text-[4.05rem]">
-            Own a number that feels <span className="block text-primary">unmistakably yours.</span>
-          </h1>
-          <div className="home-showcase__title-ornament mt-3" aria-hidden="true"><span /></div>
-          <p className="mt-3 max-w-[680px] text-base font-medium leading-6 text-muted-foreground sm:text-[1.05rem] sm:leading-7">
-            Discover rare, memorable VIP numbers through verified listings, secure checkout, and guided transfer support&mdash;crafted for identities that deserve to stand apart.
-          </p>
-          <div className="mt-3 flex flex-wrap gap-2 text-xs font-bold text-foreground 2xl:text-sm" aria-label="Marketplace promises">
-            {['Rare selections', 'Verified marketplace', 'Guided transfer'].map((item) => (
-              <span key={item} className="inline-flex min-h-9 items-center gap-2 rounded-full border border-primary/30 bg-card/65 px-3 shadow-sm">
-                <CheckCircle2 className="h-4 w-4 fill-amber-600 text-white" aria-hidden="true" />
-                {item}
-              </span>
-            ))}
-          </div>
-
-          <div className="mt-4 flex flex-col gap-2.5 sm:flex-row">
-            <Link to="/shop" className={cn('home-showcase__primary-cta inline-flex min-h-12 items-center justify-center gap-4 rounded-xl px-6 text-sm font-extrabold text-white shadow-lg transition hover:-translate-y-0.5', focusRing)}>
-              Explore Numbers
-              <span className="grid h-8 w-8 place-items-center rounded-full border border-white/75"><ArrowRight className="h-4 w-4" /></span>
-            </Link>
-            <Link to="/about" className={cn('inline-flex min-h-12 items-center justify-center gap-3 rounded-xl border border-primary/40 bg-card/75 px-6 text-sm font-extrabold text-foreground shadow-sm transition hover:-translate-y-0.5 hover:bg-accent', focusRing)}>
-              <CirclePlay className="h-6 w-6 text-primary" />
-              How It Works
-            </Link>
-          </div>
-
-          <div className="home-showcase__metrics mt-4 min-h-[94px] rounded-2xl border border-border bg-card/85 p-3 shadow-lg backdrop-blur-sm">
-            {statsError ? (
-              <div className="grid grid-cols-3 divide-x divide-amber-200/80" role="status" aria-label="Marketplace trust highlights">
-                {trustFallback.map(({ Icon, label }) => (
-                  <div key={label} className="min-w-0 px-2 sm:px-4">
-                    <Icon className="mb-2 h-6 w-6 text-primary" aria-hidden="true" />
-                    <p className="text-xs font-extrabold leading-5 text-foreground sm:text-sm">{label}</p>
-                  </div>
-                ))}
-              </div>
-            ) : statsLoading || !stats ? (
-              <div className="grid grid-cols-3 divide-x divide-amber-200/80" role="status" aria-label="Loading marketplace statistics">
-                {[0, 1, 2].map((item) => (
-                  <div key={item} className="min-w-0 px-2 sm:px-4">
-                    <div className="h-10 w-10 rounded-full bg-muted" />
-                    <div className="mt-2 h-7 w-20 rounded-md bg-muted" />
-                    <div className="mt-2 h-3 w-full max-w-28 rounded bg-muted" />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <dl className="grid grid-cols-3 divide-x divide-amber-200/80">
-                {metricConfig.map(({ key, label, Icon }) => (
-                  <div key={key} className="flex min-w-0 items-center gap-3 px-2 sm:px-4">
-                    <span className="hidden h-12 w-12 shrink-0 place-items-center rounded-full border border-primary/40 bg-primary/10 text-primary sm:grid"><Icon className="h-6 w-6" /></span>
-                    <div className="min-w-0">
-                      <dd className="font-serif text-xl font-bold tabular-nums text-foreground sm:text-2xl">
-                        <AnimatedHeroCount value={stats[key]} label={label} />
-                      </dd>
-                      <dt className="mt-1 text-[10px] font-bold leading-4 text-muted-foreground sm:text-xs">{label}</dt>
-                    </div>
-                  </div>
-                ))}
-              </dl>
-            )}
-          </div>
+          <DealOfDayShowcase deals={deals} loading={dealsLoading} error={dealsError} />
         </motion.div>
 
         <motion.div
