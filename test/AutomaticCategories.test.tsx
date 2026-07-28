@@ -191,6 +191,13 @@ describe('NumberCard automatic category badges', () => {
     expect(screen.queryByText(/^\+\d+$/)).not.toBeInTheDocument();
     expect(screen.getAllByText('Doubling Numbers')).toHaveLength(1);
     expect(screen.getByText('Signature VIP Number')).toBeInTheDocument();
+    expect(container.querySelector('.number-card-shell')).toHaveClass('min-h-[216px]');
+    expect(screen.getByText('Verified')).toHaveClass('number-card__verified');
+    expect(screen.getByRole('button', { name: 'add to wishlist' })).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('button', { name: 'compare' })).toHaveAttribute('aria-pressed', 'false');
+    expect(container.querySelector('.number-card__sheen')).toBeInTheDocument();
+    expect(container.querySelector('.number-card__primary-action')).toHaveTextContent('Buy Now');
+    expect(container.querySelector('[class*="blue"]')).not.toBeInTheDocument();
     expect(Array.from(container.querySelectorAll('[data-match="true"]')).map((node) => node.textContent)).toEqual(['00', '66', '22']);
     expect(screen.getByRole('img', {
       name: 'VIP number, digits 9 0 0 6 6 2 2 1 2 1. Category: Doubling Numbers. Matching digits: 00, 66, 22.',

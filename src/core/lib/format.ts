@@ -12,7 +12,7 @@ export const BADGE_META: Record<string, BadgeMeta> = {
   PREMIUM: { label: 'Premium', className: 'bg-gradient-to-r from-[#d4af37] to-[#b8860b] text-[#2a1500]' },
   BEST_SELLER: { label: 'Best Seller', className: 'bg-[#c0392b] text-white' },
   HOT_DEAL: { label: 'Hot Deal', className: 'bg-[#e07b00] text-white' },
-  NEW_ARRIVAL: { label: 'New Arrival', className: 'bg-[#1e9e57] text-white' },
+  NEW_ARRIVAL: { label: 'New Arrival', className: 'bg-gradient-to-r from-[#19704f] to-[#0b5139] text-white' },
   VALUE_PICK: { label: 'Popular', className: 'bg-[#6c3bb5] text-white' },
   NONE: { label: '', className: '' },
 };

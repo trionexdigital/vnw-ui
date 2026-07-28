@@ -128,9 +128,9 @@ function TableWire({ rows = 6, cols = 5 }: { rows?: number; cols?: number }) {
   );
 }
 
-function CardGridWire({ count = 8 }: { count?: number }) {
+function CardGridWire({ count = 8, wide = false }: { count?: number; wide?: boolean }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className={cn('grid gap-3 sm:grid-cols-2 lg:grid-cols-4', wide && 'md:grid-cols-3 xl:grid-cols-5')}>
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className="vnw-card p-4">
           <Wire className="h-8 w-36" />
@@ -249,7 +249,7 @@ export function Loader({ label, variant }: { label?: string; variant?: 'dashboar
     <div className="animate-rise-in py-2" aria-busy="true" aria-live="polite" aria-label={label || 'Loading content'}>
       {inferred === 'dashboard' && <DashboardWire />}
       {inferred === 'table' && <TableWire />}
-      {inferred === 'cards' && <CardGridWire />}
+      {inferred === 'cards' && <CardGridWire count={10} wide />}
       {inferred === 'detail' && <><HeaderWire /><DetailWire /></>}
       {inferred === 'form' && <><HeaderWire /><FormWire /></>}
       {inferred === 'shop' && <ShopWire />}

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import {
+  ArrowUpDown,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -15,6 +16,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { numbersAPI, categoriesAPI } from '@/core/api/vnwAPI';
 import NumberCard, { NumberItem } from '@/shared/components/NumberCard';
 import { Loader } from '@/shared/components/ui-bits';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from '@/shared/ui/select';
 import { badgeOptions } from '@/core/lib/format';
 import { MotionGrid, MotionGridItem } from '@/shared/motion/MotionPrimitives';
 import type { NumberCategory } from '@/core/categories/types';
@@ -219,14 +226,14 @@ export default function Shop() {
   };
 
   const FilterOptions = ({ mobile = false }: { mobile?: boolean }) => (
-    <div className={`flex min-h-0 flex-1 flex-col ${mobile ? '' : 'px-4 pb-4'}`}>
-      <div className="grid grid-cols-2 rounded-xl border border-border bg-muted p-1" role="tablist" aria-label="Filter groups">
+    <div className={`flex min-h-0 flex-1 flex-col pt-2 ${mobile ? '' : 'px-3 pb-3'}`}>
+      <div className="grid grid-cols-2 rounded-lg border border-border bg-muted p-0.5" role="tablist" aria-label="Filter groups">
         <button
           type="button"
           role="tab"
           aria-selected={filterTab === 'categories'}
           onClick={() => setFilterTab('categories')}
-          className={`min-h-10 rounded-lg text-sm font-black transition ${filterTab === 'categories' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'}`}
+          className={`min-h-8 rounded-md px-2 text-xs font-black transition ${filterTab === 'categories' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
         >
           Categories
         </button>
@@ -235,21 +242,21 @@ export default function Shop() {
           role="tab"
           aria-selected={filterTab === 'prices'}
           onClick={() => setFilterTab('prices')}
-          className={`min-h-10 rounded-lg text-sm font-black transition ${filterTab === 'prices' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'}`}
+          className={`min-h-8 rounded-md px-2 text-xs font-black transition ${filterTab === 'prices' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
         >
           Prices
         </button>
       </div>
       <div
         role="tabpanel"
-        className="mt-3 min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain pr-1 [scrollbar-width:thin]"
+        className="mt-2 min-h-0 flex-1 space-y-0.5 overflow-y-auto overscroll-contain pr-1 [scrollbar-color:hsl(var(--primary))_transparent] [scrollbar-width:thin]"
       >
         {filterTab === 'categories' ? (
           <>
             <button
               type="button"
               onClick={() => update({ category: '' })}
-              className={`flex min-h-11 w-full items-center justify-between rounded-xl px-3 text-left text-sm font-bold ${
+              className={`flex min-h-9 w-full items-center justify-between rounded-lg px-2.5 text-left text-xs font-bold transition ${
                 !category ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-accent hover:text-foreground'
               }`}
             >
@@ -261,14 +268,14 @@ export default function Shop() {
                 key={item.slug}
                 type="button"
                 onClick={() => update({ category: item.slug })}
-                className={`flex min-h-11 w-full items-center justify-between gap-2 rounded-xl px-3 text-left text-sm font-bold ${
+                className={`flex min-h-9 w-full items-center justify-between gap-2 rounded-lg px-2.5 text-left text-xs font-bold transition ${
                   category === item.slug
                     ? 'bg-primary text-primary-foreground shadow-sm'
                     : 'text-muted-foreground hover:bg-accent hover:text-foreground'
                 }`}
               >
                 <span className="min-w-0 truncate">{item.name}</span>
-                <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] ${category === item.slug ? 'bg-background/20' : 'bg-muted'}`}>
+                <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] ${category === item.slug ? 'bg-background/20' : 'bg-muted'}`}>
                   {getCategoryCount(item).toLocaleString('en-IN')}
                 </span>
               </button>
@@ -281,7 +288,7 @@ export default function Shop() {
               key={band.label}
               type="button"
               onClick={() => setPriceBand(band.min, band.max)}
-              className={`flex min-h-12 w-full items-center justify-between rounded-xl px-3 text-left text-sm font-bold ${
+              className={`flex min-h-9 w-full items-center justify-between rounded-lg px-2.5 text-left text-xs font-bold transition ${
                 selected ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-accent hover:text-foreground'
               }`}
             >
@@ -295,16 +302,43 @@ export default function Shop() {
   );
 
   const FilterHeader = ({ mobile = false }: { mobile?: boolean }) => (
-    <div className="shrink-0 border-b border-border p-4">
+    <div className="shrink-0 border-b border-border p-3">
       <div className="flex items-center justify-between gap-2">
-        <h2 className="flex items-center gap-2 text-lg font-black text-foreground">
-          <Filter className="h-5 w-5 text-primary" aria-hidden="true" /> Filters
+        <h2 className="flex items-center gap-1.5 text-base font-black text-foreground">
+          <Filter className="h-4 w-4 text-primary" aria-hidden="true" /> Filters
         </h2>
         <div className="flex items-center gap-1">
+          <Select value={sort} onValueChange={(value) => update({ sort: value })}>
+            <SelectTrigger
+              aria-label="Sort results"
+              title={`Sort: ${SORT_OPTIONS.find((option) => option.value === sort)?.label || 'Newest'}`}
+              className="h-9 w-9 justify-center rounded-lg border-border bg-card p-0 text-primary shadow-sm transition hover:border-primary hover:bg-primary/10 focus:ring-2 focus:ring-ring focus:ring-offset-0 [&>svg:last-child]:hidden"
+            >
+              <ArrowUpDown className="h-4 w-4" aria-hidden="true" />
+              <span className="sr-only">
+                Sort: {SORT_OPTIONS.find((option) => option.value === sort)?.label || 'Newest'}
+              </span>
+            </SelectTrigger>
+            <SelectContent
+              align="end"
+              sideOffset={6}
+              className="w-56 rounded-xl border-border bg-card p-1 shadow-xl"
+            >
+              {SORT_OPTIONS.map((option) => (
+                <SelectItem
+                  key={option.value}
+                  value={option.value}
+                  className="min-h-9 rounded-lg pl-8 pr-3 text-xs font-bold data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary focus:bg-accent"
+                >
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <button
             type="button"
             onClick={resetAll}
-            className="inline-flex min-h-10 items-center gap-1 rounded-lg px-2 text-xs font-black text-primary hover:bg-primary/10"
+            className="inline-flex min-h-9 items-center gap-1 rounded-lg px-2 text-[11px] font-black text-primary transition hover:bg-primary/10"
           >
             <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" /> Reset
           </button>
@@ -314,23 +348,13 @@ export default function Shop() {
               type="button"
               aria-label="Close filters"
               onClick={() => setFiltersOpen(false)}
-              className="grid h-10 w-10 place-items-center rounded-lg border border-border text-foreground"
+              className="grid h-9 w-9 place-items-center rounded-lg border border-border text-foreground"
             >
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
           )}
         </div>
       </div>
-      <label className="mt-3 block text-xs font-black uppercase tracking-wide text-muted-foreground">
-        Sort results
-        <select
-          value={sort}
-          onChange={(event) => update({ sort: event.target.value })}
-          className="input-luxury mt-1 h-11 w-full text-base normal-case tracking-normal"
-        >
-          {SORT_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-        </select>
-      </label>
     </div>
   );
 
@@ -398,9 +422,9 @@ export default function Shop() {
         </div>
       )}
 
-      <div className="grid items-start gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
-        <aside className="sticky top-24 hidden max-h-[calc(100vh-7rem)] min-h-[480px] self-start overflow-hidden lg:block">
-          <div className="vnw-card flex h-full max-h-[calc(100vh-7rem)] min-h-[480px] flex-col overflow-hidden">
+      <div className="grid items-start gap-5 lg:grid-cols-[248px_minmax(0,1fr)]">
+        <aside className="sticky top-24 hidden max-h-[calc(100vh-7rem)] min-h-[420px] self-start overflow-hidden lg:block">
+          <div className="vnw-card flex h-full max-h-[calc(100vh-7rem)] min-h-[420px] flex-col overflow-hidden">
             <FilterHeader />
             <FilterOptions />
           </div>
@@ -449,7 +473,7 @@ export default function Shop() {
                     <div className="text-xs font-black uppercase tracking-[.12em] text-primary">Closest matches</div>
                     <h2 id={`alternative-${group.relaxed_key}`} className="mt-1 text-lg font-black text-foreground">{group.label}</h2>
                   </div>
-                  <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {group.items.slice(0, 6).map((number) => <NumberCard key={number.number_id} item={number} />)}
                   </div>
                 </section>
@@ -457,7 +481,7 @@ export default function Shop() {
             </>
           ) : (
             <>
-              <MotionGrid className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              <MotionGrid className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {items.map((number) => (
                   <MotionGridItem key={number.number_id}>
                     <NumberCard item={number} />
@@ -519,7 +543,7 @@ export default function Shop() {
             >
               <div id="mobile-filter-title" className="sr-only">Filter VIP number results</div>
               <FilterHeader mobile />
-              <div className="flex min-h-0 flex-1 flex-col px-4 pt-4">
+              <div className="flex min-h-0 flex-1 flex-col px-3 pt-3">
                 <FilterOptions mobile />
               </div>
               <div className="shrink-0 border-t border-border bg-background p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">

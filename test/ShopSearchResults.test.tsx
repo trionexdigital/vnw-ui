@@ -71,6 +71,19 @@ describe('shop search results and filters', () => {
     expect(screen.getByText('12')).toBeInTheDocument();
   });
 
+  it('keeps sorting in the compact filter-header icon control', async () => {
+    const user = userEvent.setup();
+    const { container } = renderShop();
+    await screen.findByText('98765 43210');
+    const sortControl = container.querySelector<HTMLElement>('aside [role="combobox"][aria-label="Sort results"]');
+
+    expect(sortControl).toBeInTheDocument();
+    await user.click(sortControl as HTMLElement);
+    expect(screen.getByRole('option', { name: 'Price: Low to High' })).toBeInTheDocument();
+    await user.click(screen.getByRole('option', { name: 'Price: Low to High' }));
+    await waitFor(() => expect(screen.getByLabelText('Current location')).toHaveTextContent('sort=price_asc'));
+  });
+
   it('locks page scrolling while the accessible mobile filter sheet is open', async () => {
     const user = userEvent.setup();
     renderShop();

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Heart, ShoppingCart, BarChart2, Crown, Star, IndianRupee, ShieldCheck } from 'lucide-react';
+import { Heart, ShoppingCart, BarChart2, Crown, Star, IndianRupee, ShieldCheck, Zap } from 'lucide-react';
 import { useState } from 'react';
 import { cartAPI, wishlistAPI } from '@/core/api/vnwAPI';
 import { useStore } from '@/shared/store/useStore';
@@ -76,75 +76,101 @@ export default function NumberCard({ item, onWishlistChange }: { item: NumberIte
 
   return (
     <motion.article
-      className="premium-card vnw-card-hover group relative flex min-h-[184px] flex-col overflow-hidden rounded-xl p-3"
+      className="number-card-shell group relative flex h-full min-h-[216px] flex-col overflow-hidden rounded-xl p-2.5"
       initial={reduceMotion ? false : { opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={reduceMotion ? undefined : { y: -2 }}
+      whileHover={reduceMotion ? undefined : { y: -4, scale: 1.008 }}
       transition={{ duration: reduceMotion ? 0 : 0.22, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-amber-600 to-transparent opacity-75" />
-      <div className="relative mb-2 flex items-center justify-between gap-2">
+      <span className="number-card__sheen" aria-hidden="true" />
+      <span className="number-card__topline" aria-hidden="true" />
+
+      <div className="relative mb-1.5 flex items-center justify-between gap-2">
         {badge.label
-          ? <span className={cn('chip !rounded-md !px-2 !py-0.5 text-[9px]', badge.className)}><Star className="h-2.5 w-2.5" fill="currentColor" />{badge.label}</span>
-          : <span className="chip !rounded-md !px-2 !py-0.5 text-[9px]"><Star className="h-2.5 w-2.5" fill="currentColor" />VIP</span>}
-        <button onClick={toggleWish} aria-label="wishlist"
-          className={cn('grid h-8 w-8 place-items-center rounded-lg border border-border bg-card text-muted-foreground shadow-sm transition hover:border-primary hover:text-primary', wished && 'border-rose-400/50 bg-rose-500/10 text-rose-600 dark:text-rose-400')}>
-          <Heart className="h-4 w-4" fill={wished ? 'currentColor' : 'none'} />
+          ? <span className={cn('number-card__badge inline-flex min-h-5 items-center gap-1 rounded-md px-2 py-0.5 text-[8px] font-black uppercase tracking-wide', badge.className)}><Star className="h-2.5 w-2.5" fill="currentColor" />{badge.label}</span>
+          : <span className="number-card__badge number-card__badge--default inline-flex min-h-5 items-center gap-1 rounded-md px-2 py-0.5 text-[8px] font-black uppercase tracking-wide"><Star className="h-2.5 w-2.5" fill="currentColor" />VIP</span>}
+        <button
+          onClick={toggleWish}
+          aria-label={wished ? 'remove from wishlist' : 'add to wishlist'}
+          aria-pressed={wished}
+          className={cn('number-card__icon-button grid h-7 w-7 place-items-center rounded-lg', wished && 'is-wished')}
+        >
+          <Heart className="h-3.5 w-3.5" fill={wished ? 'currentColor' : 'none'} />
         </button>
       </div>
 
       <button onClick={() => navigate(`/number/${item.number_id}`)} className="relative w-full text-center">
-        <div className="mb-1 flex items-center justify-center gap-1.5 text-[10px] font-bold text-muted-foreground">
-          <Crown className="h-3.5 w-3.5 shrink-0 text-primary" /> <span>{displayTitle}</span>
+        <div className="number-card__eyebrow mb-1 flex items-center justify-center gap-1 text-[9px] font-bold">
+          <Crown className="number-card__crown h-3 w-3 shrink-0" />
+          <span className="min-w-0 truncate">{displayTitle}</span>
         </div>
-        <HighlightedNumber number={item.number_value || item.display_number} category={primaryCategory} />
+        <HighlightedNumber
+          number={item.number_value || item.display_number}
+          category={primaryCategory}
+          className="number-card__number"
+        />
       </button>
 
-      {primaryCategory && (
-        <div className="relative mt-2 flex min-w-0 items-center justify-center" aria-label="Automatic number category">
+      <div className="number-card__identity-row relative mt-1.5 flex min-h-7 items-center justify-between gap-1 border-y py-1">
+        <div className="min-w-0" aria-label="Automatic number category">
+          {primaryCategory ? (
           <button
             type="button"
             title={primaryCategory.name}
             onClick={() => navigate(`/shop?category=${encodeURIComponent(primaryCategory.slug)}`)}
-            className="max-w-full rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[9px] font-black text-primary transition hover:border-primary/40 hover:bg-primary/20"
+            className="number-card__category max-w-full rounded-md border px-1.5 py-0.5 text-[9px] font-black"
           >
             <span className="block truncate">{primaryCategory.name}</span>
           </button>
+          ) : (
+            <span className="number-card__collection block truncate text-[9px] font-black uppercase tracking-wide">VIP Collection</span>
+          )}
         </div>
-      )}
-
-      <div className="relative my-2 flex items-center justify-center gap-1.5 border-y border-border py-1.5 text-emerald-700 dark:text-emerald-400">
-        <ShieldCheck className="h-3.5 w-3.5" />
-        <span className="text-[10px] font-bold">Verified &amp; available on any operator</span>
+        <span
+          className="number-card__verified flex shrink-0 items-center gap-1 text-[9px] font-black"
+          title="Verified and available on any operator"
+        >
+          <ShieldCheck className="h-3 w-3" aria-hidden="true" />
+          Verified
+        </span>
       </div>
 
-      <div className="relative grid grid-cols-4 gap-1.5">
-        <div className="rounded-lg border border-border bg-muted py-1.5 text-center">
-          <div className="text-[9px] text-muted-foreground">Total</div>
-          <div className="text-sm font-black text-foreground">{total}</div>
+      <div className="relative mt-1.5 grid grid-cols-[38px_38px_minmax(0,1fr)] gap-1">
+        <div className="number-card__metric rounded-lg border py-1 text-center">
+          <div className="text-[8px] leading-none">Total</div>
+          <div className="mt-0.5 text-xs font-black leading-none">{total}</div>
         </div>
-        <div className="rounded-lg border border-border bg-muted py-1.5 text-center">
-          <div className="text-[9px] text-muted-foreground">Sum</div>
-          <div className="text-sm font-black text-foreground">{sum}</div>
+        <div className="number-card__metric rounded-lg border py-1 text-center">
+          <div className="text-[8px] leading-none">Sum</div>
+          <div className="mt-0.5 text-xs font-black leading-none">{sum}</div>
         </div>
-        <div className="col-span-2 rounded-lg border border-primary/30 bg-primary/10 px-2 py-1.5">
+        <div className="number-card__price min-w-0 rounded-lg border px-1.5 py-1">
           <div className="flex items-center justify-between gap-1">
-            <span className="text-[9px] text-muted-foreground line-through">{formatINR(item.mrp)}</span>
-            {discountPct > 0 && <span className="rounded-full bg-card px-1.5 py-0.5 text-[9px] font-black text-primary">{discountPct}%</span>}
+            <span className="number-card__mrp truncate text-[8px] line-through">{formatINR(item.mrp)}</span>
+            {discountPct > 0 && <span className="number-card__discount shrink-0 rounded-full px-1 py-0.5 text-[8px] font-black leading-none">{discountPct}%</span>}
           </div>
-          <div className="flex items-center justify-end gap-0.5 text-base font-black leading-none text-foreground"><IndianRupee className="h-3.5 w-3.5" />{Number(item.offer_price).toLocaleString('en-IN')}</div>
+          <div className="number-card__offer mt-0.5 flex min-w-0 items-center justify-end gap-0.5 text-sm font-black leading-none">
+            <IndianRupee className="h-3 w-3 shrink-0" />
+            <span className="truncate">{Number(item.offer_price).toLocaleString('en-IN')}</span>
+          </div>
         </div>
       </div>
 
-      <div className="relative mt-2 grid grid-cols-[1fr_auto_auto] gap-1.5">
-        <button className="h-9 rounded-lg bg-primary px-3 text-xs font-black text-primary-foreground shadow-sm transition hover:bg-primary/90 disabled:opacity-50" onClick={buyNow} disabled={!!sold}>{sold ? 'Sold' : 'Buy Now'}</button>
-        <button aria-label="add to cart" className="grid h-9 w-10 place-items-center rounded-lg border border-border bg-card text-foreground transition hover:border-primary hover:text-primary disabled:opacity-50" onClick={addToCart} disabled={busy || !!sold}>
-          <ShoppingCart className="h-4 w-4" />
+      <div className="relative mt-1.5 grid grid-cols-[1fr_auto_auto] gap-1">
+        <button className="number-card__primary-action inline-flex h-8 items-center justify-center gap-1 rounded-lg px-2 text-[10px] font-black disabled:opacity-50" onClick={buyNow} disabled={!!sold}>
+          {!sold && <Zap className="h-3 w-3" aria-hidden="true" />}
+          {sold ? 'Sold' : 'Buy Now'}
         </button>
-        <button onClick={() => toggleCompare(item.number_id)}
+        <button aria-label="add to cart" className="number-card__secondary-action grid h-8 w-9 place-items-center rounded-lg border disabled:opacity-50" onClick={addToCart} disabled={busy || !!sold}>
+          <ShoppingCart className="h-3.5 w-3.5" />
+        </button>
+        <button
+          onClick={() => toggleCompare(item.number_id)}
           aria-label="compare"
-          className={cn('grid h-9 w-10 place-items-center rounded-lg border border-border bg-card transition hover:border-primary', inCompare ? 'border-primary bg-accent text-primary' : 'text-foreground')}>
-          <BarChart2 className="h-4 w-4" />
+          aria-pressed={inCompare}
+          className={cn('number-card__secondary-action grid h-8 w-9 place-items-center rounded-lg border', inCompare && 'is-active')}
+        >
+          <BarChart2 className="h-3.5 w-3.5" />
         </button>
       </div>
     </motion.article>

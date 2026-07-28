@@ -70,6 +70,8 @@ describe('HomeHero', () => {
     expect(container.querySelector('.brand-stage__slogan')).toBeInTheDocument();
     expect(container.querySelector('.brand-stage__pedestal')).toBeInTheDocument();
     expect(container.querySelectorAll('.brand-stage__number-plaque')).toHaveLength(8);
+    expect(screen.getByRole('link', { name: 'Browse Mirror numbers' })).toHaveAttribute('href', '/shop?category=mirror-numbers');
+    expect(screen.getByRole('link', { name: 'Browse Numerology numbers' })).toHaveAttribute('href', '/numerology');
     expect(container.querySelector('.home-showcase__butterflies--ambient')).toHaveAttribute('aria-hidden', 'true');
     expect(container.querySelector('.home-showcase__butterflies--focus')).toHaveAttribute('aria-hidden', 'true');
     expect(container.querySelector('.home-showcase__butterflies--mobile-art')).not.toBeInTheDocument();
@@ -93,6 +95,22 @@ describe('HomeHero', () => {
     renderHero(<HomeHero deals={deals} />);
     await user.click(screen.getByRole('button', { name: 'Pause automatic deal rotation' }));
     expect(screen.getByRole('button', { name: 'Start automatic deal rotation' })).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('pauses the category orbit while a category is hovered or keyboard-focused', () => {
+    const { container } = renderHero(<HomeHero deals={deals} />);
+    const orbit = container.querySelector('.brand-stage__number-orbit');
+    const mirror = screen.getByRole('link', { name: 'Browse Mirror numbers' });
+
+    fireEvent.mouseEnter(mirror);
+    expect(orbit).toHaveClass('is-paused');
+    fireEvent.mouseLeave(mirror);
+    expect(orbit).not.toHaveClass('is-paused');
+
+    fireEvent.focus(mirror);
+    expect(orbit).toHaveClass('is-paused');
+    fireEvent.blur(mirror);
+    expect(orbit).not.toHaveClass('is-paused');
   });
 
   it('supports one- and two-number layouts plus keyboard wraparound', () => {

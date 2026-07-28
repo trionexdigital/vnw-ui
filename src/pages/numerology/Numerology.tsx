@@ -113,7 +113,7 @@ export default function Numerology() {
               <p className="text-center text-muted-foreground">No matching numbers right now. <Link to="/shop" className="text-gold-dark">Browse all numbers</Link></p>
             ) : (
               <>
-                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{matches.map((n) => <NumberCard key={n.number_id} item={n} />)}</div>
+                <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">{matches.map((n) => <NumberCard key={n.number_id} item={n} />)}</div>
                 <div className="mt-6 text-center"><Link to={`/shop?numerology=${activeSum}`} className="btn-royal">View All Sum {activeSum} Numbers <ArrowRight className="h-4 w-4" /></Link></div>
               </>
             )}

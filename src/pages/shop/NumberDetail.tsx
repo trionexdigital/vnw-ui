@@ -127,7 +127,7 @@ export default function NumberDetail() {
       {related.length > 0 && (
         <div className="mt-10">
           <h2 className="mb-4 text-xl font-black text-foreground">Similar Numbers</h2>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{related.map((n) => <NumberCard key={n.number_id} item={n} />)}</div>
+          <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">{related.map((n) => <NumberCard key={n.number_id} item={n} />)}</div>
         </div>
       )}
 

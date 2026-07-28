@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight,
@@ -79,15 +79,15 @@ export function SectionHeader({
   );
 }
 
-const orbitNumbers = [
-  { value: 'Mirror', left: '50%', top: '2%' },
-  { value: 'Triple', left: '84%', top: '22%' },
-  { value: 'Numberology', left: '94%', top: '55%' },
-  { value: 'AB AB', left: '79%', top: '82%' },
-  { value: 'Doubling', left: '50%', top: '98%' },
-  { value: '786', left: '17%', top: '82%' },
-  { value: 'Counting', left: '5%', top: '54%' },
-  { value: 'Unique', left: '18%', top: '22%' },
+const orbitCategories = [
+  { label: 'Mirror', to: '/shop?category=mirror-numbers', left: '50%', top: '2%' },
+  { label: 'Triple', to: '/shop?category=triple-numbers', left: '84%', top: '22%' },
+  { label: 'Numerology', to: '/numerology', left: '94%', top: '55%' },
+  { label: 'AB AB', to: '/shop?category=ab-ab-xy-xy-numbers', left: '79%', top: '82%' },
+  { label: 'Doubling', to: '/shop?category=doubling-numbers', left: '50%', top: '98%' },
+  { label: '786', to: '/shop?category=786-numbers', left: '17%', top: '82%' },
+  { label: 'Counting', to: '/shop?category=counting-numbers', left: '5%', top: '54%' },
+  { label: 'Unique', to: '/shop?category=unique-numbers', left: '18%', top: '22%' },
 ];
 
 type HeroButterfly = {
@@ -154,17 +154,18 @@ export function HomeHero({
   const heroRef = useRef<HTMLElement>(null);
   const isInView = useInView(heroRef, { amount: 0.12 });
   const ambientMotion = isInView && !reduceMotion;
+  const [orbitPaused, setOrbitPaused] = useState(false);
 
   return (
     <section
       ref={heroRef}
-      className={cn('home-hero home-showcase relative isolate overflow-hidden px-4 py-5 sm:px-6 sm:py-5 lg:px-8 lg:py-4', ambientMotion && 'is-motion-active')}
+      className={cn('home-hero home-showcase relative isolate overflow-hidden px-4 py-4 sm:px-6 sm:py-4 lg:px-8 lg:py-3', ambientMotion && 'is-motion-active')}
       aria-labelledby="home-hero-title"
     >
       <div className="home-showcase__dots absolute bottom-0 left-0 h-40 w-56 opacity-50" aria-hidden="true" />
       <HeroButterflyLayer mode="ambient" />
       <HeroButterflyLayer mode="focus" />
-      <div className="home-hero__grid mx-auto grid w-full max-w-[1700px] items-center gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-4">
+      <div className="home-hero__grid relative mx-auto grid w-full max-w-[1700px] items-center gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-4">
         <motion.div
           className="home-hero__copy relative z-10 mx-auto w-full max-w-[800px] lg:col-start-1 lg:row-start-1"
           initial={reduceMotion ? false : { opacity: 0, y: 22 }}
@@ -179,7 +180,7 @@ export function HomeHero({
           initial={reduceMotion ? false : { opacity: 0, scale: 0.94 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: reduceMotion ? 0 : 0.58, delay: reduceMotion ? 0 : 0.08, ease: [0.16, 1, 0.3, 1] }}
-          aria-hidden="true"
+          aria-label="Browse VIP number categories"
         >
           <div className="brand-stage__aura absolute inset-[2%] rounded-full" />
           <div className="brand-stage__orbit brand-stage__orbit--wide absolute inset-[6%] rounded-[50%]" />
@@ -187,13 +188,23 @@ export function HomeHero({
           <div className="brand-stage__orbit brand-stage__orbit--inner absolute inset-[26%] rounded-full" />
           <div className="brand-stage__sparkles absolute inset-[7%] rounded-full" />
 
-          <div className="brand-stage__number-orbit absolute inset-[7%] z-30">
-            {orbitNumbers.map((item) => (
-              <span key={item.value} className="brand-stage__number-anchor absolute" style={{ left: item.left, top: item.top }}>
-                <span className="brand-stage__number-plaque">
-                  <Crown className="brand-stage__number-crown" />
-                  {item.value}
-                </span>
+          <div className={cn('brand-stage__number-orbit absolute inset-[7%] z-30', orbitPaused && 'is-paused')}>
+            {orbitCategories.map((category) => (
+              <span key={category.label} className="brand-stage__number-anchor absolute" style={{ left: category.left, top: category.top }}>
+                <Link
+                  to={category.to}
+                  className="brand-stage__category-link"
+                  aria-label={`Browse ${category.label} numbers`}
+                  onMouseEnter={() => setOrbitPaused(true)}
+                  onMouseLeave={() => setOrbitPaused(false)}
+                  onFocus={() => setOrbitPaused(true)}
+                  onBlur={() => setOrbitPaused(false)}
+                >
+                  <span className="brand-stage__number-plaque">
+                    <Crown className="brand-stage__number-crown" />
+                    {category.label}
+                  </span>
+                </Link>
               </span>
             ))}
           </div>
@@ -205,7 +216,7 @@ export function HomeHero({
           </div>
 
           <div className="brand-stage__pedestal absolute bottom-[3%] left-1/2 z-10 h-[15%] w-[68%] -translate-x-1/2 rounded-[50%]" />
-          <div className="brand-stage__slogan absolute bottom-0 left-1/2 z-40 w-[55%] -translate-x-1/2 rounded-2xl border border-amber-400 bg-white px-6 py-3 shadow-[0_18px_38px_-18px_rgba(120,76,15,.4)]">
+          <div className="brand-stage__slogan absolute left-1/2 z-40 w-[55%] -translate-x-1/2 rounded-2xl border border-amber-400 bg-white px-6 py-3 shadow-[0_18px_38px_-18px_rgba(120,76,15,.4)]">
             <Slogan className="h-auto w-full" alt="" />
           </div>
         </motion.div>
@@ -307,7 +318,7 @@ export function NumberGridSection({
             </Link>
           </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {numbers.map((number) => <NumberCard key={number.number_id} item={number} />)}
           </div>
         )}
