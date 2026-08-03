@@ -6,6 +6,7 @@ import { useStore } from '@/shared/store/useStore';
 import { formatINR, BADGE_META } from '@/core/lib/format';
 import { getPrimaryCategory } from '@/core/categories/types';
 import { Loader, EmptyState } from '@/shared/components/ui-bits';
+import { formatRtpDate, getNumberPurchaseMode, numberActionPath } from '@/core/lib/numberPurchaseMode';
 
 export default function Compare() {
   const navigate = useNavigate();
@@ -40,6 +41,7 @@ export default function Compare() {
     ['Numerology Sum', (n) => n.numerology_sum ?? '—'],
     ['Badge', (n) => BADGE_META[n.badge || 'NONE'].label || '—'],
     ['Status', (n) => n.status],
+    ['RTP', (n) => getNumberPurchaseMode(n) === 'PREBOOK' ? `Ready ${formatRtpDate(n.rtp_available_at)}` : n.rtp_status || 'RTP'],
   ];
 
   return (
@@ -74,7 +76,7 @@ export default function Compare() {
               <td className="px-4 py-3" />
               {items.map((n) => (
                 <td key={n.number_id} className="px-4 py-3 text-center">
-                  <button onClick={() => navigate(`/checkout?number_id=${n.number_id}`)} className="btn-gold text-xs" disabled={n.status !== 'AVAILABLE'}>Buy Now</button>
+                  <button onClick={() => navigate(numberActionPath(n))} className="btn-gold text-xs" disabled={getNumberPurchaseMode(n) === 'UNAVAILABLE'}>{getNumberPurchaseMode(n) === 'PREBOOK' ? 'Pre-book' : 'Buy Now'}</button>
                 </td>
               ))}
             </tr>

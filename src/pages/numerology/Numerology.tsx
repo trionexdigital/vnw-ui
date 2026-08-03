@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Sparkles, Calendar, User2, ArrowRight, Hexagon } from 'lucide-react';
-import { numbersAPI } from '@/core/api/vnwAPI';
+import { Sparkles, Calendar, User2, ArrowRight, Hexagon, Smartphone, BriefcaseBusiness, Layers3, Send, ShieldCheck } from 'lucide-react';
+import { numbersAPI, siteAPI } from '@/core/api/vnwAPI';
 import NumberCard, { NumberItem } from '@/shared/components/NumberCard';
 import { Loader } from '@/shared/components/ui-bits';
+import { useToast } from '@/shared/hooks/use-toast';
 
 const reduce = (n: number): number => { while (n > 9) n = String(n).split('').reduce((s, d) => s + Number(d), 0); return n; };
 const reduceStr = (s: string): number => reduce(s.replace(/\D/g, '').split('').reduce((a, d) => a + Number(d), 0));
@@ -32,12 +33,38 @@ function NumCircle({ n, label }: { n: number; label: string }) {
 }
 
 export default function Numerology() {
+  const { toast } = useToast();
   const [dob, setDob] = useState('');
   const [name, setName] = useState('');
   const [result, setResult] = useState<{ mulank: number; bhagyank: number; nameNo: number } | null>(null);
   const [matches, setMatches] = useState<NumberItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeSum, setActiveSum] = useState<number | null>(null);
+  const [mobileNumber, setMobileNumber] = useState('');
+  const [service, setService] = useState('Current Number Analysis');
+  const [enquiry, setEnquiry] = useState({ name: '', phone: '', email: '', message: '' });
+  const [sending, setSending] = useState(false);
+
+  const digits = mobileNumber.replace(/\D/g, '').slice(0, 10);
+  const digitTotal = digits.split('').reduce((sum, digit) => sum + Number(digit), 0);
+  const midTotal = String(digitTotal).split('').reduce((sum, digit) => sum + Number(digit), 0);
+  const finalRoot = digits.length === 10 ? reduce(midTotal) : 0;
+
+  const chooseService = (next: string) => {
+    setService(next);
+    window.setTimeout(() => document.getElementById('numerology-enquiry')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 0);
+  };
+
+  const submitEnquiry = async (event: React.FormEvent) => {
+    event.preventDefault(); setSending(true);
+    try {
+      const response = await siteAPI.enquiry({ ...enquiry, type: 'NUMEROLOGY', subject: service, message: `${service}: ${enquiry.message || 'Please contact me about this numerology service.'}` });
+      if (response?.status !== 1) throw new Error(response?.info || 'Unable to send enquiry.');
+      toast({ title: 'Enquiry received', description: response.info });
+      setEnquiry({ name: '', phone: '', email: '', message: '' });
+    } catch (error: any) { toast({ title: 'Could not send enquiry', description: error.message, variant: 'destructive' }); }
+    finally { setSending(false); }
+  };
 
   const calc = (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,6 +93,29 @@ export default function Numerology() {
         <h1 className="mt-4 text-3xl font-extrabold text-foreground sm:text-4xl" style={{ fontFamily: 'Playfair Display, serif' }}>Free <span className="text-gold">Numerology</span> Calculator</h1>
         <p className="mx-auto mt-3 max-w-xl text-muted-foreground">Discover your lucky numbers and find VIP numbers that align with your destiny.</p>
       </div>
+
+      <section className="mt-10 grid gap-4 md:grid-cols-3">
+        {[
+          [Smartphone, 'Current Number Analysis', 'Understand the digit total and numerological root of the mobile number you already use.'],
+          [BriefcaseBusiness, 'New Number Guidance', 'Use your personal results to explore available numbers with a matching numerology sum.'],
+          [Layers3, 'Combined Consultation', 'Discuss both your current number and preferences for a new premium identity.'],
+        ].map(([Icon, title, description]: any) => (
+          <article key={title} className="group rounded-2xl border border-border bg-card p-5 shadow-sm transition hover:-translate-y-1 hover:border-primary hover:shadow-lg">
+            <span className="grid h-11 w-11 place-items-center rounded-xl bg-primary/10 text-primary"><Icon className="h-5 w-5" /></span>
+            <h2 className="mt-4 text-lg font-black text-foreground">{title}</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p>
+            <button type="button" onClick={() => chooseService(title)} className="mt-4 inline-flex items-center gap-2 text-sm font-black text-primary">Request guidance <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></button>
+          </article>
+        ))}
+      </section>
+
+      <section className="vnw-card mx-auto mt-8 max-w-3xl p-6">
+        <div className="text-center"><div className="text-xs font-black uppercase tracking-[.15em] text-primary">10-digit number calculator</div><h2 className="mt-2 text-2xl font-black text-foreground">Reveal your mobile number root</h2><p className="mt-2 text-sm text-muted-foreground">Calculations appear automatically when all ten digits are entered.</p></div>
+        <label className="mt-6 block"><span className="mb-2 block text-xs font-black uppercase text-muted-foreground">Mobile number</span><input inputMode="numeric" autoComplete="tel" value={digits} onChange={(event) => setMobileNumber(event.target.value.replace(/\D/g, '').slice(0, 10))} placeholder="98765 43210" className={`${input} h-13 text-center text-xl font-black tracking-[.2em]`} /><span className="mt-1 block text-right text-xs text-muted-foreground">{digits.length}/10 digits</span></label>
+        <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-4">
+          {[['Digit Total', digits.length === 10 ? digitTotal : 0, 'Sum of all digits'], ['Mid Sum', digits.length === 10 ? midTotal : 0, 'Secondary total'], ['Final Root', finalRoot, 'Numerological root']].map(([label, value, helper]) => <div key={label} className="rounded-xl border border-border bg-background p-3 text-center"><div className="text-[10px] font-black uppercase text-muted-foreground">{label}</div><div className="mt-1 text-2xl font-black text-primary">{value}</div><div className="mt-1 hidden text-[10px] text-muted-foreground sm:block">{helper}</div></div>)}
+        </div>
+        {finalRoot > 0 && <div className="mt-5 text-center"><button type="button" onClick={() => loadMatches(finalRoot)} className="btn-gold">Show Sum {finalRoot} Numbers <ArrowRight className="h-4 w-4" /></button></div>}
+      </section>
 
       <form onSubmit={calc} className="vnw-card mx-auto mt-8 max-w-2xl p-6">
         <div className="grid gap-4 sm:grid-cols-2">
@@ -120,6 +170,16 @@ export default function Numerology() {
           </div>
         </>
       )}
+
+      <section id="numerology-enquiry" className="vnw-card mx-auto mt-10 max-w-3xl p-6">
+        <div className="flex items-start gap-3"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary"><Send className="h-5 w-5" /></span><div><h2 className="text-xl font-black text-foreground">Request {service}</h2><p className="mt-1 text-sm text-muted-foreground">Share a contact method and our team will follow up. This is an enquiry, not a paid automated report.</p></div></div>
+        <form onSubmit={submitEnquiry} className="mt-5 space-y-3">
+          <div className="grid gap-3 sm:grid-cols-3"><input required placeholder="Your name" className={input} value={enquiry.name} onChange={(e) => setEnquiry({ ...enquiry, name: e.target.value })} /><input placeholder="Phone" className={input} value={enquiry.phone} onChange={(e) => setEnquiry({ ...enquiry, phone: e.target.value })} /><input type="email" placeholder="Email" className={input} value={enquiry.email} onChange={(e) => setEnquiry({ ...enquiry, email: e.target.value })} /></div>
+          <textarea rows={3} placeholder="What would you like help with?" className={input} value={enquiry.message} onChange={(e) => setEnquiry({ ...enquiry, message: e.target.value })} />
+          <button disabled={sending || (!enquiry.phone && !enquiry.email)} className="btn-gold w-full disabled:opacity-50"><Send className="h-4 w-4" /> {sending ? 'Sending…' : 'Send enquiry'}</button>
+        </form>
+        <div className="mt-4 flex items-start gap-2 rounded-xl bg-muted p-3 text-xs leading-5 text-muted-foreground"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />Numerology content is informational and does not guarantee financial, career, health, or relationship outcomes. Contact information is used only to respond to your request.</div>
+      </section>
     </div>
   );
 }

@@ -85,7 +85,7 @@ export function HomeCarousel({ slides, loading = false }: { slides: PublishedCar
     <section
       ref={sectionRef}
       aria-roledescription="carousel"
-      aria-label="Featured VIP number stories"
+      aria-label="Premium VIP number stories"
       tabIndex={0}
       onKeyDown={(event) => { if (event.key === 'ArrowLeft') show(activeIndex - 1); if (event.key === 'ArrowRight') show(activeIndex + 1); if (event.key === ' ') { event.preventDefault(); setManualPause((value) => !value); } }}
       onPointerEnter={() => setInteracting(true)}
@@ -97,7 +97,7 @@ export function HomeCarousel({ slides, loading = false }: { slides: PublishedCar
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-3/4 w-3/4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 blur-[100px]" />
       <div className={`relative mx-auto ${mobile ? 'max-w-[430px]' : 'max-w-7xl'}`}>
         <div className="mb-3 flex items-center justify-between px-2 sm:mb-4">
-          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[.18em] text-primary"><Sparkles className="h-4 w-4" />Featured stories</div>
+          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[.18em] text-primary"><Sparkles className="h-4 w-4" />Premium stories</div>
           <button onClick={() => setManualPause((value) => !value)} className="inline-flex h-9 items-center gap-2 rounded-full border border-border bg-card/90 px-3 text-xs font-bold text-foreground shadow-sm backdrop-blur hover:bg-accent" aria-label={manualPause ? 'Play carousel' : 'Pause carousel'}>{manualPause ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}{manualPause ? 'Play' : 'Pause'}</button>
         </div>
 

@@ -18,6 +18,7 @@ import { formatINR } from '@/core/lib/format';
 import { getPrimaryCategory } from '@/core/categories/types';
 import type { DealOfDayItem } from '@/core/api/vnwAPI';
 import { cn } from '@/core/lib/utils';
+import { formatRtpDate, getNumberPurchaseMode, numberActionPath } from '@/core/lib/numberPurchaseMode';
 
 type CardPosition = 'previous' | 'active' | 'next';
 
@@ -118,6 +119,7 @@ function DealCard({
   const active = position === 'active';
   const category = dealCategory(deal);
   const label = dealLabel(deal);
+  const prebook = getNumberPurchaseMode(deal) === 'PREBOOK';
   const showSeparateLabel = label.trim().toLocaleLowerCase() !== category.name.trim().toLocaleLowerCase();
   return (
     <motion.div
@@ -177,7 +179,7 @@ function DealCard({
 
           <div className="deal-hero-card__port">
             <Smartphone className="h-4 w-4" aria-hidden="true" />
-            Ready to Port
+            {prebook ? `Ready ${formatRtpDate(deal.rtp_available_at)}` : 'Ready to Port'}
           </div>
 
           <div className="deal-hero-card__purchase">
@@ -187,11 +189,11 @@ function DealCard({
               {deal.mrp > deal.offer_price && <del>{formatINR(deal.mrp)}</del>}
             </div>
             <Link
-              to={`/checkout?number_id=${deal.number_id}`}
+              to={numberActionPath(deal)}
               className="deal-hero-card__book focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               tabIndex={active ? 0 : -1}
             >
-              Book Now
+              {prebook ? 'Pre-book' : 'Buy Now'}
               <span><ArrowRight className="h-4 w-4" /></span>
             </Link>
           </div>

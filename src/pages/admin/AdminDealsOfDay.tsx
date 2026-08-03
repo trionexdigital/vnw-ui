@@ -206,7 +206,7 @@ export default function AdminDealsOfDay() {
           <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
           <p>
             Active, available numbers appear in this order. Sold or inactive catalog numbers are hidden automatically;
-            featured catalog numbers fill the hero only when no curated deals are eligible.
+            premium curated catalog numbers fill the hero only when no curated deals are eligible.
           </p>
         </div>
       </div>
@@ -214,7 +214,7 @@ export default function AdminDealsOfDay() {
       {loading ? <Loader /> : items.length === 0 ? (
         <EmptyState
           title="No curated deals yet"
-          description="The storefront is currently using featured catalog numbers."
+          description="The storefront is currently using premium curated catalog numbers."
           action={<button type="button" onClick={openNew} className="btn-gold">Add the first deal</button>}
         />
       ) : (

@@ -1,4 +1,4 @@
-import { Crown, Heart, ShoppingCart, Star, Zap, CheckCircle2 } from 'lucide-react';
+import { CalendarClock, Crown, Heart, ShoppingCart, Star, Zap, CheckCircle2 } from 'lucide-react';
 import { formatINR, digitTotal } from '@/core/lib/format';
 
 export function PremiumNumberShowcaseCard({
@@ -13,6 +13,8 @@ export function PremiumNumberShowcaseCard({
   onCart,
   onWish,
   sold,
+  prebook,
+  rtpDate,
 }: {
   number: string;
   title?: string;
@@ -25,6 +27,8 @@ export function PremiumNumberShowcaseCard({
   onCart?: () => void;
   onWish?: () => void;
   sold?: boolean;
+  prebook?: boolean;
+  rtpDate?: string;
 }) {
   return (
     <section className="premium-card relative overflow-hidden rounded-[2rem] p-5 text-center sm:p-8">
@@ -56,9 +60,10 @@ export function PremiumNumberShowcaseCard({
         <div><div className="text-sm font-semibold">Offer Price</div><div className="text-4xl font-black text-foreground">{formatINR(offerPrice)}</div></div>
         <div className="flex items-center justify-center"><span className="rounded-2xl border border-primary/30 bg-primary/10 px-5 py-3 text-xl font-black text-primary">* {discount || 0}% OFF</span></div>
       </div>
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        <button onClick={onBuy} disabled={sold} className="emerald-gradient-bg rounded-2xl px-6 py-4 text-2xl font-black text-primary-foreground shadow-xl disabled:opacity-50"><Zap className="mr-2 inline h-7 w-7" />{sold ? 'Sold' : 'Buy Now'}</button>
-        <button onClick={onCart} disabled={sold} className="rounded-2xl border-2 border-foreground bg-card/65 px-6 py-4 text-2xl font-black text-foreground disabled:opacity-50"><ShoppingCart className="mr-2 inline h-7 w-7" />Add to Cart</button>
+      {prebook && <div className="mx-auto mt-5 inline-flex items-center gap-2 rounded-2xl border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-black text-primary"><CalendarClock className="h-4 w-4" /> Ready to port on {rtpDate}</div>}
+      <div className={`mt-6 grid gap-4 ${prebook ? '' : 'sm:grid-cols-2'}`}>
+        <button onClick={onBuy} disabled={sold} className="emerald-gradient-bg rounded-2xl px-6 py-4 text-2xl font-black text-primary-foreground shadow-xl disabled:opacity-50">{prebook ? <CalendarClock className="mr-2 inline h-7 w-7" /> : <Zap className="mr-2 inline h-7 w-7" />}{sold ? 'Unavailable' : prebook ? 'Pre-book' : 'Buy Now'}</button>
+        {!prebook && <button onClick={onCart} disabled={sold} className="rounded-2xl border-2 border-foreground bg-card/65 px-6 py-4 text-2xl font-black text-foreground disabled:opacity-50"><ShoppingCart className="mr-2 inline h-7 w-7" />Add to Cart</button>}
       </div>
     </section>
   );

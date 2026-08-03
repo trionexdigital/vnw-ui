@@ -8,6 +8,7 @@ import { useToast } from '@/shared/hooks/use-toast';
 import { formatINR } from '@/core/lib/format';
 import { getPrimaryCategory } from '@/core/categories/types';
 import { Loader, EmptyState } from '@/shared/components/ui-bits';
+import { getNumberPurchaseMode } from '@/core/lib/numberPurchaseMode';
 
 export default function Checkout() {
   const [params] = useSearchParams();
@@ -29,6 +30,10 @@ export default function Checkout() {
       try {
         if (numberId) {
           const n = await numbersAPI.detail(Number(numberId));
+          if (getNumberPurchaseMode(n) === 'PREBOOK') {
+            navigate(`/pre-book/${n.number_id}/checkout`, { replace: true });
+            return;
+          }
           setItems([n]); setSubtotal(Number(n.offer_price));
         } else {
           const c = await cartAPI.list();

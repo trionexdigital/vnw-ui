@@ -59,7 +59,7 @@ describe('HomeHero', () => {
     expect(screen.getByRole('heading', { name: /deal of the day/i })).toBeInTheDocument();
     expect(screen.getByRole('region', { name: /deal of the day vip numbers/i })).toHaveAttribute('aria-roledescription', 'carousel');
     expect(screen.getByRole('link', { name: '969595 1155' })).toHaveAttribute('href', '/number/1');
-    expect(screen.getByRole('link', { name: /book now/i })).toHaveAttribute('href', '/checkout?number_id=1');
+    expect(screen.getByRole('link', { name: /buy now/i })).toHaveAttribute('href', '/checkout?number_id=1');
     expect(screen.getByText('Numerology Special')).toBeInTheDocument();
     expect(screen.getAllByText('VIP Category')).toHaveLength(3);
     expect(screen.getAllByText('Ready to Port')).toHaveLength(3);

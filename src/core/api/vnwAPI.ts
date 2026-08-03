@@ -47,7 +47,11 @@ export interface NumberListRequest {
   operator?: string;
   badge?: string;
   is_featured?: boolean | number;
+  is_premium?: boolean | number;
   seller_id?: number;
+  rtp_status?: 'RTP' | 'NON_RTP';
+  rtp_from?: string;
+  rtp_to?: string;
   sort?: string;
   page?: number;
   limit?: number;
@@ -61,6 +65,7 @@ export const numbersAPI = {
   aiSearch: (p: NumberListRequest & { query: string }) => post('numbers/ai-search', p),
   featured: (p: NumberListRequest = {}) => post('numbers/featured', p),
   detail: (number_id: number) => post('numbers/detail', { number_id }),
+  operators: () => post<OperatorFacet[]>('numbers/operators', {}),
 };
 
 export const categoriesAPI = {
@@ -71,6 +76,7 @@ export const categoriesAPI = {
 export const cartAPI = {
   list: () => post('cart/list', {}),
   add: (number_id: number) => post('cart/add', { number_id }),
+  addMany: (number_ids: number[]) => post('cart/add-many', { number_ids }),
   remove: (number_id: number) => post('cart/remove', { number_id }),
   clear: () => post('cart/clear', {}),
 };
@@ -124,6 +130,36 @@ export interface CarouselSlide {
 
 export const bannersAPI = {
   list: () => post<CarouselSlide[]>('banners/list', {}),
+};
+
+export type RtpStatus = 'RTP' | 'NON_RTP';
+export type PrebookStatus = 'PENDING_PAYMENT' | 'BOOKED' | 'READY' | 'CANCEL_REQUESTED' | 'REFUND_PENDING' | 'REFUNDED' | 'FULFILLED' | 'FAILED';
+
+export interface PrebookRecord {
+  prebook_id: number;
+  order_id: number;
+  order_no: string;
+  number_id: number;
+  display_number: string;
+  operator?: string | null;
+  total: number;
+  status: PrebookStatus;
+  payment_status: string;
+  rtp_status: RtpStatus;
+  rtp_available_at: string;
+  cancellation_deadline?: string | null;
+  cancellation_seconds_remaining: number;
+  can_cancel: boolean;
+  refund_status?: string | null;
+  reason_type?: string | null;
+}
+
+export const prebooksAPI = {
+  catalog: (p: NumberListRequest = {}) => post<{ items: any[]; total: number; page: number; limit: number }>('prebooks/catalog', p),
+  create: (number_id: number) => post<{ prebook_id: number; order_id: number; order_no: string; total: number; payment_expires_at: string }>('prebooks/create', { number_id }),
+  my: () => post<PrebookRecord[]>('prebooks/my', {}),
+  cancel: (prebook_id: number, note?: string) => post('prebooks/cancel', { prebook_id, note }),
+  reportIssue: (prebook_id: number, reason_type: string, note: string) => post('prebooks/report-issue', { prebook_id, reason_type, note }),
 };
 
 export const carouselAPI = {
@@ -204,7 +240,10 @@ export interface DealOfDayItem extends CategorizedNumber {
   description?: string | null;
   stock?: number;
   status?: string;
+  rtp_status?: RtpStatus;
+  rtp_available_at?: string | null;
   is_featured?: boolean | number;
+  is_premium?: boolean;
   hero_label?: string | null;
   hero_description?: string | null;
   sort_order: number;
@@ -225,10 +264,65 @@ export interface DealOfDaySaveInput {
   is_active: boolean;
 }
 
+export type CorporatePackType = 'SERIES' | 'MIXED' | 'SIMILAR_START' | 'SIMILAR_END' | 'SIMILAR_BOTH';
+
+export interface CorporatePackQuery {
+  pack_type: CorporatePackType;
+  size: number;
+  limit?: number;
+}
+
+export interface CorporatePack {
+  pack_id: string;
+  title: string;
+  pack_type: CorporatePackType;
+  description?: string | null;
+  sort_order: number;
+  is_active: boolean;
+  size: number;
+  total_price: number;
+  is_available: boolean;
+  numbers: Array<CategorizedNumber & {
+    number_id: number;
+    display_number: string;
+    offer_price: number;
+    status: string;
+    stock: number;
+    operator?: string | null;
+  }>;
+}
+
+export interface OperatorFacet { operator: string; count: number; }
+
+export interface TrustedClient {
+  client_id: number;
+  name: string;
+  website_url?: string | null;
+  alt_text?: string | null;
+  has_logo: boolean;
+  logo_url?: string | null;
+  sort_order: number;
+  is_active: boolean;
+}
+
+export interface FaqItem {
+  faq_id: number;
+  category: string;
+  question: string;
+  answer: string;
+  sort_order: number;
+  is_active: boolean;
+}
+
 export const siteAPI = {
   settings: () => post('site/settings', {}),
   heroStats: () => post<HeroStats>('site/hero-stats', {}),
   dealsOfDay: () => post<DealOfDayResponse>('site/deals-of-day', {}),
+  corporatePacks: (p: CorporatePackQuery) => post<CorporatePack[]>('site/corporate-packs', p),
+  operators: () => post<OperatorFacet[]>('site/operators', {}),
+  trustedClients: () => post<TrustedClient[]>('site/trusted-clients', {}),
+  trustedClientLogoUrl: (clientId: number) => BASE_URL + `site/trusted-clients/${clientId}/logo`,
+  faqs: () => post<FaqItem[]>('site/faqs', {}),
   subscribe: (email: string, source = 'footer') => postRaw('site/newsletter', { email, source }),
   enquiry: (p: any) => postRaw('site/enquiry', p),
 };
@@ -293,6 +387,13 @@ export const adminAPI = {
   ordersList: (p: any = {}) => post('admin/orders/list', p),
   orderDetail: (order_id: number) => post('admin/orders/detail', { order_id }),
   orderUpdateStatus: (order_id: number, status: string) => post('admin/orders/update-status', { order_id, status }),
+  prebooksList: (p: any = {}) => post('admin/prebooks/list', p),
+  prebookFulfill: (prebook_id: number) => post('admin/prebooks/fulfill', { prebook_id }),
+  prebookMarkUnavailable: (prebook_id: number, note: string) => post('admin/prebooks/mark-unavailable', { prebook_id, note }),
+  prebookRefundsList: (p: any = {}) => post('admin/prebook-refunds/list', p),
+  prebookRefundApprove: (refund_request_id: number, admin_note?: string) => post('admin/prebook-refunds/approve', { refund_request_id, admin_note }),
+  prebookRefundReject: (refund_request_id: number, admin_note: string) => post('admin/prebook-refunds/reject', { refund_request_id, admin_note }),
+  prebookRefundRetry: (refund_request_id: number, admin_note?: string) => post('admin/prebook-refunds/retry', { refund_request_id, admin_note }),
   usersList: (p: any = {}) => post('admin/users/list', p),
   userSetRole: (target_id: number, role: string) => post('admin/users/set-role', { target_id, role }),
   userSetStatus: (target_id: number, status: string) => post('admin/users/set-status', { target_id, status }),
@@ -316,6 +417,22 @@ export const adminAPI = {
   testimonialsList: () => post('admin/testimonials/list', {}),
   testimonialSave: (p: any) => post('admin/testimonials/save', p),
   testimonialDelete: (testimonial_id: number) => post('admin/testimonials/delete', { testimonial_id }),
+  trustedClientsList: () => post<TrustedClient[]>('admin/trusted-clients/list', {}),
+  trustedClientSave: (p: Partial<TrustedClient>) => post<{ client_id: number }>('admin/trusted-clients/save', p),
+  trustedClientsReorder: (client_ids: number[]) => post('admin/trusted-clients/reorder', { client_ids }),
+  trustedClientDelete: (client_id: number) => post('admin/trusted-clients/delete', { client_id }),
+  trustedClientLogoUpload: async (clientId: number, file: File) => {
+    const form = new FormData();
+    form.append('client_id', String(clientId));
+    form.append('file', file, file.name);
+    const response = await httpService.uploadRequest(BASE_URL + 'admin/trusted-clients/logo/upload', form);
+    if (response?.status === 1) return response.data;
+    throw new Error(response?.info || 'Logo upload failed');
+  },
+  faqsList: () => post<FaqItem[]>('admin/faqs/list', {}),
+  faqSave: (p: Partial<FaqItem>) => post<{ faq_id: number }>('admin/faqs/save', p),
+  faqsReorder: (faq_ids: number[]) => post('admin/faqs/reorder', { faq_ids }),
+  faqDelete: (faq_id: number) => post('admin/faqs/delete', { faq_id }),
   bannersList: () => post<CarouselSlide[]>('admin/banners/list', {}),
   bannerSave: (p: Partial<CarouselSlide>) => post<{ banner_id: number }>('admin/banners/save', p),
   bannerDelete: (banner_id: number) => post('admin/banners/delete', { banner_id }),

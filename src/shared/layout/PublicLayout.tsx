@@ -2,7 +2,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {
   Search, Heart, ShoppingCart, User, LogOut, LayoutDashboard, Phone, MessageCircle,
-  ChevronUp, Facebook, Instagram, Youtube, Mail, Globe, MapPin, Bell, Menu, X, Sparkles, Crown,
+  ChevronUp, Facebook, Instagram, Youtube, Mail, Globe, MapPin, Bell, Menu, X, Sparkles, Crown, CalendarClock,
 } from 'lucide-react';
 import { useStore } from '@/shared/store/useStore';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
@@ -28,15 +28,6 @@ function CountBadge({ n }: { n: number }) {
   if (!n) return null;
   return <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-amber-700 px-1 text-[9px] font-bold text-white">{n}</span>;
 }
-
-const NUMBER_CATS = [
-  { label: 'All VIP Numbers', to: '/shop' },
-  { label: 'All Categories', to: '/categories' },
-  { label: 'Mirror Numbers', to: '/shop?category=mirror-numbers' },
-  { label: 'Counting Numbers', to: '/shop?category=counting-numbers' },
-  { label: '786 Numbers', to: '/shop?category=786-numbers' },
-  { label: 'Numerology', to: '/numerology' },
-];
 
 const HEADER_BUTTERFLIES = [
   { left: '5%', top: '62%', wings: ['93', '39'], delay: '-1.2s', duration: '15.5s' },
@@ -65,10 +56,11 @@ function Header() {
   const dash = user?.role === 'ADMIN' ? '/admin' : user?.role === 'DEALER' ? '/dealer' : '/dashboard';
   const nav = [
     { label: 'Home', to: '/' },
-    { label: 'How It Works', to: '/about' },
+    { label: 'How It Works', to: '/how-it-works' },
+    { label: 'Corporate Elite Pack', to: '/corporate-elite-pack' },
+    { label: 'Numerology', to: '/numerology' },
     { label: 'About Us', to: '/about' },
-    { label: 'Testimonials', to: '/#testimonials' },
-    { label: 'Contact', to: '/contact' },
+    { label: 'Contact Us', to: '/contact' },
   ];
 
   const submit = (e: React.FormEvent) => {
@@ -92,6 +84,7 @@ function Header() {
           <div className="glass-panel rounded-xl p-2">
             <div className="px-3 py-2 text-xs text-muted-foreground">Hi, {(user.name || 'User').split(' ')[0]}</div>
             <Link to={dash} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground hover:bg-accent"><LayoutDashboard className="h-4 w-4 text-primary" /> Dashboard</Link>
+            <Link to="/pre-book#mine" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground hover:bg-accent"><CalendarClock className="h-4 w-4 text-primary" /> My Pre-books</Link>
             <Link to="/orders" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground hover:bg-accent"><ShoppingCart className="h-4 w-4 text-primary" /> My Orders</Link>
             <Link to="/account" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground hover:bg-accent"><User className="h-4 w-4 text-primary" /> Profile</Link>
             <button onClick={() => dispatch(logout())} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-destructive hover:bg-destructive/10"><LogOut className="h-4 w-4" /> Logout</button>
@@ -120,6 +113,7 @@ function Header() {
         </div>
         <div className="grid gap-1">
           <Link to={dash} onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-bold text-foreground hover:bg-accent"><LayoutDashboard className="h-4 w-4 text-primary" /> Dashboard</Link>
+          <Link to="/pre-book#mine" onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-bold text-foreground hover:bg-accent"><CalendarClock className="h-4 w-4 text-primary" /> My Pre-books</Link>
           <Link to="/orders" onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-bold text-foreground hover:bg-accent"><ShoppingCart className="h-4 w-4 text-primary" /> My Orders</Link>
           <Link to="/account" onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-bold text-foreground hover:bg-accent"><User className="h-4 w-4 text-primary" /> Profile</Link>
           <button onClick={() => { dispatch(logout()); setOpen(false); }} className="flex items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-bold text-destructive hover:bg-destructive/10"><LogOut className="h-4 w-4" /> Logout</button>
@@ -160,28 +154,12 @@ function Header() {
             ))}
           </div>
           <Logo />
-          <nav className="relative z-10 ml-auto hidden min-w-0 flex-nowrap items-center gap-0 whitespace-nowrap text-xs font-bold text-foreground xl:flex 2xl:gap-1 2xl:text-sm" aria-label="Primary navigation">
-            <Link
-              to="/"
-              aria-current={location.pathname === '/' ? 'page' : undefined}
-              className={location.pathname === '/'
-                ? 'rounded-xl border border-primary/30 bg-primary/10 px-2.5 py-2.5 text-primary shadow-sm 2xl:px-3.5'
-                : 'rounded-xl px-2.5 py-2.5 transition hover:bg-accent hover:text-primary 2xl:px-3.5'}
-            >
-              Home
-            </Link>
-            <div className="group relative">
-              <button className="rounded-xl px-2.5 py-2.5 transition hover:bg-accent hover:text-primary 2xl:px-3.5">Explore</button>
-              <div className="invisible absolute left-0 top-full z-50 w-56 pt-4 opacity-0 transition-all group-hover:visible group-hover:opacity-100">
-                <div className="glass-panel rounded-xl p-2">
-                  {NUMBER_CATS.map((c) => <Link key={c.label} to={c.to} className="block rounded-lg px-3 py-2 text-sm text-foreground hover:bg-accent hover:text-primary">{c.label}</Link>)}
-                </div>
-              </div>
-            </div>
-            {nav.slice(1).map((n) => <Link key={n.label} to={n.to} className="rounded-xl px-2.5 py-2.5 transition hover:bg-accent hover:text-primary 2xl:px-3.5">{n.label}</Link>)}
+          <nav className="relative z-10 ml-auto hidden min-w-0 flex-nowrap items-center gap-0 whitespace-nowrap text-[11px] font-bold text-foreground xl:flex 2xl:gap-1 2xl:text-sm" aria-label="Primary navigation">
+            {nav.map((n) => <Link key={n.label} to={n.to} aria-current={location.pathname === n.to ? 'page' : undefined} className={location.pathname === n.to ? 'rounded-xl border border-primary/30 bg-primary/10 px-2 py-2.5 text-primary shadow-sm 2xl:px-3' : `rounded-xl px-2 py-2.5 transition hover:bg-accent hover:text-primary 2xl:px-3 ${n.to === '/corporate-elite-pack' ? 'text-primary' : ''}`}>{n.label}</Link>)}
           </nav>
           <div className="relative z-10 ml-auto flex shrink-0 items-center gap-1 xl:ml-2 2xl:gap-1.5">
             <Link to="/shop?focus=search" className="hidden h-11 items-center gap-1.5 rounded-xl border border-primary bg-card/85 px-3 text-xs font-black text-primary shadow-sm transition hover:bg-accent xl:inline-flex 2xl:text-sm"><Search className="h-5 w-5" /> Search</Link>
+            <Link to="/pre-book" className="inline-flex h-11 items-center gap-1.5 rounded-xl bg-primary px-2.5 text-xs font-black text-primary-foreground shadow-sm transition hover:-translate-y-0.5 2xl:px-3 2xl:text-sm"><CalendarClock className="h-4 w-4" /><span className="hidden 2xl:inline">Pre-book</span></Link>
             <Link to="/wishlist" aria-label="Wishlist" className="relative hidden h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm transition hover:border-primary hover:bg-accent md:grid"><Heart className="h-5 w-5" /><CountBadge n={wishlistCount} /></Link>
             <Link to="/cart" aria-label="Cart" className="relative grid h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm transition hover:border-primary hover:bg-accent"><ShoppingCart className="h-5 w-5" /><CountBadge n={cartCount} /></Link>
             <button aria-label="Notifications" className="relative hidden h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm transition hover:border-primary hover:bg-accent md:grid"><Bell className="h-5 w-5" /><span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-amber-600" /></button>
@@ -213,7 +191,8 @@ function Header() {
               <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search dream number..." className="min-w-0 flex-1 bg-transparent text-base outline-none" />
             </form>
             <div className="grid gap-2">
-              {[{ label: 'Home', to: '/' }, { label: 'Explore Numbers', to: '/shop' }, { label: 'Number Categories', to: '/categories' }, { label: 'Numerology', to: '/numerology' }, { label: 'How It Works', to: '/about' }, { label: 'About Us', to: '/about' }, { label: 'Contact Us', to: '/contact' }].map((n) => (
+              <Link to="/pre-book" onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-black text-primary-foreground shadow-sm"><CalendarClock className="h-4 w-4" /> Pre-book VIP Numbers</Link>
+              {nav.map((n) => (
                 <Link key={n.label} to={n.to} onClick={() => setOpen(false)} className="rounded-xl border border-border bg-card px-4 py-3 text-sm font-bold text-foreground shadow-sm hover:border-primary hover:bg-accent">{n.label}</Link>
               ))}
             </div>
@@ -261,8 +240,12 @@ function Footer() {
             <h4 className="mb-3 font-black text-foreground">Quick Links</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link to="/shop">VIP Numbers</Link></li>
+              <li><Link to="/premium-numbers">Premium Numbers</Link></li>
+              <li><Link to="/corporate-elite-pack">Corporate Elite Pack</Link></li>
               <li><Link to="/categories">Number Categories</Link></li>
+              <li><Link to="/how-it-works">How It Works</Link></li>
               <li><Link to="/numerology">Numerology</Link></li>
+              <li><Link to="/faq">FAQs</Link></li>
               <li><Link to="/about">About Us</Link></li>
               <li><Link to="/contact">Contact Us</Link></li>
             </ul>

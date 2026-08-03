@@ -50,7 +50,7 @@ const SORT_OPTIONS = [
   { value: 'popular', label: 'Most Popular' },
 ];
 
-export default function Shop() {
+export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {}) {
   const [params, setParams] = useSearchParams();
   const [categories, setCategories] = useState<NumberCategory[]>([]);
   const [items, setItems] = useState<NumberItem[]>([]);
@@ -96,7 +96,11 @@ export default function Shop() {
     let cancelled = false;
     setLoading(true);
     setError('');
-    const listingPayload = listPayloadFromParams(params);
+    const listingPayload = {
+      ...listPayloadFromParams(params),
+      ...(preset === 'newest' ? { sort: 'newest' } : {}),
+      ...(preset === 'premium' ? { is_premium: 1 } : {}),
+    };
     const request = ai
       ? numbersAPI.aiSearch({ ...listingPayload, query: ai })
       : numbersAPI.list(listingPayload);
@@ -122,7 +126,7 @@ export default function Shop() {
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [paramsKey, retryToken]);
+  }, [paramsKey, retryToken, preset]);
 
   useEffect(() => {
     if (!filtersOpen) return;
@@ -215,6 +219,8 @@ export default function Shop() {
       label: `Badge: ${badgeOptions.find((item) => item.value === badge)?.label || badge}`,
       keys: ['badge'],
     });
+    const operator = params.get('operator');
+    if (operator) filters.push({ id: 'operator', label: `Operator: ${operator}`, keys: ['operator'] });
     return filters;
   }, [paramsKey, categories, category, ai, priceMin, priceMax, selectedPrice?.label]);
 
@@ -365,10 +371,12 @@ export default function Shop() {
       <div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
         <div>
           <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-black uppercase tracking-[.12em] text-primary">
-            Premium marketplace
+            {preset === 'newest' ? 'Just added' : preset === 'premium' ? 'Curated collection' : 'Premium marketplace'}
           </div>
           <h1 className="text-2xl font-black text-foreground sm:text-3xl">
-            VIP number <span className="text-primary">results</span>
+            {preset === 'newest' ? <>Newly added <span className="text-primary">VIP numbers</span></>
+              : preset === 'premium' ? <>Premium <span className="text-primary">VIP numbers</span></>
+                : <>VIP number <span className="text-primary">results</span></>}
           </h1>
           <p aria-live="polite" className="mt-1 text-sm text-muted-foreground">
             {loading ? 'Searching available numbers…' : `${total.toLocaleString('en-IN')} exact ${total === 1 ? 'match' : 'matches'}`}

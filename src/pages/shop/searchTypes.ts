@@ -248,6 +248,8 @@ export function listPayloadFromParams(params: URLSearchParams) {
     ...(q && scope === 'anywhere' ? { q } : {}),
     badge: params.get('badge') || undefined,
     numerology: params.get('numerology') || undefined,
+    operator: params.get('operator') || undefined,
+    is_premium: params.get('premium') === '1' ? 1 : undefined,
     sort: params.get('sort') || 'newest',
     page: Math.max(1, Number(params.get('page')) || 1),
     price_min: params.get('price_min') || undefined,

@@ -9,14 +9,21 @@ import { MotionPage } from '@/shared/motion/MotionPrimitives';
 const Home = lazy(() => import('@/pages/home/Home'));
 const Categories = lazy(() => import('@/pages/categories/Categories'));
 const Shop = lazy(() => import('@/pages/shop/Shop'));
+const NewlyAddedNumbers = lazy(() => import('@/pages/shop/NewlyAddedNumbers'));
+const PremiumNumbers = lazy(() => import('@/pages/shop/PremiumNumbers'));
 const NumberDetail = lazy(() => import('@/pages/shop/NumberDetail'));
 const Cart = lazy(() => import('@/pages/cart/Cart'));
 const Wishlist = lazy(() => import('@/pages/wishlist/Wishlist'));
 const Compare = lazy(() => import('@/pages/compare/Compare'));
 const Checkout = lazy(() => import('@/pages/checkout/Checkout'));
+const PreBook = lazy(() => import('@/pages/prebook/PreBook'));
+const PreBookCheckout = lazy(() => import('@/pages/prebook/PreBookCheckout'));
 const About = lazy(() => import('@/pages/static/About'));
 const Contact = lazy(() => import('@/pages/static/Contact'));
 const Numerology = lazy(() => import('@/pages/numerology/Numerology'));
+const HowItWorks = lazy(() => import('@/pages/static/HowItWorks'));
+const CorporateElitePack = lazy(() => import('@/pages/corporate/CorporateElitePack'));
+const Faq = lazy(() => import('@/pages/static/Faq'));
 const Auth = lazy(() => import('@/pages/auth/Auth'));
 
 const BuyerDashboard = lazy(() => import('@/pages/dashboard/Dashboard'));
@@ -44,6 +51,9 @@ const DealerProfile = lazy(() => import('@/pages/dealer/DealerProfile'));
 const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'));
 const AdminNumbers = lazy(() => import('@/pages/admin/AdminNumbers'));
 const AdminDealsOfDay = lazy(() => import('@/pages/admin/AdminDealsOfDay'));
+const AdminTrustedClients = lazy(() => import('@/pages/admin/AdminTrustedClients'));
+const AdminFaqs = lazy(() => import('@/pages/admin/AdminFaqs'));
+const AdminPrebooks = lazy(() => import('@/pages/admin/AdminPrebooks'));
 const AdminOrders = lazy(() => import('@/pages/admin/AdminOrders'));
 const AdminUsers = lazy(() => import('@/pages/admin/AdminUsers'));
 const AdminDealers = lazy(() => import('@/pages/admin/AdminDealers'));
@@ -78,14 +88,21 @@ export default function AppRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/shop" element={<Shop />} />
+        <Route path="/newly-added-vip-numbers" element={<NewlyAddedNumbers />} />
+        <Route path="/premium-numbers" element={<PremiumNumbers />} />
         <Route path="/number/:id" element={<NumberDetail />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/compare" element={<Compare />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/numerology" element={<Numerology />} />
+        <Route path="/how-it-works" element={<HowItWorks />} />
+        <Route path="/corporate-elite-pack" element={<CorporateElitePack />} />
+        <Route path="/faq" element={<Faq />} />
         <Route path="/wishlist" element={<RoleGuard><Wishlist /></RoleGuard>} />
         <Route path="/checkout" element={<RoleGuard><Checkout /></RoleGuard>} />
+        <Route path="/pre-book" element={<PreBook />} />
+        <Route path="/pre-book/:numberId/checkout" element={<RoleGuard><PreBookCheckout /></RoleGuard>} />
       </Route>
 
       {/* Auth */}
@@ -130,6 +147,7 @@ export default function AppRoutes() {
         <Route path="/admin/deals-of-day" element={<RoleGuard roles={adminRoles}><AdminDealsOfDay /></RoleGuard>} />
         <Route path="/admin/categories" element={<RoleGuard roles={adminRoles}><Navigate to="/admin/numbers?notice=automatic-categories" replace /></RoleGuard>} />
         <Route path="/admin/orders" element={<RoleGuard roles={adminRoles}><AdminOrders /></RoleGuard>} />
+        <Route path="/admin/prebooks" element={<RoleGuard roles={adminRoles}><AdminPrebooks /></RoleGuard>} />
         <Route path="/admin/users" element={<RoleGuard roles={adminRoles}><AdminUsers /></RoleGuard>} />
         <Route path="/admin/dealers" element={<RoleGuard roles={adminRoles}><AdminDealers /></RoleGuard>} />
         <Route path="/admin/dealers/new" element={<RoleGuard roles={adminRoles}><AdminCreateDealer /></RoleGuard>} />
@@ -138,6 +156,8 @@ export default function AppRoutes() {
         <Route path="/admin/payouts" element={<RoleGuard roles={adminRoles}><AdminPayouts /></RoleGuard>} />
         <Route path="/admin/reviews" element={<RoleGuard roles={adminRoles}><AdminReviews /></RoleGuard>} />
         <Route path="/admin/testimonials" element={<RoleGuard roles={adminRoles}><AdminTestimonials /></RoleGuard>} />
+        <Route path="/admin/trusted-clients" element={<RoleGuard roles={adminRoles}><AdminTrustedClients /></RoleGuard>} />
+        <Route path="/admin/faqs" element={<RoleGuard roles={adminRoles}><AdminFaqs /></RoleGuard>} />
         <Route path="/admin/carousel" element={<RoleGuard roles={adminRoles}><AdminBanners /></RoleGuard>} />
         <Route path="/admin/banners" element={<RoleGuard roles={adminRoles}><AdminBanners /></RoleGuard>} />
         <Route path="/admin/coupons" element={<RoleGuard roles={adminRoles}><AdminCoupons /></RoleGuard>} />

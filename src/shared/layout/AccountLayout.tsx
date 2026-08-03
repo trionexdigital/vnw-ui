@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   Crown, LayoutDashboard, ShoppingBag, Heart, Users2, User, LogOut, Store, ListPlus,
   Tag, BadgeIndianRupee, Star, Image, MessageSquare, Settings, Gift, Menu, ArrowLeft, ListChecks, X, Ticket, Mail,
-  ClipboardList, Inbox, Bell, ChevronRight, PanelLeftClose, PanelLeftOpen, ShieldCheck, Search, UserCircle, Sparkles,
+  ClipboardList, Inbox, Bell, ChevronRight, PanelLeftClose, PanelLeftOpen, ShieldCheck, Search, UserCircle, Sparkles, Handshake, CircleHelp, CalendarClock,
 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { logout } from '@/app/authSlice';
@@ -19,6 +19,7 @@ interface MenuItem { to: string; label: string; icon: any; end?: boolean; perm?:
 const USER_MENU: MenuItem[] = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/orders', label: 'My Orders', icon: ShoppingBag },
+  { to: '/pre-book#mine', label: 'My Pre-books', icon: CalendarClock },
   { to: '/sell', label: 'Sell a Number', icon: Tag, perm: 'user.sell' },
   { to: '/wishlist', label: 'Wishlist', icon: Heart },
   { to: '/referrals', label: 'Referrals', icon: Gift },
@@ -45,6 +46,7 @@ const ADMIN_MENU: MenuItem[] = [
   { to: '/admin/numbers', label: 'Numbers', icon: Crown },
   { to: '/admin/deals-of-day', label: 'Deal of the Day', icon: Sparkles },
   { to: '/admin/orders', label: 'Orders', icon: ShoppingBag },
+  { to: '/admin/prebooks', label: 'Pre-books & Refunds', icon: CalendarClock },
   { to: '/admin/sell-requests', label: 'Sell Requests', icon: Inbox },
   { to: '/admin/approvals', label: 'Approvals', icon: ClipboardList },
   { to: '/admin/users', label: 'Users', icon: Users2 },
@@ -52,6 +54,8 @@ const ADMIN_MENU: MenuItem[] = [
   { to: '/admin/payouts', label: 'Payouts', icon: BadgeIndianRupee },
   { to: '/admin/reviews', label: 'Reviews', icon: Star },
   { to: '/admin/testimonials', label: 'Testimonials', icon: MessageSquare },
+  { to: '/admin/trusted-clients', label: 'Trusted Clients', icon: Handshake },
+  { to: '/admin/faqs', label: 'FAQs', icon: CircleHelp },
   { to: '/admin/carousel', label: 'Carousel', icon: Image },
   { to: '/admin/coupons', label: 'Coupons', icon: Ticket },
   { to: '/admin/subscribers', label: 'Subscribers', icon: Mail },
@@ -62,9 +66,9 @@ const ADMIN_MENU: MenuItem[] = [
 const ADMIN_GROUPS = [
   { label: 'Overview', items: ['Dashboard'] },
   { label: 'Catalog', items: ['Numbers', 'Deal of the Day', 'Carousel', 'Coupons'] },
-  { label: 'Operations', items: ['Orders', 'Sell Requests', 'Approvals', 'Payouts'] },
+  { label: 'Operations', items: ['Orders', 'Pre-books & Refunds', 'Sell Requests', 'Approvals', 'Payouts'] },
   { label: 'People', items: ['Users', 'Dealers', 'Subscribers'] },
-  { label: 'Trust', items: ['Reviews', 'Testimonials', 'Messages', 'Settings'] },
+  { label: 'Trust', items: ['Reviews', 'Testimonials', 'Trusted Clients', 'FAQs', 'Messages', 'Settings'] },
 ];
 
 const ROLE_HOME: Record<string, string> = {

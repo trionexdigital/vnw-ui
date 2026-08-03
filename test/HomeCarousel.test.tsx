@@ -44,7 +44,7 @@ describe('HomeCarousel', () => {
 
   it('renders the complete production artboard in an exact-ratio card', async () => {
     const { container } = render(<HomeCarousel slides={slides} />);
-    expect(screen.getByRole('region', { name: 'Featured VIP number stories' })).toHaveAttribute('aria-roledescription', 'carousel');
+    expect(screen.getByRole('region', { name: 'Premium VIP number stories' })).toHaveAttribute('aria-roledescription', 'carousel');
     await waitFor(() => expect(screen.getByRole('img', { name: 'Signature artwork' })).toHaveAttribute('data-preview-ready', 'true'));
     expect((container.querySelector('[aria-roledescription="slide"]') as HTMLElement).style.aspectRatio).toBe('1600/900');
     expect(container.querySelector('.object-cover')).not.toBeInTheDocument();

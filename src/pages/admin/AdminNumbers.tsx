@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Pencil, Trash2, Check, X, Plus, Star, Sparkles } from 'lucide-react';
+import { Pencil, Trash2, Check, X, Plus, Star, Sparkles, CalendarClock } from 'lucide-react';
 import { adminAPI } from '@/core/api/vnwAPI';
 import { useToast } from '@/shared/hooks/use-toast';
 import { PageHeader, Loader, StatusBadge, Money, Table } from '@/shared/components/ui-bits';
@@ -9,7 +9,11 @@ import { badgeOptions, statusOptions, numerologySum } from '@/core/lib/format';
 import DetectedCategories from '@/shared/components/DetectedCategories';
 import { getPrimaryCategory } from '@/core/categories/types';
 
-const empty = { display_number: '', title_label: 'VIP Number', badge: 'NONE', mrp: '', offer_price: '', numerology_sum: '', operator: 'Any', description: '', stock: 1, status: 'AVAILABLE', is_featured: false };
+const empty = { display_number: '', title_label: 'VIP Number', badge: 'NONE', mrp: '', offer_price: '', numerology_sum: '', operator: 'Any', description: '', stock: 1, status: 'AVAILABLE', is_featured: false, rtp_status: 'RTP', rtp_available_date: '' };
+
+const toIstDateInput = (value?: string | null) => value
+  ? new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(value.endsWith('Z') ? value : `${value}Z`))
+  : '';
 
 const categoryLabel = (number: any) => getPrimaryCategory(number)?.name || 'Unique';
 
@@ -29,7 +33,7 @@ export default function AdminNumbers() {
   const input = 'w-full rounded-lg border border-card-border bg-secondary px-3 py-2 text-sm outline-none focus:border-primary';
 
   const openNew = () => { setForm(empty); setOpen(true); };
-  const openEdit = (n: any) => { setForm({ ...n, is_featured: !!n.is_featured }); setOpen(true); };
+  const openEdit = (n: any) => { setForm({ ...n, is_featured: !!n.is_featured, rtp_status: n.rtp_status || 'RTP', rtp_available_date: toIstDateInput(n.rtp_available_at) }); setOpen(true); };
 
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +42,7 @@ export default function AdminNumbers() {
         ...form, number_value: form.display_number.replace(/\s+/g, ''),
         mrp: Number(form.mrp), offer_price: Number(form.offer_price),
         numerology_sum: form.numerology_sum || numerologySum(form.display_number),
+        rtp_available_date: form.rtp_status === 'NON_RTP' ? form.rtp_available_date : null,
       });
       toast({ title: 'Saved' }); setOpen(false); load();
     } catch (e: any) { toast({ title: 'Error', description: e.message, variant: 'destructive' }); }
@@ -63,7 +68,7 @@ export default function AdminNumbers() {
       </div>
 
       {loading ? <Loader /> : (
-        <Table head={['Number', 'Category', 'Seller', 'MRP', 'Offer', 'Status', '']}>
+        <Table head={['Number', 'Category', 'Seller', 'MRP', 'Offer', 'RTP', 'Status', '']}>
           {items.map((n) => (
             <tr key={n.number_id} className="border-b border-card-border last:border-0">
               <td className="px-4 py-3 font-bold text-foreground">{n.display_number} {n.is_featured ? <Star className="ml-1 inline h-3 w-3 text-primary" fill="currentColor" /> : null}</td>
@@ -71,6 +76,7 @@ export default function AdminNumbers() {
               <td className="px-4 py-3 text-xs text-muted-foreground">{n.seller_type}</td>
               <td className="px-4 py-3"><Money value={n.mrp} /></td>
               <td className="px-4 py-3"><Money value={n.offer_price} /></td>
+              <td className="px-4 py-3"><span className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-black ${n.rtp_status === 'NON_RTP' ? 'bg-amber-500/15 text-amber-700' : 'bg-success/10 text-success'}`}><CalendarClock className="h-3 w-3" />{n.rtp_status || 'RTP'}{n.rtp_status === 'NON_RTP' && n.rtp_available_at ? ` · ${toIstDateInput(n.rtp_available_at)}` : ''}</span></td>
               <td className="px-4 py-3"><StatusBadge status={n.status} /></td>
               <td className="px-4 py-3">
                 <div className="flex justify-end gap-2">
@@ -102,7 +108,18 @@ export default function AdminNumbers() {
           <select className={input} value={form.status} onChange={(e) => set('status', e.target.value)}>
             {statusOptions.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
-          <label className="flex items-center gap-2 text-sm text-muted-foreground"><input type="checkbox" checked={form.is_featured} onChange={(e) => set('is_featured', e.target.checked)} /> Featured on homepage</label>
+          <div>
+            <label className="mb-1 block text-xs font-bold text-muted-foreground">RTP Status</label>
+            <select className={input} value={form.rtp_status || 'RTP'} onChange={(e) => { set('rtp_status', e.target.value); if (e.target.value === 'RTP') set('rtp_available_date', ''); }}>
+              <option value="RTP">RTP · Ready to port</option>
+              <option value="NON_RTP">NON-RTP · Pre-book</option>
+            </select>
+          </div>
+          {form.rtp_status === 'NON_RTP' && <div>
+            <label className="mb-1 block text-xs font-bold text-muted-foreground">Ready-to-port date (India)</label>
+            <input type="date" className={input} required min={new Date(Date.now() + 86400000).toISOString().slice(0, 10)} value={form.rtp_available_date || ''} onChange={(e) => set('rtp_available_date', e.target.value)} />
+          </div>}
+          <label className="flex items-center gap-2 text-sm text-muted-foreground"><input type="checkbox" checked={form.is_featured} onChange={(e) => set('is_featured', e.target.checked)} /> Premium curated listing</label>
           <textarea className={input + ' sm:col-span-2'} rows={2} placeholder="Description" value={form.description || ''} onChange={(e) => set('description', e.target.value)} />
           <div className="sm:col-span-2"><button className="btn-gold w-full">Save Number</button></div>
         </form>

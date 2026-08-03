@@ -3,10 +3,13 @@ import { Mail, Phone, MessageCircle, Send } from 'lucide-react';
 import { contactAPI } from '@/core/api/vnwAPI';
 import { useToast } from '@/shared/hooks/use-toast';
 import { APP_CONFIG } from '@/core/config/app.config';
+import { useSearchParams } from 'react-router-dom';
 
 export default function Contact() {
   const { toast } = useToast();
-  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
+  const [params] = useSearchParams();
+  const requestedSubject = params.get('subject')?.replaceAll('-', ' ') || '';
+  const [form, setForm] = useState({ name: '', email: '', subject: requestedSubject, message: '' });
   const [busy, setBusy] = useState(false);
 
   const submit = async (e: React.FormEvent) => {

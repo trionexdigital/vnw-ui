@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Heart, ShoppingCart, BarChart2, Crown, Star, IndianRupee, ShieldCheck, Zap } from 'lucide-react';
+import { Heart, ShoppingCart, BarChart2, CalendarClock, Crown, Star, IndianRupee, ShieldCheck, Zap } from 'lucide-react';
 import { useState } from 'react';
 import { cartAPI, wishlistAPI } from '@/core/api/vnwAPI';
 import { useStore } from '@/shared/store/useStore';
@@ -11,6 +11,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import type { CategorizedNumber } from '@/core/categories/types';
 import { getPrimaryCategory } from '@/core/categories/types';
 import HighlightedNumber from '@/shared/components/HighlightedNumber';
+import { formatRtpDate, getNumberPurchaseMode, numberActionPath } from '@/core/lib/numberPurchaseMode';
 
 export interface NumberItem extends CategorizedNumber {
   number_id: number;
@@ -25,6 +26,8 @@ export interface NumberItem extends CategorizedNumber {
   operator?: string;
   stock?: number;
   status?: string;
+  rtp_status?: 'RTP' | 'NON_RTP';
+  rtp_available_at?: string | null;
 }
 
 export default function NumberCard({ item, onWishlistChange }: { item: NumberItem; onWishlistChange?: () => void }) {
@@ -38,7 +41,9 @@ export default function NumberCard({ item, onWishlistChange }: { item: NumberIte
   const inCompare = compare.includes(item.number_id);
   const total = digitTotal(item.display_number);
   const sum = item.numerology_sum ?? numerologySum(item.display_number);
-  const sold = item.status && item.status !== 'AVAILABLE';
+  const purchaseMode = getNumberPurchaseMode(item);
+  const unavailable = purchaseMode === 'UNAVAILABLE';
+  const isPrebook = purchaseMode === 'PREBOOK';
   const discountPct = item.discount_pct ?? (Number(item.mrp) > 0
     ? Math.round(((Number(item.mrp) - Number(item.offer_price)) / Number(item.mrp)) * 100) : 0);
   const primaryCategory = getPrimaryCategory(item);
@@ -63,7 +68,7 @@ export default function NumberCard({ item, onWishlistChange }: { item: NumberIte
     finally { setBusy(false); }
   };
 
-  const buyNow = () => { if (!requireAuth()) return; navigate(`/checkout?number_id=${item.number_id}`); };
+  const buyNow = () => { if (!requireAuth()) return; navigate(numberActionPath(item)); };
 
   const toggleWish = async () => {
     if (!requireAuth()) return;
@@ -126,13 +131,13 @@ export default function NumberCard({ item, onWishlistChange }: { item: NumberIte
             <span className="number-card__collection block truncate text-[9px] font-black uppercase tracking-wide">VIP Collection</span>
           )}
         </div>
-        <span
+        {isPrebook ? <span className="number-card__verified flex shrink-0 items-center gap-1 text-[9px] font-black" title={`RTP on ${formatRtpDate(item.rtp_available_at)}`}><CalendarClock className="h-3 w-3" />{formatRtpDate(item.rtp_available_at)}</span> : <span
           className="number-card__verified flex shrink-0 items-center gap-1 text-[9px] font-black"
           title="Verified and available on any operator"
         >
           <ShieldCheck className="h-3 w-3" aria-hidden="true" />
           Verified
-        </span>
+        </span>}
       </div>
 
       <div className="relative mt-1.5 grid grid-cols-[38px_38px_minmax(0,1fr)] gap-1">
@@ -156,14 +161,14 @@ export default function NumberCard({ item, onWishlistChange }: { item: NumberIte
         </div>
       </div>
 
-      <div className="relative mt-1.5 grid grid-cols-[1fr_auto_auto] gap-1">
-        <button className="number-card__primary-action inline-flex h-8 items-center justify-center gap-1 rounded-lg px-2 text-[10px] font-black disabled:opacity-50" onClick={buyNow} disabled={!!sold}>
-          {!sold && <Zap className="h-3 w-3" aria-hidden="true" />}
-          {sold ? 'Sold' : 'Buy Now'}
+      <div className={`relative mt-1.5 grid gap-1 ${isPrebook ? 'grid-cols-[1fr_auto]' : 'grid-cols-[1fr_auto_auto]'}`}>
+        <button className="number-card__primary-action inline-flex h-8 items-center justify-center gap-1 rounded-lg px-2 text-[10px] font-black disabled:opacity-50" onClick={buyNow} disabled={unavailable}>
+          {!unavailable && (isPrebook ? <CalendarClock className="h-3 w-3" aria-hidden="true" /> : <Zap className="h-3 w-3" aria-hidden="true" />)}
+          {unavailable ? 'Unavailable' : isPrebook ? 'Pre-book' : 'Buy Now'}
         </button>
-        <button aria-label="add to cart" className="number-card__secondary-action grid h-8 w-9 place-items-center rounded-lg border disabled:opacity-50" onClick={addToCart} disabled={busy || !!sold}>
+        {!isPrebook && <button aria-label="add to cart" className="number-card__secondary-action grid h-8 w-9 place-items-center rounded-lg border disabled:opacity-50" onClick={addToCart} disabled={busy || unavailable}>
           <ShoppingCart className="h-3.5 w-3.5" />
-        </button>
+        </button>}
         <button
           onClick={() => toggleCompare(item.number_id)}
           aria-label="compare"

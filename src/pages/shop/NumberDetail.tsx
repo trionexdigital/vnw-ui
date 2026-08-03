@@ -12,6 +12,7 @@ import NumberCard from '@/shared/components/NumberCard';
 import { cn } from '@/core/lib/utils';
 import { PremiumNumberShowcaseCard } from '@/shared/components/PremiumShowcaseCards';
 import { getPrimaryCategory } from '@/core/categories/types';
+import { formatRtpDate, getNumberPurchaseMode, numberActionPath } from '@/core/lib/numberPurchaseMode';
 
 export default function NumberDetail() {
   const { id } = useParams();
@@ -77,7 +78,9 @@ export default function NumberDetail() {
   if (loading) return <div className="mx-auto max-w-7xl px-4 py-10"><Loader /></div>;
   if (!data) return <div className="mx-auto max-w-7xl px-4 py-20 text-center text-muted-foreground">Number not found. <Link to="/shop" className="text-primary">Back to shop</Link></div>;
 
-  const sold = data.status !== 'AVAILABLE';
+  const purchaseMode = getNumberPurchaseMode(data);
+  const sold = purchaseMode === 'UNAVAILABLE';
+  const prebook = purchaseMode === 'PREBOOK';
   const wa = (site.WHATSAPP || '').replace(/\D/g, '');
   const waLink = `https://wa.me/${wa}?text=${encodeURIComponent(`Hi! I'm interested in VIP number ${data.display_number} (${formatINR(data.offer_price)}). Is it available?`)}`;
 
@@ -96,10 +99,12 @@ export default function NumberDetail() {
         offerPrice={data.offer_price}
         discount={data.discount_pct || Math.round(((Number(data.mrp) - Number(data.offer_price)) / Number(data.mrp)) * 100)}
         sum={data.numerology_sum}
-        onBuy={() => requireAuth() && navigate(`/checkout?number_id=${data.number_id}`)}
+        onBuy={() => requireAuth() && navigate(numberActionPath(data))}
         onCart={addToCart}
         onWish={addWish}
         sold={sold}
+        prebook={prebook}
+        rtpDate={formatRtpDate(data.rtp_available_at)}
       />
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
