@@ -57,7 +57,7 @@ function Header() {
   const nav = [
     { label: 'Home', to: '/' },
     { label: 'How It Works', to: '/how-it-works' },
-    { label: 'Corporate Elite Pack', to: '/corporate-elite-pack' },
+    { label: 'Family Pack', to: '/family-pack' },
     { label: 'Numerology', to: '/numerology' },
     { label: 'About Us', to: '/about' },
     { label: 'Contact Us', to: '/contact' },
@@ -155,7 +155,7 @@ function Header() {
           </div>
           <Logo />
           <nav className="relative z-10 ml-auto hidden min-w-0 flex-nowrap items-center gap-0 whitespace-nowrap text-[11px] font-bold text-foreground xl:flex 2xl:gap-1 2xl:text-sm" aria-label="Primary navigation">
-            {nav.map((n) => <Link key={n.label} to={n.to} aria-current={location.pathname === n.to ? 'page' : undefined} className={location.pathname === n.to ? 'rounded-xl border border-primary/30 bg-primary/10 px-2 py-2.5 text-primary shadow-sm 2xl:px-3' : `rounded-xl px-2 py-2.5 transition hover:bg-accent hover:text-primary 2xl:px-3 ${n.to === '/corporate-elite-pack' ? 'text-primary' : ''}`}>{n.label}</Link>)}
+            {nav.map((n) => <Link key={n.label} to={n.to} aria-current={location.pathname === n.to ? 'page' : undefined} className={location.pathname === n.to ? 'rounded-xl border border-primary/30 bg-primary/10 px-2 py-2.5 text-primary shadow-sm 2xl:px-3' : 'rounded-xl px-2 py-2.5 transition hover:bg-accent hover:text-primary 2xl:px-3'}>{n.label}</Link>)}
           </nav>
           <div className="relative z-10 ml-auto flex shrink-0 items-center gap-1 xl:ml-2 2xl:gap-1.5">
             <Link to="/shop?focus=search" className="hidden h-11 items-center gap-1.5 rounded-xl border border-primary bg-card/85 px-3 text-xs font-black text-primary shadow-sm transition hover:bg-accent xl:inline-flex 2xl:text-sm"><Search className="h-5 w-5" /> Search</Link>
@@ -241,7 +241,7 @@ function Footer() {
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link to="/shop">VIP Numbers</Link></li>
               <li><Link to="/premium-numbers">Premium Numbers</Link></li>
-              <li><Link to="/corporate-elite-pack">Corporate Elite Pack</Link></li>
+              <li><Link to="/family-pack">Family Pack</Link></li>
               <li><Link to="/categories">Number Categories</Link></li>
               <li><Link to="/how-it-works">How It Works</Link></li>
               <li><Link to="/numerology">Numerology</Link></li>

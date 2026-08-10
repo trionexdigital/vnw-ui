@@ -147,7 +147,7 @@ function DealCard({
         {active && (
           <div className="deal-hero-card__ribbon">
             <Sparkles className="h-4 w-4" aria-hidden="true" />
-            Today&apos;s Deal
+            Today&apos;s Lucky Pick
           </div>
         )}
 
@@ -184,7 +184,7 @@ function DealCard({
 
           <div className="deal-hero-card__purchase">
             <div>
-              <span>Deal price</span>
+              <span>Lucky Pick price</span>
               <strong>{formatINR(deal.offer_price)}</strong>
               {deal.mrp > deal.offer_price && <del>{formatINR(deal.mrp)}</del>}
             </div>
@@ -304,7 +304,7 @@ export default function DealOfDayShowcase({
       className="deal-showcase"
       role="region"
       aria-roledescription="carousel"
-      aria-label="Deal of the Day VIP numbers"
+      aria-label="Lucky Pick of the Day VIP numbers"
       onFocusCapture={(event) => {
         if ((event.target as HTMLElement).matches(':focus-visible')) setFocusPaused(true);
       }}
@@ -322,7 +322,7 @@ export default function DealOfDayShowcase({
           India&apos;s Premium VIP Number Marketplace
           <span aria-hidden="true" />
         </p>
-        <h1 id="home-hero-title"><span aria-hidden="true" />Deal of the Day<span aria-hidden="true" /></h1>
+        <h1 id="home-hero-title"><span aria-hidden="true" />Lucky Pick of the Day<span aria-hidden="true" /></h1>
         <p>Exclusive numbers. Exceptional value.</p>
       </div>
 
@@ -363,7 +363,7 @@ export default function DealOfDayShowcase({
         </div>
 
         {loading ? (
-          <div className="deal-showcase__loading" role="status" aria-label="Loading Deal of the Day">
+          <div className="deal-showcase__loading" role="status" aria-label="Loading Lucky Pick of the Day">
             <div className="deal-showcase__skeleton" />
           </div>
         ) : visibleDeals.length ? (
@@ -382,7 +382,7 @@ export default function DealOfDayShowcase({
         ) : (
           <div className="deal-showcase__empty" role="status">
             <Sparkles className="h-8 w-8 text-primary" />
-            <strong>{error ? 'Deals are refreshing' : 'New premium deals are coming soon'}</strong>
+            <strong>{error ? 'Lucky Picks are refreshing' : 'New premium Lucky Picks are coming soon'}</strong>
             <span>Explore the live catalog while our next exclusive selection is prepared.</span>
             <Link to="/shop">Explore Numbers <ArrowRight className="h-4 w-4" /></Link>
           </div>
@@ -390,10 +390,10 @@ export default function DealOfDayShowcase({
 
         {deals.length > 1 && !loading && (
           <>
-            <button type="button" className="deal-showcase__arrow deal-showcase__arrow--left" onClick={() => move(-1)} aria-label="Previous deal">
+            <button type="button" className="deal-showcase__arrow deal-showcase__arrow--left" onClick={() => move(-1)} aria-label="Previous Lucky Pick">
               <ChevronLeft className="h-6 w-6" />
             </button>
-            <button type="button" className="deal-showcase__arrow deal-showcase__arrow--right" onClick={() => move(1)} aria-label="Next deal">
+            <button type="button" className="deal-showcase__arrow deal-showcase__arrow--right" onClick={() => move(1)} aria-label="Next Lucky Pick">
               <ChevronRight className="h-6 w-6" />
             </button>
           </>
@@ -401,12 +401,12 @@ export default function DealOfDayShowcase({
       </div>
 
       {deals.length > 1 && !loading && (
-        <div className="deal-showcase__dots" role="group" aria-label="Deal carousel controls">
+        <div className="deal-showcase__dots" role="group" aria-label="Lucky Pick carousel controls">
           {!reducedMotion && (
             <button
               type="button"
               className="deal-showcase__rotation-control"
-              aria-label={rotationPaused ? 'Start automatic deal rotation' : 'Pause automatic deal rotation'}
+              aria-label={rotationPaused ? 'Start automatic Lucky Pick rotation' : 'Pause automatic Lucky Pick rotation'}
               aria-pressed={rotationPaused}
               onClick={() => setRotationPaused((paused) => !paused)}
             >
@@ -419,7 +419,7 @@ export default function DealOfDayShowcase({
               key={deal.number_id}
               type="button"
               aria-current={index === activeIndex ? 'true' : undefined}
-              aria-label={`Show deal ${index + 1}: ${dealNumber(deal)}`}
+              aria-label={`Show Lucky Pick ${index + 1}: ${dealNumber(deal)}`}
               onClick={() => show(index)}
               className={cn('deal-showcase__dot', index === activeIndex && 'is-active')}
             />
@@ -432,7 +432,7 @@ export default function DealOfDayShowcase({
           aria-live={rotationPaused || focusPaused || reducedMotion ? 'polite' : 'off'}
           aria-atomic="true"
         >
-          Deal {activeIndex + 1} of {deals.length}: {deals[activeIndex] ? dealNumber(deals[activeIndex]) : ''}
+          Lucky Pick {activeIndex + 1} of {deals.length}: {deals[activeIndex] ? dealNumber(deals[activeIndex]) : ''}
         </p>
       )}
     </div>

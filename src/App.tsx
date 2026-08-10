@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import { StrictMode } from "react";
 import { store } from './app/store';
 import { ThemeProvider } from '@/shared/theme';
+import ScrollToTop from '@/app/router/ScrollToTop';
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
       <ThemeProvider>
         <Provider store={store}>
           <BrowserRouter>
+            <ScrollToTop />
             <TooltipProvider>
               <Toaster />
               <AppRoutes />

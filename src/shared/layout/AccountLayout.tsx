@@ -44,7 +44,7 @@ const EMPLOYEE_MENU: MenuItem[] = [
 const ADMIN_MENU: MenuItem[] = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/admin/numbers', label: 'Numbers', icon: Crown },
-  { to: '/admin/deals-of-day', label: 'Deal of the Day', icon: Sparkles },
+  { to: '/admin/deals-of-day', label: 'Lucky Pick of the Day', icon: Sparkles },
   { to: '/admin/orders', label: 'Orders', icon: ShoppingBag },
   { to: '/admin/prebooks', label: 'Pre-books & Refunds', icon: CalendarClock },
   { to: '/admin/sell-requests', label: 'Sell Requests', icon: Inbox },
@@ -65,7 +65,7 @@ const ADMIN_MENU: MenuItem[] = [
 
 const ADMIN_GROUPS = [
   { label: 'Overview', items: ['Dashboard'] },
-  { label: 'Catalog', items: ['Numbers', 'Deal of the Day', 'Carousel', 'Coupons'] },
+  { label: 'Catalog', items: ['Numbers', 'Lucky Pick of the Day', 'Carousel', 'Coupons'] },
   { label: 'Operations', items: ['Orders', 'Pre-books & Refunds', 'Sell Requests', 'Approvals', 'Payouts'] },
   { label: 'People', items: ['Users', 'Dealers', 'Subscribers'] },
   { label: 'Trust', items: ['Reviews', 'Testimonials', 'Trusted Clients', 'FAQs', 'Messages', 'Settings'] },

@@ -86,7 +86,7 @@ describe('AdminDealsOfDay', () => {
 
     await user.click(screen.getByRole('button', { name: 'Remove 999997 1155' }));
     await waitFor(() => expect(api.remove).toHaveBeenCalledWith(12));
-    expect(window.confirm).toHaveBeenCalledWith('Remove 999997 1155 from Deal of the Day?');
+    expect(window.confirm).toHaveBeenCalledWith('Remove 999997 1155 from Lucky Pick of the Day?');
   });
 
   it('adds a catalog number with optional hero copy', async () => {
@@ -117,14 +117,14 @@ describe('AdminDealsOfDay', () => {
     render(<MemoryRouter><AdminDealsOfDay /></MemoryRouter>);
 
     await screen.findByText('969595 1155');
-    await user.click(screen.getByRole('button', { name: 'Add Deal' }));
+    await user.click(screen.getByRole('button', { name: 'Add Lucky Pick' }));
     const picker = await screen.findByRole('combobox', { name: 'VIP number' });
     await waitFor(() => expect(screen.getByRole('option', { name: /936313 1155/ })).toBeInTheDocument());
     expect(screen.queryByRole('option', { name: /969595 1155/ })).not.toBeInTheDocument();
     await user.selectOptions(picker, '103');
     await user.type(screen.getByPlaceholderText('e.g. Numerology Special'), 'Golden Choice');
     await user.type(screen.getByPlaceholderText(/Highly desirable/), 'Rare and memorable');
-    await user.click(screen.getByRole('button', { name: 'Add to Deal of the Day' }));
+    await user.click(screen.getByRole('button', { name: 'Add to Lucky Pick of the Day' }));
 
     await waitFor(() => expect(api.save).toHaveBeenCalledWith({
       number_id: 103,

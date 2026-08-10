@@ -56,14 +56,14 @@ describe('HomeHero', () => {
   it('renders the screenshot-inspired deal stage while preserving the protected right artwork', () => {
     const { container } = renderHero(<HomeHero deals={deals} />);
 
-    expect(screen.getByRole('heading', { name: /deal of the day/i })).toBeInTheDocument();
-    expect(screen.getByRole('region', { name: /deal of the day vip numbers/i })).toHaveAttribute('aria-roledescription', 'carousel');
+    expect(screen.getByRole('heading', { name: /lucky pick of the day/i })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: /lucky pick of the day vip numbers/i })).toHaveAttribute('aria-roledescription', 'carousel');
     expect(screen.getByRole('link', { name: '969595 1155' })).toHaveAttribute('href', '/number/1');
     expect(screen.getByRole('link', { name: /buy now/i })).toHaveAttribute('href', '/checkout?number_id=1');
     expect(screen.getByText('Numerology Special')).toBeInTheDocument();
     expect(screen.getAllByText('VIP Category')).toHaveLength(3);
     expect(screen.getAllByText('Ready to Port')).toHaveLength(3);
-    expect(screen.getByRole('button', { name: 'Pause automatic deal rotation' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Pause automatic Lucky Pick rotation' })).toBeInTheDocument();
     expect(container.querySelectorAll('.deal-hero-card')).toHaveLength(3);
     expect(container.querySelector('.home-hero__copy')).toHaveClass('lg:col-start-1');
     expect(container.querySelector('.home-hero__art')).toHaveClass('lg:col-start-2');
@@ -79,13 +79,13 @@ describe('HomeHero', () => {
     expect(container.querySelectorAll('.home-showcase__butterflies--focus .home-hero__butterfly')).toHaveLength(15);
   });
 
-  it('moves to the next deal and rotates the platform in the same direction', async () => {
+  it('moves to the next Lucky Pick and rotates the platform in the same direction', async () => {
     const user = userEvent.setup();
     const { container } = renderHero(<HomeHero deals={deals} />);
     const ring = container.querySelector('.deal-showcase__base-ring--inner');
     expect(ring).toHaveAttribute('data-rotation', '0');
 
-    await user.click(screen.getByRole('button', { name: 'Next deal' }));
+    await user.click(screen.getByRole('button', { name: 'Next Lucky Pick' }));
     await waitFor(() => expect(screen.getByRole('link', { name: '999997 1155' })).toBeInTheDocument());
     expect(ring).toHaveAttribute('data-rotation', '60');
   });
@@ -93,8 +93,8 @@ describe('HomeHero', () => {
   it('provides an explicit automatic-rotation control', async () => {
     const user = userEvent.setup();
     renderHero(<HomeHero deals={deals} />);
-    await user.click(screen.getByRole('button', { name: 'Pause automatic deal rotation' }));
-    expect(screen.getByRole('button', { name: 'Start automatic deal rotation' })).toHaveAttribute('aria-pressed', 'true');
+    await user.click(screen.getByRole('button', { name: 'Pause automatic Lucky Pick rotation' }));
+    expect(screen.getByRole('button', { name: 'Start automatic Lucky Pick rotation' })).toHaveAttribute('aria-pressed', 'true');
   });
 
   it('pauses the category orbit while a category is hovered or keyboard-focused', () => {
@@ -116,20 +116,20 @@ describe('HomeHero', () => {
   it('supports one- and two-number layouts plus keyboard wraparound', () => {
     const single = renderHero(<HomeHero deals={deals.slice(0, 1)} />);
     expect(single.container.querySelectorAll('.deal-hero-card')).toHaveLength(1);
-    expect(screen.queryByRole('button', { name: 'Next deal' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Next Lucky Pick' })).not.toBeInTheDocument();
     single.unmount();
 
     const pair = renderHero(<HomeHero deals={deals.slice(0, 2)} />);
     expect(pair.container.querySelectorAll('.deal-hero-card')).toHaveLength(2);
     expect(pair.container.querySelector('[data-position="previous"]')).not.toBeInTheDocument();
-    fireEvent.keyDown(screen.getByRole('region', { name: /deal of the day vip numbers/i }), { key: 'ArrowLeft' });
+    fireEvent.keyDown(screen.getByRole('region', { name: /lucky pick of the day vip numbers/i }), { key: 'ArrowLeft' });
     expect(screen.getByRole('link', { name: '999997 1155' })).toBeInTheDocument();
     expect(pair.container.querySelector('.deal-showcase__base-ring--inner')).toHaveAttribute('data-rotation', '-60');
   });
 
   it('reserves the card stage while the deals API is loading', () => {
     renderHero(<HomeHero deals={[]} dealsLoading />);
-    expect(screen.getByRole('status', { name: /loading deal of the day/i })).toBeInTheDocument();
+    expect(screen.getByRole('status', { name: /loading lucky pick of the day/i })).toBeInTheDocument();
   });
 
   it('keeps the catalog number visible when its formatted display value is missing', () => {
@@ -167,7 +167,7 @@ describe('HomeHero', () => {
 
   it('renders a curated fallback state when no deal feed is available', () => {
     renderHero(<HomeHero deals={[]} dealsError />);
-    expect(screen.getByText('Deals are refreshing')).toBeInTheDocument();
+    expect(screen.getByText('Lucky Picks are refreshing')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /explore numbers/i })).toHaveAttribute('href', '/shop');
   });
 
@@ -176,7 +176,7 @@ describe('HomeHero', () => {
     const user = userEvent.setup();
     const { container } = renderHero(<HomeHero deals={deals} />);
     expect(container.querySelector('.home-hero')).not.toHaveClass('is-motion-active');
-    await user.click(screen.getByRole('button', { name: 'Next deal' }));
+    await user.click(screen.getByRole('button', { name: 'Next Lucky Pick' }));
     expect(container.querySelector('.deal-showcase__base-ring--inner')).toHaveAttribute('data-rotation', '0');
   });
 });

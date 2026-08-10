@@ -13,6 +13,7 @@ import { localService } from '@/core/services/local';
 import { useStore } from '@/shared/store/useStore';
 import { useToast } from '@/shared/hooks/use-toast';
 import { SectionHeader } from './HomeSections';
+import FamilyPackCard, { useFamilyPackWishlist } from '@/shared/components/FamilyPackCard';
 
 export const PACK_TYPE_LABELS: Record<CorporatePack['pack_type'], string> = {
   SERIES: 'Numbers in Series',
@@ -69,7 +70,7 @@ export function CorporatePackCard({ pack }: { pack: CorporatePack }) {
           <Link key={number.number_id} to={`/number/${number.number_id}`} className="rounded-xl border border-border bg-background px-3 py-2 transition hover:border-primary">
             <div className="font-black tracking-wide text-foreground">{number.display_number}</div>
             <div className="mt-0.5 flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
-              <span>{number.operator || 'Any operator'}</span><span>{formatINR(number.offer_price)}</span>
+              <span>VIP number</span><span>{formatINR(number.offer_price)}</span>
             </div>
           </Link>
         ))}
@@ -89,11 +90,12 @@ export function CorporatePackPreview() {
   const [type, setType] = useState<CorporatePackType>('MIXED');
   const [size, setSize] = useState(3);
   const [loading, setLoading] = useState(true);
+  const { wishedIds, updateWishlist } = useFamilyPackWishlist();
 
   useEffect(() => {
     let active = true;
     setLoading(true);
-    siteAPI.corporatePacks({ pack_type: type, size, limit: 3 })
+    siteAPI.familyPacks({ pack_type: type, size, limit: 3 })
       .then((items) => { if (active) setPacks(items); })
       .catch(() => { if (active) setPacks([]); })
       .finally(() => { if (active) setLoading(false); });
@@ -104,7 +106,7 @@ export function CorporatePackPreview() {
   return (
     <section className="bg-card px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
-        <SectionHeader eyebrow="Corporate Elite Pack" title="One identity across your whole team" description="Live groups generated automatically from currently available VIP numbers." action={<Link to="/corporate-elite-pack" className="btn-gold-outline">Explore Elite Packs <ArrowRight className="h-4 w-4" /></Link>} />
+        <SectionHeader eyebrow="Family Pack" title="One memorable identity for your whole family" description="Live family groups generated automatically from currently available VIP numbers." action={<Link to="/family-pack" className="btn-gold-outline">Explore Family Packs <ArrowRight className="h-4 w-4" /></Link>} />
         <div className="mb-5 rounded-2xl border border-border bg-background p-3 shadow-sm sm:p-4">
           <div className="grid gap-4 md:grid-cols-[1fr_190px] md:items-end">
             <div className="min-w-0"><div className="text-[10px] font-black uppercase tracking-wider text-primary">Matching style</div><div className="mt-2 flex gap-2 overflow-x-auto pb-1">{PACK_TYPES.map((value) => <button key={value} type="button" onClick={() => setType(value)} aria-pressed={type === value} className={`min-h-9 shrink-0 rounded-xl border px-3 text-xs font-black transition ${type === value ? 'border-primary bg-primary text-primary-foreground shadow-sm' : 'border-border bg-card text-foreground hover:border-primary hover:text-primary'}`}>{PACK_TYPE_LABELS[value]}</button>)}</div></div>
@@ -115,12 +117,12 @@ export function CorporatePackPreview() {
           <div className="grid min-h-44 place-items-center rounded-2xl border border-primary/20 bg-background"><div className="flex items-center gap-2 text-sm font-bold text-muted-foreground"><RefreshCw className="h-4 w-4 animate-spin text-primary" /> Finding live matching packs…</div></div>
         ) : visible.length ? (
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: .15 }} transition={{ staggerChildren: .08 }} className="grid gap-4 lg:grid-cols-3">
-            {visible.map((pack) => <CorporatePackCard key={pack.pack_id} pack={pack} />)}
+            {visible.map((pack) => <FamilyPackCard key={pack.pack_id} pack={pack} wishedIds={wishedIds} onWishlistChange={updateWishlist} />)}
           </motion.div>
         ) : (
           <div className="rounded-2xl border border-primary/20 bg-background p-6 sm:flex sm:items-center sm:justify-between">
             <div><h3 className="text-lg font-black text-foreground">Build a coordinated number collection</h3><p className="mt-1 text-sm text-muted-foreground">Tell us your preferred pack size and matching style.</p></div>
-            <Link to="/corporate-elite-pack" className="btn-gold mt-4 sm:mt-0">Configure a pack <ArrowRight className="h-4 w-4" /></Link>
+            <Link to="/family-pack" className="btn-gold mt-4 sm:mt-0">Configure a Family Pack <ArrowRight className="h-4 w-4" /></Link>
           </div>
         )}
       </div>

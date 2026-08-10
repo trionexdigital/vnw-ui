@@ -318,7 +318,9 @@ export const siteAPI = {
   settings: () => post('site/settings', {}),
   heroStats: () => post<HeroStats>('site/hero-stats', {}),
   dealsOfDay: () => post<DealOfDayResponse>('site/deals-of-day', {}),
-  corporatePacks: (p: CorporatePackQuery) => post<CorporatePack[]>('site/corporate-packs', p),
+  familyPacks: (p: CorporatePackQuery) => post<CorporatePack[]>('site/family-packs', p),
+  // Legacy alias retained for integrations that still call the previous API name.
+  corporatePacks: (p: CorporatePackQuery) => post<CorporatePack[]>('site/family-packs', p),
   operators: () => post<OperatorFacet[]>('site/operators', {}),
   trustedClients: () => post<TrustedClient[]>('site/trusted-clients', {}),
   trustedClientLogoUrl: (clientId: number) => BASE_URL + `site/trusted-clients/${clientId}/logo`,

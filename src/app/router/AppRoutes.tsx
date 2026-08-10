@@ -22,7 +22,7 @@ const About = lazy(() => import('@/pages/static/About'));
 const Contact = lazy(() => import('@/pages/static/Contact'));
 const Numerology = lazy(() => import('@/pages/numerology/Numerology'));
 const HowItWorks = lazy(() => import('@/pages/static/HowItWorks'));
-const CorporateElitePack = lazy(() => import('@/pages/corporate/CorporateElitePack'));
+const FamilyPack = lazy(() => import('@/pages/corporate/CorporateElitePack'));
 const Faq = lazy(() => import('@/pages/static/Faq'));
 const Auth = lazy(() => import('@/pages/auth/Auth'));
 
@@ -97,7 +97,8 @@ export default function AppRoutes() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/numerology" element={<Numerology />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
-        <Route path="/corporate-elite-pack" element={<CorporateElitePack />} />
+        <Route path="/family-pack" element={<FamilyPack />} />
+        <Route path="/corporate-elite-pack" element={<Navigate to="/family-pack" replace />} />
         <Route path="/faq" element={<Faq />} />
         <Route path="/wishlist" element={<RoleGuard><Wishlist /></RoleGuard>} />
         <Route path="/checkout" element={<RoleGuard><Checkout /></RoleGuard>} />

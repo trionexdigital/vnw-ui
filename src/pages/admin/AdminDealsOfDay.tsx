@@ -60,7 +60,7 @@ export default function AdminDealsOfDay() {
     try {
       setItems(await adminAPI.dealsOfDayList());
     } catch (error: any) {
-      toast({ title: 'Unable to load deals', description: error.message, variant: 'destructive' });
+      toast({ title: 'Unable to load Lucky Picks', description: error.message, variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -132,11 +132,11 @@ export default function AdminDealsOfDay() {
     setSaving(true);
     try {
       await adminAPI.dealOfDaySave(form);
-      toast({ title: form.deal_id ? 'Deal updated' : 'Deal added' });
+      toast({ title: form.deal_id ? 'Lucky Pick updated' : 'Lucky Pick added' });
       setOpen(false);
       await load();
     } catch (error: any) {
-      toast({ title: 'Could not save deal', description: error.message, variant: 'destructive' });
+      toast({ title: 'Could not save Lucky Pick', description: error.message, variant: 'destructive' });
     } finally {
       setSaving(false);
     }
@@ -154,9 +154,9 @@ export default function AdminDealsOfDay() {
       setItems((current) => current.map((row) => (
         row.deal_id === item.deal_id ? { ...row, is_active: !row.is_active } : row
       )));
-      toast({ title: item.is_active ? 'Deal hidden' : 'Deal published' });
+      toast({ title: item.is_active ? 'Lucky Pick hidden' : 'Lucky Pick published' });
     } catch (error: any) {
-      toast({ title: 'Could not update deal', description: error.message, variant: 'destructive' });
+      toast({ title: 'Could not update Lucky Pick', description: error.message, variant: 'destructive' });
     }
   };
 
@@ -169,34 +169,34 @@ export default function AdminDealsOfDay() {
     setOrdering(true);
     try {
       await adminAPI.dealsOfDayReorder(next.map((item) => Number(item.deal_id)));
-      toast({ title: 'Deal order updated' });
+      toast({ title: 'Lucky Pick order updated' });
     } catch (error: any) {
       setItems(items);
-      toast({ title: 'Could not reorder deals', description: error.message, variant: 'destructive' });
+      toast({ title: 'Could not reorder Lucky Picks', description: error.message, variant: 'destructive' });
     } finally {
       setOrdering(false);
     }
   };
 
   const remove = async (item: DealOfDayItem) => {
-    if (!item.deal_id || !window.confirm(`Remove ${item.display_number} from Deal of the Day?`)) return;
+    if (!item.deal_id || !window.confirm(`Remove ${item.display_number} from Lucky Pick of the Day?`)) return;
     try {
       await adminAPI.dealOfDayDelete(item.deal_id);
-      toast({ title: 'Deal removed', description: 'The catalog number was not deleted.' });
+      toast({ title: 'Lucky Pick removed', description: 'The catalog number was not deleted.' });
       await load();
     } catch (error: any) {
-      toast({ title: 'Could not remove deal', description: error.message, variant: 'destructive' });
+      toast({ title: 'Could not remove Lucky Pick', description: error.message, variant: 'destructive' });
     }
   };
 
   return (
     <div>
       <PageHeader
-        title="Deal of the Day"
+        title="Lucky Pick of the Day"
         subtitle="Curate and order the premium numbers shown in the homepage hero"
         action={(
           <button type="button" onClick={openNew} className="btn-gold inline-flex items-center gap-2 text-sm">
-            <Plus className="h-4 w-4" /> Add Deal
+            <Plus className="h-4 w-4" /> Add Lucky Pick
           </button>
         )}
       />
@@ -206,16 +206,16 @@ export default function AdminDealsOfDay() {
           <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
           <p>
             Active, available numbers appear in this order. Sold or inactive catalog numbers are hidden automatically;
-            premium curated catalog numbers fill the hero only when no curated deals are eligible.
+            premium curated catalog numbers fill the hero only when no curated Lucky Picks are eligible.
           </p>
         </div>
       </div>
 
       {loading ? <Loader /> : items.length === 0 ? (
         <EmptyState
-          title="No curated deals yet"
+          title="No curated Lucky Picks yet"
           description="The storefront is currently using premium curated catalog numbers."
-          action={<button type="button" onClick={openNew} className="btn-gold">Add the first deal</button>}
+          action={<button type="button" onClick={openNew} className="btn-gold">Add the first Lucky Pick</button>}
         />
       ) : (
         <Table head={['Order', 'Number', 'Hero Copy', 'Price', 'Catalog', 'Published', 'Actions']}>
@@ -287,7 +287,7 @@ export default function AdminDealsOfDay() {
         </Table>
       )}
 
-      <Modal open={open} onClose={() => !saving && setOpen(false)} title={form.deal_id ? 'Edit Deal of the Day' : 'Add Deal of the Day'} wide>
+      <Modal open={open} onClose={() => !saving && setOpen(false)} title={form.deal_id ? 'Edit Lucky Pick of the Day' : 'Add Lucky Pick of the Day'} wide>
         <form onSubmit={save} className="grid gap-5 lg:grid-cols-[1.2fr_.8fr]">
           <div className="space-y-4">
             <div>
@@ -369,14 +369,14 @@ export default function AdminDealsOfDay() {
                 {form.hero_description || 'Highly desirable • Easy to remember'}
               </p>
               <div className="mt-6 rounded-xl bg-primary/10 p-3">
-                <div className="text-[10px] font-bold uppercase text-muted-foreground">Deal price</div>
+                <div className="text-[10px] font-bold uppercase text-muted-foreground">Lucky Pick price</div>
                 <div className="mt-1 text-xl font-black text-primary">{formatINR(selected?.offer_price || 0)}</div>
               </div>
             </div>
           </div>
 
           <button type="submit" disabled={saving} className="btn-gold min-h-11 lg:col-span-2">
-            {saving ? 'Saving…' : form.deal_id ? 'Update Deal' : 'Add to Deal of the Day'}
+            {saving ? 'Saving…' : form.deal_id ? 'Update Lucky Pick' : 'Add to Lucky Pick of the Day'}
           </button>
         </form>
       </Modal>

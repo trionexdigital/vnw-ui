@@ -85,7 +85,7 @@ async function mockStorefront(page: import('@playwright/test').Page) {
 }
 
 for (const viewport of viewports) {
-  test(`Deal of the Day hero is contained and usable at ${viewport.width}x${viewport.height}`, async ({ page }, testInfo) => {
+  test(`Lucky Pick of the Day hero is contained and usable at ${viewport.width}x${viewport.height}`, async ({ page }, testInfo) => {
     await page.setViewportSize(viewport);
     await mockStorefront(page);
     await page.goto('/', { waitUntil: 'domcontentloaded' });
@@ -139,7 +139,7 @@ for (const viewport of viewports) {
 
     const ring = page.locator('.deal-showcase__base-ring--inner');
     await expect(ring).toHaveAttribute('data-rotation', '0');
-    await page.getByRole('button', { name: 'Next deal' }).click();
+    await page.getByRole('button', { name: 'Next Lucky Pick' }).click();
     await expect(page.locator('.deal-card-motion[data-position="active"]').getByText('999997 1155')).toBeVisible();
     await expect(ring).toHaveAttribute('data-rotation', '60');
     await expect.poll(async () => (
@@ -185,11 +185,11 @@ test('reduced motion keeps manual navigation flat and disables autoplay', async 
   await mockStorefront(page);
   await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-  await expect(page.getByRole('button', { name: 'Pause automatic deal rotation' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Pause automatic Lucky Pick rotation' })).toHaveCount(0);
   await page.waitForTimeout(6_500);
   await expect(page.locator('.deal-card-motion[data-position="active"]').getByText('969595 1155')).toBeVisible();
 
-  await page.getByRole('button', { name: 'Next deal' }).click();
+  await page.getByRole('button', { name: 'Next Lucky Pick' }).click();
   await expect(page.locator('.deal-card-motion[data-position="active"]').getByText('999997 1155')).toBeVisible();
   await expect(page.locator('.deal-showcase__base-ring--inner')).toHaveAttribute('data-rotation', '0');
   const previousCard = page.locator('.deal-card-motion[data-position="previous"]');
