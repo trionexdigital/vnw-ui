@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   ArrowRight, BadgeIndianRupee, Building2, ChevronDown, CircleHelp, CreditCard, Headphones,
-  Network, PhoneCall, RefreshCw, ShieldCheck, ShoppingCart, Smartphone, Sparkles,
+  Network, PhoneCall, RefreshCw, ShieldCheck, ShoppingCart, Sparkles,
 } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import {
-  cartAPI, siteAPI, type CorporatePack, type CorporatePackType, type FaqItem, type OperatorFacet, type TrustedClient,
+  cartAPI, numbersAPI, siteAPI, type CorporatePack, type CorporatePackType, type FaqItem, type OperatorFacet, type TrustedClient,
 } from '@/core/api/vnwAPI';
 import { formatINR } from '@/core/lib/format';
 import { localService } from '@/core/services/local';
@@ -14,6 +14,8 @@ import { useStore } from '@/shared/store/useStore';
 import { useToast } from '@/shared/hooks/use-toast';
 import { SectionHeader } from './HomeSections';
 import FamilyPackCard, { useFamilyPackWishlist } from '@/shared/components/FamilyPackCard';
+import NumberCard, { type NumberItem } from '@/shared/components/NumberCard';
+import { MotionCard, MotionGrid, MotionGridItem, MotionSection } from '@/shared/motion/MotionPrimitives';
 
 export const PACK_TYPE_LABELS: Record<CorporatePack['pack_type'], string> = {
   SERIES: 'Numbers in Series',
@@ -131,25 +133,45 @@ export function CorporatePackPreview() {
 }
 
 export function OperatorSection({ operators }: { operators: OperatorFacet[] }) {
-  const tones = ['bg-primary/10', 'bg-accent', 'bg-muted', 'bg-secondary'];
-  if (!operators.length) return null;
+  const reduceMotion = useReducedMotion();
+  const [selected, setSelected] = useState('');
+  const [numbers, setNumbers] = useState<NumberItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => { if (!selected) return; let active=true; setLoading(true); numbersAPI.list({operator:selected,limit:8,sort:'popular'}).then((d:any)=>{if(active)setNumbers(d.items||[]);}).catch(()=>{if(active)setNumbers([]);}).finally(()=>{if(active)setLoading(false);}); return()=>{active=false;}; }, [selected]);
+  const canonicalOperators = [
+    { operator: 'Airtel', icon: '/icons/Airtel_logo-02.png', iconClass: 'operator-logo--airtel' },
+    { operator: 'Jio', icon: '/icons/jio-logo-icon.png', iconClass: 'operator-logo--jio' },
+    { operator: 'Vi', icon: '/icons/vi-mobile-icon.png', iconClass: 'operator-logo--vi' },
+    { operator: 'BSNL', icon: '/icons/bsnl-logo.png', iconClass: 'operator-logo--bsnl' },
+  ];
+  void operators;
   return (
-    <section className="bg-background px-4 py-10 sm:px-6 lg:px-8">
+    <MotionSection className="bg-background px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
-        <SectionHeader eyebrow="Shop by network" title="Choose your preferred operator" description="Explore currently available VIP numbers by network operator." />
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {operators.map((item, index) => (
-            <motion.div key={item.operator} whileHover={{ y: -5, rotate: index % 2 ? .4 : -.4 }}>
-              <Link to={`/shop?operator=${encodeURIComponent(item.operator)}`} className="group flex min-h-28 items-center gap-4 rounded-2xl border border-border bg-card p-4 shadow-sm transition hover:border-primary hover:shadow-lg">
-                <span className={`grid h-14 w-14 shrink-0 place-items-center rounded-2xl ${tones[index % tones.length]} text-primary`}><Smartphone className="h-7 w-7" /></span>
-                <span className="min-w-0"><span className="block text-lg font-black text-foreground">{item.operator}</span><span className="text-sm text-muted-foreground">{item.count} available</span></span>
+        <SectionHeader eyebrow="Browse by catalogued series" title="Choose your preferred operator" description="Select a series to browse matching numbers instantly. Every eligible number can still be ported to your preferred network through MNP." />
+        <MotionGrid className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {canonicalOperators.map((item) => (
+            <MotionGridItem key={item.operator}>
+              <motion.button
+                type="button"
+                aria-label={`Browse ${item.operator} catalogued series`}
+                aria-pressed={selected===item.operator}
+                onClick={()=>setSelected(item.operator)}
+                whileHover={reduceMotion ? undefined : { y: -5, scale: 1.012 }}
+                whileTap={reduceMotion ? undefined : { scale: .985 }}
+                transition={{ type: 'spring', stiffness: 280, damping: 24, mass: .72 }}
+                className={`operator-choice group flex min-h-28 w-full items-center gap-4 rounded-2xl border bg-card p-4 text-left shadow-sm ${selected===item.operator?'is-selected border-primary ring-2 ring-primary/20':'border-border'}`}
+              >
+                <span className="operator-logo-frame grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-2xl border border-border/80 shadow-sm"><img src={item.icon} alt={`${item.operator} logo`} className={`operator-logo ${item.iconClass}`} /></span>
+                <span className="min-w-0"><span className="block text-lg font-black text-foreground">{item.operator}</span><span className="text-sm font-semibold text-muted-foreground">Browse series</span></span>
                 <ArrowRight className="ml-auto h-4 w-4 text-primary transition group-hover:translate-x-1" />
-              </Link>
-            </motion.div>
+              </motion.button>
+            </MotionGridItem>
           ))}
-        </div>
+        </MotionGrid>
+        {selected && <div className="mt-6 rounded-2xl border border-primary/20 bg-card p-4 sm:p-5"><div className="mb-4 flex flex-wrap items-center justify-between gap-3"><div><h3 className="text-lg font-black">{selected} catalogued series</h3><p className="mt-1 text-xs text-muted-foreground">Series describes how we catalogue this number. After purchase, you may port it to another eligible operator under MNP.</p></div><Link className="btn-gold-outline" to={`/shop?operator=${encodeURIComponent(selected)}`}>View filtered shop <ArrowRight className="h-4 w-4"/></Link></div>{loading?<div className="flex min-h-32 items-center justify-center gap-2 text-sm text-muted-foreground"><RefreshCw className="h-4 w-4 animate-spin"/>Loading series…</div>:numbers.length?<div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{numbers.map(n=><NumberCard key={n.number_id} item={n}/>)}</div>:<p className="rounded-xl bg-muted p-6 text-center text-sm text-muted-foreground">No available {selected} series numbers right now.</p>}</div>}
       </div>
-    </section>
+    </MotionSection>
   );
 }
 
@@ -162,23 +184,31 @@ export const JOURNEY_STEPS = [
 ];
 
 export function JourneyPreview() {
+  const reduceMotion = useReducedMotion();
   return (
-    <section className="overflow-hidden bg-card px-4 py-10 sm:px-6 lg:px-8">
+    <MotionSection className="overflow-hidden bg-card px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeader eyebrow="Premium number journey" title="From checkout to confident activation" description="A clear five-stage path, including our 100% money-back assurance." action={<Link to="/how-it-works" className="btn-gold-outline">See the full journey <ArrowRight className="h-4 w-4" /></Link>} />
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: .2 }} transition={{ staggerChildren: .1 }} className="relative grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          <div className="absolute left-[10%] right-[10%] top-7 hidden h-px bg-primary/30 lg:block" aria-hidden="true" />
+        <MotionGrid className="relative grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <motion.span
+            className="journey-progress absolute left-[10%] right-[10%] top-7 hidden h-px origin-left bg-gradient-to-r from-primary/20 via-primary to-primary/20 lg:block"
+            aria-hidden="true"
+            initial={reduceMotion ? false : { scaleX: 0, opacity: 0 }}
+            whileInView={{ scaleX: 1, opacity: 1 }}
+            viewport={{ once: true, amount: .4 }}
+            transition={{ duration: reduceMotion ? 0 : .8, ease: [0.16, 1, 0.3, 1] }}
+          />
           {JOURNEY_STEPS.map((step, index) => (
-            <motion.article variants={reveal} key={step.title} className="relative rounded-2xl border border-border bg-background p-4 text-center shadow-sm transition hover:border-primary">
-              <span className="relative mx-auto grid h-14 w-14 place-items-center rounded-full border-4 border-card bg-primary text-primary-foreground shadow-md"><step.icon className="h-6 w-6" /></span>
+            <MotionCard key={step.title} className="journey-card group relative rounded-2xl border border-border bg-background p-4 text-center shadow-sm">
+              <span className="journey-card__icon relative mx-auto grid h-14 w-14 place-items-center rounded-full border-4 border-card bg-primary text-primary-foreground shadow-md"><step.icon className="h-6 w-6" /></span>
               <div className="mt-3 text-[10px] font-black uppercase tracking-[.15em] text-primary">Step {index + 1}</div>
               <h3 className="mt-1 font-black text-foreground">{step.title}</h3>
               <p className="mt-2 text-xs leading-5 text-muted-foreground">{step.text}</p>
-            </motion.article>
+            </MotionCard>
           ))}
-        </motion.div>
+        </MotionGrid>
       </div>
-    </section>
+    </MotionSection>
   );
 }
 

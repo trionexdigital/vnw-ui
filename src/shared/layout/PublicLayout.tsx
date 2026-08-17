@@ -58,6 +58,7 @@ function Header() {
     { label: 'Home', to: '/' },
     { label: 'How It Works', to: '/how-it-works' },
     { label: 'Family Pack', to: '/family-pack' },
+    { label: 'Accessories', to: '/accessories' },
     { label: 'Numerology', to: '/numerology' },
     { label: 'About Us', to: '/about' },
     { label: 'Contact Us', to: '/contact' },
@@ -79,21 +80,21 @@ function Header() {
   const AccountMenu = (
     token && user ? (
       <div className="group relative">
-        <button aria-label="Open account menu" className="grid h-10 w-10 place-items-center rounded-xl border border-border bg-card text-foreground shadow-sm transition hover:border-primary hover:bg-accent"><User className="h-5 w-5" /></button>
+        <button aria-label="Open account menu" className="vnw-interactive grid h-10 w-10 place-items-center rounded-xl border border-border bg-card text-foreground shadow-sm"><User className="h-5 w-5" /></button>
         <div className="invisible absolute right-0 top-full w-52 pt-3 opacity-0 transition-all group-hover:visible group-hover:opacity-100">
           <div className="glass-panel rounded-xl p-2">
             <div className="px-3 py-2 text-xs text-muted-foreground">Hi, {(user.name || 'User').split(' ')[0]}</div>
-            <Link to={dash} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground hover:bg-accent"><LayoutDashboard className="h-4 w-4 text-primary" /> Dashboard</Link>
-            <Link to="/pre-book#mine" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground hover:bg-accent"><CalendarClock className="h-4 w-4 text-primary" /> My Pre-books</Link>
-            <Link to="/orders" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground hover:bg-accent"><ShoppingCart className="h-4 w-4 text-primary" /> My Orders</Link>
-            <Link to="/account" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground hover:bg-accent"><User className="h-4 w-4 text-primary" /> Profile</Link>
+            <Link to={dash} className="vnw-interactive flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground"><LayoutDashboard className="h-4 w-4 text-primary" /> Dashboard</Link>
+            <Link to="/pre-book#mine" className="vnw-interactive flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground"><CalendarClock className="h-4 w-4 text-primary" /> My Pre-books</Link>
+            <Link to="/orders" className="vnw-interactive flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground"><ShoppingCart className="h-4 w-4 text-primary" /> My Orders</Link>
+            <Link to="/account" className="vnw-interactive flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground"><User className="h-4 w-4 text-primary" /> Profile</Link>
             <button onClick={() => dispatch(logout())} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-destructive hover:bg-destructive/10"><LogOut className="h-4 w-4" /> Logout</button>
           </div>
         </div>
       </div>
     ) : (
       <>
-        <Link to="/login" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-border bg-card/85 px-3 py-2 text-xs font-bold text-foreground shadow-sm transition hover:border-primary hover:bg-accent 2xl:px-4 2xl:text-sm"><User className="h-5 w-5" />Sign In</Link>
+        <Link to="/login" className="vnw-interactive inline-flex min-h-11 items-center gap-2 rounded-xl border border-border bg-card/85 px-3 py-2 text-xs font-bold text-foreground shadow-sm 2xl:px-4 2xl:text-sm"><User className="h-5 w-5" />Sign In</Link>
         <Link to="/register" className="public-header__register inline-flex min-h-11 items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-white shadow-[0_10px_22px_-12px_rgba(133,77,14,.62)] transition hover:-translate-y-0.5 2xl:px-4 2xl:text-sm"><Crown className="h-5 w-5 text-amber-200" />Register</Link>
       </>
     )
@@ -112,10 +113,10 @@ function Header() {
           </div>
         </div>
         <div className="grid gap-1">
-          <Link to={dash} onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-bold text-foreground hover:bg-accent"><LayoutDashboard className="h-4 w-4 text-primary" /> Dashboard</Link>
-          <Link to="/pre-book#mine" onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-bold text-foreground hover:bg-accent"><CalendarClock className="h-4 w-4 text-primary" /> My Pre-books</Link>
-          <Link to="/orders" onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-bold text-foreground hover:bg-accent"><ShoppingCart className="h-4 w-4 text-primary" /> My Orders</Link>
-          <Link to="/account" onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-bold text-foreground hover:bg-accent"><User className="h-4 w-4 text-primary" /> Profile</Link>
+          <Link to={dash} onClick={() => setOpen(false)} className="vnw-interactive flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-bold text-foreground"><LayoutDashboard className="h-4 w-4 text-primary" /> Dashboard</Link>
+          <Link to="/pre-book#mine" onClick={() => setOpen(false)} className="vnw-interactive flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-bold text-foreground"><CalendarClock className="h-4 w-4 text-primary" /> My Pre-books</Link>
+          <Link to="/orders" onClick={() => setOpen(false)} className="vnw-interactive flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-bold text-foreground"><ShoppingCart className="h-4 w-4 text-primary" /> My Orders</Link>
+          <Link to="/account" onClick={() => setOpen(false)} className="vnw-interactive flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-bold text-foreground"><User className="h-4 w-4 text-primary" /> Profile</Link>
           <button onClick={() => { dispatch(logout()); setOpen(false); }} className="flex items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-bold text-destructive hover:bg-destructive/10"><LogOut className="h-4 w-4" /> Logout</button>
         </div>
       </div>
@@ -155,17 +156,17 @@ function Header() {
           </div>
           <Logo />
           <nav className="relative z-10 ml-auto hidden min-w-0 flex-nowrap items-center gap-0 whitespace-nowrap text-[11px] font-bold text-foreground xl:flex 2xl:gap-1 2xl:text-sm" aria-label="Primary navigation">
-            {nav.map((n) => <Link key={n.label} to={n.to} aria-current={location.pathname === n.to ? 'page' : undefined} className={location.pathname === n.to ? 'rounded-xl border border-primary/30 bg-primary/10 px-2 py-2.5 text-primary shadow-sm 2xl:px-3' : 'rounded-xl px-2 py-2.5 transition hover:bg-accent hover:text-primary 2xl:px-3'}>{n.label}</Link>)}
+            {nav.map((n) => <Link key={n.label} to={n.to} aria-current={location.pathname === n.to ? 'page' : undefined} className={location.pathname === n.to ? 'rounded-xl border border-primary/30 bg-primary/10 px-2 py-2.5 text-primary shadow-sm 2xl:px-3' : 'vnw-interactive rounded-xl border border-transparent px-2 py-2.5 2xl:px-3'}>{n.label}</Link>)}
           </nav>
           <div className="relative z-10 ml-auto flex shrink-0 items-center gap-1 xl:ml-2 2xl:gap-1.5">
-            <Link to="/shop?focus=search" className="hidden h-11 items-center gap-1.5 rounded-xl border border-primary bg-card/85 px-3 text-xs font-black text-primary shadow-sm transition hover:bg-accent xl:inline-flex 2xl:text-sm"><Search className="h-5 w-5" /> Search</Link>
+            <Link to="/shop?focus=search" className="vnw-interactive hidden h-11 items-center gap-1.5 rounded-xl border border-primary bg-card/85 px-3 text-xs font-black text-primary shadow-sm xl:inline-flex 2xl:text-sm"><Search className="h-5 w-5" /> Search</Link>
             <Link to="/pre-book" className="inline-flex h-11 items-center gap-1.5 rounded-xl bg-primary px-2.5 text-xs font-black text-primary-foreground shadow-sm transition hover:-translate-y-0.5 2xl:px-3 2xl:text-sm"><CalendarClock className="h-4 w-4" /><span className="hidden 2xl:inline">Pre-book</span></Link>
-            <Link to="/wishlist" aria-label="Wishlist" className="relative hidden h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm transition hover:border-primary hover:bg-accent md:grid"><Heart className="h-5 w-5" /><CountBadge n={wishlistCount} /></Link>
-            <Link to="/cart" aria-label="Cart" className="relative grid h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm transition hover:border-primary hover:bg-accent"><ShoppingCart className="h-5 w-5" /><CountBadge n={cartCount} /></Link>
-            <button aria-label="Notifications" className="relative hidden h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm transition hover:border-primary hover:bg-accent md:grid"><Bell className="h-5 w-5" /><span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-amber-600" /></button>
+            <Link to="/wishlist" aria-label="Wishlist" className="vnw-interactive relative hidden h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm md:grid"><Heart className="h-5 w-5" /><CountBadge n={wishlistCount} /></Link>
+            <Link to="/cart" aria-label="Cart" className="vnw-interactive relative grid h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm"><ShoppingCart className="h-5 w-5" /><CountBadge n={cartCount} /></Link>
+            <button aria-label="Notifications" className="vnw-interactive relative hidden h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm md:grid"><Bell className="h-5 w-5" /><span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-amber-600" /></button>
             <ThemeControl className="hidden sm:inline-flex" />
             <div className="hidden items-center gap-2 sm:flex">{AccountMenu}</div>
-            <button onClick={() => setOpen(true)} aria-label="Open navigation menu" className="grid h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm transition hover:border-primary hover:bg-accent xl:hidden"><Menu className="h-5 w-5" /></button>
+            <button onClick={() => setOpen(true)} aria-label="Open navigation menu" className="vnw-interactive grid h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm xl:hidden"><Menu className="h-5 w-5" /></button>
           </div>
         </div>
       </header>
@@ -193,7 +194,7 @@ function Header() {
             <div className="grid gap-2">
               <Link to="/pre-book" onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-black text-primary-foreground shadow-sm"><CalendarClock className="h-4 w-4" /> Pre-book VIP Numbers</Link>
               {nav.map((n) => (
-                <Link key={n.label} to={n.to} onClick={() => setOpen(false)} className="rounded-xl border border-border bg-card px-4 py-3 text-sm font-bold text-foreground shadow-sm hover:border-primary hover:bg-accent">{n.label}</Link>
+                <Link key={n.label} to={n.to} onClick={() => setOpen(false)} className="vnw-interactive rounded-xl border border-border bg-card px-4 py-3 text-sm font-bold text-foreground shadow-sm">{n.label}</Link>
               ))}
             </div>
             <div className="mt-4 sm:hidden">{MobileAccount}</div>
@@ -228,7 +229,7 @@ function Footer() {
             </span>
           ))}
         </div>
-        <div className="relative z-10 grid gap-6 px-6 py-8 md:grid-cols-[1.1fr_1fr] lg:grid-cols-[1.2fr_1fr_1fr_1fr]">
+        <div className="relative z-10 grid gap-6 px-6 py-8 md:grid-cols-2 lg:grid-cols-[1.2fr_repeat(4,1fr)]">
           <div>
             <Logo />
             <p className="mt-4 max-w-sm text-sm text-muted-foreground">India's trusted VIP number marketplace with genuine numbers, secure payments, and pan-India delivery.</p>
@@ -242,12 +243,26 @@ function Footer() {
               <li><Link to="/shop">VIP Numbers</Link></li>
               <li><Link to="/premium-numbers">Premium Numbers</Link></li>
               <li><Link to="/family-pack">Family Pack</Link></li>
+              <li><Link to="/accessories">Accessories</Link></li>
               <li><Link to="/categories">Number Categories</Link></li>
               <li><Link to="/how-it-works">How It Works</Link></li>
               <li><Link to="/numerology">Numerology</Link></li>
               <li><Link to="/faq">FAQs</Link></li>
               <li><Link to="/about">About Us</Link></li>
               <li><Link to="/contact">Contact Us</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="mb-3 font-black text-foreground">Legal</h4>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><Link to="/terms-and-conditions">Terms &amp; Conditions</Link></li>
+              <li><Link to="/privacy-policy">Privacy Policy</Link></li>
+              <li><Link to="/refund-policy">Refund Policy</Link></li>
+              <li><Link to="/delivery-fulfilment-policy">Delivery &amp; Fulfilment</Link></li>
+              <li><Link to="/cookie-policy">Cookie Policy</Link></li>
+              <li><Link to="/mnp-activation-policy">MNP &amp; Activation</Link></li>
+              <li><Link to="/disclaimer">Disclaimer</Link></li>
+              <li><Link to="/grievance-redressal">Grievance Redressal</Link></li>
             </ul>
           </div>
           <div>
@@ -321,7 +336,7 @@ export default function PublicLayout() {
   const location = useLocation();
   useEffect(() => { if (!siteLoaded) loadSite(); }, []);
   return (
-    <div className={`app-shell-bg flex min-h-screen flex-col ${location.pathname === '/' ? 'is-home-route' : ''}`}>
+    <div className={`customer-motion-scope app-shell-bg flex min-h-screen flex-col ${location.pathname === '/' ? 'is-home-route' : ''}`}>
       <Header />
       <div className="pt-[72px]">
         <PromoBar />

@@ -127,6 +127,7 @@ export default function Auth({ mode }: { mode: Mode }) {
           <button disabled={isLoading} className="btn-royal mt-5 w-full">
             {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : title}
           </button>
+          {mode === 'register' && <p className="mt-3 text-center text-xs text-muted-foreground">By creating an account, you agree to our <Link to="/terms-and-conditions" className="text-primary">Terms</Link> and acknowledge our <Link to="/privacy-policy" className="text-primary">Privacy Policy</Link>.</p>}
 
           <div className="mt-5 text-center text-sm text-muted-foreground">
             {mode === 'login' && (<>

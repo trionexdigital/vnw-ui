@@ -168,6 +168,7 @@ describe('NumberCard automatic category badges', () => {
           number_value: '9006622121',
           display_number: '90066 22121',
           title_label: 'Doubling Numbers',
+          operator: 'Jio',
           mrp: 20000,
           offer_price: 15000,
           categories: [
@@ -191,11 +192,14 @@ describe('NumberCard automatic category badges', () => {
     expect(screen.queryByText(/^\+\d+$/)).not.toBeInTheDocument();
     expect(screen.getAllByText('Doubling Numbers')).toHaveLength(1);
     expect(screen.getByText('Signature VIP Number')).toBeInTheDocument();
-    expect(container.querySelector('.number-card-shell')).toHaveClass('min-h-[216px]');
+    expect(container.querySelector('.number-card-shell')).toHaveClass('min-h-[296px]');
     expect(screen.getByText('Verified')).toHaveClass('number-card__verified');
     expect(screen.getByRole('button', { name: 'add to wishlist' })).toHaveAttribute('aria-pressed', 'false');
     expect(screen.getByRole('button', { name: 'compare' })).toHaveAttribute('aria-pressed', 'false');
-    expect(container.querySelector('.number-card__sheen')).toBeInTheDocument();
+    expect(container.querySelector('.number-card__glow')).toBeInTheDocument();
+    expect(container.querySelector('.number-card__butterflies')).not.toBeInTheDocument();
+    expect(screen.queryByText(/catalogued series/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Portable to any eligible operator/i)).not.toBeInTheDocument();
     expect(container.querySelector('.number-card__primary-action')).toHaveTextContent('Buy Now');
     expect(container.querySelector('[class*="blue"]')).not.toBeInTheDocument();
     expect(Array.from(container.querySelectorAll('[data-match="true"]')).map((node) => node.textContent)).toEqual(['00', '66', '22']);

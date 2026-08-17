@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Trash2, ShoppingCart, Sigma } from 'lucide-react';
-import { cartAPI } from '@/core/api/vnwAPI';
+import { Minus, Plus, Trash2, ShoppingCart, Sigma } from 'lucide-react';
+import { accessoryImageUrl, cartAPI } from '@/core/api/vnwAPI';
 import { useStore } from '@/shared/store/useStore';
 import { localService } from '@/core/services/local';
 import { formatINR } from '@/core/lib/format';
@@ -21,7 +21,8 @@ export default function Cart() {
   };
   useEffect(() => { load(); /* eslint-disable-next-line */ }, []);
 
-  const remove = async (id: number) => { await cartAPI.remove(id); await refreshCounts(); load(); };
+  const remove = async (it: any) => { it.item_type === 'ACCESSORY' ? await cartAPI.removeAccessory(it.accessory_id) : await cartAPI.remove(it.number_id); await refreshCounts(); load(); };
+  const updateQty = async (it: any, quantity: number) => { await cartAPI.updateAccessory(it.accessory_id, quantity); await refreshCounts(); load(); };
 
   if (loading) return <div className="mx-auto max-w-5xl px-4 py-10"><Loader /></div>;
 
@@ -35,17 +36,19 @@ export default function Cart() {
         <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
           <div className="space-y-3">
             {data.items.map((it: any) => (
-              <div key={it.cart_item_id} className="vnw-card flex items-center justify-between p-4">
+              <div key={`${it.item_type}-${it.item_id}`} className="vnw-card flex flex-wrap items-center justify-between gap-4 p-4">
                 <div>
-                  <Link to={`/number/${it.number_id}`} className="text-xl font-extrabold text-foreground">{it.display_number}</Link>
+                  {it.item_type === 'ACCESSORY' ? <div className="flex items-center gap-3">{it.primary_image_id&&<img src={accessoryImageUrl(it.primary_image_id)} alt="" className="h-16 w-16 rounded-xl object-contain"/>}<div><Link to={`/accessories/${it.slug}`} className="text-base font-extrabold text-foreground">{it.name}</Link><div className="text-xs text-muted-foreground">{it.brand} · {it.sku}</div></div></div> : <Link to={`/number/${it.number_id}`} className="text-xl font-extrabold text-foreground">{it.display_number}</Link>}
+                  {it.item_type !== 'ACCESSORY' &&
                   <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
                     <span>{it.title_label || getPrimaryCategory(it)?.name || 'VIP Number'}</span>
                     <span className="flex items-center gap-1"><Sigma className="h-3 w-3" /> Sum {it.numerology_sum}</span>
-                  </div>
+                  </div>}
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className="font-bold text-foreground">{formatINR(it.offer_price)}</span>
-                  <button onClick={() => remove(it.number_id)} className="text-muted-foreground hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
+                  {it.item_type === 'ACCESSORY'&&<div className="flex items-center rounded-xl border border-border"><button aria-label="Decrease quantity" className="grid h-11 w-11 place-items-center" onClick={()=>updateQty(it,it.quantity-1)}><Minus className="h-4 w-4"/></button><span className="min-w-8 text-center font-black">{it.quantity}</span><button aria-label="Increase quantity" className="grid h-11 w-11 place-items-center" disabled={it.quantity>=it.available_stock} onClick={()=>updateQty(it,it.quantity+1)}><Plus className="h-4 w-4"/></button></div>}
+                  <span className="font-bold text-foreground">{formatINR(it.line_total ?? it.offer_price)}</span>
+                  <button aria-label="Remove item" onClick={() => remove(it)} className="grid h-11 w-11 place-items-center text-muted-foreground hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
                 </div>
               </div>
             ))}

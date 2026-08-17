@@ -9,7 +9,7 @@ import { badgeOptions, statusOptions, numerologySum } from '@/core/lib/format';
 import DetectedCategories from '@/shared/components/DetectedCategories';
 import { getPrimaryCategory } from '@/core/categories/types';
 
-const empty = { display_number: '', title_label: 'VIP Number', badge: 'NONE', mrp: '', offer_price: '', numerology_sum: '', operator: 'Any', description: '', stock: 1, status: 'AVAILABLE', is_featured: false, rtp_status: 'RTP', rtp_available_date: '' };
+const empty = { display_number: '', title_label: 'VIP Number', badge: 'NONE', mrp: '', offer_price: '', numerology_sum: '', operator: '', description: '', stock: 1, status: 'AVAILABLE', is_featured: false, rtp_status: 'RTP', rtp_available_date: '' };
 
 const toIstDateInput = (value?: string | null) => value
   ? new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(value.endsWith('Z') ? value : `${value}Z`))
@@ -105,6 +105,7 @@ export default function AdminNumbers() {
           <input type="number" className={input} placeholder="MRP" value={form.mrp} onChange={(e) => set('mrp', e.target.value)} required />
           <input type="number" className={input} placeholder="Offer Price" value={form.offer_price} onChange={(e) => set('offer_price', e.target.value)} required />
           <input type="number" className={input} placeholder="Numerology (auto)" value={form.numerology_sum} onChange={(e) => set('numerology_sum', e.target.value)} />
+          <div><label className="mb-1 block text-xs font-bold text-muted-foreground">Catalogued series / origin</label><select className={input} value={form.operator || ''} onChange={(e) => set('operator', e.target.value)}><option value="">Other / Unassigned</option><option value="Airtel">Airtel</option><option value="Jio">Jio</option><option value="Vi">Vi</option><option value="BSNL">BSNL</option></select></div>
           <select className={input} value={form.status} onChange={(e) => set('status', e.target.value)}>
             {statusOptions.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
@@ -119,7 +120,7 @@ export default function AdminNumbers() {
             <label className="mb-1 block text-xs font-bold text-muted-foreground">Ready-to-port date (India)</label>
             <input type="date" className={input} required min={new Date(Date.now() + 86400000).toISOString().slice(0, 10)} value={form.rtp_available_date || ''} onChange={(e) => set('rtp_available_date', e.target.value)} />
           </div>}
-          <label className="flex items-center gap-2 text-sm text-muted-foreground"><input type="checkbox" checked={form.is_featured} onChange={(e) => set('is_featured', e.target.checked)} /> Premium curated listing</label>
+          <label className="flex items-center gap-2 text-sm text-muted-foreground"><input type="checkbox" checked={form.is_featured} onChange={(e) => set('is_featured', e.target.checked)} /> Catalog premium attribute</label>
           <textarea className={input + ' sm:col-span-2'} rows={2} placeholder="Description" value={form.description || ''} onChange={(e) => set('description', e.target.value)} />
           <div className="sm:col-span-2"><button className="btn-gold w-full">Save Number</button></div>
         </form>

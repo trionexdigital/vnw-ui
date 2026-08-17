@@ -12,6 +12,16 @@ const FIELDS: [string, string][] = [
   ['SUPPORT_ADDRESS', 'Support Address'],
   ['PROMO_TEXT', 'Promo Bar Text (storefront announcement)'],
   ['PROMO_COUPON', 'Promo Coupon Code'],
+  ['LEGAL_BUSINESS_NAME', 'Legal Business Name'],
+  ['LEGAL_REGISTERED_ADDRESS', 'Registered Address'],
+  ['LEGAL_JURISDICTION', 'Legal Jurisdiction'],
+  ['LEGAL_EMAIL', 'Legal Contact Email'],
+  ['GRIEVANCE_OFFICER_NAME', 'Grievance Officer Name'],
+  ['GRIEVANCE_EMAIL', 'Grievance Email'],
+  ['GRIEVANCE_PHONE', 'Grievance Phone'],
+  ['GSTIN', 'GSTIN (if applicable)'],
+  ['CIN', 'CIN (if applicable)'],
+  ['POLICY_EFFECTIVE_DATE', 'Policy Effective Date'],
 ];
 
 export default function AdminSettings() {

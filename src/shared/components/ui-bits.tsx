@@ -130,7 +130,7 @@ function TableWire({ rows = 6, cols = 5 }: { rows?: number; cols?: number }) {
 
 function CardGridWire({ count = 8, wide = false }: { count?: number; wide?: boolean }) {
   return (
-    <div className={cn('grid gap-3 sm:grid-cols-2 lg:grid-cols-4', wide && 'md:grid-cols-3 xl:grid-cols-5')}>
+    <div className={cn('grid gap-4 sm:grid-cols-2 lg:grid-cols-4', wide && 'md:grid-cols-3 xl:grid-cols-4')}>
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className="vnw-card p-4">
           <Wire className="h-8 w-36" />

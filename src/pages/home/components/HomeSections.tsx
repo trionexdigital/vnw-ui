@@ -40,7 +40,7 @@ const primaryButton = cn(
   focusRing,
 );
 const secondaryButton = cn(
-  'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-border bg-card px-5 py-3 text-sm font-bold text-foreground shadow-sm transition hover:border-primary hover:bg-accent',
+  'vnw-interactive inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-border bg-card px-5 py-3 text-sm font-bold text-foreground shadow-sm',
   focusRing,
 );
 const mutedCard = 'rounded-2xl border border-border bg-card shadow-sm';
@@ -318,7 +318,7 @@ export function NumberGridSection({
             </Link>
           </div>
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {numbers.map((number) => <NumberCard key={number.number_id} item={number} />)}
           </div>
         )}

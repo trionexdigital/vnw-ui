@@ -44,6 +44,8 @@ const EMPLOYEE_MENU: MenuItem[] = [
 const ADMIN_MENU: MenuItem[] = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/admin/numbers', label: 'Numbers', icon: Crown },
+  { to: '/admin/home-premium', label: 'Premium Homepage', icon: Star },
+  { to: '/admin/accessories', label: 'Accessories', icon: ShoppingBag },
   { to: '/admin/deals-of-day', label: 'Lucky Pick of the Day', icon: Sparkles },
   { to: '/admin/orders', label: 'Orders', icon: ShoppingBag },
   { to: '/admin/prebooks', label: 'Pre-books & Refunds', icon: CalendarClock },
@@ -65,7 +67,7 @@ const ADMIN_MENU: MenuItem[] = [
 
 const ADMIN_GROUPS = [
   { label: 'Overview', items: ['Dashboard'] },
-  { label: 'Catalog', items: ['Numbers', 'Lucky Pick of the Day', 'Carousel', 'Coupons'] },
+  { label: 'Catalog', items: ['Numbers', 'Premium Homepage', 'Accessories', 'Lucky Pick of the Day', 'Carousel', 'Coupons'] },
   { label: 'Operations', items: ['Orders', 'Pre-books & Refunds', 'Sell Requests', 'Approvals', 'Payouts'] },
   { label: 'People', items: ['Users', 'Dealers', 'Subscribers'] },
   { label: 'Trust', items: ['Reviews', 'Testimonials', 'Trusted Clients', 'FAQs', 'Messages', 'Settings'] },
@@ -219,7 +221,7 @@ export default function AccountLayout() {
   ];
 
   return (
-    <div className="app-shell-bg flex min-h-screen bg-background text-foreground">
+    <div className="customer-motion-scope app-shell-bg flex min-h-screen bg-background text-foreground">
       <aside className={cn('sticky top-0 hidden h-screen shrink-0 transition-[width] duration-300 lg:block', collapsed ? 'w-[68px]' : 'w-[244px]')}>
         <SidebarInner />
       </aside>

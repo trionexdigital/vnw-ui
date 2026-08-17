@@ -8,6 +8,9 @@ const COMPARE_KEY = 'vnw_compare';
 export interface SiteSettings {
   SITE_TITLE?: string; SITE_TAGLINE?: string; CONTACT_EMAIL?: string; CONTACT_PHONE?: string;
   WHATSAPP?: string; PROMO_TEXT?: string; PROMO_COUPON?: string; SUPPORT_ADDRESS?: string;
+  LEGAL_BUSINESS_NAME?: string; LEGAL_REGISTERED_ADDRESS?: string; LEGAL_JURISDICTION?: string;
+  LEGAL_EMAIL?: string; GRIEVANCE_OFFICER_NAME?: string; GRIEVANCE_EMAIL?: string; GRIEVANCE_PHONE?: string;
+  GSTIN?: string; CIN?: string; POLICY_EFFECTIVE_DATE?: string;
 }
 
 interface StoreState {

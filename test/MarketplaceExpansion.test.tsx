@@ -3,10 +3,10 @@ import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { CorporatePackPreview, FaqAccordion, JourneyPreview } from '@/pages/home/components/MarketplaceSections';
+import { CorporatePackPreview, FaqAccordion, JourneyPreview, OperatorSection } from '@/pages/home/components/MarketplaceSections';
 import FamilyPack from '@/pages/corporate/CorporateElitePack';
 import { siteAPI } from '@/core/api/vnwAPI';
-import { cartAPI, wishlistAPI, type CorporatePack } from '@/core/api/vnwAPI';
+import { cartAPI, numbersAPI, wishlistAPI, type CorporatePack } from '@/core/api/vnwAPI';
 import { listPayloadFromParams } from '@/pages/shop/searchTypes';
 import FamilyPackCard from '@/shared/components/FamilyPackCard';
 import { localService } from '@/core/services/local';
@@ -17,6 +17,23 @@ describe('marketplace expansion', () => {
   it('maps operator and premium URLs to catalog API filters', () => {
     const payload = listPayloadFromParams(new URLSearchParams('operator=Jio&premium=1&sort=popular'));
     expect(payload).toMatchObject({ operator: 'Jio', is_premium: 1, sort: 'popular' });
+  });
+
+  it('uses the supplied operator logos without exposing zero-stock counts', async () => {
+    const user = userEvent.setup();
+    const list = vi.spyOn(numbersAPI, 'list').mockResolvedValue({ items: [], total: 0, page: 1, limit: 8 } as any);
+    render(<MemoryRouter><OperatorSection operators={[]} /></MemoryRouter>);
+
+    expect(screen.getByRole('img', { name: 'Airtel logo' })).toHaveAttribute('src', '/icons/Airtel_logo-02.png');
+    expect(screen.getByRole('img', { name: 'Jio logo' })).toHaveAttribute('src', '/icons/jio-logo-icon.png');
+    expect(screen.getByRole('img', { name: 'Vi logo' })).toHaveAttribute('src', '/icons/vi-mobile-icon.png');
+    expect(screen.getByRole('img', { name: 'BSNL logo' })).toHaveAttribute('src', '/icons/bsnl-logo.png');
+    expect(screen.queryByText(/0 available/i)).not.toBeInTheDocument();
+    expect(screen.getAllByText('Browse series')).toHaveLength(4);
+
+    await user.click(screen.getByRole('button', { name: 'Browse Jio catalogued series' }));
+    await waitFor(() => expect(list).toHaveBeenCalledWith({ operator: 'Jio', limit: 8, sort: 'popular' }));
+    expect(screen.getByText(/After purchase, you may port it/i)).toBeVisible();
   });
 
   it('exposes FAQs as keyboard-operable disclosure controls', async () => {

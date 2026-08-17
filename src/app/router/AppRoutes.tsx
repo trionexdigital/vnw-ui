@@ -24,6 +24,9 @@ const Numerology = lazy(() => import('@/pages/numerology/Numerology'));
 const HowItWorks = lazy(() => import('@/pages/static/HowItWorks'));
 const FamilyPack = lazy(() => import('@/pages/corporate/CorporateElitePack'));
 const Faq = lazy(() => import('@/pages/static/Faq'));
+const Accessories = lazy(() => import('@/pages/accessories/Accessories'));
+const AccessoryDetail = lazy(() => import('@/pages/accessories/AccessoryDetail'));
+const LegalPage = lazy(() => import('@/pages/legal/LegalPage'));
 const Auth = lazy(() => import('@/pages/auth/Auth'));
 
 const BuyerDashboard = lazy(() => import('@/pages/dashboard/Dashboard'));
@@ -69,6 +72,8 @@ const AdminSettings = lazy(() => import('@/pages/admin/AdminSettings'));
 const AdminSellRequests = lazy(() => import('@/pages/admin/AdminSellRequests'));
 const AdminApprovals = lazy(() => import('@/pages/admin/AdminApprovals'));
 const AdminCreateDealer = lazy(() => import('@/pages/admin/AdminCreateDealer'));
+const AdminAccessories = lazy(() => import('@/pages/admin/AdminAccessories'));
+const AdminHomePremium = lazy(() => import('@/pages/admin/AdminHomePremium'));
 
 const dealerRoles = ['DEALER', 'ADMIN'];
 const adminRoles = ['ADMIN'];
@@ -76,7 +81,7 @@ const employeeRoles = ['EMPLOYEE', 'ADMIN'];
 
 function StandalonePage({ children }: { children: ReactNode }) {
   const location = useLocation();
-  return <MotionPage routeKey={location.pathname}>{children}</MotionPage>;
+  return <MotionPage routeKey={location.pathname} className="customer-motion-scope">{children}</MotionPage>;
 }
 
 export default function AppRoutes() {
@@ -100,6 +105,16 @@ export default function AppRoutes() {
         <Route path="/family-pack" element={<FamilyPack />} />
         <Route path="/corporate-elite-pack" element={<Navigate to="/family-pack" replace />} />
         <Route path="/faq" element={<Faq />} />
+        <Route path="/accessories" element={<Accessories />} />
+        <Route path="/accessories/:slug" element={<AccessoryDetail />} />
+        <Route path="/terms-and-conditions" element={<LegalPage policyKey="terms-and-conditions" />} />
+        <Route path="/privacy-policy" element={<LegalPage policyKey="privacy-policy" />} />
+        <Route path="/refund-policy" element={<LegalPage policyKey="refund-policy" />} />
+        <Route path="/delivery-fulfilment-policy" element={<LegalPage policyKey="delivery-fulfilment-policy" />} />
+        <Route path="/cookie-policy" element={<LegalPage policyKey="cookie-policy" />} />
+        <Route path="/mnp-activation-policy" element={<LegalPage policyKey="mnp-activation-policy" />} />
+        <Route path="/disclaimer" element={<LegalPage policyKey="disclaimer" />} />
+        <Route path="/grievance-redressal" element={<LegalPage policyKey="grievance-redressal" />} />
         <Route path="/wishlist" element={<RoleGuard><Wishlist /></RoleGuard>} />
         <Route path="/checkout" element={<RoleGuard><Checkout /></RoleGuard>} />
         <Route path="/pre-book" element={<PreBook />} />
@@ -165,6 +180,8 @@ export default function AppRoutes() {
         <Route path="/admin/subscribers" element={<RoleGuard roles={adminRoles}><AdminSubscribers /></RoleGuard>} />
         <Route path="/admin/messages" element={<RoleGuard roles={adminRoles}><AdminMessages /></RoleGuard>} />
         <Route path="/admin/settings" element={<RoleGuard roles={adminRoles}><AdminSettings /></RoleGuard>} />
+        <Route path="/admin/accessories" element={<RoleGuard roles={adminRoles}><AdminAccessories /></RoleGuard>} />
+        <Route path="/admin/home-premium" element={<RoleGuard roles={adminRoles}><AdminHomePremium /></RoleGuard>} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

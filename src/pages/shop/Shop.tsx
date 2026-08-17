@@ -263,7 +263,7 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
               type="button"
               onClick={() => update({ category: '' })}
               className={`flex min-h-9 w-full items-center justify-between rounded-lg px-2.5 text-left text-xs font-bold transition ${
-                !category ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+                !category ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-primary/10 hover:text-foreground'
               }`}
             >
               <span>All Categories</span>
@@ -277,7 +277,7 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
                 className={`flex min-h-9 w-full items-center justify-between gap-2 rounded-lg px-2.5 text-left text-xs font-bold transition ${
                   category === item.slug
                     ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+                    : 'text-muted-foreground hover:bg-primary/10 hover:text-foreground'
                 }`}
               >
                 <span className="min-w-0 truncate">{item.name}</span>
@@ -295,7 +295,7 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
               type="button"
               onClick={() => setPriceBand(band.min, band.max)}
               className={`flex min-h-9 w-full items-center justify-between rounded-lg px-2.5 text-left text-xs font-bold transition ${
-                selected ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+                selected ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-primary/10 hover:text-foreground'
               }`}
             >
               {band.label}

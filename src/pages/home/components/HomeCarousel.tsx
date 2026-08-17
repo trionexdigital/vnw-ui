@@ -98,7 +98,7 @@ export function HomeCarousel({ slides, loading = false }: { slides: PublishedCar
       <div className={`relative mx-auto ${mobile ? 'max-w-[430px]' : 'max-w-7xl'}`}>
         <div className="mb-3 flex items-center justify-between px-2 sm:mb-4">
           <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[.18em] text-primary"><Sparkles className="h-4 w-4" />Premium stories</div>
-          <button onClick={() => setManualPause((value) => !value)} className="inline-flex h-9 items-center gap-2 rounded-full border border-border bg-card/90 px-3 text-xs font-bold text-foreground shadow-sm backdrop-blur hover:bg-accent" aria-label={manualPause ? 'Play carousel' : 'Pause carousel'}>{manualPause ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}{manualPause ? 'Play' : 'Pause'}</button>
+          <button onClick={() => setManualPause((value) => !value)} className="vnw-interactive inline-flex h-9 items-center gap-2 rounded-full border border-border bg-card/90 px-3 text-xs font-bold text-foreground shadow-sm backdrop-blur" aria-label={manualPause ? 'Play carousel' : 'Pause carousel'}>{manualPause ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}{manualPause ? 'Play' : 'Pause'}</button>
         </div>
 
         <div className="group relative overflow-hidden rounded-[1.75rem] border border-border/80 bg-card p-1.5 shadow-[0_24px_80px_rgba(30,18,5,.18)] transition duration-500 hover:-translate-y-1 hover:shadow-[0_34px_100px_rgba(30,18,5,.24)] sm:rounded-[2.25rem] sm:p-2.5">

@@ -78,6 +78,9 @@ export const cartAPI = {
   add: (number_id: number) => post('cart/add', { number_id }),
   addMany: (number_ids: number[]) => post('cart/add-many', { number_ids }),
   remove: (number_id: number) => post('cart/remove', { number_id }),
+  addAccessory: (accessory_id: number, quantity = 1) => post('cart/accessory/add', { accessory_id, quantity }),
+  updateAccessory: (accessory_id: number, quantity: number) => post('cart/accessory/update', { accessory_id, quantity }),
+  removeAccessory: (accessory_id: number) => post('cart/accessory/remove', { accessory_id }),
   clear: () => post('cart/clear', {}),
 };
 
@@ -130,6 +133,36 @@ export interface CarouselSlide {
 
 export const bannersAPI = {
   list: () => post<CarouselSlide[]>('banners/list', {}),
+};
+
+export interface AccessoryImage {
+  image_id: number; accessory_id: number; original_name?: string; mime_type?: string;
+  byte_size?: number; alt_text?: string | null; sort_order: number; is_primary: boolean | number;
+}
+
+export interface AccessoryProduct {
+  accessory_id: number; slug: string; name: string; brand: string; model?: string | null;
+  sku: string; category?: string | null; mrp: number; offer_price: number; discount_pct: number;
+  stock: number; reserved_stock: number; available_stock: number; short_description?: string | null;
+  description?: string | null; highlights: string[]; specifications: Array<{ label: string; value: string }>;
+  warranty?: string | null; status: 'DRAFT' | 'ACTIVE' | 'INACTIVE' | 'ARCHIVED';
+  primary_image_id?: number | null; image_count?: number; images?: AccessoryImage[];
+  homepage_accessory_id?: number; homepage_active?: boolean; sort_order?: number;
+}
+
+export interface AccessoryListResponse {
+  items: AccessoryProduct[]; total: number; page: number; limit: number;
+  facets: Array<{ brand: string; category: string }>;
+}
+
+export const accessoryImageUrl = (imageId?: number | null) => imageId ? `${BASE_URL}accessories/image/${imageId}` : '';
+
+export const accessoriesAPI = {
+  list: (p: any = {}) => post<AccessoryListResponse>('accessories/list', p),
+  detail: (slug: string) => post<AccessoryProduct>('accessories/detail', { slug }),
+  detailById: (accessory_id: number) => post<AccessoryProduct>('accessories/detail', { accessory_id }),
+  returns: () => post<any[]>('accessories/returns/list', {}),
+  requestReturn: (p: { accessory_order_item_id: number; reason: string; customer_note?: string; requested_resolution: 'REFUND' | 'REPLACEMENT' }) => post('accessories/returns/request', p),
 };
 
 export type RtpStatus = 'RTP' | 'NON_RTP';
@@ -325,6 +358,8 @@ export const siteAPI = {
   trustedClients: () => post<TrustedClient[]>('site/trusted-clients', {}),
   trustedClientLogoUrl: (clientId: number) => BASE_URL + `site/trusted-clients/${clientId}/logo`,
   faqs: () => post<FaqItem[]>('site/faqs', {}),
+  homeAccessories: () => post<AccessoryProduct[]>('site/home-accessories', {}),
+  homePremiumNumbers: () => post<any[]>('site/home-premium-numbers', {}),
   subscribe: (email: string, source = 'footer') => postRaw('site/newsletter', { email, source }),
   enquiry: (p: any) => postRaw('site/enquiry', p),
 };
@@ -445,4 +480,31 @@ export const adminAPI = {
   newsletterList: () => post('admin/newsletter/list', {}),
   settingsGet: () => post('admin/settings/get', {}),
   settingsSave: (p: any) => post('admin/settings/save', p),
+  accessoriesList: (p: any = {}) => post<AccessoryListResponse>('admin/accessories/list', p),
+  accessoryDetail: (accessory_id: number) => post<AccessoryProduct>('admin/accessories/detail', { accessory_id }),
+  accessorySave: (p: Partial<AccessoryProduct>) => post<{ accessory_id: number }>('admin/accessories/save', p),
+  accessoryArchive: (accessory_id: number) => post('admin/accessories/archive', { accessory_id }),
+  accessoryImageDelete: (image_id: number) => post('admin/accessories/images/delete', { image_id }),
+  accessoryImagesReorder: (accessory_id: number, image_ids: number[], primary_image_id: number) => post('admin/accessories/images/reorder', { accessory_id, image_ids, primary_image_id }),
+  accessoryImagesUpload: async (accessoryId: number, files: File[], altText = '') => {
+    if (!files.length) throw new Error('Choose at least one product image');
+    const form = new FormData();
+    form.append('accessory_id', String(accessoryId));
+    form.append('alt_text', altText);
+    files.forEach((file) => form.append('file', file, file.name));
+    const response = await httpService.uploadRequest(BASE_URL + 'admin/accessories/images/upload', form);
+    if (response?.status === 1) return response.data; throw new Error(response?.info || 'Image upload failed');
+  },
+  accessoryImageUpload: (accessoryId: number, file: File, altText = '') => adminAPI.accessoryImagesUpload(accessoryId, [file], altText),
+  homeAccessoriesList: () => post<AccessoryProduct[]>('admin/accessories/home/list', {}),
+  homeAccessorySave: (p: any) => post('admin/accessories/home/save', p),
+  homeAccessoriesReorder: (homepage_accessory_ids: number[]) => post('admin/accessories/home/reorder', { homepage_accessory_ids }),
+  homeAccessoryRemove: (homepage_accessory_id: number) => post('admin/accessories/home/remove', { homepage_accessory_id }),
+  homePremiumList: () => post<any[]>('admin/home-premium/list', {}),
+  homePremiumSave: (p: any) => post('admin/home-premium/save', p),
+  homePremiumReorder: (homepage_premium_ids: number[]) => post('admin/home-premium/reorder', { homepage_premium_ids }),
+  homePremiumRemove: (homepage_premium_id: number) => post('admin/home-premium/remove', { homepage_premium_id }),
+  accessoryReturnsList: (p: any = {}) => post<any[]>('admin/accessories/returns/list', p),
+  accessoryReturnResolve: (p: any) => post('admin/accessories/returns/resolve', p),
+  accessoryFulfilmentUpdate: (p: any) => post('admin/accessories/fulfilment/update', p),
 };
