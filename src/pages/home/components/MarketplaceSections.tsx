@@ -97,14 +97,14 @@ export function CorporatePackPreview() {
   useEffect(() => {
     let active = true;
     setLoading(true);
-    siteAPI.familyPacks({ pack_type: type, size, limit: 3 })
+    siteAPI.familyPacks({ pack_type: type, size, limit: 4 })
       .then((items) => { if (active) setPacks(items); })
       .catch(() => { if (active) setPacks([]); })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, [type, size]);
 
-  const visible = packs.filter((pack) => pack.is_available).slice(0, 3);
+  const visible = packs.filter((pack) => pack.is_available).slice(0, 4);
   return (
     <section className="bg-card px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
@@ -118,7 +118,7 @@ export function CorporatePackPreview() {
         {loading ? (
           <div className="grid min-h-44 place-items-center rounded-2xl border border-primary/20 bg-background"><div className="flex items-center gap-2 text-sm font-bold text-muted-foreground"><RefreshCw className="h-4 w-4 animate-spin text-primary" /> Finding live matching packs…</div></div>
         ) : visible.length ? (
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: .15 }} transition={{ staggerChildren: .08 }} className="grid gap-4 lg:grid-cols-3">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: .15 }} transition={{ staggerChildren: .08 }} className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {visible.map((pack) => <FamilyPackCard key={pack.pack_id} pack={pack} wishedIds={wishedIds} onWishlistChange={updateWishlist} />)}
           </motion.div>
         ) : (
@@ -169,7 +169,7 @@ export function OperatorSection({ operators }: { operators: OperatorFacet[] }) {
             </MotionGridItem>
           ))}
         </MotionGrid>
-        {selected && <div className="mt-6 rounded-2xl border border-primary/20 bg-card p-4 sm:p-5"><div className="mb-4 flex flex-wrap items-center justify-between gap-3"><div><h3 className="text-lg font-black">{selected} catalogued series</h3><p className="mt-1 text-xs text-muted-foreground">Series describes how we catalogue this number. After purchase, you may port it to another eligible operator under MNP.</p></div><Link className="btn-gold-outline" to={`/shop?operator=${encodeURIComponent(selected)}`}>View filtered shop <ArrowRight className="h-4 w-4"/></Link></div>{loading?<div className="flex min-h-32 items-center justify-center gap-2 text-sm text-muted-foreground"><RefreshCw className="h-4 w-4 animate-spin"/>Loading series…</div>:numbers.length?<div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{numbers.map(n=><NumberCard key={n.number_id} item={n}/>)}</div>:<p className="rounded-xl bg-muted p-6 text-center text-sm text-muted-foreground">No available {selected} series numbers right now.</p>}</div>}
+        {selected && <div className="mt-6 rounded-2xl border border-primary/20 bg-card p-4 sm:p-5"><div className="mb-4 flex flex-wrap items-center justify-between gap-3"><div><h3 className="text-lg font-black">{selected} catalogued series</h3><p className="mt-1 text-xs text-muted-foreground">Series describes how we catalogue this number. After purchase, you may port it to another eligible operator under MNP.</p></div><Link className="btn-gold-outline" to={`/shop?operator=${encodeURIComponent(selected)}`}>View filtered shop <ArrowRight className="h-4 w-4"/></Link></div>{loading?<div className="flex min-h-32 items-center justify-center gap-2 text-sm text-muted-foreground"><RefreshCw className="h-4 w-4 animate-spin"/>Loading series…</div>:numbers.length?<div className="number-card-grid">{numbers.map(n=><NumberCard key={n.number_id} item={n}/>)}</div>:<p className="rounded-xl bg-muted p-6 text-center text-sm text-muted-foreground">No available {selected} series numbers right now.</p>}</div>}
       </div>
     </MotionSection>
   );

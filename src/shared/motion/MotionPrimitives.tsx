@@ -48,6 +48,7 @@ export function MotionSection({
 
   return (
     <motion.section
+      data-motion-reveal="section"
       className={className}
       initial={reduceMotion || !canUseViewportMotion ? false : { opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -71,6 +72,7 @@ export function MotionGrid({
 
   return (
     <motion.div
+      data-motion-reveal="grid"
       className={className}
       initial={reduceMotion || !canUseViewportMotion ? false : 'hidden'}
       whileInView="visible"
@@ -96,6 +98,7 @@ export function MotionGridItem({
 
   return (
     <motion.div
+      data-motion-reveal="item"
       className={cn('min-w-0', className)}
       variants={{
         hidden: reduceMotion ? { opacity: 1 } : { opacity: 0, y: 12 },
@@ -120,6 +123,7 @@ export function MotionReveal({
 
   return (
     <motion.div
+      data-motion-reveal="reveal"
       className={className}
       initial={reduceMotion || !canUseViewportMotion ? false : revealVariants.hidden}
       whileInView={revealVariants.visible}
@@ -140,6 +144,7 @@ export function MotionCard({
 
   return (
     <motion.article
+      data-motion-reveal="card"
       className={className}
       variants={{
         hidden: reduceMotion ? { opacity: 1 } : revealVariants.hidden,

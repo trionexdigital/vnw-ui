@@ -481,7 +481,7 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
                     <div className="text-xs font-black uppercase tracking-[.12em] text-primary">Closest matches</div>
                     <h2 id={`alternative-${group.relaxed_key}`} className="mt-1 text-lg font-black text-foreground">{group.label}</h2>
                   </div>
-                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  <div className="number-card-grid">
                     {group.items.slice(0, 6).map((number) => <NumberCard key={number.number_id} item={number} />)}
                   </div>
                 </section>
@@ -489,7 +489,7 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
             </>
           ) : (
             <>
-              <MotionGrid className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              <MotionGrid className="number-card-grid">
                 {items.map((number) => (
                   <MotionGridItem key={number.number_id}>
                     <NumberCard item={number} />

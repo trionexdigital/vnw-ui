@@ -115,7 +115,7 @@ export default function PreBook() {
       </form>
 
       <div className="mt-5 flex items-center justify-between"><h2 className="text-xl font-black text-foreground">Available to pre-book</h2><span className="text-sm text-muted-foreground">{total} numbers</span></div>
-      {loading ? <div className="py-16"><Loader /></div> : items.length ? <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{items.map((n) => <NumberCard key={n.number_id} item={n} />)}</div> : <EmptyState title="No matching pre-book numbers" subtitle="Try widening the date, price, or category filters." />}
+      {loading ? <div className="py-16"><Loader /></div> : items.length ? <div className="number-card-grid mt-3">{items.map((n) => <NumberCard key={n.number_id} item={n} />)}</div> : <EmptyState title="No matching pre-book numbers" subtitle="Try widening the date, price, or category filters." />}
       {pages > 1 && <div className="mt-6 flex items-center justify-center gap-3"><button aria-label="Previous page" className="btn-gold-outline h-10 px-3" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}><ChevronLeft className="h-4 w-4" /></button><span className="text-sm font-bold text-muted-foreground">Page {page} of {pages}</span><button aria-label="Next page" className="btn-gold-outline h-10 px-3" disabled={page >= pages} onClick={() => setPage((p) => p + 1)}><ChevronRight className="h-4 w-4" /></button></div>}
 
       <section id="mine" className="mt-12 scroll-mt-28">

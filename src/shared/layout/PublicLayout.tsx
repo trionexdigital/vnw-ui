@@ -15,6 +15,7 @@ import { BrandLockup } from '@/shared/components/Logo';
 import { ThemeControl } from '@/shared/components/ThemeControl';
 import { AnimatePresence, motion } from 'framer-motion';
 import { MotionPage } from '@/shared/motion/MotionPrimitives';
+import PublicScrollMotion from '@/shared/motion/PublicScrollMotion';
 
 function Logo() {
   return (
@@ -60,8 +61,7 @@ function Header() {
     { label: 'Family Pack', to: '/family-pack' },
     { label: 'Accessories', to: '/accessories' },
     { label: 'Numerology', to: '/numerology' },
-    { label: 'About Us', to: '/about' },
-    { label: 'Contact Us', to: '/contact' },
+    { label: 'Contact', to: '/about' },
   ];
 
   const submit = (e: React.FormEvent) => {
@@ -248,8 +248,7 @@ function Footer() {
               <li><Link to="/how-it-works">How It Works</Link></li>
               <li><Link to="/numerology">Numerology</Link></li>
               <li><Link to="/faq">FAQs</Link></li>
-              <li><Link to="/about">About Us</Link></li>
-              <li><Link to="/contact">Contact Us</Link></li>
+              <li><Link to="/about">About &amp; Contact</Link></li>
             </ul>
           </div>
           <div>
@@ -343,7 +342,9 @@ export default function PublicLayout() {
       </div>
       <main className="flex-1 pb-20 lg:pb-0">
         <MotionPage routeKey={location.pathname}>
-          <Outlet />
+          <PublicScrollMotion routeKey={location.pathname}>
+            <Outlet />
+          </PublicScrollMotion>
         </MotionPage>
       </main>
       <Footer />

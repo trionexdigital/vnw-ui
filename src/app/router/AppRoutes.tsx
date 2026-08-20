@@ -4,6 +4,7 @@ import { RoleGuard } from './RoleGuard';
 import PublicLayout from '@/shared/layout/PublicLayout';
 import AccountLayout from '@/shared/layout/AccountLayout';
 import { MotionPage } from '@/shared/motion/MotionPrimitives';
+import { Loader } from '@/shared/components/ui-bits';
 
 // Route-level splitting keeps the storefront fast while preserving every console screen.
 const Home = lazy(() => import('@/pages/home/Home'));
@@ -12,6 +13,7 @@ const Shop = lazy(() => import('@/pages/shop/Shop'));
 const NewlyAddedNumbers = lazy(() => import('@/pages/shop/NewlyAddedNumbers'));
 const PremiumNumbers = lazy(() => import('@/pages/shop/PremiumNumbers'));
 const NumberDetail = lazy(() => import('@/pages/shop/NumberDetail'));
+const SimilarNumbers = lazy(() => import('@/pages/shop/SimilarNumbers'));
 const Cart = lazy(() => import('@/pages/cart/Cart'));
 const Wishlist = lazy(() => import('@/pages/wishlist/Wishlist'));
 const Compare = lazy(() => import('@/pages/compare/Compare'));
@@ -19,7 +21,6 @@ const Checkout = lazy(() => import('@/pages/checkout/Checkout'));
 const PreBook = lazy(() => import('@/pages/prebook/PreBook'));
 const PreBookCheckout = lazy(() => import('@/pages/prebook/PreBookCheckout'));
 const About = lazy(() => import('@/pages/static/About'));
-const Contact = lazy(() => import('@/pages/static/Contact'));
 const Numerology = lazy(() => import('@/pages/numerology/Numerology'));
 const HowItWorks = lazy(() => import('@/pages/static/HowItWorks'));
 const FamilyPack = lazy(() => import('@/pages/corporate/CorporateElitePack'));
@@ -84,9 +85,14 @@ function StandalonePage({ children }: { children: ReactNode }) {
   return <MotionPage routeKey={location.pathname} className="customer-motion-scope">{children}</MotionPage>;
 }
 
+function ContactRedirect() {
+  const location = useLocation();
+  return <Navigate to={`/about${location.search}#contact`} replace />;
+}
+
 export default function AppRoutes() {
   return (
-    <Suspense fallback={<div className="grid min-h-[45vh] place-items-center bg-background text-foreground"><div className="text-center"><div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-border border-t-accent" /><p className="mt-3 text-sm font-bold text-muted-foreground">Loading screen…</p></div></div>}>
+    <Suspense fallback={<div className="mx-auto min-h-[45vh] w-full max-w-7xl bg-background px-4 py-8 text-foreground"><Loader label="Loading screen" /></div>}>
     <Routes>
       {/* Storefront */}
       <Route element={<PublicLayout />}>
@@ -96,10 +102,11 @@ export default function AppRoutes() {
         <Route path="/newly-added-vip-numbers" element={<NewlyAddedNumbers />} />
         <Route path="/premium-numbers" element={<PremiumNumbers />} />
         <Route path="/number/:id" element={<NumberDetail />} />
+        <Route path="/number/:id/similar" element={<SimilarNumbers />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/compare" element={<Compare />} />
         <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
+        <Route path="/contact" element={<ContactRedirect />} />
         <Route path="/numerology" element={<Numerology />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/family-pack" element={<FamilyPack />} />

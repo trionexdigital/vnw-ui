@@ -146,6 +146,58 @@ function CardGridWire({ count = 8, wide = false }: { count?: number; wide?: bool
   );
 }
 
+function ProductGridWire() {
+  return (
+    <div data-wireframe="products" className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <div key={i} className="vnw-card overflow-hidden p-0">
+          <Wire className="h-48 rounded-none sm:h-52" />
+          <div className="p-4">
+            <Wire className="h-3 w-28 rounded-full" />
+            <Wire className="mt-3 h-5 w-full rounded-full" />
+            <Wire className="mt-2 h-5 w-4/5 rounded-full" />
+            <div className="mt-4 flex gap-2"><Wire className="h-7 w-24 rounded-full" /><Wire className="h-5 w-16 rounded-full" /></div>
+            <Wire className="mt-4 h-11 rounded-2xl" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function FamilyPackWire() {
+  return (
+    <div data-wireframe="family-packs" className="grid gap-3 lg:grid-cols-3">
+      {Array.from({ length: 3 }).map((_, card) => (
+        <div key={card} className="vnw-card p-3">
+          <div className="flex items-start justify-between"><div><Wire className="h-6 w-28 rounded-full" /><Wire className="mt-2 h-5 w-36 rounded-full" /></div><Wire className="h-8 w-8 rounded-xl" /></div>
+          <Wire className="mt-2 h-3 w-3/4 rounded-full" />
+          <div className="mt-3 grid gap-2">
+            {Array.from({ length: 3 }).map((_, row) => <Wire key={row} className="h-14 rounded-2xl" />)}
+          </div>
+          <Wire className="mt-3 h-16 rounded-2xl" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function FaqWire() {
+  return (
+    <div data-wireframe="faq" className="mx-auto max-w-5xl">
+      <HeaderWire />
+      <div className="mt-8 grid gap-3">
+        {Array.from({ length: 7 }).map((_, i) => (
+          <div key={i} className="vnw-card flex min-h-14 items-center justify-between gap-4 p-4">
+            <Wire className="h-4 w-3/4 rounded-full" />
+            <Wire className="h-8 w-8 shrink-0 rounded-xl" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function DetailWire() {
   return (
     <div className="grid gap-5 lg:grid-cols-[1.15fr_.85fr]">
@@ -236,20 +288,28 @@ function GenericWire({ label }: { label?: string }) {
   );
 }
 
-export function Loader({ label, variant }: { label?: string; variant?: 'dashboard' | 'table' | 'cards' | 'detail' | 'form' | 'shop' | 'generic' }) {
+export function Loader({ label, variant }: { label?: string; variant?: 'dashboard' | 'table' | 'cards' | 'products' | 'packs' | 'faq' | 'detail' | 'form' | 'shop' | 'generic' }) {
   const { pathname } = useLocation();
   const inferred = variant
-    || (pathname === '/' || pathname.includes('/shop') || pathname.includes('/wishlist') || pathname.includes('/compare') ? 'shop'
-      : pathname.includes('/number/') || pathname.includes('/orders/') ? 'detail'
-        : pathname.includes('/dashboard') || pathname === '/admin' || pathname === '/dealer' || pathname === '/employee' ? 'dashboard'
-          : pathname.includes('/account') || pathname.includes('/settings') || pathname.includes('/create') || pathname.includes('/new') || pathname.includes('/edit') ? 'form'
-            : 'table');
+    || (pathname === '/' || pathname.includes('/shop') || pathname.includes('/wishlist') || pathname === '/pre-book' || pathname === '/newly-added-vip-numbers' || pathname === '/premium-numbers' ? 'shop'
+      : pathname.includes('/number/') || pathname.includes('/orders/') || /^\/accessories\/[^/]+/.test(pathname) || pathname === '/cart' || pathname === '/compare' ? 'detail'
+        : pathname === '/accessories' ? 'products'
+          : pathname === '/family-pack' ? 'packs'
+            : pathname === '/faq' ? 'faq'
+              : pathname === '/categories' || pathname === '/numerology' ? 'cards'
+          : pathname.includes('/checkout') || pathname === '/contact' ? 'form'
+            : pathname.includes('/dashboard') || pathname === '/admin' || pathname === '/dealer' || pathname === '/employee' ? 'dashboard'
+              : pathname.includes('/account') || pathname.includes('/settings') || pathname.includes('/create') || pathname.includes('/new') || pathname.includes('/edit') ? 'form'
+                : 'table');
 
   return (
     <div className="animate-rise-in py-2" aria-busy="true" aria-live="polite" aria-label={label || 'Loading content'}>
       {inferred === 'dashboard' && <DashboardWire />}
       {inferred === 'table' && <TableWire />}
       {inferred === 'cards' && <CardGridWire count={10} wide />}
+      {inferred === 'products' && <ProductGridWire />}
+      {inferred === 'packs' && <FamilyPackWire />}
+      {inferred === 'faq' && <FaqWire />}
       {inferred === 'detail' && <><HeaderWire /><DetailWire /></>}
       {inferred === 'form' && <><HeaderWire /><FormWire /></>}
       {inferred === 'shop' && <ShopWire />}

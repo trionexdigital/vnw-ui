@@ -29,14 +29,13 @@ export default function NumberDetail() {
 
   const load = () => {
     setLoading(true);
+    setRelated([]);
     numbersAPI.detail(Number(id)).then((d) => {
       setData(d);
       pushRecentlyViewed(d);
-      const relatedCategory = getPrimaryCategory(d)?.slug;
-      if (relatedCategory) {
-        numbersAPI.list({ category: relatedCategory, limit: 5, status: 'AVAILABLE' })
-          .then((r) => setRelated((r.items || []).filter((x: any) => x.number_id !== d.number_id).slice(0, 4))).catch(() => {});
-      }
+      numbersAPI.similar({ number_id: d.number_id, page: 1, limit: 4 })
+        .then((response) => setRelated(response.items || []))
+        .catch(() => setRelated([]));
     }).catch(() => setData(null)).finally(() => setLoading(false));
   };
   useEffect(() => { load(); window.scrollTo(0, 0); /* eslint-disable-next-line */ }, [id]);
@@ -131,8 +130,11 @@ export default function NumberDetail() {
 
       {related.length > 0 && (
         <div className="mt-10">
-          <h2 className="mb-4 text-xl font-black text-foreground">Similar Numbers</h2>
-          <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">{related.map((n) => <NumberCard key={n.number_id} item={n} />)}</div>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div><h2 className="text-xl font-black text-foreground">Similar Numbers</h2><p className="mt-1 text-sm text-muted-foreground">Ranked by pattern, category, numerology, and price closeness.</p></div>
+            <Link to={`/number/${data.number_id}/similar`} className="btn-gold-outline">View all similar numbers</Link>
+          </div>
+          <div className="number-card-grid">{related.map((n) => <NumberCard key={n.number_id} item={n} />)}</div>
         </div>
       )}
 

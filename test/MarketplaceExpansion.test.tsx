@@ -68,13 +68,13 @@ describe('marketplace expansion', () => {
     const packs = vi.spyOn(siteAPI, 'familyPacks').mockResolvedValue([]);
     render(<MemoryRouter><CorporatePackPreview /></MemoryRouter>);
 
-    await waitFor(() => expect(packs).toHaveBeenCalledWith({ pack_type: 'MIXED', size: 3, limit: 3 }));
+    await waitFor(() => expect(packs).toHaveBeenCalledWith({ pack_type: 'MIXED', size: 3, limit: 4 }));
     expect(screen.queryByRole('button', { name: 'Numbers in Series' })).not.toBeInTheDocument();
     const size = screen.getByRole('combobox', { name: 'Homepage pack size' });
     expect(screen.getAllByRole('option')).toHaveLength(9);
     await user.selectOptions(size, '4');
     await user.click(screen.getByRole('button', { name: 'Similar Both Ends' }));
-    await waitFor(() => expect(packs).toHaveBeenLastCalledWith({ pack_type: 'SIMILAR_BOTH', size: 4, limit: 3 }));
+    await waitFor(() => expect(packs).toHaveBeenLastCalledWith({ pack_type: 'SIMILAR_BOTH', size: 4, limit: 4 }));
   });
 
   it('shows operator-free selectable Family Pack cards with working cart and wishlist actions', async () => {
@@ -93,8 +93,11 @@ describe('marketplace expansion', () => {
     vi.spyOn(cartAPI, 'list').mockResolvedValue({ count: 1 });
     vi.spyOn(wishlistAPI, 'list').mockResolvedValue({ count: 1, items: [] });
 
-    render(<MemoryRouter><FamilyPackCard pack={pack} wishedIds={new Set()} onWishlistChange={vi.fn()} /></MemoryRouter>);
+    const { container } = render(<MemoryRouter><FamilyPackCard pack={pack} wishedIds={new Set()} onWishlistChange={vi.fn()} /></MemoryRouter>);
 
+    expect(screen.getByTestId('family-pack-card')).toHaveClass('number-card-shell');
+    expect(container.querySelectorAll('.family-pack-card__number-row')).toHaveLength(2);
+    expect(container.querySelector('.family-pack-card__number-list')).not.toHaveClass('grid');
     expect(screen.queryByText('Airtel')).not.toBeInTheDocument();
     expect(screen.queryByText('Vi')).not.toBeInTheDocument();
     expect(screen.getByText('2 of 2 selected')).toBeInTheDocument();

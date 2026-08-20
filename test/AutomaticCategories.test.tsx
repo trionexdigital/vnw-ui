@@ -192,8 +192,8 @@ describe('NumberCard automatic category badges', () => {
     expect(screen.queryByText(/^\+\d+$/)).not.toBeInTheDocument();
     expect(screen.getAllByText('Doubling Numbers')).toHaveLength(1);
     expect(screen.getByText('Signature VIP Number')).toBeInTheDocument();
-    expect(container.querySelector('.number-card-shell')).toHaveClass('min-h-[296px]');
-    expect(screen.getByText('Verified')).toHaveClass('number-card__verified');
+    expect(container.querySelector('.number-card-shell')).toHaveClass('min-h-[218px]');
+    expect(screen.queryByText('Verified')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'add to wishlist' })).toHaveAttribute('aria-pressed', 'false');
     expect(screen.getByRole('button', { name: 'compare' })).toHaveAttribute('aria-pressed', 'false');
     expect(container.querySelector('.number-card__glow')).toBeInTheDocument();
@@ -201,12 +201,15 @@ describe('NumberCard automatic category badges', () => {
     expect(screen.queryByText(/catalogued series/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Portable to any eligible operator/i)).not.toBeInTheDocument();
     expect(container.querySelector('.number-card__primary-action')).toHaveTextContent('Buy Now');
+    expect(screen.getByRole('button', { name: /find numbers similar to 90066 22121/i })).toHaveTextContent('Similar Numbers');
     expect(container.querySelector('[class*="blue"]')).not.toBeInTheDocument();
     expect(Array.from(container.querySelectorAll('[data-match="true"]')).map((node) => node.textContent)).toEqual(['00', '66', '22']);
     expect(screen.getByRole('img', {
       name: 'VIP number, digits 9 0 0 6 6 2 2 1 2 1. Category: Doubling Numbers. Matching digits: 00, 66, 22.',
     })).toBeInTheDocument();
 
+    await user.click(screen.getByRole('button', { name: /find numbers similar to 90066 22121/i }));
+    await waitFor(() => expect(screen.getByLabelText('Current location')).toHaveTextContent('/number/11/similar'));
     await user.click(screen.getByRole('button', { name: 'Doubling Numbers' }));
     await waitFor(() => expect(screen.getByLabelText('Current location')).toHaveTextContent('/shop?category=doubling-numbers'));
   });

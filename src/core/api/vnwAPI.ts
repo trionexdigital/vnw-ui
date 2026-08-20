@@ -60,11 +60,45 @@ export interface NumberListRequest {
   [key: string]: unknown;
 }
 
+export interface NumberCatalogItem extends CategorizedNumber {
+  number_id: number;
+  number_value?: string;
+  display_number: string;
+  title_label?: string;
+  badge?: string;
+  mrp: number;
+  offer_price: number;
+  discount_pct?: number;
+  numerology_sum?: number;
+  operator?: string;
+  stock?: number;
+  status?: string;
+  rtp_status?: 'RTP' | 'NON_RTP';
+  rtp_available_at?: string | null;
+  is_premium?: boolean;
+}
+
+export interface SimilarNumbersRequest {
+  number_id: number;
+  page?: number;
+  limit?: number;
+}
+
+export interface SimilarNumbersResponse {
+  source: NumberCatalogItem;
+  items: NumberCatalogItem[];
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
+}
+
 export const numbersAPI = {
   list: (p: NumberListRequest) => post('numbers/list', p),
   aiSearch: (p: NumberListRequest & { query: string }) => post('numbers/ai-search', p),
   featured: (p: NumberListRequest = {}) => post('numbers/featured', p),
   detail: (number_id: number) => post('numbers/detail', { number_id }),
+  similar: (p: SimilarNumbersRequest) => post<SimilarNumbersResponse>('numbers/similar', p),
   operators: () => post<OperatorFacet[]>('numbers/operators', {}),
 };
 

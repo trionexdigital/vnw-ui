@@ -22,6 +22,8 @@ describe('RTP purchase-mode contract', () => {
     render(<MemoryRouter><NumberCard item={{ ...base, rtp_status: 'NON_RTP', rtp_available_at: '2026-09-01 18:30:00' }} /></MemoryRouter>);
     expect(screen.getByRole('button', { name: /pre-book/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /add to cart/i })).not.toBeInTheDocument();
+    expect(screen.getByTitle(/RTP on/)).toHaveClass('number-card__verified');
+    expect(screen.queryByText('Verified')).not.toBeInTheDocument();
   });
 
   it('disables actions for reserved inventory', () => {
