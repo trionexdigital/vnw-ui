@@ -11,6 +11,7 @@ afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 describe('Numerology page', () => {
   it('uses aligned animated sections and exposes both calculator paths', async () => {
     const user = userEvent.setup();
+    const scrollIntoView = vi.spyOn(HTMLElement.prototype, 'scrollIntoView');
     const list = vi.spyOn(numbersAPI, 'list').mockResolvedValue({ items: [], total: 0, page: 1, limit: 8, pages: 0 });
     const { container } = render(<MemoryRouter><Numerology /></MemoryRouter>);
 
@@ -27,5 +28,7 @@ describe('Numerology page', () => {
     await user.type(screen.getByLabelText(/Full name/), 'Rahul Sharma');
     await user.click(screen.getByRole('button', { name: 'Calculate My Numbers' }));
     expect(await screen.findByRole('heading', { name: 'Your core numerology numbers' })).toBeVisible();
+    await waitFor(() => expect(scrollIntoView.mock.instances.at(-1)?.id).toBe('numerology-profile-results'));
+    expect(scrollIntoView).toHaveBeenLastCalledWith({ behavior: 'smooth', block: 'start' });
   });
 });

@@ -68,13 +68,13 @@ export function SectionHeader({
   centered?: boolean;
 }) {
   return (
-    <div className={cn('mb-5 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-end sm:justify-between', centered && 'items-center text-center sm:items-center sm:justify-center')}>
+    <div data-public-section-header className={cn('public-section-heading mb-4 flex flex-col gap-2.5 sm:flex-row sm:items-end sm:justify-between', centered && 'public-section-heading--centered items-center text-center sm:items-center sm:justify-center')}>
       <div className={cn('max-w-2xl', centered && 'mx-auto')}>
-        {eyebrow && <p className="mb-2 text-xs font-bold uppercase tracking-wide text-primary">{eyebrow}</p>}
-        <h2 className="text-xl font-black leading-tight text-foreground sm:text-2xl">{title}</h2>
-        {description && <p className="mt-2 text-sm leading-6 text-muted-foreground sm:text-base">{description}</p>}
+        {eyebrow && <p className="public-section-heading__eyebrow mb-1.5 text-[10px] font-black uppercase tracking-[.14em] text-primary">{eyebrow}</p>}
+        <h2 className="public-section-heading__title text-lg font-black leading-tight text-foreground sm:text-xl">{title}</h2>
+        {description && <p className="public-section-heading__subtitle mt-1.5 text-xs leading-5 text-muted-foreground sm:text-sm">{description}</p>}
       </div>
-      {action && <div className="shrink-0">{action}</div>}
+      {action && <div className="public-section-heading__action shrink-0">{action}</div>}
     </div>
   );
 }
@@ -82,7 +82,7 @@ export function SectionHeader({
 const orbitCategories = [
   { label: 'Mirror', to: '/shop?category=mirror-numbers', left: '50%', top: '2%' },
   { label: 'Triple', to: '/shop?category=triple-numbers', left: '84%', top: '22%' },
-  { label: 'Numerology', to: '/numerology', left: '94%', top: '55%' },
+  { label: 'Numerology', to: '/shop?category=without-248-numbers', left: '94%', top: '55%' },
   { label: 'AB AB', to: '/shop?category=ab-ab-xy-xy-numbers', left: '79%', top: '82%' },
   { label: 'Doubling', to: '/shop?category=doubling-numbers', left: '50%', top: '98%' },
   { label: '786', to: '/shop?category=786-numbers', left: '17%', top: '82%' },

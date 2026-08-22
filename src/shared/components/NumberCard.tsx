@@ -14,7 +14,14 @@ import { formatRtpDate, getNumberPurchaseMode, numberActionPath } from '@/core/l
 
 export type NumberItem = NumberCatalogItem;
 
-export default function NumberCard({ item, onWishlistChange }: { item: NumberItem; onWishlistChange?: () => void }) {
+interface NumberCardProps {
+  item: NumberItem;
+  onWishlistChange?: () => void;
+  /** Search results opt in after the customer applies a search or filter. */
+  highlightDigits?: boolean;
+}
+
+export default function NumberCard({ item, onWishlistChange, highlightDigits = false }: NumberCardProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { refreshCounts, compare, toggleCompare } = useStore();
@@ -109,24 +116,24 @@ export default function NumberCard({ item, onWishlistChange }: { item: NumberIte
       <span className="number-card__corner number-card__corner--left" aria-hidden="true" />
       <span className="number-card__corner number-card__corner--right" aria-hidden="true" />
 
-      <div className="relative z-10 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-1">
+      <div className="number-card__topbar relative z-10 flex min-h-8 min-w-0 items-center justify-center">
         {badge.label
-          ? <span className={cn('number-card__badge inline-flex min-h-6 items-center gap-1 rounded-md px-2 py-0.5 text-[8px] font-black uppercase tracking-[.08em]', badge.className)}><Star className="h-2.5 w-2.5" fill="currentColor" />{badge.label}</span>
-          : <span className="number-card__badge number-card__badge--default inline-flex min-h-6 items-center gap-1 rounded-md px-2 py-0.5 text-[8px] font-black uppercase tracking-[.08em]"><Star className="h-2.5 w-2.5" fill="currentColor" />VIP Collection</span>}
+          ? <span className={cn('number-card__badge absolute left-0 inline-flex min-h-[18px] shrink-0 items-center gap-0.5 whitespace-nowrap rounded-md px-1 py-0.5 text-[6px] font-black uppercase tracking-[.07em]', badge.className)}><Star className="h-2 w-2" fill="currentColor" />{badge.label}</span>
+          : <span className="number-card__badge number-card__badge--default absolute left-0 inline-flex min-h-[18px] shrink-0 items-center gap-0.5 whitespace-nowrap rounded-md px-1 py-0.5 text-[6px] font-black uppercase tracking-[.07em]"><Star className="h-2 w-2" fill="currentColor" />VIP Collection</span>}
         <button
           type="button"
           onClick={() => navigate(`/number/${item.number_id}/similar`)}
-          className="number-card__similar mx-auto inline-flex min-h-6 min-w-0 items-center gap-1 rounded-md border px-1.5 text-[8px] font-black"
+          className="number-card__similar inline-flex min-h-5 min-w-0 items-center justify-center gap-1 whitespace-nowrap rounded-md border px-1.5 text-[7px] font-black"
           aria-label={`Find numbers similar to ${item.display_number}`}
         >
           <GitCompareArrows className="h-2.5 w-2.5 shrink-0" aria-hidden="true" />
-          <span className="truncate">Similar Numbers</span>
+          <span>Similar Numbers</span>
         </button>
         <button
           onClick={toggleWish}
           aria-label={wished ? 'remove from wishlist' : 'add to wishlist'}
           aria-pressed={wished}
-          className={cn('number-card__icon-button grid h-8 w-8 shrink-0 place-items-center rounded-lg', wished && 'is-wished')}
+          className={cn('number-card__icon-button absolute right-0 grid h-8 w-8 shrink-0 place-items-center rounded-lg', wished && 'is-wished')}
         >
           <Heart className="h-4 w-4" fill={wished ? 'currentColor' : 'none'} />
         </button>
@@ -135,22 +142,22 @@ export default function NumberCard({ item, onWishlistChange }: { item: NumberIte
       <div className="number-card__title-row relative z-10 flex min-w-0 items-center justify-center">
         <div className="number-card__eyebrow flex min-w-0 items-center justify-center gap-1 text-[9px] font-black uppercase tracking-[.08em]">
           <Crown className="number-card__crown h-3.5 w-3.5 shrink-0" />
-          <span className="min-w-0 truncate">{displayTitle}</span>
+          <span className="min-w-0 text-center leading-tight">{displayTitle}</span>
         </div>
       </div>
 
       <button onClick={() => navigate(`/number/${item.number_id}`)} className="number-card__number-link relative z-10 w-full rounded-lg px-0.5 text-center focus-visible:outline-none" aria-label={`View VIP number ${item.display_number}`}>
         <HighlightedNumber
           number={item.number_value || item.display_number}
-          category={primaryCategory}
+          category={highlightDigits ? primaryCategory : null}
           className="number-card__number"
         />
       </button>
 
       <div className="number-card__ornament relative z-10 mt-1 flex items-center gap-2" aria-hidden="true"><span /><i>◇</i><span /></div>
 
-      <div className="number-card__identity-row relative z-10 flex min-h-5 items-center justify-between gap-1">
-        <div className="min-w-0 flex-1" aria-label="Automatic number category">
+      <div className="number-card__identity-row relative z-10 flex min-h-5 items-center justify-center">
+        <div className={cn('flex min-w-0 justify-center', isPrebook ? 'max-w-[62%]' : 'w-full')} aria-label="Automatic number category">
           {primaryCategory ? (
           <button
             type="button"
@@ -158,13 +165,13 @@ export default function NumberCard({ item, onWishlistChange }: { item: NumberIte
             onClick={() => navigate(`/shop?category=${encodeURIComponent(primaryCategory.slug)}`)}
             className="number-card__category mx-auto block max-w-full rounded-full border px-2 py-0 text-[8px] font-black"
           >
-            <span className="block truncate">{primaryCategory.name}</span>
+            <span className="block text-center leading-tight">{primaryCategory.name}</span>
           </button>
           ) : (
             <span className="number-card__collection block truncate text-[9px] font-black uppercase tracking-wide">VIP Collection</span>
           )}
         </div>
-        {isPrebook ? <span className="number-card__verified flex shrink-0 items-center gap-1 text-[9px] font-black" title={`RTP on ${formatRtpDate(item.rtp_available_at)}`}><CalendarClock className="h-3 w-3" />{formatRtpDate(item.rtp_available_at)}</span> : null}
+        {isPrebook ? <span className="number-card__verified absolute right-0 flex shrink-0 items-center gap-1 text-[9px] font-black" title={`RTP on ${formatRtpDate(item.rtp_available_at)}`}><CalendarClock className="h-3 w-3" />{formatRtpDate(item.rtp_available_at)}</span> : null}
       </div>
 
       <div className="number-card__commerce relative z-10 mt-0.5">

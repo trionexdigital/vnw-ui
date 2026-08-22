@@ -132,10 +132,13 @@ export default function Numerology() {
     }
   };
 
-  const loadMatches = (sum: number) => {
+  const loadMatches = (sum: number, options: { scroll?: boolean } = {}) => {
     if (!sum) return;
     setActiveSum(sum);
     setLoading(true);
+    if (options.scroll !== false) {
+      window.setTimeout(() => document.getElementById('numerology-matches')?.scrollIntoView?.({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' }), 0);
+    }
     numbersAPI.list({ numerology: sum, limit: 8, status: 'AVAILABLE' })
       .then((data) => setMatches(data.items || []))
       .catch(() => setMatches([]))
@@ -152,7 +155,8 @@ export default function Numerology() {
       nameNo: name ? nameNumber(name) : 0,
     };
     setResult(nextResult);
-    loadMatches(nextResult.mulank || nextResult.bhagyank || nextResult.nameNo);
+    loadMatches(nextResult.mulank || nextResult.bhagyank || nextResult.nameNo, { scroll: false });
+    window.setTimeout(() => document.getElementById('numerology-profile-results')?.scrollIntoView?.({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' }), 0);
   };
 
   const profileSums = result
@@ -161,7 +165,7 @@ export default function Numerology() {
 
   return (
     <main className="overflow-hidden bg-background text-foreground">
-      <MotionSection className="relative border-b border-border bg-card px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+      <MotionSection className="public-page-hero relative border-b border-border bg-card px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_78%_20%,hsl(var(--primary)/.15),transparent_36%)]" />
         <div className="relative mx-auto grid max-w-7xl items-center gap-9 lg:grid-cols-[1.15fr_.85fr]">
           <div className="text-center lg:text-left">
@@ -183,17 +187,17 @@ export default function Numerology() {
             </div>
           </div>
 
-          <MotionReveal delay={.08} className="mx-auto w-full max-w-md">
-            <div className="vnw-card relative overflow-hidden p-5 sm:p-6">
-              <div className="absolute -right-12 -top-12 h-36 w-36 rounded-full bg-primary/10 blur-2xl" />
+          <MotionReveal delay={.08} className="mx-auto w-full max-w-sm">
+            <div className="vnw-card relative overflow-hidden p-4">
+              <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-primary/10 blur-2xl" />
               <div className="relative flex items-center justify-between gap-3">
-                <div><div className="text-xs font-black uppercase tracking-[.14em] text-primary">The nine roots</div><div className="mt-1 text-sm text-muted-foreground">Every result reduces to a single digit.</div></div>
-                <Sparkles className="h-6 w-6 text-primary" />
+                <div><div className="text-[11px] font-black uppercase tracking-[.14em] text-primary">The nine roots</div><div className="mt-0.5 text-xs text-muted-foreground">Every result reduces to a single digit.</div></div>
+                <Sparkles className="h-5 w-5 text-primary" />
               </div>
-              <MotionGrid className="relative mt-5 grid grid-cols-3 gap-2.5">
+              <MotionGrid className="relative mt-3 grid grid-cols-3 gap-2">
                 {Array.from({ length: 9 }, (_, index) => index + 1).map((number) => (
                   <MotionGridItem key={number}>
-                    <button type="button" onClick={() => loadMatches(number)} className="vnw-interactive grid aspect-square w-full place-items-center rounded-2xl border border-primary/20 bg-background/80 text-xl font-black text-primary shadow-sm" aria-label={`Browse numerology sum ${number}`}>
+                    <button type="button" onClick={() => loadMatches(number)} aria-pressed={activeSum === number} className={`vnw-interactive grid h-11 w-full place-items-center rounded-xl border text-base font-black shadow-sm ${activeSum === number ? 'border-primary bg-primary text-primary-foreground' : 'border-primary/20 bg-background/80 text-primary'}`} aria-label={`Browse numerology sum ${number}`}>
                       {number}
                     </button>
                   </MotionGridItem>
@@ -203,6 +207,24 @@ export default function Numerology() {
           </MotionReveal>
         </div>
       </MotionSection>
+
+      {activeSum !== null && (
+        <MotionSection id="numerology-matches" className="scroll-mt-24 border-b border-border bg-card px-4 py-7 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <div className="flex flex-col gap-3 text-center sm:flex-row sm:items-end sm:justify-between sm:text-left">
+              <div><p className="text-xs font-black uppercase tracking-[.16em] text-primary">Available matches</p><h2 className="mt-1 text-2xl font-black">VIP numbers aligned with Sum {activeSum}</h2><p className="mt-1 text-sm text-muted-foreground">Live available numbers with the numerology root you selected.</p></div>
+              <Link to={`/shop?numerology=${activeSum}`} className="btn-gold-outline self-center sm:self-auto">View all Sum {activeSum} <ArrowRight className="h-4 w-4" /></Link>
+            </div>
+            <div className="mt-5">
+              {loading ? <Loader variant="cards" /> : matches.length === 0 ? (
+                <div className="rounded-3xl border border-primary/20 bg-background px-6 py-10 text-center"><Sparkles className="mx-auto h-8 w-8 text-primary" /><h3 className="mt-3 text-lg font-black">No Sum {activeSum} numbers available right now</h3><p className="mt-2 text-sm text-muted-foreground">Explore the full marketplace or try another numerology root.</p><Link to="/shop" className="btn-gold mt-5">Browse all numbers <ArrowRight className="h-4 w-4" /></Link></div>
+              ) : (
+                <div className="number-card-grid">{matches.map((number) => <NumberCard key={number.number_id} item={number} />)}</div>
+              )}
+            </div>
+          </div>
+        </MotionSection>
+      )}
 
       <MotionSection className="px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
@@ -285,7 +307,7 @@ export default function Numerology() {
       </MotionSection>
 
       {result && (
-        <MotionSection className="px-4 py-10 sm:px-6 lg:px-8">
+        <MotionSection id="numerology-profile-results" className="scroll-mt-32 px-4 py-10 sm:px-6 lg:px-8">
           <div className="vnw-card mx-auto max-w-4xl overflow-hidden p-5 sm:p-7">
             <div className="text-center"><p className="text-xs font-black uppercase tracking-[.16em] text-primary">Your profile</p><h2 className="mt-2 text-2xl font-black">Your core numerology numbers</h2></div>
             <MotionGrid className="mx-auto mt-6 grid max-w-2xl gap-3 sm:grid-cols-3">
@@ -309,24 +331,6 @@ export default function Numerology() {
                   </button>
                 ))}
               </div>
-            </div>
-          </div>
-        </MotionSection>
-      )}
-
-      {activeSum !== null && (
-        <MotionSection className="border-y border-border bg-card px-4 py-10 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-7xl">
-            <div className="flex flex-col gap-3 text-center sm:flex-row sm:items-end sm:justify-between sm:text-left">
-              <div><p className="text-xs font-black uppercase tracking-[.16em] text-primary">Available matches</p><h2 className="mt-2 text-2xl font-black">VIP numbers aligned with Sum {activeSum}</h2><p className="mt-2 text-sm text-muted-foreground">Live available numbers with the numerology root you selected.</p></div>
-              <Link to={`/shop?numerology=${activeSum}`} className="btn-gold-outline self-center sm:self-auto">View all Sum {activeSum} <ArrowRight className="h-4 w-4" /></Link>
-            </div>
-            <div className="mt-7">
-              {loading ? <Loader variant="cards" /> : matches.length === 0 ? (
-                <div className="rounded-3xl border border-primary/20 bg-background px-6 py-12 text-center"><Sparkles className="mx-auto h-8 w-8 text-primary" /><h3 className="mt-3 text-lg font-black">No Sum {activeSum} numbers available right now</h3><p className="mt-2 text-sm text-muted-foreground">Explore the full marketplace or try another numerology root.</p><Link to="/shop" className="btn-gold mt-5">Browse all numbers <ArrowRight className="h-4 w-4" /></Link></div>
-              ) : (
-                <div className="number-card-grid">{matches.map((number) => <NumberCard key={number.number_id} item={number} />)}</div>
-              )}
             </div>
           </div>
         </MotionSection>

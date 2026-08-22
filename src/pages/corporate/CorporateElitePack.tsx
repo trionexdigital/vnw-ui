@@ -26,7 +26,7 @@ export default function FamilyPack() {
 
   return (
     <main className="bg-background text-foreground">
-      <section className="relative overflow-hidden border-b border-border bg-card px-4 py-14 sm:px-6 lg:px-8">
+      <section className="public-page-hero relative overflow-hidden border-b border-border bg-card px-4 py-10 sm:px-6 lg:px-8">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_15%,hsl(var(--primary)/.16),transparent_42%)]" />
         <div className="relative mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1.2fr_.8fr] lg:items-center">
           <div><span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-black uppercase text-primary"><Building2 className="h-4 w-4" /> Family Pack</span><h1 className="mt-4 max-w-3xl text-4xl font-black sm:text-5xl">A coordinated VIP identity for every family member</h1><p className="mt-4 max-w-2xl leading-7 text-muted-foreground">Select a matching style and pack size. Live available numbers are grouped automatically, with current pricing and availability checked before they reach your cart.</p></div>
@@ -36,10 +36,10 @@ export default function FamilyPack() {
 
       <section className="px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
-            <div className="grid gap-5 md:grid-cols-[1fr_220px] md:items-end">
-              <div><div className="text-xs font-black uppercase tracking-wide text-primary">Matching style</div><div className="mt-3 flex flex-wrap gap-2">{types.map((value) => <button key={value} onClick={() => setType(value)} className={`min-h-10 rounded-xl border px-3 text-xs font-black transition ${type === value ? 'border-primary bg-primary text-primary-foreground shadow-sm' : 'border-border bg-background text-foreground hover:border-primary hover:text-primary'}`}>{PACK_TYPE_LABELS[value]}</button>)}</div></div>
-              <label className="block"><span className="text-xs font-black uppercase tracking-wide text-primary">Numbers in pack</span><select value={size} onChange={(event) => setSize(Number(event.target.value))} className="mt-3 h-11 w-full rounded-xl border border-border bg-background px-3 text-sm font-black text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20" aria-label="Numbers in pack">{Array.from({ length: 9 }, (_, index) => index + 2).map((value) => <option key={value} value={value}>{value} numbers</option>)}</select></label>
+          <div className="public-control-panel rounded-2xl border border-border bg-card p-3 shadow-sm">
+            <div className="grid gap-3 md:grid-cols-[1fr_190px] md:items-end">
+              <div><div className="text-[10px] font-black uppercase tracking-[.12em] text-primary">Matching style</div><div className="mt-2 flex flex-wrap gap-1.5">{types.map((value) => <button key={value} onClick={() => setType(value)} className={`public-segment min-h-9 rounded-lg border px-3 text-[11px] font-black transition ${type === value ? 'is-active border-primary bg-primary text-primary-foreground shadow-sm' : 'border-border bg-background text-foreground hover:border-primary hover:text-primary'}`}>{PACK_TYPE_LABELS[value]}</button>)}</div></div>
+              <label className="block"><span className="text-[10px] font-black uppercase tracking-[.12em] text-primary">Numbers in pack</span><select value={size} onChange={(event) => setSize(Number(event.target.value))} className="public-control mt-2 h-9 w-full rounded-lg border border-border bg-background px-3 text-xs font-black text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20" aria-label="Numbers in pack">{Array.from({ length: 9 }, (_, index) => index + 2).map((value) => <option key={value} value={value}>{value} numbers</option>)}</select></label>
             </div>
           </div>
 

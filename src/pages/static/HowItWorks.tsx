@@ -6,13 +6,13 @@ import { JOURNEY_STEPS } from '@/pages/home/components/MarketplaceSections';
 export default function HowItWorks() {
   return (
     <main className="overflow-hidden bg-background text-foreground">
-      <section className="relative border-b border-border bg-card px-4 py-16 sm:px-6 lg:px-8">
+      <section className="public-page-hero relative border-b border-border bg-card px-4 py-10 sm:px-6 lg:px-8">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,hsl(var(--primary)/.14),transparent_52%)]" />
         <div className="relative mx-auto max-w-4xl text-center">
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-1.5 text-xs font-black uppercase tracking-[.15em] text-primary"><ShieldCheck className="h-4 w-4" /> Premium number journey</span>
           <h1 className="mt-5 text-4xl font-black sm:text-5xl">A clear path from selection to activation</h1>
           <p className="mx-auto mt-4 max-w-2xl leading-7 text-muted-foreground">Understand what happens after you find your VIP number and how our support path helps you complete each stage.</p>
-          <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row"><Link to="/shop" className="btn-gold">Find your number <Search className="h-4 w-4" /></Link><Link to="/contact" className="btn-gold-outline">Ask a question <ArrowRight className="h-4 w-4" /></Link></div>
+          <div className="mt-5 flex flex-col justify-center gap-2 sm:flex-row"><Link to="/shop" className="btn-gold">Find your number <Search className="h-4 w-4" /></Link><Link to="/contact" className="btn-gold-outline">Ask a question <ArrowRight className="h-4 w-4" /></Link></div>
         </div>
       </section>
 

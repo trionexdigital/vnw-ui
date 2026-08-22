@@ -12,12 +12,12 @@ export default function Accessories() {
   useEffect(() => { setLoading(true); setError(''); accessoriesAPI.list({ ...query, limit: 12 }).then(setData).catch((e) => setError(e.message)).finally(() => setLoading(false)); }, [query]);
   const brands = [...new Set(data.facets.map((x) => x.brand).filter(Boolean))];
   const categories = [...new Set(data.facets.map((x) => x.category).filter(Boolean))];
-  const control = 'min-h-11 rounded-xl border border-border bg-card px-3 text-sm font-bold outline-none focus:border-primary focus:ring-2 focus:ring-primary/20';
+  const control = 'public-control min-h-10 rounded-lg border border-border bg-card px-3 text-xs font-bold outline-none focus:border-primary focus:ring-2 focus:ring-primary/20';
   return <div className="mx-auto max-w-7xl px-4 py-8">
-    <MotionReveal><header className="rounded-[2rem] border border-primary/20 bg-gradient-to-br from-card via-card to-primary/10 p-6 sm:p-10">
+    <MotionReveal><header className="public-page-hero rounded-2xl border border-primary/20 bg-gradient-to-br from-card via-card to-primary/10 p-5 sm:p-7">
       <div className="text-xs font-black uppercase tracking-[.25em] text-primary">VIP lifestyle store</div><h1 className="mt-2 text-3xl font-black text-foreground sm:text-5xl">Accessories that match your number.</h1><p className="mt-3 max-w-2xl text-muted-foreground">Curated mobile essentials with genuine stock, secure payments, free delivery, and seven-day issue support.</p>
     </header></MotionReveal>
-    <MotionReveal delay={.06} className="mt-6 grid gap-3 rounded-2xl border border-border bg-card p-3 md:grid-cols-[1fr_repeat(3,180px)]">
+    <MotionReveal delay={.06} className="public-control-panel mt-5 grid gap-2 rounded-xl border border-border bg-card p-2.5 md:grid-cols-[1fr_repeat(3,160px)]">
       <label className="relative"><Search className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground"/><input aria-label="Search accessories" className={`${control} w-full pl-10`} placeholder="Search brand, model or accessory" value={query.q} onChange={(e) => setQuery({ ...query, q: e.target.value, page: 1 })}/></label>
       <select aria-label="Brand" className={control} value={query.brand} onChange={(e) => setQuery({ ...query, brand: e.target.value, page: 1 })}><option value="">All brands</option>{brands.map((x) => <option key={x}>{x}</option>)}</select>
       <select aria-label="Category" className={control} value={query.category} onChange={(e) => setQuery({ ...query, category: e.target.value, page: 1 })}><option value="">All categories</option>{categories.map((x) => <option key={x}>{x}</option>)}</select>

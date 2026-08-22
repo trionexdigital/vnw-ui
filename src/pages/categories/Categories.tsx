@@ -65,7 +65,7 @@ export default function Categories() {
 
   return (
     <main data-categories-page className="bg-background text-foreground">
-      <section className="relative overflow-hidden border-b border-border bg-card px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+      <section className="public-page-hero relative overflow-hidden border-b border-border bg-card px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,hsl(var(--primary)/0.13),transparent_34%),radial-gradient(circle_at_82%_70%,hsl(var(--accent)/0.25),transparent_30%)]" />
         <div className="relative mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1fr_360px] lg:items-end">
           <div>
@@ -94,7 +94,7 @@ export default function Categories() {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search Mirror, 786, Counting…"
-              className="h-12 w-full rounded-xl border border-input bg-background pl-11 pr-4 text-sm font-bold text-foreground shadow-sm outline-none transition placeholder:font-medium placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-ring/15"
+              className="public-control h-10 w-full rounded-lg border border-input bg-background pl-11 pr-4 text-xs font-bold text-foreground shadow-sm outline-none transition placeholder:font-medium placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-ring/15"
             />
           </label>
         </div>

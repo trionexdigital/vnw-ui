@@ -71,7 +71,7 @@ describe('HomeHero', () => {
     expect(container.querySelector('.brand-stage__pedestal')).toBeInTheDocument();
     expect(container.querySelectorAll('.brand-stage__number-plaque')).toHaveLength(8);
     expect(screen.getByRole('link', { name: 'Browse Mirror numbers' })).toHaveAttribute('href', '/shop?category=mirror-numbers');
-    expect(screen.getByRole('link', { name: 'Browse Numerology numbers' })).toHaveAttribute('href', '/numerology');
+    expect(screen.getByRole('link', { name: 'Browse Numerology numbers' })).toHaveAttribute('href', '/shop?category=without-248-numbers');
     expect(container.querySelector('.home-showcase__butterflies--ambient')).toHaveAttribute('aria-hidden', 'true');
     expect(container.querySelector('.home-showcase__butterflies--focus')).toHaveAttribute('aria-hidden', 'true');
     expect(container.querySelector('.home-showcase__butterflies--mobile-art')).not.toBeInTheDocument();

@@ -297,34 +297,34 @@ export default function SearchWorkbench({
   }, [state, activePriceLabel]);
 
   const inputClass = (invalid = false) =>
-    `input-luxury h-11 w-full text-base ${invalid ? '!border-destructive !ring-2 !ring-destructive/15' : ''}`;
+    `input-luxury public-control h-10 w-full text-sm ${invalid ? '!border-destructive !ring-2 !ring-destructive/15' : ''}`;
   const draftInputClass = (invalid = false) =>
     `input-luxury h-10 w-full !rounded-lg px-3 py-2 text-base ${invalid ? '!border-destructive !ring-2 !ring-destructive/15' : ''}`;
 
   return (
     <section
       id="vip-search-workbench"
-      className={`${placement === 'home' ? 'bg-background px-4 py-5 sm:px-6 lg:px-8' : 'mb-5'} scroll-mt-24`}
+      className={`${placement === 'home' ? 'bg-background px-4 py-4 sm:px-6 lg:px-8' : 'mb-4'} scroll-mt-24`}
       aria-labelledby={`${placement}-search-title`}
     >
       <div className={placement === 'home' ? 'mx-auto max-w-7xl' : ''}>
-        <div className="vnw-card overflow-hidden border-primary/25">
-          <div className="vip-motif-surface flex flex-col gap-3 border-b border-border px-3 py-3 sm:px-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="public-search-workbench vnw-card overflow-hidden border-primary/25">
+          <div className="public-search-workbench__header vip-motif-surface flex flex-col gap-2.5 border-b border-border px-3 py-2.5 lg:flex-row lg:items-center lg:justify-between">
             <div className="relative z-10 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
+                <span className="public-search-workbench__icon grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
                   <Sparkles className="h-4 w-4" aria-hidden="true" />
                 </span>
                 <div>
-                  <h2 id={`${placement}-search-title`} className="text-lg font-black tracking-tight text-foreground sm:text-xl">
+                  <h2 id={`${placement}-search-title`} className="text-base font-black tracking-tight text-foreground sm:text-lg">
                     Find your signature VIP number
                   </h2>
-                  <p className="hidden text-xs text-muted-foreground sm:block">AI, exact digits, budget, or specialist patterns.</p>
+                  <p className="hidden text-[11px] text-muted-foreground sm:block">AI, exact digits, budget, or specialist patterns.</p>
                 </div>
               </div>
             </div>
             <div
-              className="relative z-10 grid grid-cols-2 gap-1 rounded-xl border border-border bg-card/90 p-1 md:grid-cols-4 lg:min-w-[610px]"
+              className="public-search-workbench__tabs relative z-10 grid grid-cols-2 gap-1 rounded-xl border border-border bg-card/90 p-1 md:grid-cols-4 lg:min-w-[560px]"
               role="tablist"
               aria-label="VIP number search modes"
             >
@@ -342,7 +342,7 @@ export default function SearchWorkbench({
                     aria-selected={active}
                     onClick={() => selectMode(tab.value)}
                     className={cn(
-                      'inline-flex min-h-10 items-center justify-center gap-1.5 rounded-lg px-2.5 text-xs font-black transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:text-sm',
+                      'public-search-workbench__tab inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg px-2 text-[11px] font-black transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:text-xs',
                       active
                         ? 'bg-primary text-primary-foreground shadow-sm'
                         : 'text-muted-foreground hover:bg-primary/10 hover:text-primary',
@@ -362,7 +362,7 @@ export default function SearchWorkbench({
                 id={`search-panel-${state.mode}`}
                 role="tabpanel"
                 aria-labelledby={`search-tab-${state.mode}`}
-                className="p-3 sm:p-4"
+                className="public-search-workbench__panel p-3"
               >
                 {state.mode === 'ai' && (
                   <div className="mx-auto max-w-5xl">
@@ -381,7 +381,7 @@ export default function SearchWorkbench({
                           className={inputClass(Boolean(errors.ai))}
                         />
                       </label>
-                      <button disabled={loading} className="btn-royal min-h-11 min-w-36 disabled:opacity-60">
+                      <button disabled={loading} className="btn-royal min-h-10 min-w-32 disabled:opacity-60">
                         <BrainCircuit className="h-4 w-4" aria-hidden="true" />
                         {loading ? 'Searching…' : 'Ask AI'}
                       </button>
@@ -431,7 +431,7 @@ export default function SearchWorkbench({
                       />
                       <ErrorText id={`${placement}-global-error`} message={errors.globalDigits} />
                     </label>
-                    <button disabled={loading} className="btn-royal min-h-11 min-w-32 disabled:opacity-60">
+                    <button disabled={loading} className="btn-royal min-h-10 min-w-28 disabled:opacity-60">
                       <Search className="h-4 w-4" aria-hidden="true" />
                       Search
                     </button>
@@ -459,7 +459,7 @@ export default function SearchWorkbench({
                         <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                       </span>
                     </label>
-                    <button disabled={loading} className="btn-royal min-h-11 min-w-40 disabled:opacity-60">Show Numbers</button>
+                    <button disabled={loading} className="btn-royal min-h-10 min-w-36 disabled:opacity-60">Show Numbers</button>
                   </div>
                 )}
 

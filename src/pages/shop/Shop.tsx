@@ -231,6 +231,8 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
     setParams(next);
   };
 
+  const highlightFilteredDigits = activeFilters.length > 0;
+
   const FilterOptions = ({ mobile = false }: { mobile?: boolean }) => (
     <div className={`flex min-h-0 flex-1 flex-col pt-2 ${mobile ? '' : 'px-3 pb-3'}`}>
       <div className="grid grid-cols-2 rounded-lg border border-border bg-muted p-0.5" role="tablist" aria-label="Filter groups">
@@ -482,7 +484,7 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
                     <h2 id={`alternative-${group.relaxed_key}`} className="mt-1 text-lg font-black text-foreground">{group.label}</h2>
                   </div>
                   <div className="number-card-grid">
-                    {group.items.slice(0, 6).map((number) => <NumberCard key={number.number_id} item={number} />)}
+                    {group.items.slice(0, 6).map((number) => <NumberCard key={number.number_id} item={number} highlightDigits={highlightFilteredDigits} />)}
                   </div>
                 </section>
               ))}
@@ -492,7 +494,7 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
               <MotionGrid className="number-card-grid">
                 {items.map((number) => (
                   <MotionGridItem key={number.number_id}>
-                    <NumberCard item={number} />
+                    <NumberCard item={number} highlightDigits={highlightFilteredDigits} />
                   </MotionGridItem>
                 ))}
               </MotionGrid>

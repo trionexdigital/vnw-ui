@@ -84,7 +84,7 @@ export default function PreBook() {
 
   return (
     <main className="mx-auto max-w-[1540px] px-4 py-8">
-      <section className="overflow-hidden rounded-[1.75rem] border border-primary/20 bg-gradient-to-br from-card via-card to-primary/10 p-6 shadow-sm sm:p-8">
+      <section className="public-page-hero overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-card via-card to-primary/10 p-5 shadow-sm sm:p-6">
         <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
           <div className="max-w-3xl">
             <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-black uppercase tracking-wider text-primary"><CalendarClock className="h-4 w-4" /> Exclusive pre-booking</span>
@@ -99,7 +99,7 @@ export default function PreBook() {
         </div>
       </section>
 
-      <form onSubmit={(e) => { e.preventDefault(); setApplied(filters); setPage(1); }} className="mt-5 rounded-2xl border border-border bg-card p-3 shadow-sm">
+      <form onSubmit={(e) => { e.preventDefault(); setApplied(filters); setPage(1); }} className="public-control-panel mt-5 rounded-xl border border-border bg-card p-3 shadow-sm">
         <div className="mb-3 flex items-center justify-between"><h2 className="flex items-center gap-2 text-sm font-black text-foreground"><Filter className="h-4 w-4 text-primary" /> Find a pre-book number</h2><button type="button" onClick={reset} className="inline-flex items-center gap-1 text-xs font-bold text-primary"><RotateCcw className="h-3.5 w-3.5" /> Reset</button></div>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
           <label className="relative sm:col-span-2"><Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><input aria-label="Search digits" inputMode="numeric" className="input-luxury h-10 w-full pl-9" placeholder="Search digits" value={filters.q} onChange={(e) => setFilters({ ...filters, q: e.target.value.replace(/\D/g, '').slice(0, 10) })} /></label>

@@ -15,7 +15,7 @@ vi.mock('@/core/api/vnwAPI', () => ({
 }));
 
 vi.mock('@/shared/components/NumberCard', () => ({
-  default: ({ item }: { item: any }) => <article>{item.display_number}</article>,
+  default: ({ item, highlightDigits = false }: { item: any; highlightDigits?: boolean }) => <article data-highlight-digits={highlightDigits ? 'true' : 'false'}>{item.display_number}</article>,
 }));
 
 vi.mock('@/shared/components/ui-bits', () => ({
@@ -69,6 +69,12 @@ describe('shop search results and filters', () => {
     expect(stickyShell).toHaveClass('max-h-[calc(100vh-7rem)]', 'overflow-hidden');
     expect(stickyShell?.querySelector('[role="tabpanel"]')).toHaveClass('overflow-y-auto');
     expect(screen.getByText('12')).toBeInTheDocument();
+    expect(screen.getByText('98765 43210')).toHaveAttribute('data-highlight-digits', 'false');
+  });
+
+  it('enables digit highlighting only after a search filter is active', async () => {
+    renderShop('/shop?ends_with=786');
+    expect(await screen.findByText('98765 43210')).toHaveAttribute('data-highlight-digits', 'true');
   });
 
   it('keeps sorting in the compact filter-header icon control', async () => {

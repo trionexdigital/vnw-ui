@@ -175,14 +175,14 @@ describe('NumberCard automatic category badges', () => {
             catalog[0],
             catalog[1],
             { slug: 'three-digit-numbers', name: 'Three Digit Numbers' },
-            { slug: 'without-248-numbers', name: 'Without 248 Numbers' },
+            { slug: 'without-248-numbers', name: 'Without 248 Numbers (Numerology)' },
           ],
           primary_category: {
             slug: 'doubling-numbers',
             name: 'Doubling Numbers',
             match_spans: [{ start: 1, end: 3 }, { start: 3, end: 5 }, { start: 5, end: 7 }],
           },
-        }} />
+        }} highlightDigits />
         <LocationProbe />
       </MemoryRouter>,
     );
@@ -212,6 +212,30 @@ describe('NumberCard automatic category badges', () => {
     await waitFor(() => expect(screen.getByLabelText('Current location')).toHaveTextContent('/number/11/similar'));
     await user.click(screen.getByRole('button', { name: 'Doubling Numbers' }));
     await waitFor(() => expect(screen.getByLabelText('Current location')).toHaveTextContent('/shop?category=doubling-numbers'));
+  });
+
+  it('keeps digit evidence unhighlighted unless a search result explicitly enables it', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <NumberCard item={{
+          number_id: 12,
+          number_value: '9006622121',
+          display_number: '90066 22121',
+          mrp: 20000,
+          offer_price: 15000,
+          primary_category: {
+            slug: 'doubling-numbers',
+            name: 'Doubling Numbers',
+            match_spans: [{ start: 1, end: 3 }, { start: 3, end: 5 }, { start: 5, end: 7 }],
+          },
+        }} />
+      </MemoryRouter>,
+    );
+
+    expect(container.querySelectorAll('[data-match="true"]')).toHaveLength(0);
+    expect(screen.getByRole('img', {
+      name: 'VIP number, digits 9 0 0 6 6 2 2 1 2 1.',
+    })).toBeInTheDocument();
   });
 
   it('uses the readable 4-3-3 fallback when match evidence is malformed', () => {
