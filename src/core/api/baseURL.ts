@@ -1,4 +1,4 @@
-export const WEB_URL = 'https://vnw-server.onrender.com/vipnumberworld/';
+export const WEB_URL = 'https://store.vipnumberworld.com/vipnumberworld/';
 export const LOCAL = 'http://localhost:3002/vipnumberworld/';
 
 // Vite replaces DEV at build time, so production bundles cannot accidentally
