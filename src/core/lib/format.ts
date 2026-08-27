@@ -37,7 +37,11 @@ const digits = (s: string) => (s || '').replace(/\D/g, '');
 export const digitTotal = (numStr: string): number =>
   digits(numStr).split('').reduce((s, d) => s + Number(d), 0);
 
-/** Single-digit numerology root (shown as SUM). */
+/** One additional digit-sum pass over TOTAL, e.g. total 82 -> 8 + 2 = 10. */
+export const digitSumOfTotal = (numStr: string): number =>
+  digitTotal(String(digitTotal(numStr)));
+
+/** Single-digit numerology root used by numerology filters and catalog data. */
 export const numerologySum = (numStr: string): number => {
   let sum = digitTotal(numStr);
   while (sum > 9) sum = String(sum).split('').reduce((s, d) => s + Number(d), 0);

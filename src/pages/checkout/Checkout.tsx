@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { ShieldCheck, Tag, Loader2 } from 'lucide-react';
-import { accessoriesAPI, accessoryImageUrl, cartAPI, numbersAPI, ordersAPI, paymentsAPI } from '@/core/api/vnwAPI';
+import { cartAPI, numbersAPI, ordersAPI, paymentsAPI } from '@/core/api/vnwAPI';
 import { useStore } from '@/shared/store/useStore';
 import { useAppSelector } from '@/app/hooks';
 import { useToast } from '@/shared/hooks/use-toast';
@@ -17,24 +17,18 @@ export default function Checkout() {
   const { refreshCounts } = useStore();
   const { user } = useAppSelector((s) => s.auth);
   const numberId = params.get('number_id');
-  const accessoryId = params.get('accessory_id');
-  const accessoryQuantity = Math.max(1, Number(params.get('quantity')) || 1);
 
   const [items, setItems] = useState<any[]>([]);
   const [subtotal, setSubtotal] = useState(0);
   const [coupon, setCoupon] = useState('');
   const [loading, setLoading] = useState(true);
   const [paying, setPaying] = useState(false);
-  const [shipping, setShipping] = useState({ name: user?.name || '', phone: user?.phone || '', address_line1: '', address_line2: '', city: '', state: '', postal_code: '' });
 
   useEffect(() => {
     (async () => {
       setLoading(true);
       try {
-        if (accessoryId) {
-          const p = await accessoriesAPI.detailById(Number(accessoryId));
-          setItems([{ ...p, item_type: 'ACCESSORY', quantity: accessoryQuantity, line_total: Number(p.offer_price) * accessoryQuantity }]); setSubtotal(Number(p.offer_price) * accessoryQuantity);
-        } else if (numberId) {
+        if (numberId) {
           const n = await numbersAPI.detail(Number(numberId));
           if (getNumberPurchaseMode(n) === 'PREBOOK') {
             navigate(`/pre-book/${n.number_id}/checkout`, { replace: true });
@@ -47,16 +41,13 @@ export default function Checkout() {
         }
       } catch { /* ignore */ } finally { setLoading(false); }
     })();
-  }, [numberId, accessoryId]);
-
-  const hasAccessories = items.some((item) => item.item_type === 'ACCESSORY');
+  }, [numberId, navigate]);
 
   const pay = async () => {
     setPaying(true);
     try {
       // 1) create the order (server reserves the numbers)
-      if (hasAccessories && (!shipping.name.trim() || !/^\+?[0-9 ]{10,15}$/.test(shipping.phone) || !shipping.address_line1.trim() || !shipping.city.trim() || !shipping.state.trim() || !/^[1-9][0-9]{5}$/.test(shipping.postal_code))) throw new Error('Please complete the delivery address with a valid phone and six-digit postal code.');
-      const order = await ordersAPI.create({ number_id: numberId ? Number(numberId) : undefined, accessory_id: accessoryId ? Number(accessoryId) : undefined, accessory_quantity: accessoryQuantity, coupon_code: coupon || undefined, shipping: hasAccessories ? shipping : undefined });
+      const order = await ordersAPI.create({ number_id: numberId ? Number(numberId) : undefined, coupon_code: coupon || undefined });
       // 2) create the Razorpay order
       const rp = await paymentsAPI.createRazorpayOrder(order.order_id);
 
@@ -111,16 +102,14 @@ export default function Checkout() {
         <h3 className="mb-4 font-semibold text-foreground">Order Items</h3>
         <div className="space-y-2">
           {items.map((it) => (
-            <div key={`${it.item_type}-${it.item_id || it.number_id || it.accessory_id}`} className="flex items-center justify-between border-b border-card-border py-2 last:border-0">
+            <div key={it.number_id} className="flex items-center justify-between border-b border-card-border py-2 last:border-0">
               <div>
-                {it.item_type === 'ACCESSORY' ? <div className="flex items-center gap-3">{it.primary_image_id&&<img src={accessoryImageUrl(it.primary_image_id)} className="h-12 w-12 rounded-lg object-contain" alt=""/>}<div><div className="font-bold text-foreground">{it.name}</div><div className="text-xs text-muted-foreground">{it.brand} · Qty {it.quantity}</div></div></div> : <><div className="text-lg font-bold text-foreground">{it.display_number}</div><div className="text-xs text-muted-foreground">{it.title_label || getPrimaryCategory(it)?.name || 'VIP Number'}</div></>}
+                <div className="vnw-card-numeral text-lg text-foreground">{it.display_number}</div><div className="text-xs text-muted-foreground">{it.title_label || getPrimaryCategory(it)?.name || 'VIP Number'}</div>
               </div>
               <span className="font-semibold text-foreground">{formatINR(it.line_total ?? it.offer_price)}</span>
             </div>
           ))}
         </div>
-
-        {hasAccessories && <fieldset className="mt-6 border-t border-card-border pt-5"><legend className="mb-3 font-semibold text-foreground">Free delivery address</legend><div className="grid gap-3 sm:grid-cols-2">{([['name','Recipient name'],['phone','Phone'],['address_line1','Address line 1'],['address_line2','Address line 2 (optional)'],['city','City'],['state','State'],['postal_code','Postal code']] as const).map(([key,label])=><label key={key} className={key.startsWith('address')?'sm:col-span-2 text-xs font-bold text-muted-foreground':'text-xs font-bold text-muted-foreground'}>{label}<input required={!['address_line2'].includes(key)} inputMode={key==='phone'||key==='postal_code'?'numeric':undefined} className="mt-1 min-h-11 w-full rounded-xl border border-border bg-secondary px-3 text-sm outline-none focus:border-primary" value={shipping[key]} onChange={e=>setShipping({...shipping,[key]:e.target.value})}/></label>)}</div></fieldset>}
 
         <div className="mt-5 flex items-center gap-2">
           <Tag className="h-4 w-4 text-primary" />

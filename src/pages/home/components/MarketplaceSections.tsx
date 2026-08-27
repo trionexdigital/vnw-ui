@@ -70,7 +70,7 @@ export function CorporatePackCard({ pack }: { pack: CorporatePack }) {
       <div className="mt-4 grid gap-2 sm:grid-cols-2">
         {pack.numbers.map((number) => (
           <Link key={number.number_id} to={`/number/${number.number_id}`} className="rounded-xl border border-border bg-background px-3 py-2 transition hover:border-primary">
-            <div className="font-black tracking-wide text-foreground">{number.display_number}</div>
+            <div className="vnw-card-numeral tracking-wide text-foreground">{number.display_number}</div>
             <div className="mt-0.5 flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
               <span>VIP number</span><span>{formatINR(number.offer_price)}</span>
             </div>

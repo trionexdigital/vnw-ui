@@ -169,6 +169,7 @@ describe('NumberCard automatic category badges', () => {
           display_number: '90066 22121',
           title_label: 'Doubling Numbers',
           operator: 'Jio',
+          numerology_sum: 2,
           mrp: 20000,
           offer_price: 15000,
           categories: [
@@ -192,16 +193,26 @@ describe('NumberCard automatic category badges', () => {
     expect(screen.queryByText(/^\+\d+$/)).not.toBeInTheDocument();
     expect(screen.getAllByText('Doubling Numbers')).toHaveLength(1);
     expect(screen.getByText('Signature VIP Number')).toBeInTheDocument();
-    expect(container.querySelector('.number-card-shell')).toHaveClass('min-h-[218px]');
+    expect(container.querySelectorAll('.number-card__metric')[0]).toHaveTextContent('Total29');
+    expect(container.querySelectorAll('.number-card__metric')[1]).toHaveTextContent('Sum11');
+    expect(container.querySelector('.number-card-shell')).toHaveClass('min-h-[220px]');
     expect(screen.queryByText('Verified')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'add to wishlist' })).toHaveAttribute('aria-pressed', 'false');
-    expect(screen.getByRole('button', { name: 'compare' })).toHaveAttribute('aria-pressed', 'false');
+    const compareButton = screen.getByRole('button', { name: 'Add to compare' });
+    expect(compareButton).toHaveAttribute('aria-pressed', 'false');
+    await user.hover(compareButton);
+    const tooltipCopies = await screen.findAllByText('Compare price, pattern & numerology.');
+    expect(tooltipCopies.some((node) => node.getAttribute('data-state') !== 'closed' && node.closest('[role="tooltip"]'))).toBe(true);
+    await user.unhover(compareButton);
     expect(container.querySelector('.number-card__glow')).toBeInTheDocument();
     expect(container.querySelector('.number-card__butterflies')).not.toBeInTheDocument();
     expect(screen.queryByText(/catalogued series/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Portable to any eligible operator/i)).not.toBeInTheDocument();
     expect(container.querySelector('.number-card__primary-action')).toHaveTextContent('Buy Now');
-    expect(screen.getByRole('button', { name: /find numbers similar to 90066 22121/i })).toHaveTextContent('Similar Numbers');
+    expect(container.querySelector('.number-card__primary-action')).toHaveClass('number-card__cta');
+    expect(screen.getByRole('button', { name: 'add to cart' })).toHaveClass('number-card__cta');
+    expect(compareButton).not.toHaveClass('number-card__cta');
+    expect(screen.getByRole('button', { name: /find numbers similar to 90066 22121/i })).toHaveTextContent('Similar');
     expect(container.querySelector('[class*="blue"]')).not.toBeInTheDocument();
     expect(Array.from(container.querySelectorAll('[data-match="true"]')).map((node) => node.textContent)).toEqual(['00', '66', '22']);
     expect(screen.getByRole('img', {

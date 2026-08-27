@@ -21,11 +21,10 @@ export default function AdminOrders() {
     catch (e: any) { toast({ title: 'Error', description: e.message, variant: 'destructive' }); }
   };
   const openDetail=async(id:number)=>{try{setDetail(await adminAPI.orderDetail(id));}catch(e:any){toast({title:'Could not load order',description:e.message,variant:'destructive'});}};
-  const updateItem=async(item:any,status:string)=>{try{await adminAPI.accessoryFulfilmentUpdate({accessory_order_item_id:item.accessory_order_item_id,fulfillment_status:status,carrier:item.carrier,tracking_number:item.tracking_number});setDetail(await adminAPI.orderDetail(detail.order_id));toast({title:'Accessory fulfilment updated'});}catch(e:any){toast({title:'Update failed',description:e.message,variant:'destructive'});}};
 
   return (
     <div>
-      <PageHeader title="Orders" subtitle="Manage customer orders & fulfilment" />
+      <PageHeader title="Orders" subtitle="Manage customer VIP number orders" />
       <div className="mb-4 flex flex-wrap gap-2">
         <button onClick={() => setFilter('')} className={`rounded-full px-3 py-1 text-xs ${!filter ? 'btn-gold' : 'btn-gold-outline'}`}>All</button>
         {ORDER_STATUSES.map((s) => <button key={s} onClick={() => setFilter(s)} className={`rounded-full px-3 py-1 text-xs ${filter === s ? 'btn-gold' : 'btn-gold-outline'}`}>{s}</button>)}
@@ -50,7 +49,7 @@ export default function AdminOrders() {
           ))}
         </Table>
       )}
-      <Modal open={!!detail} onClose={()=>setDetail(null)} title={detail?`Order ${detail.order_no}`:'Order'} wide>{detail&&<div className="space-y-4"><div className="grid gap-3 rounded-xl bg-muted p-4 text-sm sm:grid-cols-2"><div><span className="text-muted-foreground">Payment</span><br/><StatusBadge status={detail.payment_status}/></div><div><span className="text-muted-foreground">Order</span><br/><StatusBadge status={detail.status}/></div>{detail.shipping_name&&<div className="sm:col-span-2"><b>Delivery:</b> {detail.shipping_name}, {detail.shipping_address_line1}, {detail.shipping_city}, {detail.shipping_state} {detail.shipping_postal_code} · {detail.shipping_phone}</div>}</div>{detail.items?.map((it:any)=><div key={`${it.item_type}-${it.item_id}`} className="rounded-xl border border-border p-4"><div className="flex items-center justify-between gap-3"><div><b>{it.item_type==='ACCESSORY'?it.name:it.display_number}</b><div className="text-xs text-muted-foreground">{it.item_type} · Qty {it.quantity}</div></div><Money value={it.line_total}/></div>{it.item_type==='ACCESSORY'&&<div className="mt-4 grid gap-2 sm:grid-cols-3"><input className="min-h-11 rounded-xl border border-border bg-secondary px-3 text-sm" placeholder="Carrier" defaultValue={it.carrier||''} onChange={e=>it.carrier=e.target.value}/><input className="min-h-11 rounded-xl border border-border bg-secondary px-3 text-sm" placeholder="Tracking number" defaultValue={it.tracking_number||''} onChange={e=>it.tracking_number=e.target.value}/><select className="min-h-11 rounded-xl border border-border bg-secondary px-3 text-sm" value={it.fulfillment_status} onChange={e=>updateItem(it,e.target.value)}>{['PENDING','PACKED','SHIPPED','DELIVERED','CANCELLED','REFUNDED','REPLACEMENT'].map(s=><option key={s}>{s}</option>)}</select></div>}</div>)}</div>}</Modal>
+      <Modal open={!!detail} onClose={()=>setDetail(null)} title={detail?`Order ${detail.order_no}`:'Order'} wide>{detail&&<div className="space-y-4"><div className="grid gap-3 rounded-xl bg-muted p-4 text-sm sm:grid-cols-2"><div><span className="text-muted-foreground">Payment</span><br/><StatusBadge status={detail.payment_status}/></div><div><span className="text-muted-foreground">Order</span><br/><StatusBadge status={detail.status}/></div></div>{detail.items?.map((it:any)=><div key={it.order_item_id || it.item_id} className="rounded-xl border border-border p-4"><div className="flex items-center justify-between gap-3"><div><b>{it.display_number}</b><div className="text-xs text-muted-foreground">VIP number</div></div><Money value={it.line_total}/></div></div>)}</div>}</Modal>
     </div>
   );
 }

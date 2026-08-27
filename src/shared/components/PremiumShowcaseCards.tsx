@@ -39,7 +39,7 @@ export function PremiumNumberShowcaseCard({
         </button>
       </div>
       <div className="flex items-center justify-center gap-2 text-lg font-semibold text-foreground"><Crown className="h-6 w-6 text-primary" /> {title}</div>
-      <h1 className="mt-4 text-5xl font-black tracking-[.08em] text-foreground drop-shadow-[0_2px_0_rgba(217,163,27,.5)] sm:text-7xl">{number}</h1>
+      <h1 className="vnw-card-numeral mt-4 text-5xl tracking-[.08em] text-foreground drop-shadow-[0_2px_0_rgba(217,163,27,.5)] sm:text-7xl">{number}</h1>
       <div className="mx-auto my-6 flex max-w-3xl items-center justify-center gap-4 text-primary">
         <span className="h-px flex-1 bg-gradient-to-r from-transparent via-primary to-primary/20" />
         <span className="text-2xl font-semibold">{pattern}</span>
@@ -48,17 +48,17 @@ export function PremiumNumberShowcaseCard({
       <div className="mx-auto grid max-w-lg grid-cols-2 gap-4">
         <div className="rounded-2xl border border-primary/25 bg-card/60 p-4">
           <div className="text-sm text-muted-foreground">Total</div>
-          <div className="text-3xl font-black text-foreground">{digitTotal(number)}</div>
+          <div className="vnw-card-numeral text-3xl text-foreground">{digitTotal(number)}</div>
         </div>
         <div className="rounded-2xl border border-primary/25 bg-card/60 p-4">
           <div className="text-sm text-muted-foreground">Sum</div>
-          <div className="text-3xl font-black text-foreground">{sum ?? '-'}</div>
+          <div className="vnw-card-numeral text-3xl text-foreground">{sum ?? '-'}</div>
         </div>
       </div>
       <div className="mx-auto mt-6 grid max-w-4xl gap-4 rounded-2xl border border-primary/25 bg-card/60 p-4 sm:grid-cols-[1fr_1.3fr_1fr]">
-        <div><div className="text-sm font-semibold">MRP Price</div><div className="text-2xl text-foreground line-through">{formatINR(mrp)}</div></div>
-        <div><div className="text-sm font-semibold">Offer Price</div><div className="text-4xl font-black text-foreground">{formatINR(offerPrice)}</div></div>
-        <div className="flex items-center justify-center"><span className="rounded-2xl border border-primary/30 bg-primary/10 px-5 py-3 text-xl font-black text-primary">* {discount || 0}% OFF</span></div>
+        <div><div className="text-sm font-semibold">MRP Price</div><div className="vnw-card-numeral text-2xl text-foreground line-through">{formatINR(mrp)}</div></div>
+        <div><div className="text-sm font-semibold">Offer Price</div><div className="vnw-card-numeral text-4xl text-foreground">{formatINR(offerPrice)}</div></div>
+        <div className="flex items-center justify-center"><span className="vnw-card-numeral rounded-2xl border border-primary/30 bg-primary/10 px-5 py-3 text-xl text-primary">* {discount || 0}% OFF</span></div>
       </div>
       {prebook && <div className="mx-auto mt-5 inline-flex items-center gap-2 rounded-2xl border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-black text-primary"><CalendarClock className="h-4 w-4" /> Ready to port on {rtpDate}</div>}
       <div className={`mt-6 grid gap-4 ${prebook ? '' : 'sm:grid-cols-2'}`}>
@@ -92,8 +92,8 @@ export function FamilyPackCard({
       <div className="mx-auto max-w-4xl overflow-hidden rounded-xl border border-primary/25 bg-card/45">
         {numbers.map((n) => (
           <div key={n} className="grid grid-cols-[1fr_auto] items-center border-b border-primary/20 px-3 py-2 text-left last:border-0">
-            <span className="text-lg font-black tracking-[.12em] text-foreground sm:text-xl">{n}</span>
-            <span className="text-lg font-black text-foreground sm:text-xl">{formatINR(perNumber)}</span>
+            <span className="vnw-card-numeral text-lg tracking-[.12em] text-foreground sm:text-xl">{n}</span>
+            <span className="vnw-card-numeral text-lg text-foreground sm:text-xl">{formatINR(perNumber)}</span>
           </div>
         ))}
       </div>
@@ -104,7 +104,7 @@ export function FamilyPackCard({
       </div>
       <div className="mt-3 rounded-xl border border-primary/20 bg-card/60 p-3">
         <div className="text-xs font-bold text-muted-foreground">Total Price</div>
-        <div className="text-2xl font-black text-foreground">{formatINR(total)}</div>
+        <div className="vnw-card-numeral text-2xl text-foreground">{formatINR(total)}</div>
       </div>
       <div className="mt-3 grid gap-2 sm:grid-cols-2">
         <button className="emerald-gradient-bg rounded-xl px-4 py-2.5 text-sm font-black text-primary-foreground"><CheckCircle2 className="mr-1.5 inline h-5 w-5" />Select Pack</button>

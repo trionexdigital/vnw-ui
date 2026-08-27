@@ -146,25 +146,6 @@ function CardGridWire({ count = 8, wide = false }: { count?: number; wide?: bool
   );
 }
 
-function ProductGridWire() {
-  return (
-    <div data-wireframe="products" className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="vnw-card overflow-hidden p-0">
-          <Wire className="h-48 rounded-none sm:h-52" />
-          <div className="p-4">
-            <Wire className="h-3 w-28 rounded-full" />
-            <Wire className="mt-3 h-5 w-full rounded-full" />
-            <Wire className="mt-2 h-5 w-4/5 rounded-full" />
-            <div className="mt-4 flex gap-2"><Wire className="h-7 w-24 rounded-full" /><Wire className="h-5 w-16 rounded-full" /></div>
-            <Wire className="mt-4 h-11 rounded-2xl" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 function FamilyPackWire() {
   return (
     <div data-wireframe="family-packs" className="grid gap-3 lg:grid-cols-3">
@@ -288,13 +269,12 @@ function GenericWire({ label }: { label?: string }) {
   );
 }
 
-export function Loader({ label, variant }: { label?: string; variant?: 'dashboard' | 'table' | 'cards' | 'products' | 'packs' | 'faq' | 'detail' | 'form' | 'shop' | 'generic' }) {
+export function Loader({ label, variant }: { label?: string; variant?: 'dashboard' | 'table' | 'cards' | 'packs' | 'faq' | 'detail' | 'form' | 'shop' | 'generic' }) {
   const { pathname } = useLocation();
   const inferred = variant
     || (pathname === '/' || pathname.includes('/shop') || pathname.includes('/wishlist') || pathname === '/pre-book' || pathname === '/newly-added-vip-numbers' || pathname === '/premium-numbers' ? 'shop'
-      : pathname.includes('/number/') || pathname.includes('/orders/') || /^\/accessories\/[^/]+/.test(pathname) || pathname === '/cart' || pathname === '/compare' ? 'detail'
-        : pathname === '/accessories' ? 'products'
-          : pathname === '/family-pack' ? 'packs'
+      : pathname.includes('/number/') || pathname.includes('/orders/') || pathname === '/cart' || pathname === '/compare' ? 'detail'
+        : pathname === '/family-pack' ? 'packs'
             : pathname === '/faq' ? 'faq'
               : pathname === '/categories' || pathname === '/numerology' ? 'cards'
           : pathname.includes('/checkout') || pathname === '/contact' ? 'form'
@@ -307,7 +287,6 @@ export function Loader({ label, variant }: { label?: string; variant?: 'dashboar
       {inferred === 'dashboard' && <DashboardWire />}
       {inferred === 'table' && <TableWire />}
       {inferred === 'cards' && <CardGridWire count={10} wide />}
-      {inferred === 'products' && <ProductGridWire />}
       {inferred === 'packs' && <FamilyPackWire />}
       {inferred === 'faq' && <FaqWire />}
       {inferred === 'detail' && <><HeaderWire /><DetailWire /></>}

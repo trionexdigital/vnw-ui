@@ -193,14 +193,14 @@ export default function FamilyPackCard({ pack, wishedIds, onWishlistChange }: {
                 </motion.button>
                 <Link to={`/number/${number.number_id}`} className="min-w-0 rounded-md px-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
                   <span className="block text-[7px] font-black uppercase tracking-[.11em] text-primary">VIP Number</span>
-                  <span className="family-pack-card__number block whitespace-nowrap text-sm font-black tracking-[.025em]">{number.display_number}</span>
-                  <span className="family-pack-card__price block whitespace-nowrap text-[10px] font-black">{formatINR(number.offer_price)}</span>
+                  <span className="family-pack-card__number vnw-card-numeral block whitespace-nowrap text-sm tracking-[.025em]">{number.display_number}</span>
+                  <span className="family-pack-card__price vnw-card-numeral block whitespace-nowrap text-[10px]">{formatINR(number.offer_price)}</span>
                 </Link>
                 <div className="family-pack-card__number-actions flex shrink-0 items-center gap-1">
                   <motion.button whileHover={reduceMotion ? undefined : { scale: 1.1, rotate: wished ? -5 : 5 }} whileTap={reduceMotion ? undefined : { scale: .84 }} type="button" onClick={() => toggleWishlist(number)} disabled={activeAction === `wish-${number.number_id}`} aria-label={`${wished ? 'Remove' : 'Add'} ${number.display_number} ${wished ? 'from' : 'to'} wishlist`} aria-pressed={wished} className={`number-card__secondary-action grid h-7 w-7 place-items-center rounded-lg border ${wished ? 'is-active' : ''}`}>
                     <Heart className="h-3.5 w-3.5" fill={wished ? 'currentColor' : 'none'} />
                   </motion.button>
-                  <motion.button whileHover={reduceMotion ? undefined : { y: -1, scale: 1.02 }} whileTap={reduceMotion ? undefined : { scale: .95 }} type="button" onClick={() => buyOne(number)} disabled={!pack.is_available} className="number-card__primary-action inline-flex h-7 items-center justify-center gap-0.5 whitespace-nowrap rounded-lg px-1.5 text-[8px] font-black disabled:opacity-50">
+                  <motion.button whileHover={reduceMotion ? undefined : { y: -1, scale: 1.02 }} whileTap={reduceMotion ? undefined : { scale: .95 }} type="button" onClick={() => buyOne(number)} disabled={!pack.is_available} className="number-card__cta number-card__primary-action inline-flex h-7 items-center justify-center gap-0.5 whitespace-nowrap rounded-lg px-1.5 text-[8px] font-black disabled:opacity-50">
                     <Zap className="h-3 w-3" /> Buy Now
                   </motion.button>
                   <motion.button whileHover={reduceMotion ? undefined : { y: -1, scale: 1.07 }} whileTap={reduceMotion ? undefined : { scale: .9 }} type="button" onClick={() => addOne(number)} disabled={!pack.is_available || activeAction === `cart-${number.number_id}`} aria-label={`Add ${number.display_number} to cart`} className="number-card__secondary-action grid h-7 w-7 place-items-center rounded-lg border disabled:opacity-50">
@@ -217,17 +217,17 @@ export default function FamilyPackCard({ pack, wishedIds, onWishlistChange }: {
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
             <div className="text-[9px] font-bold uppercase tracking-wide text-muted-foreground">{selectedNumbers.length} of {pack.size} selected</div>
-            <motion.div key={selectedTotal} initial={reduceMotion ? false : { opacity: .4, y: 3 }} animate={{ opacity: 1, y: 0 }} className="family-pack-card__total text-base font-black">{formatINR(selectedNumbers.length ? selectedTotal : 0)}</motion.div>
+            <motion.div key={selectedTotal} initial={reduceMotion ? false : { opacity: .4, y: 3 }} animate={{ opacity: 1, y: 0 }} className="family-pack-card__total vnw-card-numeral text-base">{formatINR(selectedNumbers.length ? selectedTotal : 0)}</motion.div>
           </div>
           <motion.button whileTap={reduceMotion ? undefined : { scale: .94 }} type="button" onClick={() => setSelectedIds(allSelected ? new Set() : new Set(pack.numbers.map((number) => number.number_id)))} className="number-card__secondary-action rounded-lg border px-2 py-1 text-[9px] font-black">
             {allSelected ? 'Clear selection' : 'Select all'}
           </motion.button>
         </div>
         <div className="mt-1.5 grid grid-cols-2 gap-1.5">
-          <motion.button whileHover={reduceMotion ? undefined : { y: -1 }} whileTap={reduceMotion ? undefined : { scale: .97 }} type="button" onClick={() => addSelected(false)} disabled={!selectedNumbers.length || !pack.is_available || activeAction !== null} className="number-card__secondary-action inline-flex min-h-8 items-center justify-center gap-1 whitespace-nowrap rounded-lg border px-1 text-[8px] font-black disabled:cursor-not-allowed disabled:opacity-50">
+          <motion.button whileHover={reduceMotion ? undefined : { y: -1 }} whileTap={reduceMotion ? undefined : { scale: .97 }} type="button" onClick={() => addSelected(false)} disabled={!selectedNumbers.length || !pack.is_available || activeAction !== null} className="number-card__cta number-card__secondary-action inline-flex min-h-8 items-center justify-center gap-1 whitespace-nowrap rounded-lg border px-1 text-[8px] font-black disabled:cursor-not-allowed disabled:opacity-50">
             <ShoppingCart className="h-3.5 w-3.5" /> {activeAction === 'cart-selected' ? 'Adding…' : 'Add selected to cart'}
           </motion.button>
-          <motion.button whileHover={reduceMotion ? undefined : { y: -1, scale: 1.01 }} whileTap={reduceMotion ? undefined : { scale: .97 }} type="button" onClick={() => addSelected(true)} disabled={!selectedNumbers.length || !pack.is_available || activeAction !== null} className="number-card__primary-action inline-flex min-h-8 items-center justify-center gap-1 whitespace-nowrap rounded-lg px-1 text-[8px] font-black disabled:cursor-not-allowed disabled:opacity-50">
+          <motion.button whileHover={reduceMotion ? undefined : { y: -1, scale: 1.01 }} whileTap={reduceMotion ? undefined : { scale: .97 }} type="button" onClick={() => addSelected(true)} disabled={!selectedNumbers.length || !pack.is_available || activeAction !== null} className="number-card__cta number-card__primary-action inline-flex min-h-8 items-center justify-center gap-1 whitespace-nowrap rounded-lg px-1 text-[8px] font-black disabled:cursor-not-allowed disabled:opacity-50">
             <Zap className="h-3.5 w-3.5" /> {activeAction === 'buy-selected' ? 'Preparing…' : 'Buy selected'}
           </motion.button>
         </div>

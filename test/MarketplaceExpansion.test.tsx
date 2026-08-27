@@ -102,6 +102,9 @@ describe('marketplace expansion', () => {
     expect(screen.queryByText('Vi')).not.toBeInTheDocument();
     expect(screen.getByText('2 of 2 selected')).toBeInTheDocument();
     expect(screen.getAllByRole('button', { name: 'Buy Now' })).toHaveLength(2);
+    expect(screen.getAllByRole('button', { name: 'Buy Now' }).every((button) => button.classList.contains('number-card__cta'))).toBe(true);
+    expect(screen.getAllByRole('button', { name: /Add selected to cart/i })[0]).toHaveClass('number-card__cta');
+    expect(screen.getAllByRole('button', { name: /Buy selected/i })[0]).toHaveClass('number-card__cta');
 
     await user.click(screen.getByRole('button', { name: 'Add 9155 915 915 to cart' }));
     await waitFor(() => expect(add).toHaveBeenCalledWith(1));

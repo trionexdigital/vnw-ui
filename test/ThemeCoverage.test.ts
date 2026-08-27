@@ -102,6 +102,9 @@ describe('theme coverage', () => {
     expect(declaredPaths).toEqual(expect.arrayContaining(['/', '/login', '/dashboard', '/employee', '/dealer', '/admin']));
     expect(declaredPaths.length).toBeGreaterThanOrEqual(45);
     expect(publicLayout).toContain('<ThemeControl');
+    expect(publicLayout).toContain('to="/compare" aria-label="Compare numbers"');
+    expect(publicLayout).toContain('<HeaderIconTooltip');
+    expect(publicLayout).not.toContain('aria-label="Notifications"');
     expect(accountLayout).toContain('<ThemeControl');
     expect(auth).toContain('<ThemeControl');
   });

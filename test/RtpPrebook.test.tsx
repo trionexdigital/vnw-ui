@@ -23,6 +23,8 @@ describe('RTP purchase-mode contract', () => {
     expect(screen.getByRole('button', { name: /pre-book/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /add to cart/i })).not.toBeInTheDocument();
     expect(screen.getByTitle(/RTP on/)).toHaveClass('number-card__verified');
+    expect(screen.getByTitle(/RTP on/)).toHaveClass('number-card__rtp-date');
+    expect(screen.getByTitle(/RTP on/).parentElement).toHaveClass('number-card__identity-row--prebook');
     expect(screen.queryByText('Verified')).not.toBeInTheDocument();
   });
 

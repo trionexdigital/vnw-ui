@@ -45,7 +45,6 @@ const ADMIN_MENU: MenuItem[] = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/admin/numbers', label: 'Numbers', icon: Crown },
   { to: '/admin/home-premium', label: 'Premium Homepage', icon: Star },
-  { to: '/admin/accessories', label: 'Accessories', icon: ShoppingBag },
   { to: '/admin/deals-of-day', label: 'Lucky Pick of the Day', icon: Sparkles },
   { to: '/admin/orders', label: 'Orders', icon: ShoppingBag },
   { to: '/admin/prebooks', label: 'Pre-books & Refunds', icon: CalendarClock },
@@ -67,7 +66,7 @@ const ADMIN_MENU: MenuItem[] = [
 
 const ADMIN_GROUPS = [
   { label: 'Overview', items: ['Dashboard'] },
-  { label: 'Catalog', items: ['Numbers', 'Premium Homepage', 'Accessories', 'Lucky Pick of the Day', 'Carousel', 'Coupons'] },
+  { label: 'Catalog', items: ['Numbers', 'Premium Homepage', 'Lucky Pick of the Day', 'Carousel', 'Coupons'] },
   { label: 'Operations', items: ['Orders', 'Pre-books & Refunds', 'Sell Requests', 'Approvals', 'Payouts'] },
   { label: 'People', items: ['Users', 'Dealers', 'Subscribers'] },
   { label: 'Trust', items: ['Reviews', 'Testimonials', 'Trusted Clients', 'FAQs', 'Messages', 'Settings'] },

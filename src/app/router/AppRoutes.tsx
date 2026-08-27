@@ -25,8 +25,6 @@ const Numerology = lazy(() => import('@/pages/numerology/Numerology'));
 const HowItWorks = lazy(() => import('@/pages/static/HowItWorks'));
 const FamilyPack = lazy(() => import('@/pages/corporate/CorporateElitePack'));
 const Faq = lazy(() => import('@/pages/static/Faq'));
-const Accessories = lazy(() => import('@/pages/accessories/Accessories'));
-const AccessoryDetail = lazy(() => import('@/pages/accessories/AccessoryDetail'));
 const LegalPage = lazy(() => import('@/pages/legal/LegalPage'));
 const Auth = lazy(() => import('@/pages/auth/Auth'));
 
@@ -73,7 +71,6 @@ const AdminSettings = lazy(() => import('@/pages/admin/AdminSettings'));
 const AdminSellRequests = lazy(() => import('@/pages/admin/AdminSellRequests'));
 const AdminApprovals = lazy(() => import('@/pages/admin/AdminApprovals'));
 const AdminCreateDealer = lazy(() => import('@/pages/admin/AdminCreateDealer'));
-const AdminAccessories = lazy(() => import('@/pages/admin/AdminAccessories'));
 const AdminHomePremium = lazy(() => import('@/pages/admin/AdminHomePremium'));
 
 const dealerRoles = ['DEALER', 'ADMIN'];
@@ -112,8 +109,6 @@ export default function AppRoutes() {
         <Route path="/family-pack" element={<FamilyPack />} />
         <Route path="/corporate-elite-pack" element={<Navigate to="/family-pack" replace />} />
         <Route path="/faq" element={<Faq />} />
-        <Route path="/accessories" element={<Accessories />} />
-        <Route path="/accessories/:slug" element={<AccessoryDetail />} />
         <Route path="/terms-and-conditions" element={<LegalPage policyKey="terms-and-conditions" />} />
         <Route path="/privacy-policy" element={<LegalPage policyKey="privacy-policy" />} />
         <Route path="/refund-policy" element={<LegalPage policyKey="refund-policy" />} />
@@ -187,7 +182,6 @@ export default function AppRoutes() {
         <Route path="/admin/subscribers" element={<RoleGuard roles={adminRoles}><AdminSubscribers /></RoleGuard>} />
         <Route path="/admin/messages" element={<RoleGuard roles={adminRoles}><AdminMessages /></RoleGuard>} />
         <Route path="/admin/settings" element={<RoleGuard roles={adminRoles}><AdminSettings /></RoleGuard>} />
-        <Route path="/admin/accessories" element={<RoleGuard roles={adminRoles}><AdminAccessories /></RoleGuard>} />
         <Route path="/admin/home-premium" element={<RoleGuard roles={adminRoles}><AdminHomePremium /></RoleGuard>} />
       </Route>
 

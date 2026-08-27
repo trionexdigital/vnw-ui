@@ -38,8 +38,12 @@ export default function Auth({ mode }: { mode: Mode }) {
     try {
       if (mode === 'login') {
         const u: any = await dispatch(login({ email: form.email, password: form.password })).unwrap();
+        const promoSession = String(Date.now() + 5_000);
+        sessionStorage.setItem('vnw_login_promo_expires_at', promoSession);
+        sessionStorage.removeItem('vnw_login_promo_started');
+        sessionStorage.removeItem('vnw_promo_hidden');
         toast({ title: 'Welcome back!' });
-        navigate(homeFor(u?.role));
+        navigate((u?.role || 'USER').toUpperCase() === 'USER' ? '/' : homeFor(u?.role));
       } else if (mode === 'register') {
         if (form.password !== form.confirm_password) { toast({ title: 'Passwords do not match', variant: 'destructive' }); return; }
         const u: any = await dispatch(registerUser({

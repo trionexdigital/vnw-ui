@@ -2,7 +2,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {
   Search, Heart, ShoppingCart, User, LogOut, LayoutDashboard, Phone, MessageCircle,
-  ChevronUp, Facebook, Instagram, Youtube, Mail, Globe, MapPin, Bell, Menu, X, Sparkles, Crown, CalendarClock,
+  ChevronUp, Facebook, Instagram, Youtube, Mail, Globe, MapPin, GitCompareArrows, Menu, X, Sparkles, Crown, CalendarClock,
 } from 'lucide-react';
 import { useStore } from '@/shared/store/useStore';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
@@ -16,6 +16,7 @@ import { ThemeControl } from '@/shared/components/ThemeControl';
 import { AnimatePresence, motion } from 'framer-motion';
 import { MotionPage } from '@/shared/motion/MotionPrimitives';
 import PublicScrollMotion from '@/shared/motion/PublicScrollMotion';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui/tooltip';
 
 function Logo() {
   return (
@@ -30,6 +31,21 @@ function CountBadge({ n }: { n: number }) {
   return <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-amber-700 px-1 text-[9px] font-bold text-white">{n}</span>;
 }
 
+function HeaderIconTooltip({ label, children, side = 'bottom' }: {
+  label: string;
+  children: React.ReactElement;
+  side?: 'top' | 'right' | 'bottom' | 'left';
+}) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent side={side} sideOffset={7} collisionPadding={10} className="w-max max-w-44 px-2 py-1 text-center text-[10px] font-bold leading-tight">
+        {label}
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
 const HEADER_BUTTERFLIES = [
   { left: '5%', top: '62%', wings: ['93', '39'], delay: '-1.2s', duration: '15.5s' },
   { left: '34%', top: '18%', wings: ['78', '87'], delay: '-6.4s', duration: '17s' },
@@ -40,7 +56,7 @@ function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
-  const { cartCount, wishlistCount, refreshCounts } = useStore();
+  const { cartCount, wishlistCount, compare, refreshCounts } = useStore();
   const { user } = useAppSelector((s) => s.auth);
   const token = localService.getToken();
   const [q, setQ] = useState('');
@@ -59,7 +75,6 @@ function Header() {
     { label: 'Home', to: '/' },
     { label: 'How It Works', to: '/how-it-works' },
     { label: 'Family Pack', to: '/family-pack' },
-    { label: 'Accessories', to: '/accessories' },
     { label: 'Numerology', to: '/numerology' },
     { label: 'Contact', to: '/about' },
   ];
@@ -80,7 +95,9 @@ function Header() {
   const AccountMenu = (
     token && user ? (
       <div className="group relative">
-        <button aria-label="Open account menu" className="vnw-interactive grid h-10 w-10 place-items-center rounded-xl border border-border bg-card text-foreground shadow-sm"><User className="h-5 w-5" /></button>
+        <HeaderIconTooltip label="Account menu">
+          <button aria-label="Open account menu" className="vnw-interactive grid h-10 w-10 place-items-center rounded-xl border border-border bg-card text-foreground shadow-sm"><User className="h-5 w-5" /></button>
+        </HeaderIconTooltip>
         <div className="invisible absolute right-0 top-full w-52 pt-3 opacity-0 transition-all group-hover:visible group-hover:opacity-100">
           <div className="glass-panel rounded-xl p-2">
             <div className="px-3 py-2 text-xs text-muted-foreground">Hi, {(user.name || 'User').split(' ')[0]}</div>
@@ -129,7 +146,7 @@ function Header() {
   );
 
   return (
-    <>
+    <TooltipProvider delayDuration={250}>
       <header
         className={`public-header ${isScrolled ? 'is-scrolled' : 'is-top'} fixed inset-x-0 top-0 z-50`}
         data-scrolled={isScrolled}
@@ -160,13 +177,23 @@ function Header() {
           </nav>
           <div className="relative z-10 ml-auto flex shrink-0 items-center gap-1 xl:ml-2 2xl:gap-1.5">
             <Link to="/shop?focus=search" className="vnw-interactive hidden h-11 items-center gap-1.5 rounded-xl border border-primary bg-card/85 px-3 text-xs font-black text-primary shadow-sm xl:inline-flex 2xl:text-sm"><Search className="h-5 w-5" /> Search</Link>
-            <Link to="/pre-book" className="inline-flex h-11 items-center gap-1.5 rounded-xl bg-primary px-2.5 text-xs font-black text-primary-foreground shadow-sm transition hover:-translate-y-0.5 2xl:px-3 2xl:text-sm"><CalendarClock className="h-4 w-4" /><span className="hidden 2xl:inline">Pre-book</span></Link>
-            <Link to="/wishlist" aria-label="Wishlist" className="vnw-interactive relative hidden h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm md:grid"><Heart className="h-5 w-5" /><CountBadge n={wishlistCount} /></Link>
-            <Link to="/cart" aria-label="Cart" className="vnw-interactive relative grid h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm"><ShoppingCart className="h-5 w-5" /><CountBadge n={cartCount} /></Link>
-            <button aria-label="Notifications" className="vnw-interactive relative hidden h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm md:grid"><Bell className="h-5 w-5" /><span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-amber-600" /></button>
+            <HeaderIconTooltip label="Pre-book VIP numbers">
+              <Link to="/pre-book" aria-label="Pre-book VIP numbers" className="inline-flex h-11 items-center gap-1.5 rounded-xl bg-primary px-2.5 text-xs font-black text-primary-foreground shadow-sm transition hover:-translate-y-0.5 2xl:px-3 2xl:text-sm"><CalendarClock className="h-4 w-4" /><span className="hidden 2xl:inline">Pre-book</span></Link>
+            </HeaderIconTooltip>
+            <HeaderIconTooltip label="Wishlist">
+              <Link to="/wishlist" aria-label="Wishlist" className="vnw-interactive relative hidden h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm md:grid"><Heart className="h-5 w-5" /><CountBadge n={wishlistCount} /></Link>
+            </HeaderIconTooltip>
+            <HeaderIconTooltip label="Shopping cart">
+              <Link to="/cart" aria-label="Shopping cart" className="vnw-interactive relative grid h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm"><ShoppingCart className="h-5 w-5" /><CountBadge n={cartCount} /></Link>
+            </HeaderIconTooltip>
+            <HeaderIconTooltip label={compare.length ? `Compare numbers (${compare.length} selected)` : 'Compare numbers'}>
+              <Link to="/compare" aria-label="Compare numbers" className="vnw-interactive relative hidden h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm md:grid"><GitCompareArrows className="h-5 w-5" /><CountBadge n={compare.length} /></Link>
+            </HeaderIconTooltip>
             <ThemeControl className="hidden sm:inline-flex" />
             <div className="hidden items-center gap-2 sm:flex">{AccountMenu}</div>
-            <button onClick={() => setOpen(true)} aria-label="Open navigation menu" className="vnw-interactive grid h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm xl:hidden"><Menu className="h-5 w-5" /></button>
+            <HeaderIconTooltip label="Open navigation menu">
+              <button onClick={() => setOpen(true)} aria-label="Open navigation menu" className="vnw-interactive grid h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm xl:hidden"><Menu className="h-5 w-5" /></button>
+            </HeaderIconTooltip>
           </div>
         </div>
       </header>
@@ -184,7 +211,9 @@ function Header() {
               <Logo />
               <div className="ml-auto flex items-center gap-2">
                 <ThemeControl />
-                <button onClick={() => setOpen(false)} aria-label="Close navigation menu" className="grid h-10 w-10 place-items-center rounded-xl border border-border bg-card text-foreground"><X className="h-5 w-5" /></button>
+                <HeaderIconTooltip label="Close navigation menu" side="left">
+                  <button onClick={() => setOpen(false)} aria-label="Close navigation menu" className="grid h-10 w-10 place-items-center rounded-xl border border-border bg-card text-foreground"><X className="h-5 w-5" /></button>
+                </HeaderIconTooltip>
               </div>
             </div>
             <form onSubmit={submit} className="mb-4 flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2">
@@ -193,6 +222,7 @@ function Header() {
             </form>
             <div className="grid gap-2">
               <Link to="/pre-book" onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-black text-primary-foreground shadow-sm"><CalendarClock className="h-4 w-4" /> Pre-book VIP Numbers</Link>
+              <Link to="/compare" onClick={() => setOpen(false)} className="vnw-interactive flex items-center justify-between gap-2 rounded-xl border border-border bg-card px-4 py-3 text-sm font-bold text-foreground shadow-sm"><span className="flex items-center gap-2"><GitCompareArrows className="h-4 w-4 text-primary" /> Compare Numbers</span>{compare.length ? <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-black text-primary-foreground">{compare.length}</span> : null}</Link>
               {nav.map((n) => (
                 <Link key={n.label} to={n.to} onClick={() => setOpen(false)} className="vnw-interactive rounded-xl border border-border bg-card px-4 py-3 text-sm font-bold text-foreground shadow-sm">{n.label}</Link>
               ))}
@@ -202,7 +232,7 @@ function Header() {
         </motion.div>
       )}
       </AnimatePresence>
-    </>
+    </TooltipProvider>
   );
 }
 
@@ -243,7 +273,6 @@ function Footer() {
               <li><Link to="/shop">VIP Numbers</Link></li>
               <li><Link to="/premium-numbers">Premium Numbers</Link></li>
               <li><Link to="/family-pack">Family Pack</Link></li>
-              <li><Link to="/accessories">Accessories</Link></li>
               <li><Link to="/categories">Number Categories</Link></li>
               <li><Link to="/how-it-works">How It Works</Link></li>
               <li><Link to="/numerology">Numerology</Link></li>
@@ -288,17 +317,36 @@ function Footer() {
   );
 }
 
-function PromoBar() {
+export function PromoBar() {
   const { site } = useStore();
-  const [hidden, setHidden] = useState(() => sessionStorage.getItem('vnw_promo_hidden') === '1');
   const text = site.PROMO_TEXT;
-  if (hidden || !text) return null;
+  const [expiresAt] = useState(() => Number(sessionStorage.getItem('vnw_login_promo_expires_at')) || 0);
+  const [visible, setVisible] = useState(() => {
+    const expiry = Number(sessionStorage.getItem('vnw_login_promo_expires_at')) || 0;
+    return Boolean(localService.getToken() && expiry > Date.now() && sessionStorage.getItem('vnw_login_promo_started') !== String(expiry));
+  });
+
+  const close = () => {
+    setVisible(false);
+    sessionStorage.removeItem('vnw_login_promo_expires_at');
+  };
+
+  useEffect(() => {
+    if (!visible || !text) return;
+    const remaining = expiresAt - Date.now();
+    if (remaining <= 0) { close(); return; }
+    sessionStorage.setItem('vnw_login_promo_started', String(expiresAt));
+    const timer = window.setTimeout(close, remaining);
+    return () => window.clearTimeout(timer);
+  }, [expiresAt, text, visible]);
+
+  if (!visible || !text) return null;
   return (
     <div className="px-3 pt-2">
       <div className="relative mx-auto max-w-7xl rounded-2xl border border-border bg-accent px-8 py-2 text-center text-xs font-black text-accent-foreground shadow-sm sm:text-sm">
         <Link to="/shop?badge=HOT_DEAL">{text}</Link>
-        <button onClick={() => { setHidden(true); sessionStorage.setItem('vnw_promo_hidden', '1'); }}
-          className="absolute right-5 text-accent-foreground/70 hover:text-accent-foreground">x</button>
+        <button onClick={close} aria-label="Close sale announcement"
+          className="absolute right-4 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-lg text-accent-foreground/70 transition-colors hover:bg-black/10 hover:text-accent-foreground"><X className="h-3.5 w-3.5" /></button>
       </div>
     </div>
   );
@@ -338,7 +386,7 @@ export default function PublicLayout() {
     <div className={`customer-motion-scope app-shell-bg flex min-h-screen flex-col ${location.pathname === '/' ? 'is-home-route' : ''}`}>
       <Header />
       <div className="pt-[72px]">
-        <PromoBar />
+        {location.pathname === '/' && <PromoBar />}
       </div>
       <main className="flex-1 pb-20 lg:pb-0">
         <MotionPage routeKey={location.pathname}>

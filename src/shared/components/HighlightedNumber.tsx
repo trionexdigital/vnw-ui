@@ -22,7 +22,7 @@ export default function HighlightedNumber({ number, category, className }: Highl
     >
       <span
         aria-hidden="true"
-        className="flex min-w-0 flex-nowrap items-center justify-center gap-[clamp(0.12rem,0.8vw,0.32rem)] whitespace-nowrap text-[clamp(1.05rem,5.4vw,1.5rem)] font-black leading-none tabular-nums tracking-[0.045em] text-foreground"
+        className="vnw-card-numeral flex min-w-0 flex-nowrap items-center justify-center gap-[clamp(0.12rem,0.8vw,0.32rem)] whitespace-nowrap text-[clamp(1.05rem,5.4vw,1.5rem)] leading-none tracking-[0.045em] text-foreground"
       >
         {model.segments.map((segment, index) => (
           <span

@@ -71,7 +71,7 @@ export default function SimilarNumbers() {
         <div className="relative z-10 grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
           <div>
             <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[.18em] text-primary"><GitCompareArrows className="h-4 w-4" /> Pattern discovery</div>
-            <h1 className="mt-2 text-2xl font-black tracking-tight text-foreground sm:text-3xl">Numbers similar to <span className="similar-numbers-hero__number">{data.source.display_number}</span></h1>
+            <h1 className="mt-2 text-2xl font-black tracking-tight text-foreground sm:text-3xl">Numbers similar to <span className="similar-numbers-hero__number vnw-card-numeral">{data.source.display_number}</span></h1>
             <p className="mt-2 max-w-3xl text-xs leading-5 text-muted-foreground sm:text-sm">Matches blend the automatic category, visible starting and ending sequences, digit positions and frequency, numerology, and price proximity.</p>
           </div>
           <div className="similar-numbers-hero__summary rounded-xl border px-4 py-3">

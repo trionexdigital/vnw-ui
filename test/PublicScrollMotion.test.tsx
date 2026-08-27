@@ -2,8 +2,6 @@ import '@testing-library/jest-dom/vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import PublicScrollMotion from '@/shared/motion/PublicScrollMotion';
-import { Loader } from '@/shared/components/ui-bits';
-import { MemoryRouter } from 'react-router-dom';
 import { setMediaQueryMatches } from './setup';
 
 describe('public scroll motion and loading wireframes', () => {
@@ -20,13 +18,6 @@ describe('public scroll motion and loading wireframes', () => {
     await waitFor(() => expect(screen.getByTestId('static-section')).toHaveAttribute('data-vnw-scroll-state', 'visible'));
     expect(screen.getByTestId('static-section')).toHaveAttribute('data-vnw-scroll-reveal', 'true');
     expect(screen.getByTestId('managed-section')).not.toHaveAttribute('data-vnw-scroll-reveal');
-  });
-
-  it('uses product-card wireframes for the public accessories listing', () => {
-    render(<MemoryRouter initialEntries={['/accessories']}><Loader label="Loading accessories" /></MemoryRouter>);
-    expect(screen.getByLabelText('Loading accessories')).toHaveAttribute('aria-busy', 'true');
-    expect(document.querySelector('[data-wireframe="products"]')).toBeInTheDocument();
-    expect(document.querySelectorAll('.wireframe-shimmer').length).toBeGreaterThan(8);
   });
 
   it('makes public content immediately visible when reduced motion is requested', async () => {
