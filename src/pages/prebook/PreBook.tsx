@@ -89,7 +89,7 @@ export default function PreBook() {
           <div className="max-w-3xl">
             <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-black uppercase tracking-wider text-primary"><CalendarClock className="h-4 w-4" /> Exclusive pre-booking</span>
             <h1 className="mt-3 text-3xl font-black text-foreground sm:text-5xl">Reserve tomorrow’s VIP number today</h1>
-            <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base">Pay the full offer price to reserve one NON-RTP number exclusively. It becomes ready to port on the date shown, with a 48-hour cancellation window and 100% issue-refund guarantee.</p>
+            <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base">Pay the full discounted price to reserve one NON-RTP number exclusively. It becomes ready to port on the date shown, with a 48-hour cancellation window and 100% issue-refund guarantee.</p>
           </div>
           <div className="grid grid-cols-2 gap-2 text-xs font-bold text-foreground sm:grid-cols-3">
             <span className="rounded-xl border border-border bg-background/70 px-3 py-2"><ShieldCheck className="mr-1 inline h-4 w-4 text-primary" /> Exclusive hold</span>

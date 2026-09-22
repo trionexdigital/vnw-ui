@@ -18,3 +18,9 @@ export function formatRtpDate(value?: string | null) {
   if (Number.isNaN(parsed.getTime())) return String(value).slice(0, 10);
   return new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short', year: 'numeric' }).format(parsed);
 }
+
+export function numberReadinessLabel(number: { rtp_status?: string; rtp_available_at?: string | null }) {
+  if (number.rtp_status === 'NON_RTP') return `NON-RTP · Ready to port ${formatRtpDate(number.rtp_available_at)}`;
+  if (number.rtp_status === 'RTA') return 'RTA · Ready to activate within minutes';
+  return 'RTP · Ready to port';
+}

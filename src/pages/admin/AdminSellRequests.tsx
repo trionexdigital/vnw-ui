@@ -24,7 +24,7 @@ export default function AdminSellRequests() {
     try {
       await adminAPI.sellApprove({
         request_id: approve.request_id,
-        offer_price: Number(offer) || undefined,
+        mrp: Number(offer) || undefined,
         buy_price: Number(buy) || undefined,
         admin_note: note || undefined,
       });
@@ -77,7 +77,7 @@ export default function AdminSellRequests() {
             <p className="text-sm text-muted-foreground">Approving pays the seller into their wallet and creates a live catalog listing owned by the platform.</p>
             <div><label className="mb-1 block text-xs text-muted-foreground">Buy Price — paid to seller's wallet (₹)</label>
               <input type="number" value={buy} onChange={(e) => setBuy(e.target.value)} className="w-full rounded-lg border border-card-border bg-secondary px-3 py-2.5 text-sm outline-none" /></div>
-            <div><label className="mb-1 block text-xs text-muted-foreground">List Price — what we sell it for (₹)</label>
+            <div><label className="mb-1 block text-xs text-muted-foreground">MRP — store discount is applied automatically (₹)</label>
               <input type="number" value={offer} onChange={(e) => setOffer(e.target.value)} className="w-full rounded-lg border border-card-border bg-secondary px-3 py-2.5 text-sm outline-none" /></div>
             <div><label className="mb-1 block text-xs text-muted-foreground">Note to customer (optional)</label>
               <textarea rows={2} value={note} onChange={(e) => setNote(e.target.value)} className="w-full rounded-lg border border-card-border bg-secondary px-3 py-2.5 text-sm outline-none" /></div>

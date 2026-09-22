@@ -15,7 +15,7 @@ export default function EmployeeNumbers() {
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [f, setF] = useState<any>({ display_number: '', operator: 'Any', mrp: '', offer_price: '' });
+  const [f, setF] = useState<any>({ display_number: '', mrp: '' });
 
   const input = 'w-full rounded-lg border border-card-border bg-secondary px-3 py-2.5 text-sm outline-none focus:border-primary';
   const set = (k: string, v: any) => setF((p: any) => ({ ...p, [k]: v }));
@@ -33,10 +33,9 @@ export default function EmployeeNumbers() {
     await submitAction('numbers.save', {
       display_number: f.display_number,
       number_value: f.display_number.replace(/\s+/g, ''),
-      operator: f.operator,
-      mrp: Number(f.mrp), offer_price: Number(f.offer_price),
+      mrp: Number(f.mrp),
     }, `Create ${f.display_number}`);
-    setShowForm(false); setF({ display_number: '', operator: 'Any', mrp: '', offer_price: '' });
+    setShowForm(false); setF({ display_number: '', mrp: '' });
   };
 
   return (
@@ -75,8 +74,7 @@ export default function EmployeeNumbers() {
             <DetectedCategories number={f.display_number} className="sm:col-span-2" />
             <div><label className="mb-1 block text-xs text-muted-foreground">MRP (₹)</label>
               <input required type="number" className={input} value={f.mrp} onChange={(e) => set('mrp', e.target.value)} /></div>
-            <div><label className="mb-1 block text-xs text-muted-foreground">Offer Price (₹)</label>
-              <input required type="number" className={input} value={f.offer_price} onChange={(e) => set('offer_price', e.target.value)} /></div>
+            <p className="self-end rounded-xl bg-muted px-3 py-2 text-xs text-muted-foreground">The discounted storefront price is calculated automatically from Settings.</p>
             <div className="sm:col-span-2 flex gap-2"><button className="btn-gold">Submit for Approval</button>
               <button type="button" onClick={() => setShowForm(false)} className="btn-gold-outline">Cancel</button></div>
           </form>

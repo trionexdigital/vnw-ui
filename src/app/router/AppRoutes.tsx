@@ -14,6 +14,7 @@ const NewlyAddedNumbers = lazy(() => import('@/pages/shop/NewlyAddedNumbers'));
 const PremiumNumbers = lazy(() => import('@/pages/shop/PremiumNumbers'));
 const NumberDetail = lazy(() => import('@/pages/shop/NumberDetail'));
 const SimilarNumbers = lazy(() => import('@/pages/shop/SimilarNumbers'));
+const PrivateCollection = lazy(() => import('@/pages/shop/PrivateCollection'));
 const Cart = lazy(() => import('@/pages/cart/Cart'));
 const Wishlist = lazy(() => import('@/pages/wishlist/Wishlist'));
 const Compare = lazy(() => import('@/pages/compare/Compare'));
@@ -72,6 +73,8 @@ const AdminSellRequests = lazy(() => import('@/pages/admin/AdminSellRequests'));
 const AdminApprovals = lazy(() => import('@/pages/admin/AdminApprovals'));
 const AdminCreateDealer = lazy(() => import('@/pages/admin/AdminCreateDealer'));
 const AdminHomePremium = lazy(() => import('@/pages/admin/AdminHomePremium'));
+const AdminPrivateLinks = lazy(() => import('@/pages/admin/AdminPrivateLinks'));
+const AdminDealerPurchases = lazy(() => import('@/pages/admin/AdminDealerPurchases'));
 
 const dealerRoles = ['DEALER', 'ADMIN'];
 const adminRoles = ['ADMIN'];
@@ -100,6 +103,7 @@ export default function AppRoutes() {
         <Route path="/premium-numbers" element={<PremiumNumbers />} />
         <Route path="/number/:id" element={<NumberDetail />} />
         <Route path="/number/:id/similar" element={<SimilarNumbers />} />
+        <Route path="/private/:token" element={<PrivateCollection />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/compare" element={<Compare />} />
         <Route path="/about" element={<About />} />
@@ -162,6 +166,8 @@ export default function AppRoutes() {
         {/* Admin */}
         <Route path="/admin" element={<RoleGuard roles={adminRoles}><AdminDashboard /></RoleGuard>} />
         <Route path="/admin/numbers" element={<RoleGuard roles={adminRoles}><AdminNumbers /></RoleGuard>} />
+        <Route path="/admin/private-links" element={<RoleGuard roles={adminRoles}><AdminPrivateLinks /></RoleGuard>} />
+        <Route path="/admin/dealer-purchases" element={<RoleGuard roles={adminRoles}><AdminDealerPurchases /></RoleGuard>} />
         <Route path="/admin/deals-of-day" element={<RoleGuard roles={adminRoles}><AdminDealsOfDay /></RoleGuard>} />
         <Route path="/admin/categories" element={<RoleGuard roles={adminRoles}><Navigate to="/admin/numbers?notice=automatic-categories" replace /></RoleGuard>} />
         <Route path="/admin/orders" element={<RoleGuard roles={adminRoles}><AdminOrders /></RoleGuard>} />

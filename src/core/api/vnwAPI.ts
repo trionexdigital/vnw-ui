@@ -22,6 +22,11 @@ async function postRaw(path: string, payload: any = {}): Promise<any> {
   return httpService.postRequest(BASE_URL + path, payload);
 }
 
+const activePrivateToken = () => {
+  try { return sessionStorage.getItem('vnw_private_token') || undefined; }
+  catch { return undefined; }
+};
+
 export interface NumberSearchRequest {
   starts_with?: string;
   starts_with_pattern?: string;
@@ -49,7 +54,9 @@ export interface NumberListRequest {
   is_featured?: boolean | number;
   is_premium?: boolean | number;
   seller_id?: number;
-  rtp_status?: 'RTP' | 'NON_RTP';
+  rtp_status?: 'RTP' | 'NON_RTP' | 'RTA';
+  visibility_type?: 'ONLINE' | 'OFFLINE';
+  activation_type?: 'RTP' | 'NON_RTP' | 'RTA';
   rtp_from?: string;
   rtp_to?: string;
   sort?: string;
@@ -73,7 +80,9 @@ export interface NumberCatalogItem extends CategorizedNumber {
   operator?: string;
   stock?: number;
   status?: string;
-  rtp_status?: 'RTP' | 'NON_RTP';
+  visibility_type?: 'ONLINE' | 'OFFLINE';
+  activation_type?: 'RTP' | 'NON_RTP' | 'RTA';
+  rtp_status?: 'RTP' | 'NON_RTP' | 'RTA';
   rtp_available_at?: string | null;
   is_premium?: boolean;
 }
@@ -97,8 +106,8 @@ export const numbersAPI = {
   list: (p: NumberListRequest) => post('numbers/list', p),
   aiSearch: (p: NumberListRequest & { query: string }) => post('numbers/ai-search', p),
   featured: (p: NumberListRequest = {}) => post('numbers/featured', p),
-  detail: (number_id: number) => post('numbers/detail', { number_id }),
-  similar: (p: SimilarNumbersRequest) => post<SimilarNumbersResponse>('numbers/similar', p),
+  detail: (number_id: number) => post('numbers/detail', { number_id, private_token: activePrivateToken() }),
+  similar: (p: SimilarNumbersRequest) => post<SimilarNumbersResponse>('numbers/similar', { ...p, private_token: activePrivateToken() }),
   operators: () => post<OperatorFacet[]>('numbers/operators', {}),
 };
 
@@ -109,7 +118,7 @@ export const categoriesAPI = {
 
 export const cartAPI = {
   list: () => post('cart/list', {}),
-  add: (number_id: number) => post('cart/add', { number_id }),
+  add: (number_id: number) => post('cart/add', { number_id, private_token: activePrivateToken() }),
   addMany: (number_ids: number[]) => post('cart/add-many', { number_ids }),
   remove: (number_id: number) => post('cart/remove', { number_id }),
   clear: () => post('cart/clear', {}),
@@ -117,12 +126,12 @@ export const cartAPI = {
 
 export const wishlistAPI = {
   list: () => post('wishlist/list', {}),
-  add: (number_id: number) => post('wishlist/add', { number_id }),
+  add: (number_id: number) => post('wishlist/add', { number_id, private_token: activePrivateToken() }),
   remove: (number_id: number) => post('wishlist/remove', { number_id }),
 };
 
 export const ordersAPI = {
-  create: (p: any) => post('orders/create', p),
+  create: (p: any) => post('orders/create', { ...p, private_token: activePrivateToken() }),
   my: () => post('orders/my', {}),
   detail: (order_id: number) => post('orders/detail', { order_id }),
 };
@@ -166,7 +175,7 @@ export const bannersAPI = {
   list: () => post<CarouselSlide[]>('banners/list', {}),
 };
 
-export type RtpStatus = 'RTP' | 'NON_RTP';
+export type RtpStatus = 'RTP' | 'NON_RTP' | 'RTA';
 export type PrebookStatus = 'PENDING_PAYMENT' | 'BOOKED' | 'READY' | 'CANCEL_REQUESTED' | 'REFUND_PENDING' | 'REFUNDED' | 'FULFILLED' | 'FAILED';
 
 export interface PrebookRecord {
@@ -190,7 +199,7 @@ export interface PrebookRecord {
 
 export const prebooksAPI = {
   catalog: (p: NumberListRequest = {}) => post<{ items: any[]; total: number; page: number; limit: number }>('prebooks/catalog', p),
-  create: (number_id: number) => post<{ prebook_id: number; order_id: number; order_no: string; total: number; payment_expires_at: string }>('prebooks/create', { number_id }),
+  create: (number_id: number) => post<{ prebook_id: number; order_id: number; order_no: string; total: number; payment_expires_at: string }>('prebooks/create', { number_id, private_token: activePrivateToken() }),
   my: () => post<PrebookRecord[]>('prebooks/my', {}),
   cancel: (prebook_id: number, note?: string) => post('prebooks/cancel', { prebook_id, note }),
   reportIssue: (prebook_id: number, reason_type: string, note: string) => post('prebooks/report-issue', { prebook_id, reason_type, note }),
@@ -369,6 +378,19 @@ export const notificationsAPI = {
   markAllRead: () => post('notifications/mark-all-read', {}),
 };
 
+export interface PrivateCollection {
+  private_link_id: number;
+  name: string;
+  expires_at?: string | null;
+  revoked_at?: string | null;
+  assigned_count?: number;
+  number_ids?: number[];
+}
+
+export const privateCollectionsAPI = {
+  resolve: (token: string) => post<{ collection: PrivateCollection; items: NumberCatalogItem[] }>('private/resolve', { token }),
+};
+
 export const dealerAPI = {
   dashboard: () => post('dealer/dashboard', {}),
   listings: () => post('dealer/listings', {}),
@@ -417,6 +439,23 @@ export const adminAPI = {
   numberDelete: (number_id: number) => post('admin/numbers/delete', { number_id }),
   numberApprove: (number_id: number) => post('admin/numbers/approve', { number_id }),
   numberReject: (number_id: number) => post('admin/numbers/reject', { number_id }),
+  privateLinksList: () => post<PrivateCollection[]>('admin/private-links/list', {}),
+  privateLinkCreate: (p: any) => post<{ private_link_id: number; token: string }>('admin/private-links/create', p),
+  privateLinkUpdate: (p: any) => post('admin/private-links/update', p),
+  privateLinkRotate: (private_link_id: number) => post<{ private_link_id: number; token: string }>('admin/private-links/rotate', { private_link_id }),
+  privateLinkRevoke: (private_link_id: number) => post('admin/private-links/revoke', { private_link_id }),
+  externalDealersList: () => post('admin/dealer-purchases/dealers/list', {}),
+  externalDealerCreate: (p: any) => post('admin/dealer-purchases/dealers/create', p),
+  dealerPurchasesSummary: (external_dealer_id?: number) => post('admin/dealer-purchases/summary', { external_dealer_id }),
+  dealerPurchasesList: (p: any) => post('admin/dealer-purchases/list', p),
+  dealerPurchasesCreate: (p: any) => post('admin/dealer-purchases/create', p),
+  dealerPurchasesMarkSold: (p: any) => post('admin/dealer-purchases/mark-sold', p),
+  dealerPurchasesReverseSold: (dealer_purchase_ids: number[]) => post('admin/dealer-purchases/reverse-sold', { dealer_purchase_ids }),
+  dealerPurchasesDelete: (dealer_purchase_ids: number[], reason: string) => post('admin/dealer-purchases/delete', { dealer_purchase_ids, reason }),
+  dealerPurchasesRestore: (dealer_purchase_ids: number[]) => post('admin/dealer-purchases/restore', { dealer_purchase_ids }),
+  dealerPaymentsList: (external_dealer_id?: number) => post('admin/dealer-purchases/payments/list', { external_dealer_id }),
+  dealerPaymentRecord: (p: any) => post('admin/dealer-purchases/payments/record', p),
+  dealerPaymentVoid: (dealer_payment_id: number, reason: string) => post('admin/dealer-purchases/payments/void', { dealer_payment_id, reason }),
   dealsOfDayList: () => post<DealOfDayItem[]>('admin/deals-of-day/list', {}),
   dealOfDaySave: (p: DealOfDaySaveInput) => post<{ deal_id: number }>('admin/deals-of-day/save', p),
   dealsOfDayReorder: (deal_ids: number[]) => post('admin/deals-of-day/reorder', { deal_ids }),

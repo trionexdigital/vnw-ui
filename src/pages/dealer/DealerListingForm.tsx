@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { dealerAPI, numbersAPI } from '@/core/api/vnwAPI';
 import { useToast } from '@/shared/hooks/use-toast';
 import { PageHeader, Panel } from '@/shared/components/ui-bits';
-import { numerologySum, formatINR } from '@/core/lib/format';
+import { numerologySum } from '@/core/lib/format';
 import DetectedCategories from '@/shared/components/DetectedCategories';
 
 export default function DealerListingForm() {
@@ -12,18 +12,15 @@ export default function DealerListingForm() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [busy, setBusy] = useState(false);
-  // Pricing model: dealer enters a Sale Price and a flat Discount Amount.
-  // Final price = sale_price − discount_amount; the % shown on cards is derived from these.
   const [f, setF] = useState<any>({
-    display_number: '', title_label: 'Fancy VIP Number', sale_price: '', discount_amount: '',
-    numerology_sum: '', operator: 'Any', description: '',
+    display_number: '', title_label: 'Fancy VIP Number', sale_price: '',
+    numerology_sum: '', description: '',
   });
 
   useEffect(() => {
     if (editing) numbersAPI.detail(Number(id)).then((n) => setF({
       display_number: n.display_number, title_label: n.title_label,
-      sale_price: n.mrp, discount_amount: Math.max(0, Number(n.mrp) - Number(n.offer_price)),
-      numerology_sum: n.numerology_sum || '', operator: 'Any', description: n.description || '',
+      sale_price: n.mrp, numerology_sum: n.numerology_sum || '', description: n.description || '',
     })).catch(() => {});
   }, [id]);
 
@@ -31,9 +28,6 @@ export default function DealerListingForm() {
   const input = 'w-full rounded-lg border border-card-border bg-secondary px-3 py-2.5 text-sm outline-none focus:border-primary';
 
   const salePrice = Number(f.sale_price) || 0;
-  const discountAmt = Math.min(Number(f.discount_amount) || 0, salePrice);
-  const finalPrice = Math.max(0, salePrice - discountAmt);
-  const discountPct = salePrice > 0 ? Math.round((discountAmt / salePrice) * 100) : 0;
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,12 +38,9 @@ export default function DealerListingForm() {
         display_number: f.display_number,
         number_value: f.display_number.replace(/\s+/g, ''),
         title_label: f.title_label,
-        operator: f.operator,
         description: f.description,
         numerology_sum: f.numerology_sum || numerologySum(f.display_number),
-        // Sale Price → mrp; final price → offer_price. Server derives discount_pct.
         mrp: salePrice,
-        offer_price: finalPrice,
       };
       if (editing) { await dealerAPI.updateListing({ number_id: Number(id), ...payload }); toast({ title: 'Listing updated' }); }
       else { await dealerAPI.createListing(payload); toast({ title: 'Listing submitted', description: 'Pending admin approval.' }); }
@@ -68,21 +59,10 @@ export default function DealerListingForm() {
           <DetectedCategories number={f.display_number} className="sm:col-span-2" />
           <div><label className="mb-1 block text-xs text-muted-foreground">Label</label>
             <input className={input} value={f.title_label} onChange={(e) => set('title_label', e.target.value)} /></div>
-          <div><label className="mb-1 block text-xs text-muted-foreground">Sale Price (₹)</label>
-            <input required type="number" min="0" className={input} value={f.sale_price} onChange={(e) => set('sale_price', e.target.value)} /></div>
-          <div><label className="mb-1 block text-xs text-muted-foreground">Discount Amount (₹)</label>
-            <input type="number" min="0" className={input} value={f.discount_amount} onChange={(e) => set('discount_amount', e.target.value)} /></div>
+          <div><label className="mb-1 block text-xs text-muted-foreground">MRP (₹)</label>
+            <input required type="number" min="1" className={input} value={f.sale_price} onChange={(e) => set('sale_price', e.target.value)} /><p className="mt-1 text-[11px] text-muted-foreground">The store-wide discount is applied automatically.</p></div>
           <div><label className="mb-1 block text-xs text-muted-foreground">Numerology Sum (auto)</label>
             <input type="number" className={input} placeholder={String(numerologySum(f.display_number) || '')} value={f.numerology_sum} onChange={(e) => set('numerology_sum', e.target.value)} /></div>
-
-          {/* live pricing preview */}
-          <div className="sm:col-span-2 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-card-border bg-secondary/50 px-4 py-3">
-            <div className="text-sm">
-              <span className="text-muted-foreground line-through">{formatINR(salePrice)}</span>
-              <span className="ml-2 text-lg font-extrabold text-destructive">{formatINR(finalPrice)}</span>
-            </div>
-            <span className="rounded-full bg-destructive px-3 py-1 text-xs font-bold text-destructive-foreground">{discountPct}% OFF</span>
-          </div>
 
           <div className="sm:col-span-2"><label className="mb-1 block text-xs text-muted-foreground">Description</label>
             <textarea rows={2} className={input} value={f.description} onChange={(e) => set('description', e.target.value)} /></div>

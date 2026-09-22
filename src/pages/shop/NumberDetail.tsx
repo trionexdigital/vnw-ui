@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Star, ShieldCheck, ArrowLeft, MessageCircle, Share2, PhoneCall } from 'lucide-react';
+import { Star, ShieldCheck, ArrowLeft, MessageCircle, Share2, PhoneCall, Zap } from 'lucide-react';
 import { numbersAPI, cartAPI, wishlistAPI, reviewsAPI, siteAPI } from '@/core/api/vnwAPI';
 import { useStore } from '@/shared/store/useStore';
 import { localService } from '@/core/services/local';
@@ -114,6 +114,8 @@ export default function NumberDetail() {
             <span className="rounded-2xl bg-muted px-4 py-2"><ShieldCheck className="mr-1 inline h-4 w-4 text-primary" /> 100% genuine</span>
             <span className="rounded-2xl bg-muted px-4 py-2">Secure Razorpay payment</span>
             <span className="rounded-2xl bg-muted px-4 py-2">Quick transfer support</span>
+            {!prebook && !sold && data.rtp_status === 'RTA' && <span className="rounded-2xl bg-success-soft px-4 py-2 text-success"><Zap className="mr-1 inline h-4 w-4" /> RTA · Ready to activate within minutes</span>}
+            {!prebook && !sold && data.rtp_status !== 'RTA' && <span className="rounded-2xl bg-blue-500/10 px-4 py-2 text-blue-700"><ShieldCheck className="mr-1 inline h-4 w-4" /> RTP · Ready to begin porting</span>}
           </div>
           {wa && <a className="mt-5 inline-flex items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-5 py-3 font-black text-white transition-all hover:brightness-105" href={waLink} target="_blank" rel="noreferrer"><MessageCircle className="h-4 w-4" /> WhatsApp Enquiry</a>}
         </div>

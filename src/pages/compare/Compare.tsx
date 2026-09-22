@@ -6,7 +6,7 @@ import { useStore } from '@/shared/store/useStore';
 import { formatINR, BADGE_META } from '@/core/lib/format';
 import { getPrimaryCategory } from '@/core/categories/types';
 import { Loader, EmptyState } from '@/shared/components/ui-bits';
-import { formatRtpDate, getNumberPurchaseMode, numberActionPath } from '@/core/lib/numberPurchaseMode';
+import { getNumberPurchaseMode, numberActionPath, numberReadinessLabel } from '@/core/lib/numberPurchaseMode';
 
 export default function Compare() {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ export default function Compare() {
     ['Numerology Sum', (n) => n.numerology_sum ?? '—'],
     ['Badge', (n) => BADGE_META[n.badge || 'NONE'].label || '—'],
     ['Status', (n) => n.status],
-    ['RTP', (n) => getNumberPurchaseMode(n) === 'PREBOOK' ? `Ready ${formatRtpDate(n.rtp_available_at)}` : n.rtp_status || 'RTP'],
+    ['Porting / activation', (n) => numberReadinessLabel(n)],
   ];
 
   return (

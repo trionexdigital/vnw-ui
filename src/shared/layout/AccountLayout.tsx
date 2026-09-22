@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   Crown, LayoutDashboard, ShoppingBag, Heart, Users2, User, LogOut, Store, ListPlus,
   Tag, BadgeIndianRupee, Star, Image, MessageSquare, Settings, Gift, Menu, ArrowLeft, ListChecks, X, Ticket, Mail,
-  ClipboardList, Inbox, Bell, ChevronRight, PanelLeftClose, PanelLeftOpen, ShieldCheck, Search, UserCircle, Sparkles, Handshake, CircleHelp, CalendarClock,
+  ClipboardList, Inbox, Bell, ChevronRight, PanelLeftClose, PanelLeftOpen, ShieldCheck, Search, UserCircle, Sparkles, Handshake, CircleHelp, CalendarClock, KeyRound, PackageSearch,
 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { logout } from '@/app/authSlice';
@@ -44,9 +44,11 @@ const EMPLOYEE_MENU: MenuItem[] = [
 const ADMIN_MENU: MenuItem[] = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/admin/numbers', label: 'Numbers', icon: Crown },
+  { to: '/admin/private-links', label: 'Private Links', icon: KeyRound },
   { to: '/admin/home-premium', label: 'Premium Homepage', icon: Star },
   { to: '/admin/deals-of-day', label: 'Lucky Pick of the Day', icon: Sparkles },
   { to: '/admin/orders', label: 'Orders', icon: ShoppingBag },
+  { to: '/admin/dealer-purchases', label: 'Dealer Purchases', icon: PackageSearch },
   { to: '/admin/prebooks', label: 'Pre-books & Refunds', icon: CalendarClock },
   { to: '/admin/sell-requests', label: 'Sell Requests', icon: Inbox },
   { to: '/admin/approvals', label: 'Approvals', icon: ClipboardList },
@@ -66,8 +68,8 @@ const ADMIN_MENU: MenuItem[] = [
 
 const ADMIN_GROUPS = [
   { label: 'Overview', items: ['Dashboard'] },
-  { label: 'Catalog', items: ['Numbers', 'Premium Homepage', 'Lucky Pick of the Day', 'Carousel', 'Coupons'] },
-  { label: 'Operations', items: ['Orders', 'Pre-books & Refunds', 'Sell Requests', 'Approvals', 'Payouts'] },
+  { label: 'Catalog', items: ['Numbers', 'Private Links', 'Premium Homepage', 'Lucky Pick of the Day', 'Carousel', 'Coupons'] },
+  { label: 'Operations', items: ['Orders', 'Dealer Purchases', 'Pre-books & Refunds', 'Sell Requests', 'Approvals', 'Payouts'] },
   { label: 'People', items: ['Users', 'Dealers', 'Subscribers'] },
   { label: 'Trust', items: ['Reviews', 'Testimonials', 'Trusted Clients', 'FAQs', 'Messages', 'Settings'] },
 ];

@@ -22,13 +22,23 @@ describe('RTP purchase-mode contract', () => {
     render(<MemoryRouter><NumberCard item={{ ...base, rtp_status: 'NON_RTP', rtp_available_at: '2026-09-01 18:30:00' }} /></MemoryRouter>);
     expect(screen.getByRole('button', { name: /pre-book/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /add to cart/i })).not.toBeInTheDocument();
-    expect(screen.getByTitle(/RTP on/)).toHaveClass('number-card__verified');
-    expect(screen.getByTitle(/RTP on/)).toHaveClass('number-card__rtp-date');
-    expect(screen.getByTitle(/RTP on/).parentElement).toHaveClass('number-card__identity-row--prebook');
+    expect(screen.getByTitle(/NON-RTP · Ready to port on/)).toHaveClass('reference-card__readiness');
+    expect(screen.getByTitle(/NON-RTP · Ready to port on/)).toHaveTextContent('Pre-book');
+    expect(screen.getByTitle(/NON-RTP · Ready to port on/).parentElement).toHaveClass('reference-card__identity');
     expect(screen.queryByText('Verified')).not.toBeInTheDocument();
   });
 
   it('disables actions for reserved inventory', () => {
     expect(getNumberPurchaseMode({ ...base, status: 'RESERVED', rtp_status: 'NON_RTP' })).toBe('UNAVAILABLE');
+  });
+
+  it('labels RTP inventory as ready to begin porting', () => {
+    render(<MemoryRouter><NumberCard item={{ ...base, rtp_status: 'RTP' }} /></MemoryRouter>);
+    expect(screen.getByTitle(/Ready to begin the porting process/i)).toHaveTextContent('RTP');
+  });
+
+  it('labels RTA inventory with the fast activation guidance', () => {
+    render(<MemoryRouter><NumberCard item={{ ...base, rtp_status: 'RTA' }} /></MemoryRouter>);
+    expect(screen.getByTitle(/Ready to activate within minutes/i)).toHaveTextContent('RTA');
   });
 });

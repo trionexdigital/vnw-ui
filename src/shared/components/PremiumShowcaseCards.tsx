@@ -57,7 +57,7 @@ export function PremiumNumberShowcaseCard({
       </div>
       <div className="mx-auto mt-6 grid max-w-4xl gap-4 rounded-2xl border border-primary/25 bg-card/60 p-4 sm:grid-cols-[1fr_1.3fr_1fr]">
         <div><div className="text-sm font-semibold">MRP Price</div><div className="vnw-card-numeral text-2xl text-foreground line-through">{formatINR(mrp)}</div></div>
-        <div><div className="text-sm font-semibold">Offer Price</div><div className="vnw-card-numeral text-4xl text-foreground">{formatINR(offerPrice)}</div></div>
+        <div><div className="text-sm font-semibold">Discounted Price</div><div className="vnw-card-numeral text-4xl text-foreground">{formatINR(offerPrice)}</div></div>
         <div className="flex items-center justify-center"><span className="vnw-card-numeral rounded-2xl border border-primary/30 bg-primary/10 px-5 py-3 text-xl text-primary">* {discount || 0}% OFF</span></div>
       </div>
       {prebook && <div className="mx-auto mt-5 inline-flex items-center gap-2 rounded-2xl border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-black text-primary"><CalendarClock className="h-4 w-4" /> Ready to port on {rtpDate}</div>}
