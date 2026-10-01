@@ -36,7 +36,8 @@ describe('SearchWorkbench', () => {
     const user = userEvent.setup();
     renderWorkbench();
     await user.click(screen.getByRole('tab', { name: 'Global Search' }));
-    await user.selectOptions(screen.getByLabelText('Match position'), 'ends_with');
+    await user.click(screen.getByLabelText('Match position'));
+    await user.click(screen.getByRole('option', { name: 'Ends With' }));
     await user.type(screen.getByLabelText('Digits'), '786');
     await user.click(screen.getByRole('button', { name: 'Search' }));
 
@@ -69,7 +70,8 @@ describe('SearchWorkbench', () => {
     const user = userEvent.setup();
     renderWorkbench();
     await user.click(screen.getByRole('tab', { name: 'Search by Price' }));
-    await user.selectOptions(screen.getByLabelText('Inclusive price range'), '10001:30000');
+    await user.click(screen.getByLabelText('Inclusive price range'));
+    await user.click(screen.getByRole('option', { name: /10,001.*30,000/ }));
     await user.click(screen.getByRole('button', { name: 'Show Numbers' }));
 
     const location = screen.getByTestId('location').textContent || '';

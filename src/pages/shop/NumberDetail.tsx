@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Star, ShieldCheck, ArrowLeft, MessageCircle, Share2, PhoneCall, Zap } from 'lucide-react';
+import { Star, ShieldCheck, ArrowLeft, MessageCircle, Share2, PhoneCall, Zap, Crown, Heart, GitCompareArrows, ShoppingCart } from 'lucide-react';
 import { numbersAPI, cartAPI, wishlistAPI, reviewsAPI, siteAPI } from '@/core/api/vnwAPI';
 import { useStore } from '@/shared/store/useStore';
 import { localService } from '@/core/services/local';
@@ -10,15 +10,15 @@ import { Loader } from '@/shared/components/ui-bits';
 import { pushRecentlyViewed } from '@/core/lib/recentlyViewed';
 import NumberCard from '@/shared/components/NumberCard';
 import { cn } from '@/core/lib/utils';
-import { PremiumNumberShowcaseCard } from '@/shared/components/PremiumShowcaseCards';
-import { getPrimaryCategory } from '@/core/categories/types';
-import { formatRtpDate, getNumberPurchaseMode, numberActionPath } from '@/core/lib/numberPurchaseMode';
+import CompactPageHeader from '@/shared/components/CompactPageHeader';
+import { getNumberCategories, getPrimaryCategory } from '@/core/categories/types';
+import { formatRtpDate, getNumberPurchaseMode, numberActionPath, numberReadinessLabel } from '@/core/lib/numberPurchaseMode';
 
 export default function NumberDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { refreshCounts, site } = useStore();
+  const { refreshCounts, site, compare, toggleCompare } = useStore();
   const [data, setData] = useState<any>(null);
   const [related, setRelated] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -84,35 +84,35 @@ export default function NumberDetail() {
   const waLink = `https://wa.me/${wa}?text=${encodeURIComponent(`Hi! I'm interested in VIP number ${data.display_number} (${formatINR(data.offer_price)}). Is it available?`)}`;
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
-      <div className="mb-5 flex items-center justify-between gap-3">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-sm font-bold text-muted-foreground hover:text-primary"><ArrowLeft className="h-4 w-4" /> Back</button>
-        <button onClick={share} className="flex items-center gap-2 rounded-2xl bg-card/60 px-4 py-2 text-sm font-bold text-muted-foreground shadow-sm hover:text-primary"><Share2 className="h-4 w-4" /> Share</button>
-      </div>
+    <div className="commerce-page number-detail-page">
+      <CompactPageHeader title="Number details" subtitle="A closer look at your next memorable number." icon={Crown} action={<div className="flex gap-2"><Link to="/shop" className="btn-gold-outline min-h-9 text-xs"><ArrowLeft className="h-3 w-3" />Store</Link><button onClick={share} className="btn-gold-outline min-h-9 text-xs"><Share2 className="h-3 w-3" />Share</button></div>} />
+      <section className="commerce-panel grid gap-4 bg-gradient-to-br from-card to-primary/5 sm:grid-cols-[1fr_300px] sm:items-center">
+        <div><span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-1 text-[10px] font-black uppercase text-primary"><Crown className="h-3 w-3" />{getPrimaryCategory(data)?.name || 'VIP number'}</span><h2 className="my-3 break-words text-3xl font-black tracking-tight sm:text-4xl">{data.display_number}</h2><p className="text-xs text-muted-foreground">{data.title_label || 'Your number. Your identity.'}</p><div className="mt-3 flex flex-wrap gap-2"><span className="rounded-lg bg-muted px-2 py-1 text-xs font-semibold">{numberReadinessLabel(data)}</span><span className={`rounded-lg px-2 py-1 text-xs font-bold ${sold ? 'bg-muted text-muted-foreground' : 'bg-success-soft text-success'}`}>{data.status}</span></div></div>
+        <div className="rounded-xl border border-border bg-background p-4"><div className="flex items-baseline justify-between"><strong className="text-2xl text-primary">{formatINR(data.offer_price)}</strong><del className="text-xs text-muted-foreground">{formatINR(data.mrp)}</del></div><p className="mt-1 text-xs text-success">Save {formatINR(Math.max(0, Number(data.mrp) - Number(data.offer_price)))}</p><p className="mt-1 text-[10px] text-muted-foreground">GST and coupons calculated at checkout.</p><button disabled={sold} onClick={() => requireAuth() && navigate(numberActionPath(data))} className="btn-gold mt-3 w-full min-h-10 text-sm">{sold ? 'Unavailable' : prebook ? 'Pre-book this number' : 'Buy this number'}</button><div className="mt-2 flex gap-2">{!prebook && <button disabled={sold} onClick={addToCart} className="btn-gold-outline min-h-9 flex-1 text-xs"><ShoppingCart className="h-3 w-3" />Cart</button>}<button onClick={addWish} aria-label="Save to wishlist" className="btn-gold-outline min-h-9 px-3"><Heart className="h-4 w-4" /></button><button onClick={() => toggleCompare(data.number_id)} aria-label="Compare this number" aria-pressed={compare.includes(data.number_id)} className="btn-gold-outline min-h-9 px-3"><GitCompareArrows className="h-4 w-4" /></button></div></div>
+      </section>
 
-      <PremiumNumberShowcaseCard
-        number={data.display_number}
-        title={data.title_label || 'Signature VIP Number'}
-        pattern={getPrimaryCategory(data)?.name || 'Unique Number'}
-        mrp={data.mrp}
-        offerPrice={data.offer_price}
-        discount={data.discount_pct || Math.round(((Number(data.mrp) - Number(data.offer_price)) / Number(data.mrp)) * 100)}
-        sum={data.numerology_sum}
-        onBuy={() => requireAuth() && navigate(numberActionPath(data))}
-        onCart={addToCart}
-        onWish={addWish}
-        sold={sold}
-        prebook={prebook}
-        rtpDate={formatRtpDate(data.rtp_available_at)}
-      />
-
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
-        <div className="vnw-card p-6">
-          <h2 className="text-xl font-black text-foreground">Number Details</h2>
-          <p className="mt-3 text-sm leading-7 text-muted-foreground">{data.description || 'A premium VIP number, ready for instant booking and secure ownership transfer.'}</p>
+      <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_360px]">
+        <div className="commerce-panel">
+          <h2 className="text-base font-black text-foreground">Number Details</h2>
+          <p className="mt-3 text-sm leading-7 text-muted-foreground">{data.description || 'A premium VIP number, with support through booking and ownership transfer.'}</p>
+          {getNumberCategories(data).length > 0 && (
+            <div className="mt-5" aria-label="Matching categories and subcategories">
+              <h3 className="text-sm font-black text-foreground">Matching patterns</h3>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {getNumberCategories(data).map((category) => (
+                  <div key={category.slug} className="rounded-xl border border-border bg-muted/40 px-3 py-2">
+                    <Link to={`/shop?category=${encodeURIComponent(category.slug)}`} className="text-xs font-bold text-primary hover:underline">{category.name}</Link>
+                    {Boolean(category.subcategories?.length) && <div className="mt-1 flex flex-wrap gap-x-2 gap-y-1">
+                      {category.subcategories!.map((sub) => <Link key={`${category.id}:${sub.id}`} to={`/shop?category=${encodeURIComponent(category.slug)}&subcategory_id=${sub.id}`} className="text-[11px] text-muted-foreground hover:text-primary hover:underline">{sub.name}</Link>)}
+                    </div>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="mt-5 flex flex-wrap gap-3 text-xs font-bold text-muted-foreground">
             <span className="rounded-2xl bg-muted px-4 py-2"><ShieldCheck className="mr-1 inline h-4 w-4 text-primary" /> 100% genuine</span>
-            <span className="rounded-2xl bg-muted px-4 py-2">Secure Razorpay payment</span>
+            <span className="rounded-2xl bg-muted px-4 py-2">Secure Cashfree payment</span>
             <span className="rounded-2xl bg-muted px-4 py-2">Quick transfer support</span>
             {!prebook && !sold && data.rtp_status === 'RTA' && <span className="rounded-2xl bg-success-soft px-4 py-2 text-success"><Zap className="mr-1 inline h-4 w-4" /> RTA · Ready to activate within minutes</span>}
             {!prebook && !sold && data.rtp_status !== 'RTA' && <span className="rounded-2xl bg-blue-500/10 px-4 py-2 text-blue-700"><ShieldCheck className="mr-1 inline h-4 w-4" /> RTP · Ready to begin porting</span>}
@@ -120,28 +120,28 @@ export default function NumberDetail() {
           {wa && <a className="mt-5 inline-flex items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-5 py-3 font-black text-white transition-all hover:brightness-105" href={waLink} target="_blank" rel="noreferrer"><MessageCircle className="h-4 w-4" /> WhatsApp Enquiry</a>}
         </div>
 
-        <form onSubmit={submitEnquiry} className="vnw-card h-fit p-6">
+        <form onSubmit={submitEnquiry} className="commerce-panel h-fit">
           <div className="mb-4 flex items-center gap-2 text-sm font-black text-foreground"><PhoneCall className="h-4 w-4 text-primary" /> Request a Callback</div>
           <div className="space-y-3">
-            <input required placeholder="Your name" value={enq.name} onChange={(e) => setEnq({ ...enq, name: e.target.value })} className="input-luxury w-full" />
-            <input required placeholder="Phone" value={enq.phone} onChange={(e) => setEnq({ ...enq, phone: e.target.value })} className="input-luxury w-full" />
+            <input aria-label="Your name" required placeholder="Your name" value={enq.name} onChange={(e) => setEnq({ ...enq, name: e.target.value })} className="input-luxury w-full" />
+            <input aria-label="Phone" type="tel" required placeholder="Phone" value={enq.phone} onChange={(e) => setEnq({ ...enq, phone: e.target.value })} className="input-luxury w-full" />
             <button disabled={enqBusy} className="btn-royal w-full">{enqBusy ? 'Sending...' : 'Call Me'}</button>
           </div>
         </form>
       </div>
 
       {related.length > 0 && (
-        <div className="mt-10">
+        <div className="mt-6">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <div><h2 className="text-xl font-black text-foreground">Similar Numbers</h2><p className="mt-1 text-sm text-muted-foreground">Ranked by pattern, category, numerology, and price closeness.</p></div>
+            <div><h2 className="text-base font-black text-foreground">Similar Numbers</h2><p className="mt-1 text-sm text-muted-foreground">Ranked by pattern, category, numerology, and price closeness.</p></div>
             <Link to={`/number/${data.number_id}/similar`} className="btn-gold-outline">View all similar numbers</Link>
           </div>
           <div className="number-card-grid">{related.map((n) => <NumberCard key={n.number_id} item={n} />)}</div>
         </div>
       )}
 
-      <div className="mt-10">
-        <h2 className="mb-4 text-xl font-black text-foreground">Reviews</h2>
+      <div className="mt-6">
+        <h2 className="mb-4 text-base font-black text-foreground">Reviews</h2>
         <div className="vnw-card mb-5 p-5">
           <div className="mb-2 flex items-center gap-2">
             {Array.from({ length: 5 }).map((_, i) => (

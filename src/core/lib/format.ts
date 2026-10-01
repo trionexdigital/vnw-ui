@@ -1,7 +1,7 @@
 /** Formats a number as Indian Rupees, e.g. 24999 -> ₹24,999 */
 export const formatINR = (value: number | string | null | undefined): string => {
   const n = Number(value || 0);
-  return '₹' + n.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+  return '₹' + n.toLocaleString('en-IN', { minimumFractionDigits: Number.isInteger(n) ? 0 : 2, maximumFractionDigits: 2 });
 };
 
 export interface BadgeMeta { label: string; className: string; }

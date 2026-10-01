@@ -55,6 +55,7 @@ export default function Categories() {
       category.description,
       ...(category.examples || []),
       ...(category.aliases || []),
+      ...(category.subcategories || []).map((subcategory) => subcategory.name),
     ].some((value) => String(value || '').toLowerCase().includes(term)));
   }, [categories, query]);
 
@@ -76,12 +77,13 @@ export default function Categories() {
               Find a VIP number by <span className="text-primary">category</span>
             </h1>
             <p className="mt-4 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
-              Every number is analysed automatically and assigned to its strongest matching pattern. Choose a category to see its available collection.
+              Browse the same categories and subcategories used in our internal inventory. A number can match more than one pattern.
             </p>
             {!loading && !error && (
               <div className="mt-5 flex flex-wrap gap-2 text-xs font-bold text-muted-foreground">
                 <span className="rounded-full border border-border bg-background px-3 py-1.5">{categories.length} categories</span>
-                <span className="rounded-full border border-border bg-background px-3 py-1.5">{availableNumbers.toLocaleString('en-IN')} assigned numbers</span>
+                <span className="rounded-full border border-border bg-background px-3 py-1.5">{categories.reduce((total, item) => total + (item.subcategories?.length || 0), 0)} subcategories</span>
+                <span className="rounded-full border border-border bg-background px-3 py-1.5">{availableNumbers.toLocaleString('en-IN')} category matches</span>
               </div>
             )}
           </div>

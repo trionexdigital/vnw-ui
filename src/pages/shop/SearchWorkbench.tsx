@@ -1,3 +1,4 @@
+import { ThemedSelect } from '@/shared/ui/themed-select';
 import { FormEvent, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
@@ -319,7 +320,7 @@ export default function SearchWorkbench({
                   <h2 id={`${placement}-search-title`} className="text-base font-black tracking-tight text-foreground sm:text-lg">
                     Find your signature VIP number
                   </h2>
-                  <p className="hidden text-[11px] text-muted-foreground sm:block">AI, exact digits, budget, or specialist patterns.</p>
+                  {placement !== 'home' && <p className="hidden text-[11px] text-muted-foreground sm:block">AI, exact digits, budget, or specialist patterns.</p>}
                 </div>
               </div>
             </div>
@@ -403,7 +404,7 @@ export default function SearchWorkbench({
                     <label className="block">
                       <span className="mb-1 block text-xs font-black text-foreground">Match position</span>
                       <span className="relative block">
-                        <select
+                        <ThemedSelect
                           value={state.globalScope}
                           onChange={(event) => updateState('globalScope', event.target.value as SearchState['globalScope'])}
                           className={`${inputClass()} appearance-none pr-10`}
@@ -411,7 +412,7 @@ export default function SearchWorkbench({
                           <option value="anywhere">Anywhere</option>
                           <option value="starts_with">Starts With</option>
                           <option value="ends_with">Ends With</option>
-                        </select>
+                        </ThemedSelect>
                         <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                       </span>
                     </label>
@@ -443,7 +444,7 @@ export default function SearchWorkbench({
                     <label className="block">
                       <span className="mb-1 block text-xs font-black text-foreground">Inclusive price range</span>
                       <span className="relative block">
-                        <select
+                        <ThemedSelect
                           aria-label="Inclusive price range"
                           value={activePriceValue}
                           onChange={(event) => {
@@ -455,7 +456,7 @@ export default function SearchWorkbench({
                         >
                           {!activePriceBand && <option value={activePriceValue}>Custom price range</option>}
                           {PRICE_BANDS.map((band) => <option key={band.label} value={`${band.min}:${band.max}`}>{band.label}</option>)}
-                        </select>
+                        </ThemedSelect>
                         <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                       </span>
                     </label>
@@ -550,7 +551,7 @@ export default function SearchWorkbench({
                       />
                       <ErrorText id={`${placement}-starts-error`} message={errors.startsWith} />
                       <label className="mt-2 block text-[11px] font-bold text-muted-foreground" htmlFor={`${placement}-starts-pattern`}>Or preset</label>
-                      <select
+                      <ThemedSelect
                         id={`${placement}-starts-pattern`}
                         value={advancedDraft.startsPattern}
                         onChange={(event) => {
@@ -565,7 +566,7 @@ export default function SearchWorkbench({
                       >
                         <option value="">No preset</option>
                         {PATTERN_PRESETS.map((preset) => <option key={preset.value} value={preset.value}>{preset.label}</option>)}
-                      </select>
+                      </ThemedSelect>
                     </div>
                     <div>
                       <label className="block text-xs font-black text-foreground" htmlFor={`${placement}-anywhere`}>Anywhere</label>
@@ -599,7 +600,7 @@ export default function SearchWorkbench({
                           />
                           <ErrorText id={`${placement}-ends-error`} message={errors.endsWith} />
                         </div>
-                        <select
+                        <ThemedSelect
                           aria-label="Ends With pattern preset"
                           value={advancedDraft.endsPattern}
                           onChange={(event) => {
@@ -614,7 +615,7 @@ export default function SearchWorkbench({
                         >
                           <option value="">Or choose a preset</option>
                           {PATTERN_PRESETS.map((preset) => <option key={preset.value} value={preset.value}>{preset.label}</option>)}
-                        </select>
+                        </ThemedSelect>
                       </div>
                     </div>
                   </div>
@@ -728,7 +729,7 @@ export default function SearchWorkbench({
                           <div className="grid grid-cols-[1fr_1fr_1fr_auto] items-end gap-2">
                             <label className="text-[11px] font-bold text-muted-foreground">
                               Digit
-                              <select
+                              <ThemedSelect
                                 value={frequency.digit}
                                 aria-invalid={Boolean(errors[`frequency-${index}`])}
                                 aria-describedby={errors[`frequency-${index}`] ? `${placement}-frequency-${index}-error` : undefined}
@@ -741,7 +742,7 @@ export default function SearchWorkbench({
                               >
                                 <option value="">–</option>
                                 {Array.from({ length: 10 }, (_, digit) => <option key={digit} value={digit}>{digit}</option>)}
-                              </select>
+                              </ThemedSelect>
                             </label>
                             <label className="text-[11px] font-bold text-muted-foreground">
                               Min

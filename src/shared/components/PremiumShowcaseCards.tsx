@@ -1,10 +1,12 @@
 import { CalendarClock, Crown, Heart, ShoppingCart, Star, Zap, CheckCircle2 } from 'lucide-react';
-import { formatINR, digitTotal } from '@/core/lib/format';
+import { formatINR, digitTotal, numerologySum } from '@/core/lib/format';
+import { formatNumberDisplay } from '@/core/categories/numberDisplay';
 
 export function PremiumNumberShowcaseCard({
   number,
   title = 'Signature VIP Number',
   pattern = 'Hexa Pattern',
+  categorySlug,
   mrp,
   offerPrice,
   discount,
@@ -19,6 +21,7 @@ export function PremiumNumberShowcaseCard({
   number: string;
   title?: string;
   pattern?: string;
+  categorySlug?: string;
   mrp: number | string;
   offerPrice: number | string;
   discount?: number | string;
@@ -39,7 +42,7 @@ export function PremiumNumberShowcaseCard({
         </button>
       </div>
       <div className="flex items-center justify-center gap-2 text-lg font-semibold text-foreground"><Crown className="h-6 w-6 text-primary" /> {title}</div>
-      <h1 className="vnw-card-numeral mt-4 text-5xl tracking-[.08em] text-foreground drop-shadow-[0_2px_0_rgba(217,163,27,.5)] sm:text-7xl">{number}</h1>
+      <h1 className="vnw-card-numeral mt-4 text-[clamp(1.8rem,5vw,4.5rem)] tracking-normal text-foreground">{formatNumberDisplay(number, categorySlug ? { slug: categorySlug } : null)}</h1>
       <div className="mx-auto my-6 flex max-w-3xl items-center justify-center gap-4 text-primary">
         <span className="h-px flex-1 bg-gradient-to-r from-transparent via-primary to-primary/20" />
         <span className="text-2xl font-semibold">{pattern}</span>
@@ -51,8 +54,8 @@ export function PremiumNumberShowcaseCard({
           <div className="vnw-card-numeral text-3xl text-foreground">{digitTotal(number)}</div>
         </div>
         <div className="rounded-2xl border border-primary/25 bg-card/60 p-4">
-          <div className="text-sm text-muted-foreground">Sum</div>
-          <div className="vnw-card-numeral text-3xl text-foreground">{sum ?? '-'}</div>
+          <div className="text-sm text-muted-foreground">Root sum</div>
+          <div className="vnw-card-numeral text-3xl text-foreground">{numerologySum(number) || sum || '-'}</div>
         </div>
       </div>
       <div className="mx-auto mt-6 grid max-w-4xl gap-4 rounded-2xl border border-primary/25 bg-card/60 p-4 sm:grid-cols-[1fr_1.3fr_1fr]">

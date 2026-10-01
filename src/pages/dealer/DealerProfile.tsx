@@ -1,3 +1,4 @@
+import { ThemedSelect } from '@/shared/ui/themed-select';
 import { useEffect, useState } from 'react';
 import { dealerAPI } from '@/core/api/vnwAPI';
 import { useToast } from '@/shared/hooks/use-toast';
@@ -38,9 +39,9 @@ export default function DealerProfile() {
           <div><label className="mb-1 block text-xs text-muted-foreground">GST Number</label>
             <input className={input} value={p.gst_no || ''} onChange={(e) => set('gst_no', e.target.value)} /></div>
           <div><label className="mb-1 block text-xs text-muted-foreground">Payout Method</label>
-            <select className={input} value={p.payout_method || ''} onChange={(e) => set('payout_method', e.target.value)}>
+            <ThemedSelect className={input} value={p.payout_method || ''} onChange={(e) => set('payout_method', e.target.value)}>
               <option value="">Select</option><option value="UPI">UPI</option><option value="BANK">Bank Transfer</option>
-            </select></div>
+            </ThemedSelect></div>
           <div className="sm:col-span-2"><label className="mb-1 block text-xs text-muted-foreground">Payout Details (UPI ID / Account)</label>
             <input className={input} value={typeof p.payout_details === 'string' ? p.payout_details : ''} onChange={(e) => set('payout_details', e.target.value)} /></div>
           <div className="sm:col-span-2"><button disabled={busy} className="btn-gold">Save Profile</button></div>

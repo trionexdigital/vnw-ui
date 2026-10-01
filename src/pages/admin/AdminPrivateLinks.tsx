@@ -12,6 +12,9 @@ export default function AdminPrivateLinks() {
   const [links, setLinks] = useState<PrivateCollection[]>([]);
   const [numbers, setNumbers] = useState<OfflineNumber[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [total, setTotal] = useState(0);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [expiresAt, setExpiresAt] = useState('');
@@ -24,14 +27,14 @@ export default function AdminPrivateLinks() {
     setLoading(true);
     try {
       const [linkRows, numberData] = await Promise.all([
-        adminAPI.privateLinksList(),
+        adminAPI.privateLinksList({ page, limit: pageSize }),
         adminAPI.numbersList({ visibility_type: 'OFFLINE', status: 'ALL', limit: 60 }),
       ]);
-      setLinks(linkRows || []); setNumbers(numberData.items || []);
+      setLinks(linkRows.items || []); setTotal(linkRows.total || 0); setNumbers(numberData.items || []);
     } catch (error: any) { toast({ title: 'Could not load private links', description: error.message, variant: 'destructive' }); }
     finally { setLoading(false); }
   };
-  useEffect(() => { void load(); }, []);
+  useEffect(() => { void load(); }, [page, pageSize]);
 
   const availableNumbers = useMemo(() => numbers.filter((number) => number.status !== 'SOLD'), [numbers]);
   const close = () => { setOpen(false); setEditingId(null); setName(''); setExpiresAt(''); setSelected([]); };
@@ -70,7 +73,7 @@ export default function AdminPrivateLinks() {
       <div className="min-w-0"><div className="text-xs font-black uppercase text-accent">Latest generated URL</div><div className="mt-1 break-all text-sm font-bold">{freshUrl}</div></div>
       <button onClick={() => copyUrl(freshUrl)} className="inline-flex h-10 items-center gap-2 rounded-xl border border-border bg-card px-4 text-sm font-black"><Copy className="h-4 w-4" /> Copy</button>
     </Panel>}
-    {links.length ? <Table head={['Collection','Numbers','Expiry','Status','Actions']}>
+    {links.length ? <Table head={['Collection','Numbers','Expiry','Status','Actions']} pagination={{ page, pageSize, total, onPageChange: setPage, onPageSizeChange: (size) => { setPageSize(size); setPage(1); } }}>
       {links.map((link) => {
         const expired = Boolean(link.expires_at && new Date(link.expires_at) <= new Date());
         const status = link.revoked_at ? 'REVOKED' : expired ? 'EXPIRED' : 'ACTIVE';

@@ -119,9 +119,10 @@ describe('AdminDealsOfDay', () => {
     await screen.findByText('969595 1155');
     await user.click(screen.getByRole('button', { name: 'Add Lucky Pick' }));
     const picker = await screen.findByRole('combobox', { name: 'VIP number' });
+    await user.click(picker);
     await waitFor(() => expect(screen.getByRole('option', { name: /936313 1155/ })).toBeInTheDocument());
     expect(screen.queryByRole('option', { name: /969595 1155/ })).not.toBeInTheDocument();
-    await user.selectOptions(picker, '103');
+    await user.click(screen.getByRole('option', { name: /936313 1155/ }));
     await user.type(screen.getByPlaceholderText('e.g. Numerology Special'), 'Golden Choice');
     await user.type(screen.getByPlaceholderText(/Highly desirable/), 'Rare and memorable');
     await user.click(screen.getByRole('button', { name: 'Add to Lucky Pick of the Day' }));

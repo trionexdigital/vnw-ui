@@ -4,13 +4,6 @@ import { notificationsAPI } from '@/core/api/vnwAPI';
 import { PageHeader } from '@/shared/components/ui-bits';
 import { useToast } from '@/shared/hooks/use-toast';
 
-const fallback = [
-  { id: 1, title: 'New VIP number added', message: 'A premium listing is waiting for review.', time: '2 min', type: 'catalog', read: false },
-  { id: 2, title: 'Order activity', message: 'Recent order status needs attention.', time: '18 min', type: 'order', read: false },
-  { id: 3, title: 'Customer message', message: 'A buyer asked about number transfer.', time: '1 hr', type: 'message', read: false },
-  { id: 4, title: 'Daily console summary', message: 'Your admin dashboard has new catalog and sales activity.', time: 'Today', type: 'summary', read: true },
-];
-
 const icons: Record<string, any> = {
   catalog: Crown,
   order: ShoppingBag,
@@ -20,24 +13,27 @@ const icons: Record<string, any> = {
 
 export default function Notifications() {
   const { toast } = useToast();
-  const [items, setItems] = useState<any[]>(fallback);
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     notificationsAPI.get()
       .then((data: any) => {
         const rows = Array.isArray(data) ? data : data?.items;
-        if (Array.isArray(rows) && rows.length) setItems(rows);
+        if (Array.isArray(rows)) setItems(rows);
       })
-      .catch(() => {});
+      .catch(() => toast({ title: 'Could not load notifications', variant: 'destructive' }))
+      .finally(() => setLoading(false));
   }, []);
 
   const markAll = async () => {
     try {
       await notificationsAPI.markAllRead();
     } catch {
-      // Keep local fallback behavior if the endpoint is not ready.
+      toast({ title: 'Could not mark notifications as read', variant: 'destructive' });
+      return;
     }
-    setItems((rows) => rows.map((n) => ({ ...n, read: true })));
+    setItems((rows) => rows.map((n) => ({ ...n, is_read: 'true' })));
     toast({ title: 'Notifications marked as read' });
   };
 
@@ -50,19 +46,21 @@ export default function Notifications() {
       />
 
       <div className="vnw-card grid gap-2 p-3">
+        {loading && <p className="p-4 text-sm text-muted-foreground">Loading notifications…</p>}
+        {!loading && items.length === 0 && <p className="p-4 text-sm text-muted-foreground">No notifications yet.</p>}
         {items.map((n, index) => {
           const Icon = icons[n.type] || Bell;
           return (
-            <article key={n.id || index} className="flex gap-3 rounded-2xl bg-muted/65 p-3 shadow-sm">
+            <article key={n.notification_id || n.id || index} className="flex gap-3 rounded-2xl bg-muted/65 p-3 shadow-sm">
               <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-accent/10 text-accent"><Icon className="h-5 w-5" /></span>
               <div className="min-w-0 flex-1">
                 <div className="flex items-start justify-between gap-3">
                   <h3 className="text-sm font-black text-foreground">{n.title || n.heading || 'Notification'}</h3>
-                  <span className="shrink-0 text-[10px] font-black text-muted-foreground">{n.time || n.created_at || ''}</span>
+                  <span className="shrink-0 text-[10px] font-black text-muted-foreground">{n.created_at ? new Date(n.created_at).toLocaleString('en-IN') : ''}</span>
                 </div>
                 <p className="mt-1 text-sm leading-6 text-muted-foreground">{n.message || n.text || n.content}</p>
               </div>
-              {!n.read && <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-accent" />}
+              {String(n.is_read).toLowerCase() !== 'true' && <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-accent" />}
             </article>
           );
         })}

@@ -3,8 +3,11 @@ import { Grid3X3, Heart, Home, Search, User } from 'lucide-react';
 import { useStore } from '@/shared/store/useStore';
 import { localService } from '@/core/services/local';
 import { cn } from '@/core/lib/utils';
+import { useAppSelector } from '@/app/hooks';
+import UserAvatar from '@/shared/components/UserAvatar';
 
 export default function BottomNav() {
+  const { user } = useAppSelector(s => s.auth);
   const { wishlistCount } = useStore();
   const authed = Boolean(localService.getToken());
   const items = [
@@ -39,7 +42,7 @@ export default function BottomNav() {
                   item.center ? 'h-8 w-8 bg-primary text-primary-foreground shadow-sm' : 'h-8 w-8',
                   isActive && !item.center && 'scale-110 bg-card/70 shadow-sm',
                 )}>
-                  <item.icon className="h-5 w-5" aria-hidden="true" />
+                  {item.label === 'Account' && user ? <UserAvatar user={user} className="h-6 w-6 rounded-lg" /> : <item.icon className="h-5 w-5" aria-hidden="true" />}
                   {item.badge ? (
                     <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[9px] font-bold text-primary-foreground">
                       {item.badge}

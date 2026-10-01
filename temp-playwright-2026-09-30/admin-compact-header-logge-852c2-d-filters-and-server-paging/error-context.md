@@ -1,0 +1,221 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - region "Notifications (F8)":
+      - list
+    - generic [ref=e3]:
+      - complementary [ref=e4]:
+        - generic [ref=e5]:
+          - link "VIP Number World VIP Number World - Premium Numbers. Premium Identity." [ref=e7] [cursor=pointer]:
+            - /url: /admin
+            - generic [ref=e8] [cursor=pointer]:
+              - img "VIP Number World" [ref=e9] [cursor=pointer]
+              - img "VIP Number World - Premium Numbers. Premium Identity." [ref=e10] [cursor=pointer]
+          - navigation [ref=e11]:
+            - generic [ref=e12]:
+              - generic [ref=e13]: Overview
+              - link "Dashboard" [ref=e15] [cursor=pointer]:
+                - /url: /admin
+                - img [ref=e17] [cursor=pointer]
+                - generic [ref=e22] [cursor=pointer]: Dashboard
+            - generic [ref=e23]:
+              - generic [ref=e24]: Catalog
+              - generic [ref=e25]:
+                - link "Numbers" [ref=e26] [cursor=pointer]:
+                  - /url: /admin/numbers
+                  - img [ref=e28] [cursor=pointer]
+                  - generic [ref=e30] [cursor=pointer]: Numbers
+                - link "Private Links" [ref=e31] [cursor=pointer]:
+                  - /url: /admin/private-links
+                  - img [ref=e33] [cursor=pointer]
+                  - generic [ref=e36] [cursor=pointer]: Private Links
+                - link "Premium Homepage" [ref=e37] [cursor=pointer]:
+                  - /url: /admin/home-premium
+                  - img [ref=e39] [cursor=pointer]
+                  - generic [ref=e41] [cursor=pointer]: Premium Homepage
+                - link "Lucky Pick of the Day" [ref=e42] [cursor=pointer]:
+                  - /url: /admin/deals-of-day
+                  - img [ref=e44] [cursor=pointer]
+                  - generic [ref=e46] [cursor=pointer]: Lucky Pick of the Day
+                - link "Carousel" [ref=e47] [cursor=pointer]:
+                  - /url: /admin/carousel
+                  - img [ref=e49] [cursor=pointer]
+                  - generic [ref=e53] [cursor=pointer]: Carousel
+                - link "Coupons" [ref=e54] [cursor=pointer]:
+                  - /url: /admin/coupons
+                  - img [ref=e56] [cursor=pointer]
+                  - generic [ref=e58] [cursor=pointer]: Coupons
+            - generic [ref=e59]:
+              - generic [ref=e60]: Operations
+              - generic [ref=e61]:
+                - link "Orders" [ref=e62] [cursor=pointer]:
+                  - /url: /admin/orders
+                  - img [ref=e64] [cursor=pointer]
+                  - generic [ref=e67] [cursor=pointer]: Orders
+                - link "Dealer Purchases" [ref=e68] [cursor=pointer]:
+                  - /url: /admin/dealer-purchases
+                  - img [ref=e70] [cursor=pointer]
+                  - generic [ref=e76] [cursor=pointer]: Dealer Purchases
+                - link "Pre-books & Refunds" [ref=e77] [cursor=pointer]:
+                  - /url: /admin/prebooks
+                  - img [ref=e79] [cursor=pointer]
+                  - generic [ref=e83] [cursor=pointer]: Pre-books & Refunds
+                - link "Sell Requests" [ref=e84] [cursor=pointer]:
+                  - /url: /admin/sell-requests
+                  - img [ref=e86] [cursor=pointer]
+                  - generic [ref=e89] [cursor=pointer]: Sell Requests
+                - link "Approvals" [ref=e90] [cursor=pointer]:
+                  - /url: /admin/approvals
+                  - img [ref=e92] [cursor=pointer]
+                  - generic [ref=e95] [cursor=pointer]: Approvals
+                - link "Payouts" [ref=e96] [cursor=pointer]:
+                  - /url: /admin/payouts
+                  - img [ref=e98] [cursor=pointer]
+                  - generic [ref=e101] [cursor=pointer]: Payouts
+            - generic [ref=e102]:
+              - generic [ref=e103]: People
+              - generic [ref=e104]:
+                - link "Users" [ref=e105] [cursor=pointer]:
+                  - /url: /admin/users
+                  - img [ref=e107] [cursor=pointer]
+                  - generic [ref=e111] [cursor=pointer]: Users
+                - link "Dealers" [ref=e112] [cursor=pointer]:
+                  - /url: /admin/dealers
+                  - img [ref=e114] [cursor=pointer]
+                  - generic [ref=e119] [cursor=pointer]: Dealers
+                - link "Subscribers" [ref=e120] [cursor=pointer]:
+                  - /url: /admin/subscribers
+                  - img [ref=e122] [cursor=pointer]
+                  - generic [ref=e125] [cursor=pointer]: Subscribers
+            - generic [ref=e126]:
+              - generic [ref=e127]: Trust
+              - generic [ref=e128]:
+                - link "Reviews" [ref=e129] [cursor=pointer]:
+                  - /url: /admin/reviews
+                  - img [ref=e131] [cursor=pointer]
+                  - generic [ref=e133] [cursor=pointer]: Reviews
+                - link "Testimonials" [ref=e134] [cursor=pointer]:
+                  - /url: /admin/testimonials
+                  - img [ref=e136] [cursor=pointer]
+                  - generic [ref=e138] [cursor=pointer]: Testimonials
+                - link "Trusted Clients" [ref=e139] [cursor=pointer]:
+                  - /url: /admin/trusted-clients
+                  - img [ref=e141] [cursor=pointer]
+                  - generic [ref=e146] [cursor=pointer]: Trusted Clients
+                - link "FAQs" [ref=e147] [cursor=pointer]:
+                  - /url: /admin/faqs
+                  - img [ref=e149] [cursor=pointer]
+                  - generic [ref=e152] [cursor=pointer]: FAQs
+                - link "Messages" [ref=e153] [cursor=pointer]:
+                  - /url: /admin/messages
+                  - img [ref=e155] [cursor=pointer]
+                  - generic [ref=e157] [cursor=pointer]: Messages
+                - link "Settings" [ref=e158] [cursor=pointer]:
+                  - /url: /admin/settings
+                  - img [ref=e160] [cursor=pointer]
+                  - generic [ref=e163] [cursor=pointer]: Settings
+          - generic [ref=e164]:
+            - link "VA VNW Administrator admin@example.test" [ref=e165] [cursor=pointer]:
+              - /url: /account
+              - generic [ref=e166] [cursor=pointer]: VA
+              - generic [ref=e167] [cursor=pointer]:
+                - generic [ref=e168] [cursor=pointer]: VNW Administrator
+                - generic [ref=e169] [cursor=pointer]: admin@example.test
+            - link "Back to Store" [ref=e170] [cursor=pointer]:
+              - /url: /
+              - img [ref=e171] [cursor=pointer]
+              - text: Back to Store
+            - button "Logout" [ref=e173] [cursor=pointer]:
+              - img [ref=e174] [cursor=pointer]
+              - text: Logout
+      - generic [ref=e177]:
+        - banner [ref=e178]:
+          - generic [ref=e179]:
+            - generic [ref=e180]:
+              - button "Toggle sidebar" [ref=e181] [cursor=pointer]:
+                - img [ref=e182] [cursor=pointer]
+              - generic [ref=e187]:
+                - link "Home" [ref=e188] [cursor=pointer]:
+                  - /url: /admin
+                - img [ref=e189]
+                - generic [ref=e191]: Numbers
+            - generic [ref=e192]:
+              - 'button "Theme: System, currently Light" [ref=e193] [cursor=pointer]':
+                - img [ref=e194] [cursor=pointer]
+              - button "Notifications" [expanded] [ref=e196] [cursor=pointer]:
+                - img [ref=e197] [cursor=pointer]
+                - generic [ref=e200] [cursor=pointer]: "1"
+              - button "VA VNW Administrator ADMIN" [ref=e202] [cursor=pointer]:
+                - generic [ref=e203] [cursor=pointer]: VA
+                - generic [ref=e204] [cursor=pointer]:
+                  - generic [ref=e205] [cursor=pointer]: VNW Administrator
+                  - generic [ref=e206] [cursor=pointer]: ADMIN
+        - main [ref=e207]:
+          - generic [ref=e209]:
+            - button "Add Number" [ref=e211] [cursor=pointer]:
+              - img [ref=e212] [cursor=pointer]
+              - text: Add Number
+            - generic [ref=e213]:
+              - combobox "Filter number status" [ref=e214] [cursor=pointer]:
+                - generic: All statuses
+                - img [ref=e215] [cursor=pointer]
+              - combobox "Filter number visibility" [ref=e217] [cursor=pointer]:
+                - generic: All visibility
+                - img [ref=e218] [cursor=pointer]
+            - generic [ref=e220]:
+              - table [ref=e221]:
+                - rowgroup [ref=e222]:
+                  - row "Number Category Visibility MRP Discounted price Readiness Status" [ref=e223]:
+                    - cell "Number" [ref=e224]
+                    - cell "Category" [ref=e225]
+                    - cell "Visibility" [ref=e226]
+                    - cell "MRP" [ref=e227]
+                    - cell "Discounted price" [ref=e228]
+                    - cell "Readiness" [ref=e229]
+                    - cell "Status" [ref=e230]
+                    - cell [ref=e231]
+                - rowgroup [ref=e232]:
+                  - row "9988 998 877 Unique ONLINE ₹50,000 ₹45,000 RTP · PORT AVAILABLE" [ref=e233]:
+                    - cell "9988 998 877" [ref=e234]
+                    - cell "Unique" [ref=e235]
+                    - cell "ONLINE" [ref=e236]:
+                      - generic [ref=e237]: ONLINE
+                    - cell "₹50,000" [ref=e238]:
+                      - generic [ref=e239]: ₹50,000
+                    - cell "₹45,000" [ref=e240]:
+                      - generic [ref=e241]: ₹45,000
+                    - cell "RTP · PORT" [ref=e242]:
+                      - generic [ref=e243]:
+                        - img [ref=e244]
+                        - text: RTP · PORT
+                    - cell "AVAILABLE" [ref=e248]:
+                      - generic [ref=e249]: AVAILABLE
+                    - cell [ref=e250]:
+                      - generic [ref=e251]:
+                        - button [ref=e252] [cursor=pointer]:
+                          - img [ref=e253] [cursor=pointer]
+                        - button [ref=e256] [cursor=pointer]:
+                          - img [ref=e257] [cursor=pointer]
+              - navigation "Table pagination" [ref=e260]:
+                - generic [ref=e261]: 1–20 of 45
+                - generic [ref=e262]:
+                  - text: Rows
+                  - combobox "Rows per page" [ref=e263] [cursor=pointer]:
+                    - generic: "20"
+                    - img [ref=e264] [cursor=pointer]
+                - button "Previous page" [disabled] [ref=e266]: ‹
+                - generic [ref=e267]: Page 1 of 3
+                - button "Next page" [ref=e268] [cursor=pointer]: ›
+  - dialog [ref=e270]:
+    - generic [ref=e271]:
+      - generic [ref=e272]: Notifications
+      - button "Mark all read" [ref=e273] [cursor=pointer]
+    - generic [ref=e275]:
+      - generic [ref=e276]:
+        - generic [ref=e277]: Order ready
+        - generic [ref=e278]: 30/9/2026
+      - generic [ref=e279]: A new order needs review.
+    - button "View all notifications" [active] [ref=e280] [cursor=pointer]
+```

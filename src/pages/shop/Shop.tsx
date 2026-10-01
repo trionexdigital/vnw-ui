@@ -1,3 +1,4 @@
+import { ThemedSelect } from '@/shared/ui/themed-select';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import {
@@ -69,6 +70,7 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
   const paramsKey = params.toString();
 
   const category = params.get('category') || '';
+  const subcategoryId = params.get('subcategory_id') || '';
   const ai = params.get('ai') || '';
   const sort = params.get('sort') || 'newest';
   const page = Math.max(1, Number(params.get('page')) || 1);
@@ -168,8 +170,12 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
     if (category) filters.push({
       id: 'category',
       label: `Category: ${categoryItem?.name || category}`,
-      keys: ['category'],
+      keys: ['category', 'subcategory_id'],
     });
+    if (subcategoryId) {
+      const subcategory = categoryItem?.subcategories?.find((item) => String(item.id) === subcategoryId);
+      filters.push({ id: 'subcategory_id', label: `Subcategory: ${subcategory?.name || subcategoryId}`, keys: ['subcategory_id'] });
+    }
     if (ai) filters.push({ id: 'ai', label: `AI: ${ai}`, keys: ['ai', 'mode'] });
     const q = params.get('q');
     if (q) {
@@ -221,8 +227,10 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
     });
     const operator = params.get('operator');
     if (operator) filters.push({ id: 'operator', label: `Operator: ${operator}`, keys: ['operator'] });
+    const readiness = params.get('rtp_status');
+    if (readiness) filters.push({ id: 'rtp_status', label: readiness === 'RTA' ? 'Ready to activate' : readiness === 'RTP' ? 'Ready to port' : 'Pre-book', keys: ['rtp_status'] });
     return filters;
-  }, [paramsKey, categories, category, ai, priceMin, priceMax, selectedPrice?.label]);
+  }, [paramsKey, categories, category, subcategoryId, ai, priceMin, priceMax, selectedPrice?.label]);
 
   const removeChip = (keys: string[]) => {
     const next = new URLSearchParams(params);
@@ -263,7 +271,7 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
           <>
             <button
               type="button"
-              onClick={() => update({ category: '' })}
+              onClick={() => update({ category: '', subcategory_id: '' })}
               className={`flex min-h-9 w-full items-center justify-between rounded-lg px-2.5 text-left text-xs font-bold transition ${
                 !category ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-primary/10 hover:text-foreground'
               }`}
@@ -272,10 +280,11 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
               {!category && <Check className="h-4 w-4" aria-hidden="true" />}
             </button>
             {categories.map((item) => (
+              <div key={item.slug}>
               <button
                 key={item.slug}
                 type="button"
-                onClick={() => update({ category: item.slug })}
+                onClick={() => update({ category: item.slug, subcategory_id: '' })}
                 className={`flex min-h-9 w-full items-center justify-between gap-2 rounded-lg px-2.5 text-left text-xs font-bold transition ${
                   category === item.slug
                     ? 'bg-primary text-primary-foreground shadow-sm'
@@ -287,6 +296,22 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
                   {getCategoryCount(item).toLocaleString('en-IN')}
                 </span>
               </button>
+              {category === item.slug && Boolean(item.subcategories?.length) && (
+                <div className="ml-3 border-l border-primary/20 pl-2" aria-label={`${item.name} subcategories`}>
+                  {item.subcategories!.map((sub) => (
+                    <button
+                      key={`${item.id}:${sub.id}`}
+                      type="button"
+                      onClick={() => update({ subcategory_id: String(sub.id) })}
+                      className={`flex min-h-8 w-full items-center justify-between gap-2 rounded-lg px-2 text-left text-[11px] font-semibold transition ${subcategoryId === String(sub.id) ? 'bg-primary/15 text-primary' : 'text-muted-foreground hover:bg-primary/10 hover:text-foreground'}`}
+                    >
+                      <span className="min-w-0 truncate">{sub.name}</span>
+                      <span className="shrink-0">{Number(sub.number_count || 0).toLocaleString('en-IN')}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              </div>
             ))}
           </>
         ) : PRICE_BANDS.map((band) => {
@@ -397,13 +422,13 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
           </button>
           <label className="min-w-0 flex-1 sm:min-w-52">
             <span className="sr-only">Sort results</span>
-            <select
+            <ThemedSelect
               value={sort}
               onChange={(event) => update({ sort: event.target.value })}
               className="input-luxury h-11 w-full text-base"
             >
               {SORT_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-            </select>
+            </ThemedSelect>
           </label>
         </div>
       </div>
@@ -484,7 +509,7 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
                     <h2 id={`alternative-${group.relaxed_key}`} className="mt-1 text-lg font-black text-foreground">{group.label}</h2>
                   </div>
                   <div className="number-card-grid">
-                    {group.items.slice(0, 6).map((number) => <NumberCard key={number.number_id} item={number} highlightDigits={highlightFilteredDigits} />)}
+                    {group.items.slice(0, 6).map((number) => <NumberCard key={number.number_id} item={number} highlightDigits={highlightFilteredDigits} groupingCategory={category} />)}
                   </div>
                 </section>
               ))}
@@ -494,7 +519,7 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
               <MotionGrid className="number-card-grid">
                 {items.map((number) => (
                   <MotionGridItem key={number.number_id}>
-                    <NumberCard item={number} highlightDigits={highlightFilteredDigits} />
+                    <NumberCard item={number} highlightDigits={highlightFilteredDigits} groupingCategory={category} />
                   </MotionGridItem>
                 ))}
               </MotionGrid>

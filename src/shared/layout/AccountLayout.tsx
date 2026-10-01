@@ -1,18 +1,21 @@
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Crown, LayoutDashboard, ShoppingBag, Heart, Users2, User, LogOut, Store, ListPlus,
   Tag, BadgeIndianRupee, Star, Image, MessageSquare, Settings, Gift, Menu, ArrowLeft, ListChecks, X, Ticket, Mail,
-  ClipboardList, Inbox, Bell, ChevronRight, PanelLeftClose, PanelLeftOpen, ShieldCheck, Search, UserCircle, Sparkles, Handshake, CircleHelp, CalendarClock, KeyRound, PackageSearch,
+  ClipboardList, Inbox, Bell, ChevronRight, PanelLeftClose, PanelLeftOpen, ShieldCheck, UserCircle, Sparkles, Handshake, CircleHelp, CalendarClock, KeyRound, PackageSearch,
 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { logout } from '@/app/authSlice';
 import { cn } from '@/core/lib/utils';
 import { hasPermission } from '@/core/lib/permissions';
+import UserAvatar from '@/shared/components/UserAvatar';
 import { BrandLockup } from '@/shared/components/Logo';
 import { ThemeControl } from '@/shared/components/ThemeControl';
 import { AnimatePresence, motion } from 'framer-motion';
 import { MotionPage } from '@/shared/motion/MotionPrimitives';
+import { notificationsAPI } from '@/core/api/vnwAPI';
+import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover';
 
 interface MenuItem { to: string; label: string; icon: any; end?: boolean; perm?: string; }
 
@@ -44,10 +47,11 @@ const EMPLOYEE_MENU: MenuItem[] = [
 const ADMIN_MENU: MenuItem[] = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/admin/numbers', label: 'Numbers', icon: Crown },
-  { to: '/admin/private-links', label: 'Private Links', icon: KeyRound },
+  { to: '/admin/private-links', label: 'Offline Catalog Link', icon: KeyRound },
   { to: '/admin/home-premium', label: 'Premium Homepage', icon: Star },
   { to: '/admin/deals-of-day', label: 'Lucky Pick of the Day', icon: Sparkles },
   { to: '/admin/orders', label: 'Orders', icon: ShoppingBag },
+  { to: '/admin/payments', label: 'Payments', icon: BadgeIndianRupee },
   { to: '/admin/dealer-purchases', label: 'Dealer Purchases', icon: PackageSearch },
   { to: '/admin/prebooks', label: 'Pre-books & Refunds', icon: CalendarClock },
   { to: '/admin/sell-requests', label: 'Sell Requests', icon: Inbox },
@@ -64,14 +68,15 @@ const ADMIN_MENU: MenuItem[] = [
   { to: '/admin/subscribers', label: 'Subscribers', icon: Mail },
   { to: '/admin/messages', label: 'Messages', icon: MessageSquare },
   { to: '/admin/settings', label: 'Settings', icon: Settings },
+  { to: '/account', label: 'Profile', icon: User },
 ];
 
 const ADMIN_GROUPS = [
   { label: 'Overview', items: ['Dashboard'] },
-  { label: 'Catalog', items: ['Numbers', 'Private Links', 'Premium Homepage', 'Lucky Pick of the Day', 'Carousel', 'Coupons'] },
-  { label: 'Operations', items: ['Orders', 'Dealer Purchases', 'Pre-books & Refunds', 'Sell Requests', 'Approvals', 'Payouts'] },
+  { label: 'Catalog', items: ['Numbers', 'Offline Catalog Link', 'Premium Homepage', 'Lucky Pick of the Day', 'Carousel', 'Coupons'] },
+  { label: 'Operations', items: ['Orders', 'Payments', 'Dealer Purchases', 'Pre-books & Refunds', 'Sell Requests', 'Approvals', 'Payouts'] },
   { label: 'People', items: ['Users', 'Dealers', 'Subscribers'] },
-  { label: 'Trust', items: ['Reviews', 'Testimonials', 'Trusted Clients', 'FAQs', 'Messages', 'Settings'] },
+  { label: 'Trust', items: ['Reviews', 'Testimonials', 'Trusted Clients', 'FAQs', 'Messages', 'Settings', 'Profile'] },
 ];
 
 const ROLE_HOME: Record<string, string> = {
@@ -99,9 +104,10 @@ export default function AccountLayout() {
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);
-  const notificationsRef = useRef<HTMLDivElement>(null);
-  const profileRef = useRef<HTMLDivElement>(null);
+  const [notificationRows, setNotificationRows] = useState<any[]>([]);
+  const [visibleNotifications, setVisibleNotifications] = useState(7);
+  const [notificationsLoading, setNotificationsLoading] = useState(false);
+  const [notificationsError, setNotificationsError] = useState('');
 
   const current = [...menu].sort((a, b) => b.to.length - a.to.length).find((m) => (
     m.end ? location.pathname === m.to : location.pathname === m.to || location.pathname.startsWith(`${m.to}/`)
@@ -109,7 +115,7 @@ export default function AccountLayout() {
   const pageLabel = current?.label || EXTRA_LABELS[location.pathname] || 'Dashboard';
   const homePath = ROLE_HOME[role] || '/dashboard';
   const isAdmin = role === 'ADMIN';
-  const userName = user?.name || 'User';
+  const userName = user?.name || user?.full_name || 'User';
   const userEmail = user?.email || user?.phone || `${role.toLowerCase()}@vipnumberworld.com`;
   const initials = userName.split(' ').map((p) => p[0]).join('').slice(0, 2).toUpperCase() || role.slice(0, 2);
 
@@ -120,42 +126,40 @@ export default function AccountLayout() {
   const doLogout = () => dispatch(logout());
 
   useEffect(() => {
-    const closeFloatingMenus = (event: MouseEvent | TouchEvent) => {
-      const target = event.target as Node;
-      if (notificationsRef.current?.contains(target) || profileRef.current?.contains(target)) return;
-      setNotificationsOpen(false);
-      setProfileOpen(false);
-    };
-    document.addEventListener('mousedown', closeFloatingMenus);
-    document.addEventListener('touchstart', closeFloatingMenus);
-    return () => {
-      document.removeEventListener('mousedown', closeFloatingMenus);
-      document.removeEventListener('touchstart', closeFloatingMenus);
-    };
-  }, []);
+    if (!notificationsOpen) return;
+    let active = true;
+    setVisibleNotifications(7);
+    setNotificationsLoading(true);
+    setNotificationsError('');
+    notificationsAPI.get().then((data: any) => {
+      if (active) setNotificationRows(Array.isArray(data) ? data : data?.items || []);
+    }).catch(() => { if (active) setNotificationsError('Could not load notifications.'); })
+      .finally(() => { if (active) setNotificationsLoading(false); });
+    return () => { active = false; };
+  }, [notificationsOpen]);
 
   const NavList = ({ onItem, compact = false }: { onItem?: () => void; compact?: boolean }) => (
     <nav className="flex-1 overflow-y-auto px-2.5 py-2 [scrollbar-width:thin]">
       {groupedMenu.map((group) => (
-        <div key={group.label} className="mb-4 last:mb-0">
+        <div key={group.label} className="mb-2 last:mb-0">
           {!compact && (
-            <div className="mb-2 px-3 text-[10px] font-black uppercase text-muted-foreground">
+            <div className="mb-1 px-2 text-[9px] font-black uppercase text-muted-foreground">
               {group.label}
             </div>
           )}
-          <div className="space-y-1.5">
+          <div className="space-y-0.5">
             {group.links.map((m) => (
               <NavLink key={m.to} to={m.to} end={m.end} onClick={onItem} title={compact ? m.label : undefined}
                 className={({ isActive }) => cn(
-                  'group relative flex min-h-10 items-center rounded-lg text-sm font-bold transition-all',
-                  compact ? 'justify-center px-2' : 'gap-3 px-3',
+                  'group relative flex min-h-8 items-center rounded-lg text-xs font-bold transition-all',
+                  compact ? 'justify-center px-2' : 'gap-2 px-2',
                   isActive
                     ? 'bg-primary text-primary-foreground shadow-sm'
                     : 'text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                 )}>
                 {({ isActive }) => (
                   <>
-                    <span className={cn('grid h-8 w-8 shrink-0 place-items-center rounded-lg transition', isActive ? 'bg-primary-foreground/10 text-primary-foreground' : 'bg-sidebar-accent text-sidebar-primary group-hover:bg-card')}>
+                    <span className={cn('grid h-6 w-6 shrink-0 place-items-center rounded-lg transition', isActive ? 'bg-primary-foreground/10 text-primary-foreground' : 'bg-sidebar-accent text-sidebar-primary group-hover:bg-card')}>
                       <m.icon className="h-4 w-4" />
                     </span>
                     {!compact && <span className="min-w-0 truncate">{m.label}</span>}
@@ -179,17 +183,16 @@ export default function AccountLayout() {
           {collapsed && !mobile
             ? <BrandLockup className="dark:px-1" logoClassName="sm:h-10 sm:w-10" sloganClassName="hidden" />
             : <BrandLockup logoClassName="sm:h-10 sm:w-10" sloganClassName="h-8 w-[132px] sm:h-8 sm:w-[132px] xl:w-[132px] 2xl:w-[132px]" />}
-          {(!collapsed || mobile) && <span className="pl-1 text-[10px] font-bold capitalize text-muted-foreground">{role.toLowerCase()} panel</span>}
         </Link>
         {mobile && <button onClick={onItem} className="grid h-10 w-10 place-items-center rounded-2xl bg-sidebar-accent text-sidebar-accent-foreground"><X className="h-5 w-5" /></button>}
       </div>
 
       <NavList onItem={onItem} compact={collapsed && !mobile} />
 
-      <div className="space-y-2 p-3">
+      <div className="space-y-1 p-2">
         {(!collapsed || mobile) && (
-          <Link to="/account" onClick={onItem} className="flex items-center gap-3 rounded-2xl border border-sidebar-border bg-sidebar-accent p-3 shadow-sm transition hover:bg-sidebar-accent/80">
-            <span className="royal-gradient-bg grid h-10 w-10 shrink-0 place-items-center rounded-2xl text-sm font-black text-primary-foreground">{initials}</span>
+          <Link to="/account" onClick={onItem} className="flex items-center gap-3 rounded-2xl border border-sidebar-border bg-sidebar-accent p-2 shadow-sm transition hover:bg-sidebar-accent/80">
+            <UserAvatar user={user} className="h-8 w-8" />
             <span className="min-w-0">
               <span className="block truncate text-sm font-black text-sidebar-foreground">{userName}</span>
               <span className="block truncate text-xs text-muted-foreground">{userEmail}</span>
@@ -197,11 +200,11 @@ export default function AccountLayout() {
           </Link>
         )}
         <Link to="/" onClick={onItem} title={collapsed && !mobile ? 'Back to Store' : undefined}
-          className={cn('flex min-h-11 items-center rounded-2xl bg-sidebar-accent text-sm font-bold text-sidebar-accent-foreground shadow-sm transition hover:bg-sidebar-accent/80', collapsed && !mobile ? 'justify-center px-2' : 'gap-3 px-3')}>
+          className={cn('flex min-h-9 items-center rounded-2xl bg-sidebar-accent text-sm font-bold text-sidebar-accent-foreground shadow-sm transition hover:bg-sidebar-accent/80', collapsed && !mobile ? 'justify-center px-2' : 'gap-2 px-2')}>
           <ArrowLeft className="h-4 w-4" /> {(!collapsed || mobile) && 'Back to Store'}
         </Link>
         <button onClick={doLogout} title={collapsed && !mobile ? 'Logout' : undefined}
-          className={cn('flex min-h-11 w-full items-center rounded-2xl bg-sidebar-accent text-sm font-bold text-destructive shadow-sm transition hover:bg-destructive/10', collapsed && !mobile ? 'justify-center px-2' : 'gap-3 px-3')}>
+          className={cn('flex min-h-9 w-full items-center rounded-2xl bg-sidebar-accent text-sm font-bold text-destructive shadow-sm transition hover:bg-destructive/10', collapsed && !mobile ? 'justify-center px-2' : 'gap-2 px-2')}>
           <LogOut className="h-4 w-4" /> {(!collapsed || mobile) && 'Logout'}
         </button>
       </div>
@@ -215,15 +218,17 @@ export default function AccountLayout() {
     menu.find((m) => ['Users', 'Wishlist', 'Dealers'].includes(m.label)) || menu[3],
   ].filter(Boolean) as MenuItem[];
 
-  const notifications = [
-    { title: 'New VIP number added', text: 'A premium listing is waiting for review.', time: '2 min' },
-    { title: 'Order activity', text: 'Recent order status needs attention.', time: '18 min' },
-    { title: 'Customer message', text: 'A buyer asked about number transfer.', time: '1 hr' },
-  ];
+  const unreadCount = notificationRows.filter((row) => String(row.is_read ?? row.read).toLowerCase() === 'false' || row.is_read === 0).length;
+  const markNotificationsRead = async () => {
+    try {
+      await notificationsAPI.markAllRead();
+      setNotificationRows((rows) => rows.map((row) => ({ ...row, is_read: 'true' })));
+    } catch { setNotificationsError('Could not mark notifications as read.'); }
+  };
 
   return (
-    <div className="customer-motion-scope app-shell-bg flex min-h-screen bg-background text-foreground">
-      <aside className={cn('sticky top-0 hidden h-screen shrink-0 transition-[width] duration-300 lg:block', collapsed ? 'w-[68px]' : 'w-[244px]')}>
+    <div className={cn('customer-motion-scope app-shell-bg flex min-h-screen bg-background text-foreground', isAdmin && 'admin-shell')}>
+      <aside className={cn('sticky top-0 hidden h-screen shrink-0 transition-[width] duration-300 lg:block', collapsed ? 'w-[68px]' : 'w-[224px]')}>
         <SidebarInner />
       </aside>
 
@@ -255,72 +260,51 @@ export default function AccountLayout() {
                   <ChevronRight className="h-4 w-4 shrink-0" />
                   <span className="truncate font-black text-foreground">{pageLabel}</span>
                 </div>
-                <div className="mt-0.5 hidden text-xs text-muted-foreground sm:block">Welcome back, <span className="font-black text-foreground">{userName}</span></div>
               </div>
             </div>
 
             <div className="flex shrink-0 items-center gap-2">
-              <button className="hidden h-10 items-center gap-2 rounded-2xl border border-border bg-card px-4 text-sm font-black text-foreground shadow-sm transition hover:-translate-y-0.5 xl:inline-flex" onClick={() => navigate(isAdmin ? '/admin/numbers' : homePath)}>
-                <Search className="h-4 w-4 text-accent" /> Quick Find
-              </button>
-
               <ThemeControl />
 
-              <div className="relative" ref={notificationsRef}>
-                <button onClick={() => { setNotificationsOpen((v) => !v); setProfileOpen(false); }} aria-label="Notifications" className="relative grid h-10 w-10 place-items-center rounded-2xl border border-border bg-card text-foreground shadow-sm transition hover:-translate-y-0.5">
+              <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
+                <PopoverTrigger asChild><button aria-label="Notifications" aria-expanded={notificationsOpen} className="relative grid h-10 w-10 place-items-center rounded-2xl border border-border bg-card text-foreground shadow-sm transition hover:-translate-y-0.5">
                   <Bell className="h-5 w-5" />
-                  <span className="absolute right-1 top-1 grid h-5 min-w-5 place-items-center rounded-full bg-primary px-1 text-[10px] font-black text-primary-foreground">3</span>
-                </button>
-                {notificationsOpen && (
-                  <div className="fixed left-3 right-3 top-[68px] z-40 rounded-[1.25rem] border border-popover-border bg-popover p-2.5 text-popover-foreground shadow-xl sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-3 sm:w-[360px]">
-                    <div className="mb-2 flex items-center justify-between px-1">
+                  {unreadCount > 0 && <span className="absolute right-1 top-1 grid h-5 min-w-5 place-items-center rounded-full bg-primary px-1 text-[10px] font-black text-primary-foreground">{unreadCount > 99 ? '99+' : unreadCount}</span>}
+                </button></PopoverTrigger>
+                <PopoverContent align="end" sideOffset={8} className="z-[120] w-[min(340px,calc(100vw-24px))] rounded-xl border-popover-border p-2 shadow-xl">
+                    <div className="mb-1.5 flex items-center justify-between gap-2 px-1">
                       <b className="text-sm text-popover-foreground">Notifications</b>
-                      <span className="rounded-full bg-accent/15 px-2 py-1 text-[10px] font-black text-accent">3 new</span>
+                      {unreadCount > 0 && <button onClick={markNotificationsRead} className="rounded-lg px-2 py-1 text-[10px] font-black text-accent hover:bg-accent/10">Mark all read</button>}
                     </div>
-                    <div className="space-y-2">
-                      {notifications.map((n) => (
-                        <button key={n.title} className="w-full rounded-2xl bg-muted p-3 text-left transition hover:bg-accent/10">
+                    <div className="max-h-72 space-y-1 overflow-y-auto">
+                      {notificationsLoading && <p className="p-3 text-xs text-muted-foreground">Loading notifications…</p>}
+                      {notificationsError && <p role="status" className="p-3 text-xs text-destructive">{notificationsError}</p>}
+                      {!notificationsLoading && !notificationsError && notificationRows.length === 0 && <p className="p-3 text-xs text-muted-foreground">No notifications yet.</p>}
+                      {notificationRows.slice(0, visibleNotifications).map((n) => (
+                        <div key={n.notification_id} className="w-full rounded-lg bg-muted px-2.5 py-2 text-left">
                           <span className="flex items-center justify-between gap-3">
-                            <span className="text-sm font-black text-foreground">{n.title}</span>
-                            <span className="text-[10px] font-bold text-muted-foreground">{n.time}</span>
+                            <span className="text-xs font-black text-foreground">{n.title}</span>
+                            <span className="text-[10px] font-bold text-muted-foreground">{n.created_at ? new Date(n.created_at).toLocaleDateString('en-IN') : ''}</span>
                           </span>
-                          <span className="mt-1 block text-xs leading-5 text-muted-foreground">{n.text}</span>
-                        </button>
+                          <span className="mt-0.5 block text-[11px] leading-4 text-muted-foreground">{n.message}</span>
+                        </div>
                       ))}
                     </div>
-                    <button onClick={() => { setNotificationsOpen(false); navigate('/notifications'); }} className="mt-2 flex h-10 w-full items-center justify-center rounded-2xl bg-primary text-xs font-black text-primary-foreground transition hover:bg-primary/90">
-                      View all notifications
-                    </button>
-                  </div>
-                )}
-              </div>
+                    <div className="mt-2 flex gap-1.5">
+                      {notificationRows.length > visibleNotifications && <button onClick={() => setVisibleNotifications((count) => count + 7)} className="min-h-8 flex-1 rounded-lg border border-border text-[11px] font-black text-foreground hover:bg-muted">View 7 more</button>}
+                      <button onClick={() => { setNotificationsOpen(false); navigate('/notifications'); }} className="min-h-8 flex-1 rounded-lg bg-primary px-3 text-[11px] font-black text-primary-foreground transition hover:bg-primary/90">View all</button>
+                    </div>
+                </PopoverContent>
+              </Popover>
 
-              <div className="relative" ref={profileRef}>
-                <button onClick={() => { setProfileOpen((v) => !v); setNotificationsOpen(false); }} className="flex h-10 items-center gap-2 rounded-2xl border border-border bg-card px-1.5 pr-2.5 shadow-sm transition hover:-translate-y-0.5">
-                  <span className="royal-gradient-bg grid h-8 w-8 place-items-center rounded-xl text-xs font-black text-primary-foreground">{initials}</span>
+              <div className="relative">
+                <button aria-label="Open profile" onClick={() => { navigate('/account'); setNotificationsOpen(false); }} className="flex h-10 min-w-10 items-center gap-2 rounded-2xl border border-border bg-card px-1.5 pr-2.5 shadow-sm transition hover:-translate-y-0.5 md:min-w-[176px] lg:min-w-[205px]">
+                  <UserAvatar user={user} className="h-8 w-8" />
                   <span className="hidden text-left leading-tight md:block">
-                    <span className="block max-w-28 truncate text-xs font-black text-foreground">{userName}</span>
+                    <span className="block max-w-[150px] truncate text-xs font-black text-foreground">{userName}</span>
                     <span className="block text-[10px] font-bold text-muted-foreground">{role}</span>
                   </span>
                 </button>
-                {profileOpen && (
-                  <div className="fixed left-3 right-3 top-[68px] z-40 rounded-[1.25rem] border border-popover-border bg-popover p-2.5 text-popover-foreground shadow-xl sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-3 sm:w-72">
-                    <div className="rounded-2xl bg-muted p-3">
-                      <div className="flex items-center gap-3">
-                        <span className="royal-gradient-bg grid h-11 w-11 place-items-center rounded-2xl text-sm font-black text-primary-foreground">{initials}</span>
-                        <div className="min-w-0">
-                          <div className="truncate text-sm font-black text-foreground">{userName}</div>
-                          <div className="truncate text-xs text-muted-foreground">{userEmail}</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mt-2 grid gap-1">
-                      <button onClick={() => { setProfileOpen(false); navigate('/account'); }} className="flex items-center gap-2 rounded-2xl px-3 py-2 text-left text-sm font-bold text-foreground/80 hover:bg-muted"><UserCircle className="h-4 w-4 text-accent" /> Profile</button>
-                      <button className="flex items-center gap-2 rounded-2xl px-3 py-2 text-left text-sm font-bold text-foreground/80 hover:bg-muted"><ShieldCheck className="h-4 w-4 text-success" /> Account secure</button>
-                      <button onClick={doLogout} className="flex items-center gap-2 rounded-2xl px-3 py-2 text-left text-sm font-bold text-destructive hover:bg-destructive/10"><LogOut className="h-4 w-4" /> Logout</button>
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           </div>

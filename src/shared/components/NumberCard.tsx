@@ -7,7 +7,7 @@ import { localService } from '@/core/services/local';
 import { useToast } from '@/shared/hooks/use-toast';
 import { formatINR, BADGE_META, digitTotal, numerologySum } from '@/core/lib/format';
 import { cn } from '@/core/lib/utils';
-import { getPrimaryCategory } from '@/core/categories/types';
+import { getPrimaryCategory, type NumberCategoryMatch } from '@/core/categories/types';
 import { normalizeNumberDigits } from '@/core/categories/highlight';
 import HighlightedNumber from '@/shared/components/HighlightedNumber';
 import { formatRtpDate, getNumberPurchaseMode, numberActionPath } from '@/core/lib/numberPurchaseMode';
@@ -18,11 +18,13 @@ export type NumberItem = NumberCatalogItem;
 interface NumberCardProps {
   item: NumberItem;
   onWishlistChange?: () => void;
+  compact?: boolean;
   /** Search results opt in after the customer applies a search or filter. */
   highlightDigits?: boolean;
+  groupingCategory?: string;
 }
 
-export default function NumberCard({ item, onWishlistChange, highlightDigits = false }: NumberCardProps) {
+export default function NumberCard({ item, onWishlistChange, highlightDigits = false, compact = false, groupingCategory }: NumberCardProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { refreshCounts, compare, toggleCompare } = useStore();
@@ -42,6 +44,9 @@ export default function NumberCard({ item, onWishlistChange, highlightDigits = f
   const discountPct = item.discount_pct ?? (Number(item.mrp) > 0
     ? Math.round(((Number(item.mrp) - Number(item.offer_price)) / Number(item.mrp)) * 100) : 0);
   const primaryCategory = getPrimaryCategory(item);
+  const displayCategory: NumberCategoryMatch | null = groupingCategory
+    ? item.categories?.find((category) => category.slug === groupingCategory) || primaryCategory
+    : primaryCategory;
   const titleLabel = String(item.title_label || '').trim();
   const displayTitle = titleLabel && titleLabel.toLowerCase() !== primaryCategory?.name.toLowerCase()
     ? titleLabel : 'VIP Number';
@@ -74,7 +79,7 @@ export default function NumberCard({ item, onWishlistChange, highlightDigits = f
   };
 
   return (
-    <article className="reference-card" data-testid="number-card">
+    <article className={cn('reference-card', compact && 'reference-card--compact')} data-testid="number-card">
       <div className="reference-card__hero">
         <div className="reference-card__toolbar">
           <span className="reference-card__badge" data-badge={item.badge || 'NONE'}>
@@ -93,7 +98,7 @@ export default function NumberCard({ item, onWishlistChange, highlightDigits = f
         <div className="reference-card__title"><Crown aria-hidden="true" /><span>{displayTitle}</span></div>
         <button type="button" onClick={() => navigate(`/number/${item.number_id}`)}
           className="reference-card__number-link" aria-label={`View VIP number ${item.display_number}`}>
-          <HighlightedNumber number={number} category={highlightDigits ? primaryCategory : null} appearance="reference" />
+          <HighlightedNumber number={number} category={displayCategory && !highlightDigits ? { ...displayCategory, match_spans: [] } : displayCategory} appearance="reference" />
         </button>
         <div className="reference-card__identity">
           {primaryCategory ? (

@@ -31,6 +31,8 @@ const catalog: NumberCategory[] = [
     description: 'Matching halves or a complete palindrome.',
     examples: ['9876598765'],
     number_count: 12,
+    id: 16,
+    subcategories: [{ id: 84, name: 'Mirror', number_count: 4 }, { id: 104, name: 'Ulta-Pulta', number_count: 2 }],
   },
   {
     slug: '786-numbers',
@@ -110,20 +112,20 @@ describe('automatic category helpers', () => {
 });
 
 describe('detected category preview', () => {
-  it('waits for ten valid digits and renders only the primary match as a read-only chip', async () => {
+  it('waits for ten valid digits and renders every matching category', async () => {
     apiMocks.categoriesClassify.mockResolvedValue({
       canonical_number: '9876598765',
       categories: catalog,
       primary_category: { ...catalog[0], match_spans: [{ start: 0, end: 5 }, { start: 5, end: 10 }] },
-      classifier_version: 2,
+      classifier_version: 3,
     });
     const { rerender } = render(<DetectedCategories number="98765" />);
     expect(screen.getByText(/enter a valid 10-digit mobile number/i)).toBeInTheDocument();
     expect(apiMocks.categoriesClassify).not.toHaveBeenCalled();
 
     rerender(<DetectedCategories number="+91 98765 98765" />);
-    expect(await screen.findByText('Mirror Numbers')).toBeInTheDocument();
-    expect(screen.queryByText('786 Numbers')).not.toBeInTheDocument();
+    expect(await screen.findByText(/Mirror Numbers · Mirror, Ulta-Pulta/)).toBeInTheDocument();
+    expect(screen.getByText('786 Numbers')).toBeInTheDocument();
     expect(apiMocks.categoriesClassify).toHaveBeenCalledWith('+91 98765 98765');
   });
 });
@@ -135,8 +137,13 @@ describe('Categories page and homepage section', () => {
     render(<MemoryRouter><Categories /></MemoryRouter>);
 
     expect(await screen.findByRole('heading', { name: 'Mirror Numbers' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /browse mirror numbers, 12 numbers available/i })).toHaveAttribute('href', '/shop?category=mirror-numbers');
+    expect(screen.getByRole('link', { name: 'Mirror Numbers' })).toHaveAttribute('href', '/shop?category=mirror-numbers');
+    expect(screen.getByRole('link', { name: /ulta-pulta/i })).toHaveAttribute('href', '/shop?category=mirror-numbers&subcategory_id=104');
     expect(screen.getByText('2 categories')).toBeInTheDocument();
+
+    await user.type(screen.getByRole('searchbox', { name: /search categories/i }), 'ulta-pulta');
+    expect(screen.getByRole('heading', { name: 'Mirror Numbers' })).toBeInTheDocument();
+    await user.clear(screen.getByRole('searchbox', { name: /search categories/i }));
 
     await user.type(screen.getByRole('searchbox', { name: /search categories/i }), '786');
     expect(screen.queryByRole('heading', { name: 'Mirror Numbers' })).not.toBeInTheDocument();
@@ -245,11 +252,11 @@ describe('NumberCard automatic category badges', () => {
 
     expect(container.querySelectorAll('[data-match="true"]')).toHaveLength(0);
     expect(screen.getByRole('img', {
-      name: 'VIP number, digits 9 0 0 6 6 2 2 1 2 1.',
+      name: 'VIP number, digits 9 0 0 6 6 2 2 1 2 1. Category: Doubling Numbers.',
     })).toBeInTheDocument();
   });
 
-  it('uses the readable 4-3-3 fallback when match evidence is malformed', () => {
+  it('uses category-aware mirror grouping when match evidence is malformed', () => {
     const { container } = render(
       <HighlightedNumber
         number="9876598765"
@@ -258,7 +265,7 @@ describe('NumberCard automatic category badges', () => {
     );
 
     expect(container.querySelectorAll('[data-match="true"]')).toHaveLength(0);
-    expect(Array.from(container.querySelectorAll('[data-match="false"]')).map((node) => node.textContent)).toEqual(['9876', '598', '765']);
+    expect(Array.from(container.querySelectorAll('[data-match="false"]')).map((node) => node.textContent)).toEqual(['98765', '98765']);
     expect(screen.getByRole('img', { name: 'VIP number, digits 9 8 7 6 5 9 8 7 6 5. Category: Mirror Numbers.' })).toBeInTheDocument();
   });
 });

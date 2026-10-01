@@ -11,11 +11,14 @@ export default function AdminTestimonials() {
   const { toast } = useToast();
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [total, setTotal] = useState(0);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<any>(empty);
 
-  const load = () => { setLoading(true); adminAPI.testimonialsList().then(setItems).catch(() => {}).finally(() => setLoading(false)); };
-  useEffect(() => { load(); }, []);
+  const load = () => { setLoading(true); adminAPI.testimonialsList({ page, limit: pageSize }).then((data) => { setItems(data.items || []); setTotal(data.total || 0); }).catch(() => {}).finally(() => setLoading(false)); };
+  useEffect(() => { load(); }, [page, pageSize]);
 
   const set = (k: string, v: any) => setForm((p: any) => ({ ...p, [k]: v }));
   const input = 'w-full rounded-lg border border-card-border bg-secondary px-3 py-2 text-sm outline-none focus:border-primary';
@@ -28,7 +31,7 @@ export default function AdminTestimonials() {
       <PageHeader title="Testimonials" subtitle="Manage landing-page testimonials"
         action={<button onClick={() => { setForm(empty); setOpen(true); }} className="btn-gold text-sm"><Plus className="h-4 w-4" /> Add</button>} />
       {loading ? <Loader /> : (
-        <Table head={['Name', 'Role', 'Content', 'Rating', 'Active', '']}>
+        <Table head={['Name', 'Role', 'Content', 'Rating', 'Active', '']} pagination={{ page, pageSize, total, onPageChange: setPage, onPageSizeChange: (size) => { setPageSize(size); setPage(1); } }}>
           {items.map((t) => (
             <tr key={t.testimonial_id} className="border-b border-card-border last:border-0">
               <td className="px-4 py-3 text-foreground">{t.name}</td>

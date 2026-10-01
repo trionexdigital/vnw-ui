@@ -5,11 +5,10 @@ import {
   Bell, Camera, ChevronRight, CreditCard, HelpCircle, Lock, MapPin, Palette,
   Save, Settings as SettingsIcon, ShieldCheck, UserRound,
 } from 'lucide-react';
-import { getMe, updateProfile } from '@/core/api/authAPI';
+import { getMe, updateProfile, updateLogo } from '@/core/api/authAPI';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { updateUser } from '@/app/authSlice';
 import { useToast } from '@/shared/hooks/use-toast';
-import { PageHeader } from '@/shared/components/ui-bits';
 import { ThemeControl } from '@/shared/components/ThemeControl';
 
 const fieldClass = 'h-11 w-full rounded-2xl border border-input bg-background px-3 text-sm font-semibold text-foreground outline-none transition placeholder:text-muted-foreground focus:border-ring focus:ring-4 focus:ring-ring/10 disabled:cursor-not-allowed disabled:bg-muted';
@@ -30,8 +29,8 @@ async function cropImage(imageSrc: string, pixelCrop: Area) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return imageSrc;
 
-  canvas.width = pixelCrop.width;
-  canvas.height = pixelCrop.height;
+  canvas.width = 384;
+  canvas.height = 384;
   ctx.drawImage(
     image,
     pixelCrop.x,
@@ -40,10 +39,10 @@ async function cropImage(imageSrc: string, pixelCrop: Area) {
     pixelCrop.height,
     0,
     0,
-    pixelCrop.width,
-    pixelCrop.height,
+    canvas.width,
+    canvas.height,
   );
-  return canvas.toDataURL('image/png');
+  return canvas.toDataURL('image/jpeg', .85);
 }
 
 export default function Settings() {
@@ -63,6 +62,7 @@ export default function Settings() {
     getMe().then((u: any) => {
       setProfile({ name: u.full_name || u.name || '', phone: u.phone || '', address: (u as any).address || '', city: '', state: '', pincode: '' });
       setAvatar(u.logo || '');
+      dispatch(updateUser({ ...u, name: u.name || u.full_name }));
     }).catch(() => {
       setProfile({ name: user?.name || '', phone: user?.phone || '', address: '', city: '', state: '', pincode: '' });
     });
@@ -82,11 +82,16 @@ export default function Settings() {
 
   const saveCrop = async () => {
     if (!imageSrc || !croppedArea) return;
-    const nextAvatar = await cropImage(imageSrc, croppedArea);
-    setAvatar(nextAvatar);
-    dispatch(updateUser({ logo: nextAvatar }));
-    setImageSrc('');
-    toast({ title: 'Logo updated', description: 'Preview saved on your account.' });
+    setBusy(true);
+    try {
+      const nextAvatar = await cropImage(imageSrc, croppedArea);
+      const saved = await updateLogo(nextAvatar);
+      setAvatar(saved.logo);
+      dispatch(updateUser({ logo: saved.logo }));
+      setImageSrc('');
+      toast({ title: 'Profile image uploaded' });
+    } catch (error: any) { toast({ title: 'Upload failed', description: error.message, variant: 'destructive' }); }
+    finally { setBusy(false); }
   };
 
   const saveProfile = async (e: React.FormEvent) => {
@@ -115,7 +120,6 @@ export default function Settings() {
 
   return (
     <div className="mx-auto max-w-6xl">
-      <PageHeader title="Profile" subtitle="Manage account details, logo and settings" />
 
       <div className="grid gap-4 lg:grid-cols-[1.35fr_.85fr]">
         <section className="vnw-card overflow-hidden p-0">
@@ -230,7 +234,7 @@ export default function Settings() {
               <Cropper image={imageSrc} crop={crop} zoom={zoom} aspect={1} onCropChange={setCrop} onZoomChange={setZoom} onCropComplete={onCropComplete} />
             </div>
             <input type="range" min={1} max={3} step={0.05} value={zoom} onChange={(e) => setZoom(Number(e.target.value))} className="mt-4 w-full accent-accent" />
-            <button onClick={saveCrop} className="btn-royal mt-4 w-full">Use cropped logo</button>
+            <button disabled={busy} onClick={saveCrop} className="btn-royal mt-4 w-full">{busy ? 'Uploading…' : 'Use cropped logo'}</button>
           </div>
         </div>
       )}

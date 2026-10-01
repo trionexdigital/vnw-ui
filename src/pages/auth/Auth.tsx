@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Eye, EyeOff, Loader2, Crown, Sparkles } from 'lucide-react';
+import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import { ArrowLeft, Eye, EyeOff, Loader2, Crown, Sparkles, ShieldCheck, Headphones } from 'lucide-react';
 import { BrandLockup } from '@/shared/components/Logo';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { login, registerUser } from '@/app/authSlice';
@@ -10,6 +10,7 @@ import { localService } from '@/core/services/local';
 import { roleHome } from '@/core/lib/permissions';
 import { APP_CONFIG } from '@/core/config/app.config';
 import { ThemeControl } from '@/shared/components/ThemeControl';
+import './Auth.css';
 
 type Mode = 'login' | 'register' | 'forgot';
 const homeFor = (role?: string) => roleHome(role);
@@ -17,8 +18,14 @@ const homeFor = (role?: string) => roleHome(role);
 export default function Auth({ mode }: { mode: Mode }) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = (location.state as any)?.from;
+  const returnPath = typeof from?.pathname === 'string' && from.pathname.startsWith('/') && !from.pathname.startsWith('//') && !['/login', '/register', '/forgot'].includes(from.pathname)
+    ? from.pathname + (from.search || '') + (from.hash || '') : null;
   const { toast } = useToast();
   const [params] = useSearchParams();
+  const paymentReturn = params.get('return_to');
+  const loginDestination = returnPath || (paymentReturn && /^\/payments\/return(?:\?|$)/.test(paymentReturn) ? paymentReturn : null);
   const { isLoading, user } = useAppSelector((s) => s.auth);
   const [showPw, setShowPw] = useState(false);
 
@@ -28,7 +35,7 @@ export default function Auth({ mode }: { mode: Mode }) {
     role: params.get('role') === 'DEALER' ? 'DEALER' : 'USER',
   });
 
-  useEffect(() => { if (localService.getToken()) navigate(roleHome(user?.role)); }, []);
+  useEffect(() => { if (localService.getToken()) navigate(loginDestination || roleHome(user?.role)); }, []);
 
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
   const input = 'input-luxury w-full';
@@ -43,7 +50,7 @@ export default function Auth({ mode }: { mode: Mode }) {
         sessionStorage.removeItem('vnw_login_promo_started');
         sessionStorage.removeItem('vnw_promo_hidden');
         toast({ title: 'Welcome back!' });
-        navigate((u?.role || 'USER').toUpperCase() === 'USER' ? '/' : homeFor(u?.role));
+        navigate(loginDestination || ((u?.role || 'USER').toUpperCase() === 'USER' ? '/' : homeFor(u?.role)));
       } else if (mode === 'register') {
         if (form.password !== form.confirm_password) { toast({ title: 'Passwords do not match', variant: 'destructive' }); return; }
         const u: any = await dispatch(registerUser({
@@ -52,7 +59,7 @@ export default function Auth({ mode }: { mode: Mode }) {
           ref_code: form.ref_code || undefined, role: form.role,
         })).unwrap();
         toast({ title: 'Account created' });
-        navigate(homeFor(u?.role));
+        navigate(loginDestination || homeFor(u?.role));
       } else {
         const msg = await forgotPassword({ email: form.email, reason: form.reason || 'Password reset request' });
         toast({ title: 'Request submitted', description: msg });
@@ -66,32 +73,33 @@ export default function Auth({ mode }: { mode: Mode }) {
   const title = mode === 'login' ? 'Sign In' : mode === 'register' ? 'Create Account' : 'Reset Password';
 
   return (
-    <div className="app-shell-bg relative grid min-h-screen bg-background p-3 text-foreground lg:grid-cols-2 lg:gap-3">
-      <div className="absolute right-5 top-5 z-20">
+    <div className="auth-screen app-shell-bg relative grid h-[100dvh] overflow-hidden bg-background p-2 text-foreground lg:grid-cols-2 lg:gap-3 lg:p-3">
+      <Link to="/" className="auth-mobile-back absolute left-3 top-3 z-20 inline-flex h-9 items-center gap-1.5 rounded-xl border border-border bg-card px-3 text-xs font-bold text-foreground shadow-sm lg:hidden"><ArrowLeft className="h-4 w-4" /> Back to store</Link>
+      <div className="absolute right-3 top-3 z-20 lg:right-5 lg:top-5">
         <ThemeControl />
       </div>
-      <div className="vip-auth-panel glass-panel relative hidden flex-col justify-between overflow-hidden rounded-[2rem] p-12 lg:flex">
-        <div className="absolute -right-20 top-20 h-72 w-72 rounded-full bg-accent/10 blur-3xl" />
-        <div className="absolute bottom-14 left-14 h-72 w-72 rounded-full bg-info/10 blur-3xl" />
-        <Link to="/" className="relative flex w-fit items-center rounded-xl bg-white p-2">
-          <BrandLockup logoClassName="h-14 w-14" sloganClassName="h-12 w-64" />
-        </Link>
-        <div className="relative">
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-card/70 px-4 py-2 text-sm font-black text-accent"><Sparkles className="h-4 w-4" /> Premium Access</div>
-          <h2 className="text-5xl font-black leading-tight text-foreground">Your Number.<br /><span className="text-gradient-vnw">Your Identity.</span></h2>
-          <p className="mt-4 max-w-sm text-muted-foreground">Buy & sell premium VIP, fancy and lucky mobile numbers on India's most trusted marketplace.</p>
-          <Crown className="mt-10 h-24 w-24 text-accent" />
+      <div className="auth-side vip-auth-panel glass-panel relative hidden min-h-0 flex-col justify-between overflow-hidden rounded-[1.75rem] p-7 lg:flex xl:p-10">
+        <div className="relative z-10">
+          <Link to="/" className="inline-flex items-center rounded-xl bg-card p-2"><BrandLockup logoClassName="h-11 w-11" sloganClassName="h-9 w-52" /></Link>
+          <Link to="/" className="mt-4 flex w-fit items-center gap-2 rounded-lg border border-primary/30 bg-card/80 px-3 py-2 text-xs font-bold text-primary transition hover:bg-primary/10"><ArrowLeft className="h-4 w-4" /> Back to store</Link>
         </div>
-        <p className="relative text-xs text-muted-foreground">© {new Date().getFullYear()} {APP_CONFIG.name}</p>
+        <div className="relative z-10 max-w-lg py-4">
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-card/80 px-3 py-1.5 text-xs font-black text-primary"><Sparkles className="h-4 w-4" /> Premium numbers, personal identity</div>
+          <h2 className="text-4xl font-black leading-[1.08] tracking-tight text-foreground xl:text-5xl">Your number.<br /><span className="text-gradient-vnw">Your identity.</span></h2>
+          <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground xl:text-base">Discover a memorable VIP number with clear pricing and guidance from selection to activation.</p>
+          <div className="auth-side__number mt-6 max-w-sm rounded-2xl border border-primary/25 bg-card/90 p-4 shadow-sm"><span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[.16em] text-primary"><Crown className="h-3.5 w-3.5" /> Make it yours</span><strong className="mt-1 block text-3xl font-black tracking-wide text-foreground xl:text-4xl">9155 915 915</strong></div>
+          <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-xs font-semibold text-muted-foreground"><span className="flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-primary" /> Verified listings</span><span className="flex items-center gap-1.5"><Headphones className="h-4 w-4 text-primary" /> Guided support</span></div>
+        </div>
+        <p className="relative z-10 text-xs text-muted-foreground">© {new Date().getFullYear()} {APP_CONFIG.name}</p>
       </div>
 
-      <div className="flex items-center justify-center p-4 sm:p-6">
-        <form onSubmit={submit} className="vip-auth-panel glass-panel w-full max-w-md rounded-[2rem] p-6 sm:p-8">
-          <Link to="/" className="mx-auto mb-6 flex w-fit items-center justify-center rounded-xl bg-white p-2 lg:hidden">
-            <BrandLockup logoClassName="h-12 w-12" sloganClassName="h-10 w-52" />
+      <div className="auth-form-pane flex min-h-0 items-center justify-center overflow-y-auto p-2 pt-12 sm:p-5 sm:pt-14 lg:p-6">
+        <form onSubmit={submit} className="auth-form vip-auth-panel glass-panel my-auto w-full max-w-md rounded-[1.75rem] p-5 sm:p-7">
+          <Link to="/" className="mx-auto mb-4 flex w-fit items-center justify-center rounded-xl bg-card p-2 lg:hidden">
+            <BrandLockup logoClassName="h-10 w-10" sloganClassName="h-8 w-44" />
           </Link>
-          <h1 className="text-3xl font-black text-foreground">{title}</h1>
-          <p className="mb-6 mt-1 text-sm text-muted-foreground">
+          <h1 className="text-2xl font-black text-foreground sm:text-3xl">{title}</h1>
+          <p className="mb-4 mt-1 text-sm text-muted-foreground">
             {mode === 'login' ? 'Sign in to your account' : mode === 'register' ? (form.role === 'DEALER' ? 'Register as a dealer to sell numbers' : 'Join VIP Number World') : 'We will review your request'}
           </p>
 

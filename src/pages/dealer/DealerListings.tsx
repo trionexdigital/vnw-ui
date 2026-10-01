@@ -11,9 +11,12 @@ export default function DealerListings() {
   const { toast } = useToast();
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [total, setTotal] = useState(0);
 
-  const load = () => { setLoading(true); dealerAPI.listings().then((d) => setItems(d.items || [])).catch(() => {}).finally(() => setLoading(false)); };
-  useEffect(() => { load(); }, []);
+  const load = () => { setLoading(true); dealerAPI.listings({ page, limit: pageSize }).then((d) => { setItems(d.items || []); setTotal(d.total || 0); }).catch(() => {}).finally(() => setLoading(false)); };
+  useEffect(() => { load(); }, [page, pageSize]);
 
   const del = async (id: number) => {
     if (!confirm('Delete this listing?')) return;
@@ -31,7 +34,7 @@ export default function DealerListings() {
         <EmptyState title="No listings yet" subtitle="Add your first VIP number to start selling."
           action={<Link to="/dealer/listings/new" className="btn-gold">Add Number</Link>} />
       ) : (
-        <Table head={['Number', 'Category', 'MRP', 'Offer', 'Status', 'Views', '']}>
+        <Table head={['Number', 'Category', 'MRP', 'Offer', 'Status', 'Views', '']} pagination={{ page, pageSize, total, onPageChange: setPage, onPageSizeChange: (size) => { setPageSize(size); setPage(1); } }}>
           {items.map((n) => (
             <tr key={n.number_id} className="border-b border-card-border last:border-0">
               <td className="px-4 py-3 font-bold text-foreground">{n.display_number}</td>

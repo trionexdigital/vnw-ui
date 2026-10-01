@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { mkdirSync } from 'node:fs';
 import path from 'node:path';
 
-const output = path.resolve('../output/family-pack-implementation-2026-09-22');
+const output = path.resolve('../output/family-pack-refinement-2026-09-29');
 const captureStyle = '.fixed:has([aria-label="WhatsApp"]), nav.fixed { visibility: hidden !important; }';
 async function mockPacks(page: Page) {
   await page.route('**/vipnumberworld/**', async (route) => {
@@ -41,6 +41,8 @@ for (const width of [320, 390, 430, 768, 1280, 1600]) {
       expect(overflow).toEqual([]);
     }
     const card = cards.first();
+    const firstRowAlignment = await card.locator('.reference-family__row').first().evaluate((row) => ({ number: row.querySelector('.reference-family__number')!.getBoundingClientRect().right, price: row.querySelector('.reference-family__price')!.getBoundingClientRect().left }));
+    expect(firstRowAlignment.price).toBeGreaterThan(firstRowAlignment.number);
     await expect(card.locator('.reference-family__total')).toHaveText('₹63,997');
     mkdirSync(output, { recursive: true });
     await card.screenshot({ path: path.join(output, `family-card-${width}.png`), style: captureStyle });
@@ -52,8 +54,8 @@ for (const width of [320, 390, 430, 768, 1280, 1600]) {
     await card.getByRole('button', { name: 'Select all' }).click();
     await card.getByRole('button', { name: 'Clear selection' }).click();
     await expect(card.locator('.reference-family__total')).toHaveText('₹0');
-    await expect(card.getByRole('button', { name: 'Buy selected' })).toBeDisabled();
-    await expect(cards.last().getByRole('button', { name: 'Buy selected' })).toBeDisabled();
+    await expect(card.getByRole('button', { name: 'Buy Now' })).toBeDisabled();
+    await expect(cards.last().getByRole('button', { name: 'Buy Now' })).toBeDisabled();
     expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)).toBe(false);
   });
 }
@@ -69,10 +71,10 @@ test('ten-number packs stay readable and preserve the palette in dark mode', asy
   await expect(card.getByText('10 of 10 selected')).toBeVisible();
   await page.evaluate(() => document.documentElement.classList.add('dark'));
   await expect(card).toHaveCSS('background-color', 'rgb(255, 255, 255)');
-  await expect(card.locator('.reference-family__header')).toHaveCSS('background-color', 'rgb(33, 31, 27)');
+  await expect(card.locator('.reference-family__header')).toHaveCSS('background-image', /linear-gradient/);
   mkdirSync(output, { recursive: true });
   await card.screenshot({ path: path.join(output, 'family-ten-numbers-dark.png'), style: captureStyle });
-  await card.getByRole('button', { name: 'Buy selected' }).click();
+  await card.getByRole('button', { name: 'Buy Now' }).click();
   await expect(page).toHaveURL(/\/login$/);
 });
 

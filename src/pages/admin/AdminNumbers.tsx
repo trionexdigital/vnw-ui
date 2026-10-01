@@ -1,12 +1,14 @@
+import { ThemedSelect } from '@/shared/ui/themed-select';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Pencil, Trash2, Check, X, Plus, Star, Sparkles, CalendarClock } from 'lucide-react';
-import { adminAPI, type PrivateCollection } from '@/core/api/vnwAPI';
+import { Pencil, Trash2, Check, X, Plus, Star, Sparkles, CalendarClock, Download, Upload } from 'lucide-react';
+import { adminAPI } from '@/core/api/vnwAPI';
 import { useToast } from '@/shared/hooks/use-toast';
-import { PageHeader, Loader, StatusBadge, Money, Table } from '@/shared/components/ui-bits';
+import { Loader, StatusBadge, Money, Table } from '@/shared/components/ui-bits';
 import Modal from '@/shared/components/Modal';
-import { badgeOptions, statusOptions, numerologySum } from '@/core/lib/format';
-import DetectedCategories from '@/shared/components/DetectedCategories';
+import { statusOptions } from '@/core/lib/format';
+import NumberEditor from './NumberEditor';
+import NumberImportDialog, { downloadNumberWorkbook } from './NumberImportDialog';
 import { getPrimaryCategory } from '@/core/categories/types';
 
 const empty = { display_number: '', title_label: 'VIP Number', badge: 'NONE', mrp: '', numerology_sum: '', description: '', stock: 1, status: 'AVAILABLE', visibility_type: 'ONLINE', private_link_ids: [] as number[], is_featured: false, rtp_status: 'RTA', rtp_available_date: '' };
@@ -24,38 +26,24 @@ export default function AdminNumbers() {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [visibilityFilter, setVisibilityFilter] = useState('ALL');
-  const [privateLinks, setPrivateLinks] = useState<PrivateCollection[]>([]);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [total, setTotal] = useState(0);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<any>(empty);
+  const [importOpen, setImportOpen] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
-  const load = () => { setLoading(true); adminAPI.numbersList({ status: statusFilter, visibility_type: visibilityFilter === 'ALL' ? undefined : visibilityFilter, limit: 60 }).then((d) => setItems(d.items || [])).catch(() => {}).finally(() => setLoading(false)); };
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [statusFilter, visibilityFilter]);
-  useEffect(() => { adminAPI.privateLinksList().then(setPrivateLinks).catch(() => setPrivateLinks([])); }, []);
-
-  const set = (k: string, v: any) => setForm((p: any) => ({ ...p, [k]: v }));
-  const input = 'w-full rounded-lg border border-card-border bg-secondary px-3 py-2 text-sm outline-none focus:border-primary';
+  const load = () => { setLoading(true); adminAPI.numbersList({ status: statusFilter, visibility_type: visibilityFilter === 'ALL' ? undefined : visibilityFilter, page, limit: pageSize }).then((d) => { setItems(d.items || []); setTotal(Number(d.total || 0)); }).catch(() => {}).finally(() => setLoading(false)); };
+  useEffect(() => { load(); /* eslint-disable-next-line */ }, [statusFilter, visibilityFilter, page, pageSize]);
 
   const openNew = () => { setForm(empty); setOpen(true); };
   const openEdit = (n: any) => { setForm({ ...n, visibility_type: n.visibility_type || 'ONLINE', private_link_ids: n.private_link_ids || [], is_featured: !!n.is_featured, rtp_status: n.rtp_status || 'RTP', rtp_available_date: toIstDateInput(n.rtp_available_at) }); setOpen(true); };
 
-  const save = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await adminAPI.numberSave({
-        ...form, number_value: form.display_number.replace(/\s+/g, ''),
-        mrp: Number(form.mrp),
-        numerology_sum: form.numerology_sum || numerologySum(form.display_number),
-        rtp_available_date: form.rtp_status === 'NON_RTP' ? form.rtp_available_date : null,
-      });
-      toast({ title: 'Saved' }); setOpen(false); load();
-    } catch (e: any) { toast({ title: 'Error', description: e.message, variant: 'destructive' }); }
-  };
   const act = async (fn: Promise<any>, msg: string) => { try { await fn; toast({ title: msg }); load(); } catch (e: any) { toast({ title: 'Error', description: e.message, variant: 'destructive' }); } };
 
   return (
     <div>
-      <PageHeader title="Numbers" subtitle="Manage the VIP number catalog"
-        action={<button onClick={openNew} className="btn-gold text-sm"><Plus className="h-4 w-4" /> Add Number</button>} />
 
       {searchParams.get('notice') === 'automatic-categories' && (
         <div role="status" className="mb-4 flex items-start gap-2 rounded-xl border border-primary/25 bg-primary/10 px-4 py-3 text-sm text-foreground">
@@ -64,17 +52,18 @@ export default function AdminNumbers() {
         </div>
       )}
 
-      <div className="mb-4 flex flex-wrap gap-2">
-        {['ALL', ...statusOptions].map((s) => (
-          <button key={s} onClick={() => setStatusFilter(s)} className={`rounded-full px-3 py-1 text-xs ${statusFilter === s ? 'btn-gold' : 'btn-gold-outline'}`}>{s.replace(/_/g, ' ')}</button>
-        ))}
-      </div>
-      <div className="mb-4 flex flex-wrap gap-2">
-        {['ALL', 'ONLINE', 'OFFLINE'].map((visibility) => <button key={visibility} onClick={() => setVisibilityFilter(visibility)} className={`rounded-full px-3 py-1 text-xs font-black ${visibilityFilter === visibility ? 'btn-gold' : 'btn-gold-outline'}`}>{visibility === 'ALL' ? 'All visibility' : visibility}</button>)}
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <ThemedSelect aria-label="Filter number status" value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value); setPage(1); }} className="h-9 w-48"><option value="ALL">All statuses</option>{statusOptions.map((status) => <option key={status} value={status}>{status.replace(/_/g, ' ')}</option>)}</ThemedSelect>
+        <ThemedSelect aria-label="Filter number visibility" value={visibilityFilter} onChange={(event) => { setVisibilityFilter(event.target.value); setPage(1); }} className="h-9 w-40"><option value="ALL">All visibility</option><option value="ONLINE">Online</option><option value="OFFLINE">Offline</option></ThemedSelect>
+        <div className="ml-auto flex flex-wrap items-center gap-2">
+          <button onClick={() => setImportOpen(true)} className="btn-gold-outline min-h-9 px-3 text-xs"><Upload className="h-4 w-4" /> Import</button>
+          <button disabled={exporting} onClick={async () => { setExporting(true); try { downloadNumberWorkbook(await adminAPI.numbersExport({ status: statusFilter, visibility_type: visibilityFilter === 'ALL' ? undefined : visibilityFilter })); } catch (error: any) { toast({ title: 'Export failed', description: error.message, variant: 'destructive' }); } finally { setExporting(false); } }} className="btn-gold-outline min-h-9 px-3 text-xs"><Download className="h-4 w-4" />{exporting ? 'Exporting…' : 'Export'}</button>
+          <button onClick={openNew} className="btn-gold min-h-9 px-3 text-xs"><Plus className="h-4 w-4" /> Add Number</button>
+        </div>
       </div>
 
       {loading ? <Loader /> : (
-        <Table head={['Number', 'Category', 'Visibility', 'MRP', 'Discounted price', 'Readiness', 'Status', '']}>
+        <Table head={['Number', 'Category', 'Visibility', 'MRP', 'Discounted price', 'Readiness', 'Status', '']} pagination={{ page, pageSize, total, onPageChange: setPage, onPageSizeChange: (size) => { setPageSize(size); setPage(1); } }}>
           {items.map((n) => (
             <tr key={n.number_id} className="border-b border-card-border last:border-0">
               <td className="px-4 py-3 font-bold text-foreground">{n.display_number} {n.is_featured ? <Star className="ml-1 inline h-3 w-3 text-primary" fill="currentColor" /> : null}</td>
@@ -99,39 +88,10 @@ export default function AdminNumbers() {
         </Table>
       )}
 
-      <Modal open={open} onClose={() => setOpen(false)} title={form.number_id ? 'Edit Number' : 'Add Number'} wide>
-        <form onSubmit={save} className="grid gap-3 sm:grid-cols-2">
-          <div className="sm:col-span-2"><label className="mb-1 block text-xs text-muted-foreground">Number (with spaces)</label>
-            <input required className={input} value={form.display_number} onChange={(e) => set('display_number', e.target.value)} /></div>
-          <DetectedCategories number={form.display_number} className="sm:col-span-2" />
-          <input className={input} placeholder="Label" value={form.title_label} onChange={(e) => set('title_label', e.target.value)} />
-          <select className={input} value={form.badge} onChange={(e) => set('badge', e.target.value)}>
-            {badgeOptions.map((b) => <option key={b.value} value={b.value}>{b.label}</option>)}
-          </select>
-          <div><label className="mb-1 block text-xs font-bold text-muted-foreground">MRP</label><input type="number" min="1" className={input} placeholder="MRP" value={form.mrp} onChange={(e) => set('mrp', e.target.value)} required /><p className="mt-1 text-[11px] text-muted-foreground">The discounted storefront price is calculated from Settings.</p></div>
-          <input type="number" className={input} placeholder="Numerology (auto)" value={form.numerology_sum} onChange={(e) => set('numerology_sum', e.target.value)} />
-          <select className={input} value={form.status} onChange={(e) => set('status', e.target.value)}>
-            {statusOptions.map((s) => <option key={s} value={s}>{s}</option>)}
-          </select>
-          <div><label className="mb-1 block text-xs font-bold text-muted-foreground">Stock Visibility</label><select className={input} value={form.visibility_type || 'ONLINE'} onChange={(e) => { set('visibility_type', e.target.value); if (e.target.value === 'ONLINE') set('private_link_ids', []); }}><option value="ONLINE">Online · Publicly available</option><option value="OFFLINE">Offline · Private link only</option></select></div>
-          <div>
-            <label className="mb-1 block text-xs font-bold text-muted-foreground">Porting / activation readiness</label>
-            <select className={input} value={form.rtp_status || 'RTA'} onChange={(e) => { set('rtp_status', e.target.value); if (e.target.value !== 'NON_RTP') set('rtp_available_date', ''); }}>
-              <option value="RTP">RTP · Ready to port</option>
-              <option value="NON_RTP">NON-RTP · Pre-book until RTP date</option>
-              <option value="RTA">RTA · Ready to activate within minutes</option>
-            </select>
-          </div>
-          {form.visibility_type === 'OFFLINE' && <fieldset className="rounded-xl border border-border p-3 sm:col-span-2"><legend className="px-2 text-xs font-black text-muted-foreground">Private collection assignment</legend><div className="grid gap-2 sm:grid-cols-2">{privateLinks.filter((link) => !link.revoked_at).map((link) => <label key={link.private_link_id} className="flex items-center gap-2 rounded-lg bg-muted p-2 text-sm font-bold"><input type="checkbox" checked={(form.private_link_ids || []).includes(link.private_link_id)} onChange={(e) => set('private_link_ids', e.target.checked ? [...(form.private_link_ids || []),link.private_link_id] : (form.private_link_ids || []).filter((id: number) => id !== link.private_link_id))} />{link.name}</label>)}</div>{!privateLinks.length && <p className="text-xs text-destructive">Create a Private Link collection before saving an Offline number.</p>}</fieldset>}
-          {form.rtp_status === 'NON_RTP' && <div>
-            <label className="mb-1 block text-xs font-bold text-muted-foreground">Ready-to-port date (India)</label>
-            <input type="date" className={input} required min={new Date(Date.now() + 86400000).toISOString().slice(0, 10)} value={form.rtp_available_date || ''} onChange={(e) => set('rtp_available_date', e.target.value)} />
-          </div>}
-          <label className="flex items-center gap-2 text-sm text-muted-foreground"><input type="checkbox" checked={form.is_featured} onChange={(e) => set('is_featured', e.target.checked)} /> Catalog premium attribute</label>
-          <textarea className={input + ' sm:col-span-2'} rows={2} placeholder="Description" value={form.description || ''} onChange={(e) => set('description', e.target.value)} />
-          <div className="sm:col-span-2"><button className="btn-gold w-full">Save Number</button></div>
-        </form>
+      <Modal open={open} onClose={() => setOpen(false)} title={form.number_id ? 'Edit Number' : 'Add Numbers'} wide>
+        <NumberEditor key={form.number_id || 'new'} initial={form} onChanged={load} onSaved={(message) => { toast({ title: message }); setOpen(false); load(); }} />
       </Modal>
+      {importOpen && <NumberImportDialog open onClose={() => setImportOpen(false)} onSaved={load} />}
     </div>
   );
 }

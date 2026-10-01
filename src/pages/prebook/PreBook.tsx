@@ -1,3 +1,4 @@
+import { ThemedSelect } from '@/shared/ui/themed-select';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CalendarClock, ChevronLeft, ChevronRight, Clock3, Filter, RotateCcw, Search, ShieldCheck } from 'lucide-react';
 import { categoriesAPI, numbersAPI, prebooksAPI, type PrebookRecord } from '@/core/api/vnwAPI';
@@ -8,7 +9,7 @@ import { EmptyState, Loader, StatusBadge } from '@/shared/components/ui-bits';
 import { formatINR } from '@/core/lib/format';
 import { formatRtpDate } from '@/core/lib/numberPurchaseMode';
 
-const blankFilters = { q: '', category: '', operator: '', price_min: '', price_max: '', rtp_from: '', rtp_to: '', sort: 'rtp_soon' };
+const blankFilters = { q: '', category: '', subcategory_id: '', operator: '', price_min: '', price_max: '', rtp_from: '', rtp_to: '', sort: 'rtp_soon' };
 const issueTypes = [
   ['DELIVERY_ISSUE', 'Delivery issue'], ['UPC_ISSUE', 'UPC delivery issue'], ['ACTIVATION_ISSUE', 'Activation issue'],
 ] as const;
@@ -41,7 +42,7 @@ export default function PreBook() {
   const loadCatalog = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await prebooksAPI.catalog({ ...applied, page, limit });
+      const data = await prebooksAPI.catalog({ ...applied, subcategory_id: applied.subcategory_id ? Number(applied.subcategory_id) : undefined, page, limit });
       setItems(data.items || []); setTotal(Number(data.total || 0));
     } catch (e: any) { toast({ title: 'Could not load pre-book numbers', description: e.message, variant: 'destructive' }); }
     finally { setLoading(false); }
@@ -81,6 +82,7 @@ export default function PreBook() {
     finally { setBusy(null); }
   };
   const adjustedMine = useMemo(() => mine.map((m) => ({ ...m, cancellation_seconds_remaining: Math.max(0, m.cancellation_seconds_remaining - tick * 60) })), [mine, tick]);
+  const selectedCategory = categories.find((category) => category.slug === filters.category);
 
   return (
     <main className="mx-auto max-w-[1540px] px-4 py-8">
@@ -103,13 +105,14 @@ export default function PreBook() {
         <div className="mb-3 flex items-center justify-between"><h2 className="flex items-center gap-2 text-sm font-black text-foreground"><Filter className="h-4 w-4 text-primary" /> Find a pre-book number</h2><button type="button" onClick={reset} className="inline-flex items-center gap-1 text-xs font-bold text-primary"><RotateCcw className="h-3.5 w-3.5" /> Reset</button></div>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
           <label className="relative sm:col-span-2"><Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><input aria-label="Search digits" inputMode="numeric" className="input-luxury h-10 w-full pl-9" placeholder="Search digits" value={filters.q} onChange={(e) => setFilters({ ...filters, q: e.target.value.replace(/\D/g, '').slice(0, 10) })} /></label>
-          <select aria-label="Category" className="input-luxury h-10" value={filters.category} onChange={(e) => setFilters({ ...filters, category: e.target.value })}><option value="">All categories</option>{categories.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}</select>
-          <select aria-label="Operator" className="input-luxury h-10" value={filters.operator} onChange={(e) => setFilters({ ...filters, operator: e.target.value })}><option value="">All operators</option>{operators.map((o) => <option key={o.operator} value={o.operator}>{o.operator} ({o.count})</option>)}</select>
+          <ThemedSelect aria-label="Category" className="input-luxury h-10" value={filters.category} onChange={(e) => setFilters({ ...filters, category: e.target.value, subcategory_id: '' })}><option value="">All categories</option>{categories.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}</ThemedSelect>
+          <ThemedSelect aria-label="Subcategory" className="input-luxury h-10" value={filters.subcategory_id} disabled={!selectedCategory} onChange={(e) => setFilters({ ...filters, subcategory_id: e.target.value })}><option value="">All subcategories</option>{selectedCategory?.subcategories?.map((sub: any) => <option key={sub.id} value={sub.id}>{sub.name} ({Number(sub.number_count || 0).toLocaleString('en-IN')})</option>)}</ThemedSelect>
+          <ThemedSelect aria-label="Operator" className="input-luxury h-10" value={filters.operator} onChange={(e) => setFilters({ ...filters, operator: e.target.value })}><option value="">All operators</option>{operators.map((o) => <option key={o.operator} value={o.operator}>{o.operator} ({o.count})</option>)}</ThemedSelect>
           <input aria-label="Minimum price" type="number" className="input-luxury h-10" placeholder="Min price" value={filters.price_min} onChange={(e) => setFilters({ ...filters, price_min: e.target.value })} />
           <input aria-label="Maximum price" type="number" className="input-luxury h-10" placeholder="Max price" value={filters.price_max} onChange={(e) => setFilters({ ...filters, price_max: e.target.value })} />
           <input aria-label="RTP from" type="date" className="input-luxury h-10" value={filters.rtp_from} onChange={(e) => setFilters({ ...filters, rtp_from: e.target.value })} />
           <input aria-label="RTP to" type="date" className="input-luxury h-10" value={filters.rtp_to} onChange={(e) => setFilters({ ...filters, rtp_to: e.target.value })} />
-          <select aria-label="Sort" className="input-luxury h-10 lg:col-span-2" value={filters.sort} onChange={(e) => setFilters({ ...filters, sort: e.target.value })}><option value="rtp_soon">RTP date: soonest</option><option value="rtp_late">RTP date: latest</option><option value="price_asc">Price: low to high</option><option value="price_desc">Price: high to low</option><option value="newest">Newest</option></select>
+          <ThemedSelect aria-label="Sort" className="input-luxury h-10 lg:col-span-2" value={filters.sort} onChange={(e) => setFilters({ ...filters, sort: e.target.value })}><option value="rtp_soon">RTP date: soonest</option><option value="rtp_late">RTP date: latest</option><option value="price_asc">Price: low to high</option><option value="price_desc">Price: high to low</option><option value="newest">Newest</option></ThemedSelect>
           <button className="btn-gold h-10 lg:col-span-2">Apply filters</button>
         </div>
       </form>
@@ -129,7 +132,7 @@ export default function PreBook() {
         </article>)}</div>}
       </section>
 
-      {issue && <div className="fixed inset-0 z-[80] grid place-items-center bg-foreground/45 p-4" role="dialog" aria-modal="true" aria-labelledby="issue-title"><div className="w-full max-w-md rounded-2xl border border-border bg-card p-5 shadow-xl"><h2 id="issue-title" className="text-xl font-black">Report a pre-book issue</h2><select className="input-luxury mt-4 w-full" value={issue.type} onChange={(e) => setIssue({ ...issue, type: e.target.value })}>{issueTypes.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select><textarea autoFocus className="input-luxury mt-3 w-full" rows={4} placeholder="Tell us what happened" value={issue.note} onChange={(e) => setIssue({ ...issue, note: e.target.value })} /><div className="mt-4 flex justify-end gap-2"><button onClick={() => setIssue(null)} className="btn-gold-outline">Close</button><button disabled={!issue.note.trim() || busy === issue.id} onClick={reportIssue} className="btn-gold">Submit issue</button></div></div></div>}
+      {issue && <div className="fixed inset-0 z-[80] grid place-items-center bg-foreground/45 p-4" role="dialog" aria-modal="true" aria-labelledby="issue-title"><div className="w-full max-w-md rounded-2xl border border-border bg-card p-5 shadow-xl"><h2 id="issue-title" className="text-xl font-black">Report a pre-book issue</h2><ThemedSelect className="input-luxury mt-4 w-full" value={issue.type} onChange={(e) => setIssue({ ...issue, type: e.target.value })}>{issueTypes.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</ThemedSelect><textarea autoFocus className="input-luxury mt-3 w-full" rows={4} placeholder="Tell us what happened" value={issue.note} onChange={(e) => setIssue({ ...issue, note: e.target.value })} /><div className="mt-4 flex justify-end gap-2"><button onClick={() => setIssue(null)} className="btn-gold-outline">Close</button><button disabled={!issue.note.trim() || busy === issue.id} onClick={reportIssue} className="btn-gold">Submit issue</button></div></div></div>}
     </main>
   );
 }

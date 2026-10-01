@@ -19,8 +19,8 @@ describe('legal and contact experience', () => {
     } });
     render(<MemoryRouter initialEntries={['/about?subject=family-pack#contact']}><About /></MemoryRouter>);
 
-    expect(screen.getByRole('heading', { name: /About VIP Number World/ })).toBeVisible();
-    expect(screen.getByRole('heading', { name: /Contact our team/ })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Contact our team', level: 1 })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Genuine & Verified' })).toBeVisible();
     expect(screen.getByLabelText('Subject')).toHaveValue('family pack');
     expect(screen.getByRole('button', { name: /Send Message/ })).toBeVisible();
     expect(screen.getByTitle('VIP Number World location map')).toHaveAttribute('src', expect.stringContaining('Jaipur%2C%20Rajasthan%2C%20India'));

@@ -1,103 +1,56 @@
-import { Monitor, Moon, Sun } from 'lucide-react';
-import type { ComponentType, SVGProps } from 'react';
-
 import { cn } from '@/core/lib/utils';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/shared/ui/dropdown-menu';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/shared/ui/tooltip';
+import { Monitor, Sun, Moon } from 'lucide-react';
 import { type ThemeMode, useTheme } from './ThemeProvider';
 
-type ThemeIcon = ComponentType<SVGProps<SVGSVGElement>>;
-
-const THEME_OPTIONS: Array<{ value: ThemeMode; label: string; icon: ThemeIcon }> = [
-  { value: 'system', label: 'System', icon: Monitor },
-  { value: 'light', label: 'Light', icon: Sun },
-  { value: 'dark', label: 'Dark', icon: Moon },
+const modes: Array<{ value: ThemeMode; label: string; description: string }> = [
+  { value: 'system', label: 'Auto', description: 'Follow system theme' },
+  { value: 'light', label: 'Light', description: 'Use light theme' },
+  { value: 'dark', label: 'Dark', description: 'Use dark theme' },
 ];
-
-const THEME_ICONS: Record<ThemeMode, ThemeIcon> = {
-  system: Monitor,
-  light: Sun,
-  dark: Moon,
-};
-
-const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
 export interface ThemeControlProps {
   className?: string;
   showLabel?: boolean;
   align?: 'start' | 'center' | 'end';
   side?: 'top' | 'right' | 'bottom' | 'left';
+  compact?: boolean;
 }
 
 export function ThemeControl({
   className,
   showLabel = false,
-  align = 'end',
-  side = 'bottom',
+  compact = false,
 }: ThemeControlProps) {
-  const { theme, resolvedTheme, setTheme } = useTheme();
-  const ActiveIcon = THEME_ICONS[theme];
-  const accessibleLabel = `Theme: ${capitalize(theme)}, currently ${capitalize(resolvedTheme)}`;
+  const { theme, setTheme } = useTheme();
 
-  return (
-    <DropdownMenu>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              aria-label={accessibleLabel}
-              className={cn(
-                'inline-flex h-10 min-w-10 items-center justify-center gap-2 rounded-xl border border-border bg-background px-2.5 text-foreground shadow-sm outline-none',
-                'hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-                showLabel && 'px-3',
-                className,
-              )}
-            >
-              <ActiveIcon aria-hidden="true" className="h-4 w-4" />
-              {showLabel && <span className="text-sm font-semibold">{capitalize(theme)}</span>}
-            </button>
-          </DropdownMenuTrigger>
-        </TooltipTrigger>
-        <TooltipContent side="bottom">{accessibleLabel}</TooltipContent>
-      </Tooltip>
-
-      <DropdownMenuContent align={align} side={side} className="min-w-44">
-        <DropdownMenuLabel>Appearance</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuRadioGroup
-          value={theme}
-          onValueChange={(value) => {
-            if (value === 'system' || value === 'light' || value === 'dark') setTheme(value);
-          }}
-        >
-          {THEME_OPTIONS.map(({ value, label, icon: Icon }) => (
-            <DropdownMenuRadioItem key={value} value={value} className="gap-2">
-              <Icon aria-hidden="true" className="h-4 w-4" />
-              <span>{label}</span>
-              {value === 'system' && (
-                <span className="ml-auto pl-3 text-xs text-muted-foreground">
-                  {capitalize(resolvedTheme)}
-                </span>
-              )}
-            </DropdownMenuRadioItem>
-          ))}
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
+  return <div className={cn('inline-flex shrink-0 items-center gap-2', className)}>
+    {showLabel && <span className="text-xs font-semibold text-foreground">Appearance</span>}
+    <div role="radiogroup" aria-label="Color theme" className="inline-flex h-9 items-center rounded-xl border border-border bg-card p-0.5 shadow-sm">
+      {modes.map((mode, index) => <button
+        key={mode.value}
+        type="button"
+        role="radio"
+        aria-label={mode.description}
+        aria-checked={theme === mode.value}
+        title={mode.description}
+        tabIndex={theme === mode.value ? 0 : -1}
+        onClick={() => setTheme(mode.value)}
+        onKeyDown={(event) => {
+          const next = event.key === 'Home' ? 0 : event.key === 'End' ? modes.length - 1
+            : event.key === 'ArrowRight' || event.key === 'ArrowDown' ? (index + 1) % modes.length
+              : event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? (index + modes.length - 1) % modes.length : -1;
+          if (next < 0) return;
+          event.preventDefault();
+          setTheme(modes[next].value);
+          event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="radio"]')[next]?.focus();
+        }}
+        className={cn(
+          'inline-flex h-7 items-center justify-center gap-1 rounded-lg px-1.5 text-[10px] font-bold leading-none text-muted-foreground transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
+          theme === mode.value && 'bg-primary text-primary-foreground shadow-sm',
+        )}
+      >{mode.value === 'system' ? <Monitor className="h-3.5 w-3.5" aria-hidden="true" /> : mode.value === 'light' ? <Sun className="h-3.5 w-3.5" aria-hidden="true" /> : <Moon className="h-3.5 w-3.5" aria-hidden="true" />}<span className={compact ? 'sr-only' : ''}>{mode.label}</span></button>)}
+    </div>
+  </div>;
 }
 
 export default ThemeControl;

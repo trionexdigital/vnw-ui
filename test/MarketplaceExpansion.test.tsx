@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { CorporatePackPreview, FaqAccordion, JourneyPreview, OperatorSection } from '@/pages/home/components/MarketplaceSections';
 import FamilyPack from '@/pages/corporate/CorporateElitePack';
 import { siteAPI } from '@/core/api/vnwAPI';
-import { cartAPI, numbersAPI, wishlistAPI, type CorporatePack } from '@/core/api/vnwAPI';
+import { cartAPI, numbersAPI, type CorporatePack } from '@/core/api/vnwAPI';
 import { listPayloadFromParams } from '@/pages/shop/searchTypes';
 import FamilyPackCard from '@/shared/components/FamilyPackCard';
 import { localService } from '@/core/services/local';
@@ -17,6 +17,7 @@ describe('marketplace expansion', () => {
   it('maps operator and premium URLs to catalog API filters', () => {
     const payload = listPayloadFromParams(new URLSearchParams('operator=Jio&premium=1&sort=popular'));
     expect(payload).toMatchObject({ operator: 'Jio', is_premium: 1, sort: 'popular' });
+    expect(listPayloadFromParams(new URLSearchParams('rtp_status=RTA'))).toMatchObject({ rtp_status: 'RTA' });
   });
 
   it('uses the supplied operator logos without exposing zero-stock counts', async () => {
@@ -44,7 +45,7 @@ describe('marketplace expansion', () => {
     expect(screen.getByText(/Track the order/)).toBeVisible();
     await user.click(trigger);
     expect(trigger).toHaveAttribute('aria-expanded', 'false');
-    expect(screen.queryByText(/Track the order/)).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByText(/Track the order/)).not.toBeInTheDocument());
   });
 
   it('regenerates Family Packs when match type or the 2–10 size dropdown changes', async () => {
@@ -54,11 +55,12 @@ describe('marketplace expansion', () => {
 
     await waitFor(() => expect(packs).toHaveBeenCalledWith({ pack_type: 'MIXED', size: 3 }));
     expect(screen.queryByRole('button', { name: 'Numbers in Series' })).not.toBeInTheDocument();
-    const size = screen.getByRole('combobox', { name: 'Numbers in pack' });
-    expect(size).toHaveValue('3');
-    expect(screen.getAllByRole('option')).toHaveLength(9);
+    const size = screen.getByRole('combobox', { name: 'Pack of' });
+    expect(size).toHaveTextContent('3 numbers');
 
-    await user.selectOptions(size, '5');
+    await user.click(size);
+    expect(screen.getAllByRole('option')).toHaveLength(9);
+    await user.click(screen.getByRole('option', { name: '5 numbers' }));
     await user.click(screen.getByRole('button', { name: 'Similar Start' }));
     await waitFor(() => expect(packs).toHaveBeenLastCalledWith({ pack_type: 'SIMILAR_START', size: 5 }));
   });
@@ -71,13 +73,14 @@ describe('marketplace expansion', () => {
     await waitFor(() => expect(packs).toHaveBeenCalledWith({ pack_type: 'MIXED', size: 3, limit: 4 }));
     expect(screen.queryByRole('button', { name: 'Numbers in Series' })).not.toBeInTheDocument();
     const size = screen.getByRole('combobox', { name: 'Homepage pack size' });
+    await user.click(size);
     expect(screen.getAllByRole('option')).toHaveLength(9);
-    await user.selectOptions(size, '4');
+    await user.click(screen.getByRole('option', { name: '4 numbers' }));
     await user.click(screen.getByRole('button', { name: 'Similar Both Ends' }));
     await waitFor(() => expect(packs).toHaveBeenLastCalledWith({ pack_type: 'SIMILAR_BOTH', size: 4, limit: 4 }));
   });
 
-  it('shows operator-free selectable Family Pack cards with working cart and wishlist actions', async () => {
+  it('shows compact selectable Family Pack cards with only pack-level purchase actions', async () => {
     const user = userEvent.setup();
     const pack: CorporatePack = {
       pack_id: 'AUTO-MIXED-1-2', title: 'All Mixed 1', pack_type: 'MIXED', sort_order: 0,
@@ -88,43 +91,37 @@ describe('marketplace expansion', () => {
       ],
     };
     vi.spyOn(localService, 'getToken').mockReturnValue('token');
-    const add = vi.spyOn(cartAPI, 'add').mockResolvedValue({});
     const addMany = vi.spyOn(cartAPI, 'addMany').mockResolvedValue({});
-    const addWish = vi.spyOn(wishlistAPI, 'add').mockResolvedValue({});
     vi.spyOn(cartAPI, 'list').mockResolvedValue({ count: 1 });
-    vi.spyOn(wishlistAPI, 'list').mockResolvedValue({ count: 1, items: [] });
 
-    const { container } = render(<MemoryRouter><FamilyPackCard pack={pack} wishedIds={new Set()} onWishlistChange={vi.fn()} /></MemoryRouter>);
+    const { container } = render(<MemoryRouter><FamilyPackCard pack={pack} /></MemoryRouter>);
 
     expect(screen.getByTestId('family-pack-card')).toHaveClass('reference-card', 'reference-family');
+    expect(screen.queryByText('All Mixed 1')).not.toBeInTheDocument();
+    expect(container.querySelectorAll('.reference-family__price')).toHaveLength(2);
     expect(container.querySelectorAll('.reference-family__row')).toHaveLength(2);
     expect(container.querySelector('.reference-family__numbers')).not.toHaveClass('grid');
     expect(screen.queryByText('Airtel')).not.toBeInTheDocument();
     expect(screen.queryByText('Vi')).not.toBeInTheDocument();
     expect(screen.getByText('2 of 2 selected')).toBeInTheDocument();
-    expect(screen.getAllByRole('button', { name: 'Buy Now' })).toHaveLength(2);
-    expect(screen.getAllByRole('button', { name: 'Buy Now' }).every((button) => button.classList.contains('reference-family__buy'))).toBe(true);
-    expect(screen.getAllByRole('button', { name: /Add selected to cart/i })[0]).toHaveClass('reference-family__cart');
-    expect(screen.getAllByRole('button', { name: /Buy selected/i })[0]).toHaveClass('reference-family__buy');
-
-    await user.click(screen.getByRole('button', { name: 'Add 9155 915 915 to cart' }));
-    await waitFor(() => expect(add).toHaveBeenCalledWith(1));
-
-    await user.click(screen.getByRole('button', { name: 'Add 9353 115 511 to wishlist' }));
-    await waitFor(() => expect(addWish).toHaveBeenCalledWith(2));
+    expect(screen.getAllByRole('button', { name: 'Buy Now' })).toHaveLength(1);
+    expect(screen.getAllByRole('button', { name: 'Add to Cart' })).toHaveLength(1);
+    expect(container.querySelector('.reference-family__row-actions')).not.toBeInTheDocument();
+    expect(container.querySelector('.reference-family__wish')).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Deselect 9353 115 511' }));
     expect(screen.getByText('1 of 2 selected')).toBeInTheDocument();
     expect(container.querySelector('.reference-family__total')).toHaveTextContent('₹17,000');
-    await user.click(screen.getByRole('button', { name: 'Add selected to cart' }));
-    await waitFor(() => expect(addMany).toHaveBeenCalledWith([1]));
     await user.click(screen.getByRole('button', { name: 'Select all' }));
     expect(container.querySelector('.reference-family__total')).toHaveTextContent('₹36,000');
     await user.click(screen.getByRole('button', { name: 'Clear selection' }));
     expect(screen.getByText('0 of 2 selected')).toBeInTheDocument();
     expect(container.querySelector('.reference-family__total')).toHaveTextContent('₹0');
-    expect(screen.getByRole('button', { name: 'Buy selected' })).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Add selected to cart' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Buy Now' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Add to Cart' })).toBeDisabled();
+    await user.click(screen.getByRole('button', { name: 'Select all' }));
+    await user.click(screen.getByRole('button', { name: 'Add to Cart' }));
+    await waitFor(() => expect(addMany).toHaveBeenCalledWith([1, 2]));
   });
 
   it('shows the money-back guarantee as the fifth journey step', () => {

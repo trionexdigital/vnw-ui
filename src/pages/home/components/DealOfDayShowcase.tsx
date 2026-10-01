@@ -52,7 +52,7 @@ function dealLabel(item: DealOfDayItem) {
 }
 
 function dealCategory(item: DealOfDayItem) {
-  return getPrimaryCategory(item) || { slug: 'unique-numbers', name: 'Unique Numbers' };
+  return getPrimaryCategory(item) || { slug: '', name: 'VIP Number' };
 }
 
 function dealDescription(item: DealOfDayItem) {
@@ -322,8 +322,7 @@ export default function DealOfDayShowcase({
           India&apos;s Premium VIP Number Marketplace
           <span aria-hidden="true" />
         </p>
-        <h1 id="home-hero-title"><span aria-hidden="true" />Lucky Pick of the Day<span aria-hidden="true" /></h1>
-        <p>Exclusive numbers. Exceptional value.</p>
+        <h1 id="home-hero-title"><span aria-hidden="true" />{deals.length ? 'Lucky Pick of the Day' : 'Your Number. Your Identity.'}<span aria-hidden="true" /></h1>
       </div>
 
       <div
@@ -382,9 +381,14 @@ export default function DealOfDayShowcase({
         ) : (
           <div className="deal-showcase__empty" role="status">
             <Sparkles className="h-8 w-8 text-primary" />
-            <strong>{error ? 'Lucky Picks are refreshing' : 'New premium Lucky Picks are coming soon'}</strong>
-            <span>Explore the live catalog while our next exclusive selection is prepared.</span>
+            <strong>{error ? 'Lucky Picks are refreshing' : 'Discover your signature pattern'}</strong>
+            <span>Start with a collection that feels like you.</span>
             <Link to="/shop">Explore Numbers <ArrowRight className="h-4 w-4" /></Link>
+            <div className="deal-showcase__quick-links" aria-label="Popular patterns">
+              <Link to="/shop?category=customer-care-numbers">Mirror</Link>
+              <Link to="/shop?category=penta-vip-mobile-no">Penta</Link>
+              <Link to="/shop?category=786-vip-mobile-numbers">786</Link>
+            </div>
           </div>
         )}
 

@@ -71,6 +71,13 @@ export const changePassword = async (payload: any) => {
   throw new Error(response?.info || 'Password change failed');
 };
 
+export const updateLogo = async (logo: string) => {
+  const response = await httpService.postRequest(BASE_URL + 'auth/update-logo', { logo });
+  if (response?.status !== 1) throw new Error(response?.info || 'Could not upload profile image.');
+  localService.setUser(JSON.stringify(response.data));
+  return mapUser(response.data);
+};
+
 export const logout = () => {
   localService.logout();
 };

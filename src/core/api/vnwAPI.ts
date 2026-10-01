@@ -11,6 +11,12 @@ import type {
 import type { CategorizedNumber, CategoryClassification, NumberCategory } from '@/core/categories/types';
 
 /** POST helper that unwraps the MasterModel envelope. Throws on status !== 1. */
+export interface NumberAnalysis {
+  total: number; ready: number; rejected: number; analysis_token: string | null;
+  rows: Array<{ row: number; input: string; values?: { number: string }; reasons: string[]; number_id?: number }>;
+}
+export interface NumberWorkbook { filename: string; mime: string; content_base64: string }
+
 async function post<T = any>(path: string, payload: any = {}): Promise<T> {
   const res = await httpService.postRequest(BASE_URL + path, payload);
   if (res && res.status === 1) return res.data as T;
@@ -45,6 +51,7 @@ export interface NumberSearchRequest {
 
 export interface NumberListRequest {
   category?: string;
+  subcategory_id?: number;
   q?: string;
   price_min?: string | number;
   price_max?: string | number;
@@ -131,14 +138,15 @@ export const wishlistAPI = {
 };
 
 export const ordersAPI = {
+  quote: (p: any) => post('orders/quote', { ...p, private_token: activePrivateToken() }),
   create: (p: any) => post('orders/create', { ...p, private_token: activePrivateToken() }),
   my: () => post('orders/my', {}),
   detail: (order_id: number) => post('orders/detail', { order_id }),
 };
 
 export const paymentsAPI = {
-  createRazorpayOrder: (order_id: number) => post('payments/razorpay/create-order', { order_id }),
-  verify: (p: any) => post('payments/razorpay/verify', p),
+  createCashfreeOrder: (order_id: number) => post<import('@/core/payments/cashfree').CashfreeSession>('payments/cashfree/create-order', { order_id }),
+  verify: (p: { order_id: number }) => post<{ order_id: number; order_no: string; order_type: string; payment_status: string }>('payments/cashfree/verify', p),
 };
 
 export const reviewsAPI = {
@@ -198,6 +206,7 @@ export interface PrebookRecord {
 }
 
 export const prebooksAPI = {
+  quote: (number_id: number) => post('prebooks/quote', { number_id, private_token: activePrivateToken() }),
   catalog: (p: NumberListRequest = {}) => post<{ items: any[]; total: number; page: number; limit: number }>('prebooks/catalog', p),
   create: (number_id: number) => post<{ prebook_id: number; order_id: number; order_no: string; total: number; payment_expires_at: string }>('prebooks/create', { number_id, private_token: activePrivateToken() }),
   my: () => post<PrebookRecord[]>('prebooks/my', {}),
@@ -209,6 +218,22 @@ export const carouselAPI = {
   list: () => post<PublishedCarouselSlide[]>('carousel/list', {}),
   assetBlob: (assetId: number) => httpService.downloadRequest(BASE_URL + `carousel/asset/${assetId}`),
   previewBlob: (assetId: number) => httpService.downloadRequest(BASE_URL + `carousel/preview/${assetId}`),
+};
+
+export interface ReviewScreenshot { screenshot_id: number; alt_text: string; sort_order: number; is_active: number | boolean; }
+export const reviewScreenshotsAPI = {
+  list: () => post<ReviewScreenshot[]>('reviews/screenshots', {}),
+  imageUrl: (id: number) => BASE_URL + `reviews/screenshots/${id}/image`,
+  adminList: () => post<ReviewScreenshot[]>('admin/review-screenshots/list', {}),
+  save: (screenshot_id: number, alt_text: string, is_active: boolean) => post('admin/review-screenshots/save', { screenshot_id, alt_text, is_active }),
+  reorder: (screenshot_ids: number[]) => post('admin/review-screenshots/reorder', { screenshot_ids }),
+  remove: (screenshot_id: number) => post('admin/review-screenshots/delete', { screenshot_id }),
+  upload: async (file: File, alt_text: string, width: number, height: number) => {
+    const form = new FormData(); form.append('file', file); form.append('alt_text', alt_text); form.append('width', String(width)); form.append('height', String(height));
+    const response = await httpService.uploadRequest(BASE_URL + 'admin/review-screenshots/upload', form);
+    if (response?.status !== 1) throw new Error(response?.info || 'Screenshot upload failed');
+    return response.data as { screenshot_id: number };
+  },
 };
 
 export const adminCarouselAPI = {
@@ -344,6 +369,7 @@ export interface TrustedClient {
   alt_text?: string | null;
   has_logo: boolean;
   logo_url?: string | null;
+  logo_sha256?: string;
   sort_order: number;
   is_active: boolean;
 }
@@ -366,7 +392,7 @@ export const siteAPI = {
   corporatePacks: (p: CorporatePackQuery) => post<CorporatePack[]>('site/family-packs', p),
   operators: () => post<OperatorFacet[]>('site/operators', {}),
   trustedClients: () => post<TrustedClient[]>('site/trusted-clients', {}),
-  trustedClientLogoUrl: (clientId: number) => BASE_URL + `site/trusted-clients/${clientId}/logo`,
+  trustedClientLogoUrl: (clientId: number, version?: string) => BASE_URL + `site/trusted-clients/${clientId}/logo${version ? `?v=${encodeURIComponent(version)}` : ''}`,
   faqs: () => post<FaqItem[]>('site/faqs', {}),
   homePremiumNumbers: () => post<any[]>('site/home-premium-numbers', {}),
   subscribe: (email: string, source = 'footer') => postRaw('site/newsletter', { email, source }),
@@ -388,20 +414,20 @@ export interface PrivateCollection {
 }
 
 export const privateCollectionsAPI = {
-  resolve: (token: string) => post<{ collection: PrivateCollection; items: NumberCatalogItem[] }>('private/resolve', { token }),
+  resolve: (token: string, params: { page?: number; limit?: number; q?: string } = {}) => post<{ collection: PrivateCollection; items: NumberCatalogItem[]; total: number; page: number; limit: number }>('private/resolve', { token, ...params }),
 };
 
 export const dealerAPI = {
   dashboard: () => post('dealer/dashboard', {}),
-  listings: () => post('dealer/listings', {}),
+  listings: (params: { page?: number; limit?: number } = {}) => post('dealer/listings', params),
   createListing: (p: any) => post('dealer/listing/create', p),
   updateListing: (p: any) => post('dealer/listing/update', p),
   deleteListing: (number_id: number) => post('dealer/listing/delete', { number_id }),
-  sales: () => post('dealer/sales', {}),
+  sales: (params: { page?: number; limit?: number } = {}) => post('dealer/sales', params),
   profile: () => post('dealer/profile', {}),
   updateProfile: (p: any) => post('dealer/profile/update', p),
   requestPayout: (amount: number) => post('dealer/payout/request', { amount }),
-  payouts: () => post('dealer/payouts', {}),
+  payouts: (params: { page?: number; limit?: number } = {}) => post('dealer/payouts', params),
 };
 
 export const sellAPI = {
@@ -429,17 +455,38 @@ export const employeeAPI = {
   sellList: (p: any = {}) => post('employee/sell/list', p),
   actions: () => post('employee/actions', {}),
   submit: (action_key: string, payload: any) => post('employee/submit', { action_key, payload }),
-  mySubmissions: () => post('employee/my-submissions', {}),
+  mySubmissions: (params: { page?: number; limit?: number } = {}) => post('employee/my-submissions', params),
 };
 
 export const adminAPI = {
   dashboard: () => post('admin/dashboard', {}),
   numbersList: (p: any = {}) => post('admin/numbers/list', p),
   numberSave: (p: any) => post('admin/numbers/save', p),
+  numbersAnalyze: (p: any) => post<NumberAnalysis>('admin/numbers/analyze', p),
+  numbersAnalyzeFile: async (file: File) => {
+    const form = new FormData(); form.append('file', file, file.name);
+    const response = await httpService.uploadRequest(BASE_URL + 'admin/numbers/analyze', form);
+    if (response?.status !== 1) throw new Error(response?.info || 'Analysis failed.');
+    return response.data as NumberAnalysis;
+  },
+  numbersImport: (analysis_token: string) => post<{ imported: number; rejected: number; rows: NumberAnalysis['rows'] }>('admin/numbers/import/commit', { analysis_token }),
+  numbersTemplate: () => post<NumberWorkbook>('admin/numbers/import/template', {}),
+  numbersExport: (filters: any) => post<NumberWorkbook>('admin/numbers/export', filters),
   numberDelete: (number_id: number) => post('admin/numbers/delete', { number_id }),
   numberApprove: (number_id: number) => post('admin/numbers/approve', { number_id }),
   numberReject: (number_id: number) => post('admin/numbers/reject', { number_id }),
-  privateLinksList: () => post<PrivateCollection[]>('admin/private-links/list', {}),
+  privateLinksList: (params: { page?: number; limit?: number } = {}) => post<{ items: PrivateCollection[]; total: number }>('admin/private-links/list', params),
+  privateLinksAll: async () => {
+    const items: PrivateCollection[] = [];
+    let page = 1;
+    do {
+      const result = await post<{ items: PrivateCollection[]; total: number }>('admin/private-links/list', { page, limit: 50 });
+      items.push(...result.items);
+      if (items.length >= result.total || !result.items.length) break;
+      page += 1;
+    } while (true);
+    return items;
+  },
   privateLinkCreate: (p: any) => post<{ private_link_id: number; token: string }>('admin/private-links/create', p),
   privateLinkUpdate: (p: any) => post('admin/private-links/update', p),
   privateLinkRotate: (private_link_id: number) => post<{ private_link_id: number; token: string }>('admin/private-links/rotate', { private_link_id }),
@@ -453,7 +500,7 @@ export const adminAPI = {
   dealerPurchasesReverseSold: (dealer_purchase_ids: number[]) => post('admin/dealer-purchases/reverse-sold', { dealer_purchase_ids }),
   dealerPurchasesDelete: (dealer_purchase_ids: number[], reason: string) => post('admin/dealer-purchases/delete', { dealer_purchase_ids, reason }),
   dealerPurchasesRestore: (dealer_purchase_ids: number[]) => post('admin/dealer-purchases/restore', { dealer_purchase_ids }),
-  dealerPaymentsList: (external_dealer_id?: number) => post('admin/dealer-purchases/payments/list', { external_dealer_id }),
+  dealerPaymentsList: (params: { external_dealer_id?: number; page?: number; limit?: number } = {}) => post('admin/dealer-purchases/payments/list', params),
   dealerPaymentRecord: (p: any) => post('admin/dealer-purchases/payments/record', p),
   dealerPaymentVoid: (dealer_payment_id: number, reason: string) => post('admin/dealer-purchases/payments/void', { dealer_payment_id, reason }),
   dealsOfDayList: () => post<DealOfDayItem[]>('admin/deals-of-day/list', {}),
@@ -464,6 +511,9 @@ export const adminAPI = {
   orderDetail: (order_id: number) => post('admin/orders/detail', { order_id }),
   orderUpdateStatus: (order_id: number, status: string) => post('admin/orders/update-status', { order_id, status }),
   prebooksList: (p: any = {}) => post('admin/prebooks/list', p),
+  paymentOverview: (p: any = {}) => post('admin/payments/overview', p),
+  paymentDetail: (order_id: number, before_event_id?: number) => post('admin/payments/detail', { order_id, before_event_id }),
+  paymentReconcile: (order_id: number) => post('admin/payments/reconcile', { order_id }),
   prebookFulfill: (prebook_id: number) => post('admin/prebooks/fulfill', { prebook_id }),
   prebookMarkUnavailable: (prebook_id: number, note: string) => post('admin/prebooks/mark-unavailable', { prebook_id, note }),
   prebookRefundsList: (p: any = {}) => post('admin/prebook-refunds/list', p),
@@ -473,7 +523,7 @@ export const adminAPI = {
   usersList: (p: any = {}) => post('admin/users/list', p),
   userSetRole: (target_id: number, role: string) => post('admin/users/set-role', { target_id, role }),
   userSetStatus: (target_id: number, status: string) => post('admin/users/set-status', { target_id, status }),
-  dealersList: () => post('admin/dealers/list', {}),
+  dealersList: (p: any = {}) => post('admin/dealers/list', p),
   dealerKyc: (p: any) => post('admin/dealers/kyc', p),
   dealerCreate: (p: any) => post('admin/dealers/create', p),
   employeeCreate: (p: any) => post('admin/employees/create', p),
@@ -486,11 +536,11 @@ export const adminAPI = {
   approvalsList: (p: any = {}) => post('admin/approvals/list', p),
   approvalApprove: (approval_id: number) => post('admin/approvals/approve', { approval_id }),
   approvalReject: (approval_id: number, review_note?: string) => post('admin/approvals/reject', { approval_id, review_note }),
-  payoutsList: () => post('admin/payouts/list', {}),
+  payoutsList: (p: any = {}) => post('admin/payouts/list', p),
   payoutUpdate: (p: any) => post('admin/payouts/update', p),
   reviewsList: (p: any = {}) => post('admin/reviews/list', p),
   reviewModerate: (review_id: number, status: string) => post('admin/reviews/moderate', { review_id, status }),
-  testimonialsList: () => post('admin/testimonials/list', {}),
+  testimonialsList: (params: { page?: number; limit?: number } = {}) => post('admin/testimonials/list', params),
   testimonialSave: (p: any) => post('admin/testimonials/save', p),
   testimonialDelete: (testimonial_id: number) => post('admin/testimonials/delete', { testimonial_id }),
   trustedClientsList: () => post<TrustedClient[]>('admin/trusted-clients/list', {}),
@@ -512,11 +562,11 @@ export const adminAPI = {
   bannersList: () => post<CarouselSlide[]>('admin/banners/list', {}),
   bannerSave: (p: Partial<CarouselSlide>) => post<{ banner_id: number }>('admin/banners/save', p),
   bannerDelete: (banner_id: number) => post('admin/banners/delete', { banner_id }),
-  messagesList: () => post('admin/messages/list', {}),
-  couponsList: () => post('admin/coupons/list', {}),
+  messagesList: (p: any = {}) => post('admin/messages/list', p),
+  couponsList: (p: any = {}) => post('admin/coupons/list', p),
   couponSave: (p: any) => post('admin/coupons/save', p),
   couponDelete: (coupon_id: number) => post('admin/coupons/delete', { coupon_id }),
-  newsletterList: () => post('admin/newsletter/list', {}),
+  newsletterList: (p: any = {}) => post('admin/newsletter/list', p),
   settingsGet: () => post('admin/settings/get', {}),
   settingsSave: (p: any) => post('admin/settings/save', p),
   homePremiumList: () => post<any[]>('admin/home-premium/list', {}),

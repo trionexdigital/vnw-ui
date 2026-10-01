@@ -19,6 +19,7 @@ const Cart = lazy(() => import('@/pages/cart/Cart'));
 const Wishlist = lazy(() => import('@/pages/wishlist/Wishlist'));
 const Compare = lazy(() => import('@/pages/compare/Compare'));
 const Checkout = lazy(() => import('@/pages/checkout/Checkout'));
+const PaymentReturn = lazy(() => import('@/pages/checkout/PaymentReturn'));
 const PreBook = lazy(() => import('@/pages/prebook/PreBook'));
 const PreBookCheckout = lazy(() => import('@/pages/prebook/PreBookCheckout'));
 const About = lazy(() => import('@/pages/static/About'));
@@ -57,6 +58,7 @@ const AdminDealsOfDay = lazy(() => import('@/pages/admin/AdminDealsOfDay'));
 const AdminTrustedClients = lazy(() => import('@/pages/admin/AdminTrustedClients'));
 const AdminFaqs = lazy(() => import('@/pages/admin/AdminFaqs'));
 const AdminPrebooks = lazy(() => import('@/pages/admin/AdminPrebooks'));
+const AdminPayments = lazy(() => import('@/pages/admin/AdminPayments'));
 const AdminOrders = lazy(() => import('@/pages/admin/AdminOrders'));
 const AdminUsers = lazy(() => import('@/pages/admin/AdminUsers'));
 const AdminDealers = lazy(() => import('@/pages/admin/AdminDealers'));
@@ -64,7 +66,7 @@ const AdminPayouts = lazy(() => import('@/pages/admin/AdminPayouts'));
 const AdminReviews = lazy(() => import('@/pages/admin/AdminReviews'));
 const AdminTestimonials = lazy(() => import('@/pages/admin/AdminTestimonials'));
 const AdminBanners = lazy(() => import('@/pages/admin/AdminBanners'));
-const CarouselEditor = lazy(() => import('@/pages/admin/carousel/CarouselEditor'));
+const CarouselEditor = lazy(() => import('@/pages/admin/carousel/CarouselImageEditor'));
 const AdminMessages = lazy(() => import('@/pages/admin/AdminMessages'));
 const AdminCoupons = lazy(() => import('@/pages/admin/AdminCoupons'));
 const AdminSubscribers = lazy(() => import('@/pages/admin/AdminSubscribers'));
@@ -73,7 +75,7 @@ const AdminSellRequests = lazy(() => import('@/pages/admin/AdminSellRequests'));
 const AdminApprovals = lazy(() => import('@/pages/admin/AdminApprovals'));
 const AdminCreateDealer = lazy(() => import('@/pages/admin/AdminCreateDealer'));
 const AdminHomePremium = lazy(() => import('@/pages/admin/AdminHomePremium'));
-const AdminPrivateLinks = lazy(() => import('@/pages/admin/AdminPrivateLinks'));
+const AdminPrivateLinks = lazy(() => import('@/pages/admin/AdminOfflineLink'));
 const AdminDealerPurchases = lazy(() => import('@/pages/admin/AdminDealerPurchases'));
 
 const dealerRoles = ['DEALER', 'ADMIN'];
@@ -92,7 +94,7 @@ function ContactRedirect() {
 
 export default function AppRoutes() {
   return (
-    <Suspense fallback={<div className="mx-auto min-h-[45vh] w-full max-w-7xl bg-background px-4 py-8 text-foreground"><Loader label="Loading screen" /></div>}>
+    <Suspense fallback={<div className="w-full bg-background px-4 py-4 text-foreground"><Loader label="Loading screen" /></div>}>
     <Routes>
       {/* Storefront */}
       <Route element={<PublicLayout />}>
@@ -123,6 +125,7 @@ export default function AppRoutes() {
         <Route path="/grievance-redressal" element={<LegalPage policyKey="grievance-redressal" />} />
         <Route path="/wishlist" element={<RoleGuard><Wishlist /></RoleGuard>} />
         <Route path="/checkout" element={<RoleGuard><Checkout /></RoleGuard>} />
+        <Route path="/payments/return" element={<RoleGuard><PaymentReturn /></RoleGuard>} />
         <Route path="/pre-book" element={<PreBook />} />
         <Route path="/pre-book/:numberId/checkout" element={<RoleGuard><PreBookCheckout /></RoleGuard>} />
       </Route>
@@ -131,10 +134,6 @@ export default function AppRoutes() {
       <Route path="/login" element={<StandalonePage><Auth mode="login" /></StandalonePage>} />
       <Route path="/register" element={<StandalonePage><Auth mode="register" /></StandalonePage>} />
       <Route path="/forgot" element={<StandalonePage><Auth mode="forgot" /></StandalonePage>} />
-
-      {/* Distraction-free admin studio (intentionally outside AccountLayout) */}
-      <Route path="/admin/carousel/new" element={<RoleGuard roles={adminRoles}><CarouselEditor /></RoleGuard>} />
-      <Route path="/admin/carousel/:id/edit" element={<RoleGuard roles={adminRoles}><CarouselEditor /></RoleGuard>} />
 
       {/* Account / dashboards */}
       <Route element={<RoleGuard><AccountLayout /></RoleGuard>}>
@@ -172,6 +171,7 @@ export default function AppRoutes() {
         <Route path="/admin/categories" element={<RoleGuard roles={adminRoles}><Navigate to="/admin/numbers?notice=automatic-categories" replace /></RoleGuard>} />
         <Route path="/admin/orders" element={<RoleGuard roles={adminRoles}><AdminOrders /></RoleGuard>} />
         <Route path="/admin/prebooks" element={<RoleGuard roles={adminRoles}><AdminPrebooks /></RoleGuard>} />
+        <Route path="/admin/payments" element={<RoleGuard roles={adminRoles}><AdminPayments /></RoleGuard>} />
         <Route path="/admin/users" element={<RoleGuard roles={adminRoles}><AdminUsers /></RoleGuard>} />
         <Route path="/admin/dealers" element={<RoleGuard roles={adminRoles}><AdminDealers /></RoleGuard>} />
         <Route path="/admin/dealers/new" element={<RoleGuard roles={adminRoles}><AdminCreateDealer /></RoleGuard>} />
@@ -183,6 +183,8 @@ export default function AppRoutes() {
         <Route path="/admin/trusted-clients" element={<RoleGuard roles={adminRoles}><AdminTrustedClients /></RoleGuard>} />
         <Route path="/admin/faqs" element={<RoleGuard roles={adminRoles}><AdminFaqs /></RoleGuard>} />
         <Route path="/admin/carousel" element={<RoleGuard roles={adminRoles}><AdminBanners /></RoleGuard>} />
+        <Route path="/admin/carousel/new" element={<RoleGuard roles={adminRoles}><CarouselEditor /></RoleGuard>} />
+        <Route path="/admin/carousel/:id/edit" element={<RoleGuard roles={adminRoles}><CarouselEditor /></RoleGuard>} />
         <Route path="/admin/banners" element={<RoleGuard roles={adminRoles}><AdminBanners /></RoleGuard>} />
         <Route path="/admin/coupons" element={<RoleGuard roles={adminRoles}><AdminCoupons /></RoleGuard>} />
         <Route path="/admin/subscribers" element={<RoleGuard roles={adminRoles}><AdminSubscribers /></RoleGuard>} />

@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Heart } from 'lucide-react';
+import CompactPageHeader from '@/shared/components/CompactPageHeader';
 import { wishlistAPI } from '@/core/api/vnwAPI';
 import { useStore } from '@/shared/store/useStore';
 import NumberCard from '@/shared/components/NumberCard';
@@ -16,8 +18,8 @@ export default function Wishlist() {
   if (loading) return <div className="mx-auto max-w-7xl px-4 py-10"><Loader /></div>;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
-      <h1 className="mb-6 text-2xl font-extrabold text-foreground">My Wishlist</h1>
+    <div className="commerce-page">
+      <CompactPageHeader title="Your wishlist" subtitle={`${items.length} favourites saved. Compare them or find the one that feels right.`} icon={Heart} action={<Link to="/shop" className="btn-gold-outline min-h-9 text-xs">Explore numbers</Link>} />
       {items.length === 0 ? (
         <EmptyState title="Your wishlist is empty" subtitle="Tap the heart on any number to save it here."
           action={<Link to="/shop" className="btn-gold">Explore Numbers</Link>} />

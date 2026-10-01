@@ -1,3 +1,4 @@
+import { ThemedSelect } from '@/shared/ui/themed-select';
 import { useEffect, useState } from 'react';
 import { adminAPI } from '@/core/api/vnwAPI';
 import { useToast } from '@/shared/hooks/use-toast';
@@ -11,10 +12,13 @@ export default function AdminOrders() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [total, setTotal] = useState(0);
   const [detail,setDetail]=useState<any>(null);
 
-  const load = () => { setLoading(true); adminAPI.ordersList({ status: filter || undefined }).then(setOrders).catch(() => {}).finally(() => setLoading(false)); };
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [filter]);
+  const load = () => { setLoading(true); adminAPI.ordersList({ status: filter || undefined, page, limit: pageSize }).then((result) => { setOrders(result.items || []); setTotal(Number(result.total || 0)); }).catch(() => {}).finally(() => setLoading(false)); };
+  useEffect(() => { load(); /* eslint-disable-next-line */ }, [filter, page, pageSize]);
 
   const update = async (id: number, status: string) => {
     try { await adminAPI.orderUpdateStatus(id, status); toast({ title: 'Order updated' }); load(); }
@@ -26,11 +30,11 @@ export default function AdminOrders() {
     <div>
       <PageHeader title="Orders" subtitle="Manage customer VIP number orders" />
       <div className="mb-4 flex flex-wrap gap-2">
-        <button onClick={() => setFilter('')} className={`rounded-full px-3 py-1 text-xs ${!filter ? 'btn-gold' : 'btn-gold-outline'}`}>All</button>
-        {ORDER_STATUSES.map((s) => <button key={s} onClick={() => setFilter(s)} className={`rounded-full px-3 py-1 text-xs ${filter === s ? 'btn-gold' : 'btn-gold-outline'}`}>{s}</button>)}
+        <button onClick={() => { setFilter(''); setPage(1); }} className={`rounded-full px-3 py-1 text-xs ${!filter ? 'btn-gold' : 'btn-gold-outline'}`}>All</button>
+        {ORDER_STATUSES.map((s) => <button key={s} onClick={() => { setFilter(s); setPage(1); }} className={`rounded-full px-3 py-1 text-xs ${filter === s ? 'btn-gold' : 'btn-gold-outline'}`}>{s}</button>)}
       </div>
       {loading ? <Loader /> : (
-        <Table head={['Order', 'Customer', 'Total', 'Payment', 'Status', 'Date', 'Update']}>
+        <Table head={['Order', 'Customer', 'Total', 'Payment', 'Status', 'Date', 'Update']} pagination={{ page, pageSize, total, onPageChange: setPage, onPageSizeChange: (size) => { setPageSize(size); setPage(1); } }}>
           {orders.map((o) => (
             <tr key={o.order_id} className="border-b border-card-border last:border-0">
               <td className="px-4 py-3 font-medium text-foreground"><button className="text-left hover:text-primary" onClick={()=>openDetail(o.order_id)}>{o.order_no}</button></td>
@@ -40,10 +44,10 @@ export default function AdminOrders() {
               <td className="px-4 py-3"><StatusBadge status={o.status} /></td>
               <td className="px-4 py-3 text-muted-foreground">{String(o.created_at).slice(0, 10)}</td>
               <td className="px-4 py-3">
-                <select defaultValue={o.status} onChange={(e) => update(o.order_id, e.target.value)}
+                <ThemedSelect defaultValue={o.status} onChange={(e) => update(o.order_id, e.target.value)}
                   className="rounded-lg border border-card-border bg-secondary px-2 py-1 text-xs outline-none">
                   {ORDER_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
-                </select>
+                </ThemedSelect>
               </td>
             </tr>
           ))}

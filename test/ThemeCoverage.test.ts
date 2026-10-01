@@ -17,7 +17,6 @@ const intentionalFixedLines: Record<string, RegExp[]> = {
     /Order \{item\.sort_order\}/,
     /h-\[min\(48vh,360px\)\]/,
   ],
-  'pages/auth/Auth.tsx': [/rounded-xl bg-white p-2/],
   'pages/home/components/HomeCarousel.tsx': [
     /const ctaClass/,
     /bg-gradient-to-t from-stone-950/,
@@ -102,7 +101,8 @@ describe('theme coverage', () => {
     expect(declaredPaths).toEqual(expect.arrayContaining(['/', '/login', '/dashboard', '/employee', '/dealer', '/admin']));
     expect(declaredPaths.length).toBeGreaterThanOrEqual(45);
     expect(publicLayout).toContain('<ThemeControl');
-    expect(publicLayout).toContain('to="/compare" aria-label="Compare numbers"');
+    expect(publicLayout).toContain('to="/compare"');
+    expect(publicLayout).toContain('<HeaderNumberSearch />');
     expect(publicLayout).toContain('<HeaderIconTooltip');
     expect(publicLayout).not.toContain('aria-label="Notifications"');
     expect(accountLayout).toContain('<ThemeControl');

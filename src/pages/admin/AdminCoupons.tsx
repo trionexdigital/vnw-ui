@@ -1,3 +1,4 @@
+import { ThemedSelect } from '@/shared/ui/themed-select';
 import { useEffect, useState } from 'react';
 import { Pencil, Trash2, Plus } from 'lucide-react';
 import { adminAPI } from '@/core/api/vnwAPI';
@@ -11,11 +12,14 @@ export default function AdminCoupons() {
   const { toast } = useToast();
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [total, setTotal] = useState(0);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<any>(empty);
 
-  const load = () => { setLoading(true); adminAPI.couponsList().then(setItems).catch(() => {}).finally(() => setLoading(false)); };
-  useEffect(() => { load(); }, []);
+  const load = () => { setLoading(true); adminAPI.couponsList({ page, limit: pageSize }).then((data) => { setItems(data.items || []); setTotal(Number(data.total || 0)); }).catch(() => {}).finally(() => setLoading(false)); };
+  useEffect(() => { load(); }, [page, pageSize]);
 
   const set = (k: string, v: any) => setForm((p: any) => ({ ...p, [k]: v }));
   const input = 'w-full rounded-lg border border-card-border bg-secondary px-3 py-2 text-sm text-foreground outline-none focus:border-accent';
@@ -32,7 +36,7 @@ export default function AdminCoupons() {
       <PageHeader title="Coupons & Offers" subtitle="Create discount codes to drive more sales"
         action={<button onClick={() => { setForm(empty); setOpen(true); }} className="btn-gold text-sm"><Plus className="h-4 w-4" /> Add Coupon</button>} />
       {loading ? <Loader /> : (
-        <Table head={['Code', 'Type', 'Value', 'Min Order', 'Used', 'Active', '']}>
+        <Table head={['Code', 'Type', 'Value', 'Min Order', 'Used', 'Active', '']} pagination={{ page, pageSize, total, onPageChange: setPage, onPageSizeChange: (size) => { setPageSize(size); setPage(1); } }}>
           {items.map((c) => (
             <tr key={c.coupon_id} className="border-b border-card-border last:border-0">
               <td className="px-4 py-3 font-bold text-foreground">{c.code}</td>
@@ -54,7 +58,7 @@ export default function AdminCoupons() {
       <Modal open={open} onClose={() => setOpen(false)} title={form.coupon_id ? 'Edit Coupon' : 'Add Coupon'}>
         <form onSubmit={save} className="grid gap-3 sm:grid-cols-2">
           <input required className={input + ' sm:col-span-2 uppercase'} placeholder="CODE (e.g. WELCOME10)" value={form.code} onChange={(e) => set('code', e.target.value.toUpperCase())} />
-          <select className={input} value={form.type} onChange={(e) => set('type', e.target.value)}><option value="PERCENT">Percent %</option><option value="FLAT">Flat ₹</option></select>
+          <ThemedSelect className={input} value={form.type} onChange={(e) => set('type', e.target.value)}><option value="PERCENT">Percent %</option><option value="FLAT">Flat ₹</option></ThemedSelect>
           <input required type="number" className={input} placeholder="Value" value={form.value} onChange={(e) => set('value', e.target.value)} />
           <input type="number" className={input} placeholder="Min order ₹" value={form.min_order} onChange={(e) => set('min_order', e.target.value)} />
           <input type="number" className={input} placeholder="Max discount ₹ (optional)" value={form.max_discount} onChange={(e) => set('max_discount', e.target.value)} />

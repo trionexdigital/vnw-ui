@@ -27,7 +27,7 @@ interface AuthState {
 
 const getStoredUser = (): User | null => {
   const userData = localService.getUser();
-  try { return userData ? JSON.parse(userData) : null; } catch { return null; }
+  try { const u = userData ? JSON.parse(userData) : null; return u ? { ...u, id: u.id || u.user_id, name: u.name || u.full_name } : null; } catch { return null; }
 };
 
 const initialState: AuthState = {

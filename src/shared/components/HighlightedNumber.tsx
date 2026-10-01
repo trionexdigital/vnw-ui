@@ -1,5 +1,6 @@
 import type { NumberCategoryMatch } from '@/core/categories/types';
 import { buildHighlightedNumberModel, createNumberAriaLabel } from '@/core/categories/highlight';
+import { numberDisplayGroups } from '@/core/categories/numberDisplay';
 import { cn } from '@/core/lib/utils';
 
 interface HighlightedNumberProps {
@@ -12,6 +13,12 @@ interface HighlightedNumberProps {
 export default function HighlightedNumber({ number, category, className, appearance = 'default' }: HighlightedNumberProps) {
   const model = buildHighlightedNumberModel(number, category?.match_spans);
   const reference = appearance === 'reference';
+  let offset = 0;
+  const segments = model.hasHighlights || !category ? model.segments : numberDisplayGroups(model.canonicalNumber, category).map((text) => {
+    const segment = { start: offset, end: offset + text.length, text, matched: false };
+    offset = segment.end;
+    return segment;
+  });
 
   return (
     <span
@@ -26,7 +33,7 @@ export default function HighlightedNumber({ number, category, className, appeara
         aria-hidden="true"
         className={reference ? 'reference-card__digits' : 'vnw-card-numeral flex min-w-0 flex-nowrap items-center justify-center gap-[clamp(0.12rem,0.8vw,0.32rem)] whitespace-nowrap text-[clamp(1.05rem,5.4vw,1.5rem)] leading-none tracking-[0.045em] text-foreground'}
       >
-        {model.segments.map((segment, index) => (
+        {segments.map((segment, index) => (
           <span
             key={`${segment.start}-${segment.end}-${index}`}
             data-match={segment.matched ? 'true' : 'false'}
@@ -35,7 +42,11 @@ export default function HighlightedNumber({ number, category, className, appeara
               !reference && segment.matched && 'border-primary bg-primary px-[0.2em] text-primary-foreground shadow-sm ring-1 ring-primary/25',
             )}
           >
-            {segment.text}
+            {reference
+              ? Array.from(segment.text).map((digit, digitIndex) => (
+                <span key={`${segment.start}-${digitIndex}`} className="reference-card__digit" style={{ '--digit-index': segment.start + digitIndex } as React.CSSProperties}>{digit}</span>
+              ))
+              : segment.text}
           </span>
         ))}
       </span>

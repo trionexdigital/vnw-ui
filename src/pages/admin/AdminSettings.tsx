@@ -71,6 +71,7 @@ export default function AdminSettings() {
           </div>
         </section>
 
+        <section className="rounded-2xl border border-border bg-card p-4"><div className="flex flex-wrap items-center justify-between gap-4"><div><h2 className="text-sm font-black">Checkout GST</h2><p className="mt-1 text-xs text-muted-foreground">Added after offer and coupon discounts. New orders store the rate and tax amount.</p></div><label className="grid gap-1 text-xs font-bold" htmlFor="gst-percent">GST percentage<input id="gst-percent" type="number" min="0" max="100" step="0.01" required value={vals.GST_PERCENT ?? '0'} onChange={e => setVals({ ...vals, GST_PERCENT: e.target.value })} className="h-9 w-32 rounded-lg border border-border bg-background px-3" /></label></div></section>
         {GROUPS.map(({ title, description, icon: Icon, fields }) => (
           <section key={title} className="rounded-3xl border border-border bg-card p-5 shadow-sm sm:p-7">
             <div className="mb-5 flex items-start gap-3"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-primary/10 text-primary"><Icon className="h-5 w-5" /></span><div><h2 className="font-black text-foreground">{title}</h2><p className="mt-1 text-sm text-muted-foreground">{description}</p></div></div>
@@ -81,7 +82,7 @@ export default function AdminSettings() {
         ))}
 
         <section className="rounded-3xl border border-border bg-card p-5 shadow-sm sm:p-7">
-          <div className="flex items-start gap-3"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-primary/10 text-primary"><CreditCard className="h-5 w-5" /></span><div><h2 className="font-black text-foreground">Payment gateway</h2><p className="mt-1 text-sm leading-6 text-muted-foreground">Razorpay credentials are configured securely in the server environment and are never exposed in this page.</p></div></div>
+          <div className="flex items-start gap-3"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-primary/10 text-primary"><CreditCard className="h-5 w-5" /></span><div><h2 className="font-black text-foreground">Payment gateway</h2><p className="mt-1 text-sm leading-6 text-muted-foreground">Cashfree credentials are configured securely in the server environment and are never exposed in this page.</p></div></div>
         </section>
 
         <div className="sticky bottom-4 z-10 flex justify-end"><button disabled={busy} className="btn-gold min-w-44 shadow-lg"><Save className="h-4 w-4" />{busy ? 'Saving…' : 'Save settings'}</button></div>

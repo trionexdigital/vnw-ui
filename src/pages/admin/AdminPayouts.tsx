@@ -7,9 +7,12 @@ export default function AdminPayouts() {
   const { toast } = useToast();
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [total, setTotal] = useState(0);
 
-  const load = () => { setLoading(true); adminAPI.payoutsList().then(setRows).catch(() => {}).finally(() => setLoading(false)); };
-  useEffect(() => { load(); }, []);
+  const load = () => { setLoading(true); adminAPI.payoutsList({ page, limit: pageSize }).then((data) => { setRows(data.items || []); setTotal(Number(data.total || 0)); }).catch(() => {}).finally(() => setLoading(false)); };
+  useEffect(() => { load(); }, [page, pageSize]);
 
   const update = async (payout_id: number, status: string) => {
     const reference = status === 'PAID' ? (prompt('Payment reference (UTR/UPI ref):') || '') : '';
@@ -23,7 +26,7 @@ export default function AdminPayouts() {
     <div>
       <PageHeader title="Dealer Payouts" subtitle="Approve and mark payouts as paid" />
       {rows.length === 0 ? <EmptyState title="No payout requests" /> : (
-        <Table head={['Dealer', 'Amount', 'Status', 'Reference', 'Requested', 'Actions']}>
+        <Table head={['Dealer', 'Amount', 'Status', 'Reference', 'Requested', 'Actions']} pagination={{ page, pageSize, total, onPageChange: setPage, onPageSizeChange: (size) => { setPageSize(size); setPage(1); } }}>
           {rows.map((r) => (
             <tr key={r.payout_id} className="border-b border-card-border last:border-0">
               <td className="px-4 py-3 text-foreground">{r.full_name}<div className="text-xs text-muted-foreground">{r.email}</div></td>

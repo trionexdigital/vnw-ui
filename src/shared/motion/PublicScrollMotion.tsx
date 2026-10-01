@@ -30,7 +30,7 @@ export default function PublicScrollMotion({ children, routeKey }: { children: R
             if (!entry.isIntersecting) return;
             const element = entry.target as HTMLElement;
             reveal(element);
-            observer.unobserve(element);
+            observer?.unobserve(element);
           });
         }, { threshold: 0.06, rootMargin: '0px 0px -7% 0px' })
       : null;

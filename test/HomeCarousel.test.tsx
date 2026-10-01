@@ -11,11 +11,6 @@ vi.mock('@/core/api/vnwAPI', () => ({
   },
 }));
 
-vi.mock('@/shared/components/carousel/CarouselArtboard', () => ({
-  default: ({ document, previewUrl }: { document: CarouselDocument; previewUrl: string }) => <img alt={String(document.fabric.objects[0]?.vnwAriaLabel || 'Carousel artwork')} data-preview-ready={String(Boolean(previewUrl))} src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" />,
-  collectCarouselAssetIds: () => [],
-}));
-
 Object.defineProperties(URL, {
   createObjectURL: { configurable: true, value: vi.fn(() => 'blob:carousel-preview') },
   revokeObjectURL: { configurable: true, value: vi.fn() },
@@ -42,12 +37,12 @@ const slides: PublishedCarouselSlide[] = [
 describe('HomeCarousel', () => {
   afterEach(cleanup);
 
-  it('renders the complete production artboard in an exact-ratio card', async () => {
+  it('renders the published preview in a compact card', async () => {
     const { container } = render(<HomeCarousel slides={slides} />);
     expect(screen.getByRole('region', { name: 'Premium VIP number stories' })).toHaveAttribute('aria-roledescription', 'carousel');
-    await waitFor(() => expect(screen.getByRole('img', { name: 'Signature artwork' })).toHaveAttribute('data-preview-ready', 'true'));
-    expect((container.querySelector('[aria-roledescription="slide"]') as HTMLElement).style.aspectRatio).toBe('1600/900');
-    expect(container.querySelector('.object-cover')).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('img', { name: 'Signature collection' })).toHaveAttribute('src', 'blob:carousel-preview'));
+    expect(container.querySelector('[aria-roledescription="slide"]')).toHaveClass('md:aspect-[20/7]');
+    expect(screen.getByRole('img', { name: 'Signature collection' })).toHaveClass('object-contain', 'md:object-cover');
     expect(screen.getByRole('button', { name: 'Pause carousel' })).toBeInTheDocument();
   });
 
@@ -55,10 +50,10 @@ describe('HomeCarousel', () => {
     const user = userEvent.setup();
     render(<HomeCarousel slides={slides} />);
     await user.click(screen.getByRole('button', { name: 'Next slide' }));
-    await waitFor(() => expect(screen.getByRole('img', { name: 'Transfer artwork' })).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('img', { name: 'Guided transfer' })).toBeInTheDocument());
   });
 
-  it('reserves a no-crop frame while loading and renders nothing when empty', () => {
+  it('reserves a compact frame while loading and renders nothing when empty', () => {
     const { rerender, container } = render(<HomeCarousel slides={[]} loading />);
     expect(screen.getByRole('region', { name: /loading/i })).toBeInTheDocument();
     rerender(<HomeCarousel slides={[]} />);

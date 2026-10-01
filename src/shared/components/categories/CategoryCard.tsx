@@ -1,40 +1,34 @@
 import type { LucideIcon } from 'lucide-react';
-import { ArrowRight, Ban, Fingerprint, Hash, Layers3, ListOrdered, Repeat2, Sparkles } from 'lucide-react';
+import { ArrowRight, Fingerprint, Hash, Layers3, ListOrdered, Repeat2, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { NumberCategory } from '@/core/categories/types';
 import { getCategoryCount } from '@/core/categories/types';
 import { cn } from '@/core/lib/utils';
 
 const CATEGORY_PRESENTATION: Record<string, { sample: string; Icon: LucideIcon }> = {
-  'without-248-numbers': { sample: 'No 2 · 4 · 8', Icon: Ban },
-  'mirror-numbers': { sample: 'ABCDE · ABCDE', Icon: Repeat2 },
-  'semi-mirror-numbers': { sample: 'ABCD · ABCD', Icon: Repeat2 },
-  'two-digit-numbers': { sample: 'Only A & B', Icon: Hash },
-  'three-digit-numbers': { sample: 'Only A, B & C', Icon: Hash },
-  'counting-numbers': { sample: '5 · 6 · 7 · 8', Icon: ListOrdered },
-  '786-numbers': { sample: '… 786 …', Icon: Fingerprint },
-  '108-numbers': { sample: '… 108 …', Icon: Fingerprint },
-  'doubling-numbers': { sample: 'AA · BB · CC', Icon: Layers3 },
-  'ab-ab-xy-xy-numbers': { sample: 'AB · AB · XY · XY', Icon: Repeat2 },
-  'ab-ab-ab-numbers': { sample: 'AB · AB · AB', Icon: Repeat2 },
-  'start-ab-ab-numbers': { sample: 'ABAB · …', Icon: Repeat2 },
-  'middle-ab-ab-numbers': { sample: '… · ABAB · …', Icon: Repeat2 },
-  'ending-ab-ab-numbers': { sample: '… · ABAB', Icon: Repeat2 },
-  'abc-abc-abc-numbers': { sample: 'ABC · ABC · ABC', Icon: Repeat2 },
-  'abc-abc-numbers': { sample: 'ABC · ABC', Icon: Repeat2 },
-  'aaa-bbb-numbers': { sample: 'AAA · BBB', Icon: Layers3 },
-  'triple-numbers': { sample: 'AAA', Icon: Layers3 },
-  'tetra-numbers': { sample: 'AAAA', Icon: Layers3 },
-  'penta-numbers': { sample: 'AAAAA', Icon: Layers3 },
-  'hexa-numbers': { sample: 'AAAAAA', Icon: Layers3 },
-  'septa-numbers': { sample: 'AAAAAAA', Icon: Layers3 },
-  'octa-numbers': { sample: 'AAAAAAAA', Icon: Layers3 },
-  'unique-numbers': { sample: 'One of a kind', Icon: Sparkles },
+  'numerology-numbers': { sample: 'Find your matching sum', Icon: Fingerprint },
+  'penta-vip-mobile-no': { sample: 'Five repeating digits', Icon: Layers3 },
+  'doublling-aabbcc': { sample: 'AA · BB · CC', Icon: Layers3 },
+  'vip-mobile-number': { sample: 'XY · XY · XY', Icon: Repeat2 },
+  'customer-care-numbers': { sample: 'Mirror patterns', Icon: Repeat2 },
+  'semi-mirror-vip-mobile-number': { sample: 'Semi-mirror patterns', Icon: Repeat2 },
+  'choice-mobile-number': { sample: 'Four repeating digits', Icon: Layers3 },
+  'unforgettable-vip-number': { sample: 'XXX · YYY', Icon: Layers3 },
+  'xyzxyz-fancy-number': { sample: 'XYZ · XYZ', Icon: Repeat2 },
+  'buy-vip-mobile-number-online': { sample: 'Six repeating digits', Icon: Layers3 },
+  'vip-number-india': { sample: 'ABAB · XYXY', Icon: Repeat2 },
+  'abcd-abcd-fancy-number': { sample: 'ABCD · ABCD', Icon: Repeat2 },
+  'ascending-descending-fancy-number': { sample: 'Counting patterns', Icon: ListOrdered },
+  '2-digit-mobile-numbers': { sample: 'Minimum digit patterns', Icon: Hash },
+  'septa-octa-vip-number-for-sale': { sample: 'Seven or eight repeating digits', Icon: Layers3 },
+  '786-vip-mobile-numbers': { sample: '… 786 …', Icon: Fingerprint },
+  'vip-number-000': { sample: '… 000 …', Icon: Hash },
+  'golden-mobile-number': { sample: 'Memorable fancy numbers', Icon: Sparkles },
 };
 
 function categoryExample(category: NumberCategory): string {
   const example = category.examples?.find((value) => String(value || '').trim());
-  return example || CATEGORY_PRESENTATION[category.slug]?.sample || 'VIP pattern';
+  return example || CATEGORY_PRESENTATION[category.slug]?.sample || category.subcategories?.[0]?.name || 'VIP pattern';
 }
 
 export interface CategoryCardProps {
@@ -49,10 +43,9 @@ export function CategoryCard({ category, compact = false, className }: CategoryC
   const Icon = presentation?.Icon || Sparkles;
 
   return (
-    <Link
+    <div
       data-category-card={category.slug}
-      to={`/shop?category=${encodeURIComponent(category.slug)}`}
-      aria-label={`Browse ${category.name}${count ? `, ${count} numbers available` : ''}`}
+      aria-label={`${category.name}${count ? `, ${count} numbers available` : ''}`}
       className={cn(
         'group relative flex h-full overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
         compact ? 'min-h-[154px] flex-col p-4' : 'min-h-[196px] flex-col p-5',
@@ -70,18 +63,32 @@ export function CategoryCard({ category, compact = false, className }: CategoryC
       </div>
 
       <div className="relative mt-4 flex-1">
-        <h3 className="text-base font-black leading-tight text-foreground">{category.name}</h3>
+        <h3 className="text-base font-black leading-tight text-foreground"><Link className="hover:text-primary focus-visible:underline" to={`/shop?category=${encodeURIComponent(category.slug)}`}>{category.name}</Link></h3>
         <p className="mt-1.5 font-mono text-[11px] font-bold tracking-wide text-primary">{categoryExample(category)}</p>
         {!compact && category.description && (
           <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">{category.description}</p>
         )}
       </div>
 
-      <span className="relative mt-3 inline-flex items-center gap-1.5 text-xs font-black text-primary">
+      {!compact && Boolean(category.subcategories?.length) && (
+        <div className="relative mt-3 flex max-h-32 flex-wrap gap-1.5 overflow-y-auto" aria-label={`${category.name} subcategories`}>
+          {category.subcategories!.map((sub) => (
+            <Link
+              key={`${category.id}:${sub.id}`}
+              to={`/shop?category=${encodeURIComponent(category.slug)}&subcategory_id=${sub.id}`}
+              className="rounded-full border border-primary/20 bg-primary/5 px-2 py-1 text-[11px] font-semibold text-foreground hover:border-primary hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              {sub.name} <span className="text-muted-foreground">{Number(sub.number_count || 0).toLocaleString('en-IN')}</span>
+            </Link>
+          ))}
+        </div>
+      )}
+
+      <Link to={`/shop?category=${encodeURIComponent(category.slug)}`} className="relative mt-3 inline-flex items-center gap-1.5 text-xs font-black text-primary">
         View numbers
         <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
-      </span>
-    </Link>
+      </Link>
+    </div>
   );
 }
 

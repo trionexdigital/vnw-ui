@@ -14,14 +14,17 @@ export default function EmployeeNumbers() {
   const { toast } = useToast();
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [total, setTotal] = useState(0);
   const [showForm, setShowForm] = useState(false);
   const [f, setF] = useState<any>({ display_number: '', mrp: '' });
 
   const input = 'w-full rounded-lg border border-card-border bg-secondary px-3 py-2.5 text-sm outline-none focus:border-primary';
   const set = (k: string, v: any) => setF((p: any) => ({ ...p, [k]: v }));
 
-  const load = () => { setLoading(true); employeeAPI.numbersList({ status: 'ALL', limit: 60 }).then((d: any) => setRows(d?.items || [])).catch(() => {}).finally(() => setLoading(false)); };
-  useEffect(() => { load(); }, []);
+  const load = () => { setLoading(true); employeeAPI.numbersList({ status: 'ALL', page, limit: pageSize }).then((d: any) => { setRows(d?.items || []); setTotal(Number(d?.total || 0)); }).catch(() => {}).finally(() => setLoading(false)); };
+  useEffect(() => { load(); }, [page, pageSize]);
 
   const submitAction = async (action_key: string, payload: any, label: string) => {
     try { await employeeAPI.submit(action_key, payload); toast({ title: 'Submitted for approval', description: label }); }
@@ -43,7 +46,7 @@ export default function EmployeeNumbers() {
       <PageHeader title="Numbers" subtitle="Changes are applied after admin approval"
         action={<button onClick={() => setShowForm(true)} className="btn-gold">Add Number</button>} />
       {loading ? <Loader /> : (
-        <Table head={['Number', 'Category', 'Price', 'Status', 'Actions']}>
+        <Table head={['Number', 'Category', 'Price', 'Status', 'Actions']} pagination={{ page, pageSize, total, onPageChange: setPage, onPageSizeChange: (size) => { setPageSize(size); setPage(1); } }}>
           {rows.map((n) => (
             <tr key={n.number_id} className="border-b border-card-border last:border-0">
               <td className="px-4 py-3 text-foreground">{n.display_number}</td>

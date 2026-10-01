@@ -1,9 +1,8 @@
-import { act, cleanup, render, screen } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { ThemeControl, ThemeProvider } from '@/shared/theme';
-import { TooltipProvider } from '@/shared/ui/tooltip';
 
 afterEach(() => {
   cleanup();
@@ -14,55 +13,34 @@ afterEach(() => {
 });
 
 describe('ThemeControl', () => {
-  it('exposes the current selection and changes theme from an accessible radio menu', async () => {
+  it('starts with the system setting and allows explicit light and dark choices', async () => {
     const user = userEvent.setup();
-    render(
-      <ThemeProvider>
-        <TooltipProvider delayDuration={0}>
-          <ThemeControl />
-        </TooltipProvider>
-      </ThemeProvider>,
-    );
+    render(<ThemeProvider><ThemeControl /></ThemeProvider>);
 
-    const trigger = screen.getByRole('button', { name: 'Theme: System, currently Light' });
-    await user.click(trigger);
+    expect(screen.getByRole('radio', { name: 'Follow system theme' })).toHaveAttribute('aria-checked', 'true');
+    await user.click(screen.getByRole('radio', { name: 'Use dark theme' }));
 
-    expect(screen.getByRole('menuitemradio', { name: /System Light/i })).toHaveAttribute('data-state', 'checked');
-    await user.click(screen.getByRole('menuitemradio', { name: 'Dark' }));
-
-    expect(screen.getByRole('button', { name: 'Theme: Dark, currently Dark' })).toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: 'Use dark theme' })).toHaveAttribute('aria-checked', 'true');
     expect(document.documentElement).toHaveClass('dark');
     expect(window.localStorage.getItem('vnw_theme')).toBe('dark');
+    await user.click(screen.getByRole('radio', { name: 'Use light theme' }));
+    expect(document.documentElement).not.toHaveClass('dark');
+    await user.click(screen.getByRole('radio', { name: 'Follow system theme' }));
+    expect(window.localStorage.getItem('vnw_theme')).toBe('system');
   });
 
-  it('can show the selected mode as text for settings and mobile surfaces', () => {
-    render(
-      <ThemeProvider>
-        <TooltipProvider>
-          <ThemeControl showLabel />
-        </TooltipProvider>
-      </ThemeProvider>,
-    );
-
-    expect(screen.getByRole('button', { name: 'Theme: System, currently Light' })).toHaveTextContent('System');
+  it('shows a readable label when requested', () => {
+    render(<ThemeProvider><ThemeControl showLabel /></ThemeProvider>);
+    expect(screen.getByText('Appearance')).toBeInTheDocument();
+    expect(screen.getByRole('radiogroup', { name: 'Color theme' })).toBeInTheDocument();
   });
 
-  it('supports keyboard selection through the radio menu', async () => {
+  it('supports keyboard selection', async () => {
     const user = userEvent.setup();
-    render(
-      <ThemeProvider>
-        <TooltipProvider delayDuration={60_000}>
-          <ThemeControl />
-        </TooltipProvider>
-      </ThemeProvider>,
-    );
-
-    const trigger = screen.getByRole('button', { name: 'Theme: System, currently Light' });
-    act(() => trigger.focus());
+    render(<ThemeProvider><ThemeControl /></ThemeProvider>);
+    screen.getByRole('radio', { name: 'Use light theme' }).focus();
     await user.keyboard('{Enter}');
-    await user.keyboard('{ArrowDown}{Enter}');
-
-    expect(screen.getByRole('button', { name: 'Theme: Light, currently Light' })).toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: 'Use light theme' })).toHaveAttribute('aria-checked', 'true');
     expect(window.localStorage.getItem('vnw_theme')).toBe('light');
   });
 });

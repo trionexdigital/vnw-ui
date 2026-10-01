@@ -1,8 +1,9 @@
-import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {
-  Search, Heart, ShoppingCart, User, LogOut, LayoutDashboard, Phone, MessageCircle,
+  Heart, ShoppingCart, ShoppingBag, User, LogOut, LayoutDashboard, Phone, MessageCircle,
   ChevronUp, Facebook, Instagram, Youtube, Mail, Globe, MapPin, GitCompareArrows, Menu, X, Sparkles, Crown, CalendarClock,
+  House, BookOpen, UsersRound, Hash, PhoneCall,
 } from 'lucide-react';
 import { useStore } from '@/shared/store/useStore';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
@@ -12,10 +13,12 @@ import { APP_CONFIG } from '@/core/config/app.config';
 import BottomNav from './BottomNav';
 import NewsletterForm from '@/shared/components/NewsletterForm';
 import { BrandLockup } from '@/shared/components/Logo';
+import UserAvatar from '@/shared/components/UserAvatar';
 import { ThemeControl } from '@/shared/components/ThemeControl';
 import { AnimatePresence, motion } from 'framer-motion';
 import { MotionPage } from '@/shared/motion/MotionPrimitives';
 import PublicScrollMotion from '@/shared/motion/PublicScrollMotion';
+import HeaderNumberSearch from './HeaderNumberSearch';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui/tooltip';
 
 function Logo() {
@@ -24,11 +27,6 @@ function Logo() {
       <BrandLockup />
     </Link>
   );
-}
-
-function CountBadge({ n }: { n: number }) {
-  if (!n) return null;
-  return <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-amber-700 px-1 text-[9px] font-bold text-white">{n}</span>;
 }
 
 function HeaderIconTooltip({ label, children, side = 'bottom' }: {
@@ -53,13 +51,13 @@ const HEADER_BUTTERFLIES = [
 ];
 
 function Header() {
-  const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
-  const { cartCount, wishlistCount, compare, refreshCounts } = useStore();
+  const { cartCount, wishlistCount, compare, comparePulse, refreshCounts } = useStore();
+  const [compareNotice, setCompareNotice] = useState(false);
+  useEffect(() => { if (!comparePulse) return; setCompareNotice(true); const timer = setTimeout(() => setCompareNotice(false), 4000); return () => clearTimeout(timer); }, [comparePulse]);
   const { user } = useAppSelector((s) => s.auth);
   const token = localService.getToken();
-  const [q, setQ] = useState('');
   const [open, setOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -72,31 +70,18 @@ function Header() {
   }, []);
   const dash = user?.role === 'ADMIN' ? '/admin' : user?.role === 'DEALER' ? '/dealer' : '/dashboard';
   const nav = [
-    { label: 'Home', to: '/' },
-    { label: 'How It Works', to: '/how-it-works' },
-    { label: 'Family Pack', to: '/family-pack' },
-    { label: 'Numerology', to: '/numerology' },
-    { label: 'Contact', to: '/about' },
+    { label: 'Home', to: '/', icon: House },
+    { label: 'How It Works', to: '/how-it-works', icon: BookOpen },
+    { label: 'Family Pack', to: '/family-pack', icon: UsersRound },
+    { label: 'Numerology', to: '/numerology', icon: Hash },
+    { label: 'Contact', to: '/about', icon: PhoneCall },
   ];
-
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const value = q.trim();
-    if (/^\d{1,10}$/.test(value)) {
-      navigate(`/shop?mode=global&global_scope=anywhere&q=${encodeURIComponent(value)}`);
-    } else if (value) {
-      navigate(`/shop?mode=ai&ai=${encodeURIComponent(value)}`);
-    } else {
-      navigate('/shop?focus=search');
-    }
-    setOpen(false);
-  };
 
   const AccountMenu = (
     token && user ? (
       <div className="group relative">
         <HeaderIconTooltip label="Account menu">
-          <button aria-label="Open account menu" className="vnw-interactive grid h-10 w-10 place-items-center rounded-xl border border-border bg-card text-foreground shadow-sm"><User className="h-5 w-5" /></button>
+          <button aria-label="Open account menu" className="vnw-interactive grid h-10 w-10 place-items-center rounded-xl border border-border bg-card text-foreground shadow-sm"><UserAvatar user={user} className="h-8 w-8" /></button>
         </HeaderIconTooltip>
         <div className="invisible absolute right-0 top-full w-52 pt-3 opacity-0 transition-all group-hover:visible group-hover:opacity-100">
           <div className="glass-panel rounded-xl p-2">
@@ -104,6 +89,8 @@ function Header() {
             <Link to={dash} className="vnw-interactive flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground"><LayoutDashboard className="h-4 w-4 text-primary" /> Dashboard</Link>
             <Link to="/pre-book#mine" className="vnw-interactive flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground"><CalendarClock className="h-4 w-4 text-primary" /> My Pre-books</Link>
             <Link to="/orders" className="vnw-interactive flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground"><ShoppingCart className="h-4 w-4 text-primary" /> My Orders</Link>
+            <Link to="/cart" className="vnw-interactive flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground"><ShoppingCart className="h-4 w-4 text-primary" /> Cart {cartCount ? `(${cartCount})` : ''}</Link>
+            <Link to="/wishlist" className="vnw-interactive flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground"><Heart className="h-4 w-4 text-primary" /> Wishlist {wishlistCount ? `(${wishlistCount})` : ''}</Link>
             <Link to="/account" className="vnw-interactive flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground"><User className="h-4 w-4 text-primary" /> Profile</Link>
             <button onClick={() => dispatch(logout())} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-destructive hover:bg-destructive/10"><LogOut className="h-4 w-4" /> Logout</button>
           </div>
@@ -121,9 +108,7 @@ function Header() {
     token && user ? (
       <div className="rounded-xl border border-border bg-card p-3 shadow-sm">
         <div className="mb-2 flex items-center gap-3 rounded-xl bg-muted p-3">
-          <span className="grid h-10 w-10 place-items-center rounded-xl bg-primary text-sm font-black text-primary-foreground">
-            {(user.name || 'U').slice(0, 2).toUpperCase()}
-          </span>
+          <UserAvatar user={user} />
           <div className="min-w-0">
             <div className="truncate text-sm font-black text-foreground">Hi, {(user.name || 'User').split(' ')[0]}</div>
             <div className="truncate text-xs text-muted-foreground">{user.email || user.phone || 'Welcome back'}</div>
@@ -137,12 +122,7 @@ function Header() {
           <button onClick={() => { dispatch(logout()); setOpen(false); }} className="flex items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-bold text-destructive hover:bg-destructive/10"><LogOut className="h-4 w-4" /> Logout</button>
         </div>
       </div>
-    ) : (
-      <div className="grid grid-cols-2 gap-2">
-        <Link to="/login" onClick={() => setOpen(false)} className="rounded-xl border border-border bg-card px-4 py-3 text-center text-sm font-black text-foreground shadow-sm">Sign In</Link>
-        <Link to="/register" onClick={() => setOpen(false)} className="rounded-xl bg-primary px-4 py-3 text-center text-sm font-black text-primary-foreground">Register</Link>
-      </div>
-    )
+    ) : null
   );
 
   return (
@@ -150,6 +130,7 @@ function Header() {
       <header
         className={`public-header ${isScrolled ? 'is-scrolled' : 'is-top'} fixed inset-x-0 top-0 z-50`}
         data-scrolled={isScrolled}
+        data-guest={!token || !user}
       >
         <div className="public-header__panel relative isolate mx-auto flex min-h-[72px] w-full max-w-[1880px] items-center gap-1.5 overflow-visible px-3 py-1.5 sm:px-4">
           <div className="public-header__butterflies pointer-events-none absolute inset-0 z-0" aria-hidden="true">
@@ -171,28 +152,27 @@ function Header() {
               </span>
             ))}
           </div>
-          <Logo />
-          <nav className="relative z-10 ml-auto hidden min-w-0 flex-nowrap items-center gap-0 whitespace-nowrap text-[11px] font-bold text-foreground xl:flex 2xl:gap-1 2xl:text-sm" aria-label="Primary navigation">
-            {nav.map((n) => <Link key={n.label} to={n.to} aria-current={location.pathname === n.to ? 'page' : undefined} className={location.pathname === n.to ? 'rounded-xl border border-primary/30 bg-primary/10 px-2 py-2.5 text-primary shadow-sm 2xl:px-3' : 'vnw-interactive rounded-xl border border-transparent px-2 py-2.5 2xl:px-3'}>{n.label}</Link>)}
+          <div className="relative z-10 min-w-0"><Logo /></div>
+          <nav className="relative z-10 hidden min-w-0 flex-nowrap items-center gap-0 whitespace-nowrap text-[11px] font-bold text-foreground min-[1200px]:flex 2xl:gap-1 2xl:text-sm" aria-label="Primary navigation">
+            {nav.map((n) => { const Icon = n.icon; return <Link key={n.label} to={n.to} aria-current={location.pathname === n.to ? 'page' : undefined} className={location.pathname === n.to ? 'inline-flex items-center gap-1 rounded-xl border border-primary/30 bg-primary/10 px-2 py-2.5 text-primary shadow-sm 2xl:px-3' : 'vnw-interactive inline-flex items-center gap-1 rounded-xl border border-transparent px-2 py-2.5 2xl:px-3'}><Icon className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />{n.label}</Link>; })}
           </nav>
-          <div className="relative z-10 ml-auto flex shrink-0 items-center gap-1 xl:ml-2 2xl:gap-1.5">
-            <Link to="/shop?focus=search" className="vnw-interactive hidden h-11 items-center gap-1.5 rounded-xl border border-primary bg-card/85 px-3 text-xs font-black text-primary shadow-sm xl:inline-flex 2xl:text-sm"><Search className="h-5 w-5" /> Search</Link>
-            <HeaderIconTooltip label="Pre-book VIP numbers">
-              <Link to="/pre-book" aria-label="Pre-book VIP numbers" className="inline-flex h-11 items-center gap-1.5 rounded-xl bg-primary px-2.5 text-xs font-black text-primary-foreground shadow-sm transition hover:-translate-y-0.5 2xl:px-3 2xl:text-sm"><CalendarClock className="h-4 w-4" /><span className="hidden 2xl:inline">Pre-book</span></Link>
-            </HeaderIconTooltip>
-            <HeaderIconTooltip label="Wishlist">
-              <Link to="/wishlist" aria-label="Wishlist" className="vnw-interactive relative hidden h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm md:grid"><Heart className="h-5 w-5" /><CountBadge n={wishlistCount} /></Link>
-            </HeaderIconTooltip>
-            <HeaderIconTooltip label="Shopping cart">
-              <Link to="/cart" aria-label="Shopping cart" className="vnw-interactive relative grid h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm"><ShoppingCart className="h-5 w-5" /><CountBadge n={cartCount} /></Link>
-            </HeaderIconTooltip>
-            <HeaderIconTooltip label={compare.length ? `Compare numbers (${compare.length} selected)` : 'Compare numbers'}>
-              <Link to="/compare" aria-label="Compare numbers" className="vnw-interactive relative hidden h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm md:grid"><GitCompareArrows className="h-5 w-5" /><CountBadge n={compare.length} /></Link>
-            </HeaderIconTooltip>
-            <ThemeControl className="hidden sm:inline-flex" />
-            <div className="hidden items-center gap-2 sm:flex">{AccountMenu}</div>
+          <div className="hidden min-[1200px]:contents"><HeaderNumberSearch /></div>
+          <div className="relative z-10 ml-auto flex shrink-0 items-center justify-end gap-1 2xl:gap-1.5">
+            <div className="flex"><ThemeControl compact /></div>
+            {token && user && <div className="public-header__shortcuts hidden items-center gap-1 min-[1200px]:flex">
+              {[
+                { label: 'Cart', to: '/cart', icon: ShoppingCart, count: cartCount },
+                { label: 'Wishlist', to: '/wishlist', icon: Heart, count: wishlistCount },
+              ].map(({ label, to, icon: Icon, count }) => <HeaderIconTooltip key={to} label={label}><Link to={to} aria-label={label} className="public-header__shortcut vnw-interactive relative grid h-10 w-10 place-items-center rounded-xl border border-border bg-card text-foreground shadow-sm"><Icon className="h-5 w-5" />{count ? <span className="absolute -right-1 -top-1 grid min-h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[9px] font-black text-primary-foreground">{count}</span> : null}</Link></HeaderIconTooltip>)}
+            </div>}
+            {(!token || !user) && <div className="hidden items-center gap-2 min-[1200px]:flex">{AccountMenu}</div>}
+            <div className="relative">
+              <HeaderIconTooltip label="Compare numbers"><Link to="/compare" aria-label="Compare numbers" onClick={() => setCompareNotice(false)} key={comparePulse} className={`public-header__shortcut relative grid h-10 w-10 place-items-center rounded-xl border bg-card shadow-sm ${compareNotice ? 'comparison-cue border-primary text-primary' : 'border-border text-foreground'}`}><GitCompareArrows className="h-5 w-5" />{compare.length > 0 && <span className="absolute -right-1 -top-1 rounded-full bg-primary px-1.5 text-[10px] font-bold text-primary-foreground">{compare.length}</span>}</Link></HeaderIconTooltip>
+              <AnimatePresence>{compareNotice && <motion.div role="status" className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-primary/30 bg-card p-3 text-xs shadow-lg" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}><button onClick={() => setCompareNotice(false)} aria-label="Dismiss comparison notice" className="float-right"><X className="h-3 w-3" /></button><strong>Added to comparison</strong><Link to="/compare" onClick={() => setCompareNotice(false)} className="mt-1 block font-bold text-primary">Compare {compare.length} numbers →</Link></motion.div>}</AnimatePresence>
+            </div>
+            {token && user && <div className="hidden items-center gap-2 min-[1200px]:flex">{AccountMenu}</div>}
             <HeaderIconTooltip label="Open navigation menu">
-              <button onClick={() => setOpen(true)} aria-label="Open navigation menu" className="vnw-interactive grid h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm xl:hidden"><Menu className="h-5 w-5" /></button>
+              <button onClick={() => setOpen(true)} aria-label="Open navigation menu" className="vnw-interactive grid h-11 w-11 place-items-center rounded-xl border border-border bg-card/85 text-foreground shadow-sm min-[1200px]:hidden"><Menu className="h-5 w-5" /></button>
             </HeaderIconTooltip>
           </div>
         </div>
@@ -200,34 +180,33 @@ function Header() {
 
       <AnimatePresence>
       {open && (
-        <motion.div className="fixed inset-0 z-[60] xl:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+        <motion.div className="fixed inset-0 z-[100] min-[1200px]:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
           <motion.div className="absolute inset-0 bg-stone-950/35" onClick={() => setOpen(false)} />
           <motion.div
-            className="glass-panel absolute right-3 top-3 flex max-h-[calc(100vh-1.5rem)] w-[min(360px,calc(100vw-1.5rem))] flex-col rounded-xl p-4"
+            className="public-header__drawer glass-panel absolute right-3 top-3 flex max-h-[calc(100vh-1.5rem)] w-[min(360px,calc(100vw-1.5rem))] flex-col overflow-y-auto rounded-xl p-4"
             initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 24 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="mb-4 flex items-center justify-between gap-2">
-              <Logo />
-              <div className="ml-auto flex items-center gap-2">
-                <ThemeControl />
+            <div className="mb-3 flex min-w-0 items-center justify-start gap-1">
+              {(!token || !user) && <>
+                <Link to="/login" onClick={() => setOpen(false)} className="inline-flex min-h-10 min-w-[96px] items-center justify-center whitespace-nowrap rounded-lg border border-border bg-card px-4 py-2 text-xs font-black text-foreground shadow-sm">Sign In</Link>
+                <Link to="/register" onClick={() => setOpen(false)} className="inline-flex min-h-10 min-w-[96px] items-center justify-center whitespace-nowrap rounded-lg bg-primary px-4 py-2 text-xs font-black text-primary-foreground">Sign Up</Link>
+              </>}
+              <div className="ml-auto flex shrink-0 items-center gap-1">
                 <HeaderIconTooltip label="Close navigation menu" side="left">
-                  <button onClick={() => setOpen(false)} aria-label="Close navigation menu" className="grid h-10 w-10 place-items-center rounded-xl border border-border bg-card text-foreground"><X className="h-5 w-5" /></button>
+                  <button onClick={() => setOpen(false)} aria-label="Close navigation menu" className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-border bg-card text-foreground"><X className="h-4 w-4" /></button>
                 </HeaderIconTooltip>
               </div>
             </div>
-            <form onSubmit={submit} className="mb-4 flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2">
-              <Search className="h-4 w-4 text-primary" />
-              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search dream number..." className="min-w-0 flex-1 bg-transparent text-base outline-none" />
-            </form>
+            {MobileAccount && <div className="mb-3">{MobileAccount}</div>}
+            {location.pathname !== '/' && <div className="public-header__drawer-search mb-4"><HeaderNumberSearch /></div>}
             <div className="grid gap-2">
               <Link to="/pre-book" onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-black text-primary-foreground shadow-sm"><CalendarClock className="h-4 w-4" /> Pre-book VIP Numbers</Link>
+              <Link to="/wishlist" onClick={() => setOpen(false)} className="vnw-interactive flex items-center justify-between gap-2 rounded-xl border border-border bg-card px-4 py-3 text-sm font-bold text-foreground shadow-sm"><span className="flex items-center gap-2"><Heart className="h-4 w-4 text-primary" /> Wishlist</span>{wishlistCount || ''}</Link>
+              <Link to="/cart" onClick={() => setOpen(false)} className="vnw-interactive flex items-center justify-between gap-2 rounded-xl border border-border bg-card px-4 py-3 text-sm font-bold text-foreground shadow-sm"><span className="flex items-center gap-2"><ShoppingCart className="h-4 w-4 text-primary" /> Cart</span>{cartCount || ''}</Link>
               <Link to="/compare" onClick={() => setOpen(false)} className="vnw-interactive flex items-center justify-between gap-2 rounded-xl border border-border bg-card px-4 py-3 text-sm font-bold text-foreground shadow-sm"><span className="flex items-center gap-2"><GitCompareArrows className="h-4 w-4 text-primary" /> Compare Numbers</span>{compare.length ? <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-black text-primary-foreground">{compare.length}</span> : null}</Link>
-              {nav.map((n) => (
-                <Link key={n.label} to={n.to} onClick={() => setOpen(false)} className="vnw-interactive rounded-xl border border-border bg-card px-4 py-3 text-sm font-bold text-foreground shadow-sm">{n.label}</Link>
-              ))}
+              {nav.map((n) => { const Icon = n.icon; return <Link key={n.label} to={n.to} onClick={() => setOpen(false)} className="vnw-interactive flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-3 text-sm font-bold text-foreground shadow-sm"><Icon className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />{n.label}</Link>; })}
             </div>
-            <div className="mt-4 sm:hidden">{MobileAccount}</div>
           </motion.div>
         </motion.div>
       )}
@@ -237,6 +216,7 @@ function Header() {
 }
 
 function Footer() {
+  const site = useStore((state) => state.site);
   return (
     <footer className="px-3 pb-3">
       <div className="glass-panel relative isolate mx-auto max-w-7xl overflow-hidden rounded-[1.5rem]">
@@ -296,8 +276,8 @@ function Footer() {
           <div>
             <h4 className="mb-3 font-black text-foreground">Contact</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2"><Phone className="h-4 w-4 text-primary" /> {APP_CONFIG.contactPhone}</li>
-              <li className="flex items-center gap-2"><Mail className="h-4 w-4 text-primary" /> {APP_CONFIG.contactEmail}</li>
+              <li className="flex items-center gap-2"><Phone className="h-4 w-4 shrink-0 text-primary" /><a href={`tel:${site.CONTACT_PHONE || APP_CONFIG.contactPhone}`}>{site.CONTACT_PHONE || APP_CONFIG.contactPhone}</a></li>
+              <li className="flex items-center gap-2"><Mail className="h-4 w-4 shrink-0 text-primary" /><a className="break-all" href={`mailto:${site.CONTACT_EMAIL || APP_CONFIG.contactEmail}`}>{site.CONTACT_EMAIL || APP_CONFIG.contactEmail}</a></li>
               <li className="flex items-center gap-2"><Globe className="h-4 w-4 text-primary" /> vipnumberworld.com</li>
               <li className="flex items-center gap-2"><MapPin className="h-4 w-4 text-primary" /> Pan India Delivery</li>
             </ul>
@@ -386,6 +366,7 @@ export default function PublicLayout() {
     <div className={`customer-motion-scope app-shell-bg flex min-h-screen flex-col ${location.pathname === '/' ? 'is-home-route' : ''}`}>
       <Header />
       <div className="pt-[72px]">
+        {location.pathname === '/' && <div className="public-home-mobile-search min-[1200px]:hidden"><HeaderNumberSearch /></div>}
         {location.pathname === '/' && <PromoBar />}
       </div>
       <main className="flex-1 pb-20 lg:pb-0">

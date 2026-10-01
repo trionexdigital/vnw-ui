@@ -10,9 +10,12 @@ export default function AdminApprovals() {
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState('PENDING');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [total, setTotal] = useState(0);
 
-  const load = () => { setLoading(true); adminAPI.approvalsList({ status: tab }).then(setRows).catch(() => {}).finally(() => setLoading(false)); };
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [tab]);
+  const load = () => { setLoading(true); adminAPI.approvalsList({ status: tab, page, limit: pageSize }).then((data) => { setRows(data.items || []); setTotal(data.total || 0); }).catch(() => {}).finally(() => setLoading(false)); };
+  useEffect(() => { load(); /* eslint-disable-next-line */ }, [tab, page, pageSize]);
 
   const approve = async (approval_id: number) => {
     try { await adminAPI.approvalApprove(approval_id); toast({ title: 'Approved', description: 'Action applied.' }); load(); }
@@ -29,14 +32,14 @@ export default function AdminApprovals() {
       <PageHeader title="Employee Approvals" subtitle="Actions requested by employees — nothing applies until you approve" />
       <div className="mb-4 flex flex-wrap gap-2">
         {STATUS_TABS.map((s) => (
-          <button key={s} onClick={() => setTab(s)}
+          <button key={s} onClick={() => { setTab(s); setPage(1); }}
             className={`rounded-full px-3 py-1.5 text-xs font-semibold ${tab === s ? 'gold-gradient-bg text-accent-foreground' : 'border border-card-border text-muted-foreground'}`}>{s}</button>
         ))}
       </div>
       {loading ? <Loader /> : rows.length === 0 ? (
         <EmptyState title="Nothing here" subtitle={`No ${tab.toLowerCase()} requests.`} />
       ) : (
-        <Table head={['Requested Action', 'Type', 'Employee', 'Status', 'When', 'Actions']}>
+        <Table head={['Requested Action', 'Type', 'Employee', 'Status', 'When', 'Actions']} pagination={{ page, pageSize, total, onPageChange: setPage, onPageSizeChange: (size) => { setPageSize(size); setPage(1); } }}>
           {rows.map((r) => (
             <tr key={r.approval_id} className="border-b border-card-border last:border-0 align-top">
               <td className="px-4 py-3 text-foreground">{r.summary}

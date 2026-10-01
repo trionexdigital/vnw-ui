@@ -3,24 +3,27 @@ import { Star } from 'lucide-react';
 import { adminAPI } from '@/core/api/vnwAPI';
 import { useToast } from '@/shared/hooks/use-toast';
 import { PageHeader, Loader, StatusBadge, Table, EmptyState } from '@/shared/components/ui-bits';
+import ReviewScreenshotManager from './ReviewScreenshotManager';
 
 export default function AdminReviews() {
   const { toast } = useToast();
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [total, setTotal] = useState(0);
 
-  const load = () => { setLoading(true); adminAPI.reviewsList().then(setRows).catch(() => {}).finally(() => setLoading(false)); };
-  useEffect(() => { load(); }, []);
+  const load = () => { setLoading(true); adminAPI.reviewsList({ page, limit: pageSize }).then((data) => { setRows(data.items || []); setTotal(Number(data.total || 0)); }).catch(() => {}).finally(() => setLoading(false)); };
+  useEffect(() => { load(); }, [page, pageSize]);
 
   const mod = async (id: number, status: string) => { try { await adminAPI.reviewModerate(id, status); toast({ title: 'Done' }); load(); } catch (e: any) { toast({ title: 'Error', description: e.message, variant: 'destructive' }); } };
 
-  if (loading) return <Loader />;
-
   return (
     <div>
-      <PageHeader title="Reviews" subtitle="Moderate customer reviews" />
-      {rows.length === 0 ? <EmptyState title="No reviews" /> : (
-        <Table head={['Number', 'User', 'Rating', 'Comment', 'Status', 'Actions']}>
+      <ReviewScreenshotManager />
+      <h2 className="mb-3 text-base font-black">Number reviews</h2>
+      {loading ? <Loader /> : rows.length === 0 ? <EmptyState title="No number reviews" /> : (
+        <Table head={['Number', 'User', 'Rating', 'Comment', 'Status', 'Actions']} pagination={{ page, pageSize, total, onPageChange: setPage, onPageSizeChange: (size) => { setPageSize(size); setPage(1); } }}>
           {rows.map((r) => (
             <tr key={r.review_id} className="border-b border-card-border last:border-0">
               <td className="px-4 py-3 font-bold text-foreground">{r.display_number}</td>

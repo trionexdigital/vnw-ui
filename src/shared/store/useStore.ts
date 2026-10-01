@@ -17,6 +17,7 @@ interface StoreState {
   cartCount: number;
   wishlistCount: number;
   compare: number[];
+  comparePulse: number;
   site: SiteSettings;
   siteLoaded: boolean;
   refreshCounts: () => Promise<void>;
@@ -35,6 +36,7 @@ export const useStore = create<StoreState>((set, get) => ({
   cartCount: 0,
   wishlistCount: 0,
   compare: loadCompare(),
+  comparePulse: 0,
   site: { WHATSAPP: APP_CONFIG.whatsapp, CONTACT_PHONE: APP_CONFIG.contactPhone, CONTACT_EMAIL: APP_CONFIG.contactEmail },
   siteLoaded: false,
 
@@ -59,7 +61,7 @@ export const useStore = create<StoreState>((set, get) => ({
     const cur = get().compare;
     let next = cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id].slice(-4);
     localStorage.setItem(COMPARE_KEY, JSON.stringify(next));
-    set({ compare: next });
+    set({ compare: next, comparePulse: cur.includes(id) ? get().comparePulse : get().comparePulse + 1 });
   },
   clearCompare: () => { localStorage.setItem(COMPARE_KEY, '[]'); set({ compare: [] }); },
 }));

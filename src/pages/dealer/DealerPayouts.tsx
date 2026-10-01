@@ -6,9 +6,12 @@ import WalletPanel from '@/shared/components/WalletPanel';
 export default function DealerPayouts() {
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [total, setTotal] = useState(0);
 
-  const load = () => { setLoading(true); dealerAPI.payouts().then(setRows).catch(() => {}).finally(() => setLoading(false)); };
-  useEffect(() => { load(); }, []);
+  const load = () => { setLoading(true); dealerAPI.payouts({ page, limit: pageSize }).then((data) => { setRows(data.items || []); setTotal(data.total || 0); }).catch(() => {}).finally(() => setLoading(false)); };
+  useEffect(() => { load(); }, [page, pageSize]);
 
   if (loading) return <Loader />;
 
@@ -18,7 +21,7 @@ export default function DealerPayouts() {
       <div className="mb-6"><WalletPanel onChange={load} /></div>
       <h2 className="mb-3 text-lg font-bold text-foreground">Payout History</h2>
       {rows.length === 0 ? <p className="text-sm text-muted-foreground">No payout requests yet.</p> : (
-        <Table head={['Amount', 'Status', 'Reference', 'Requested', 'Processed']}>
+        <Table head={['Amount', 'Status', 'Reference', 'Requested', 'Processed']} pagination={{ page, pageSize, total, onPageChange: setPage, onPageSizeChange: (size) => { setPageSize(size); setPage(1); } }}>
           {rows.map((r) => (
             <tr key={r.payout_id} className="border-b border-card-border last:border-0">
               <td className="px-4 py-3"><Money value={r.amount} /></td>

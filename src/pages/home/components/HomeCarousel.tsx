@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Pause, Play, Sparkles } from 'lucide-react';
 import type { CarouselDevice, PublishedCarouselSlide } from '@/core/carousel/types';
 import { carouselAPI } from '@/core/api/vnwAPI';
-import CarouselArtboard, { collectCarouselAssetIds } from '@/shared/components/carousel/CarouselArtboard';
 import { AnimatePresence } from 'framer-motion';
 import { motion, useReducedMotion } from '@/shared/motion/MotionPrimitives';
 
@@ -18,26 +17,16 @@ function useMobileArtboard() {
 }
 
 function useSlideResources(slide: PublishedCarouselSlide | undefined, device: CarouselDevice) {
-  const [assetUrls, setAssetUrls] = useState<Map<number, string>>(new Map());
   const [previewUrl, setPreviewUrl] = useState('');
   useEffect(() => {
-    if (!slide) { setAssetUrls(new Map()); setPreviewUrl(''); return; }
+    if (!slide) { setPreviewUrl(''); return; }
     let cancelled = false;
-    const urls: string[] = [];
-    const document = device === 'mobile' ? slide.published_mobile : slide.published_desktop;
     const previewId = device === 'mobile' ? slide.published_mobile_preview_id : slide.published_desktop_preview_id;
-    Promise.all([
-      Promise.all(collectCarouselAssetIds(document).map(async (assetId) => {
-        const blob = await carouselAPI.assetBlob(assetId); const url = URL.createObjectURL(blob); urls.push(url); return [assetId, url] as const;
-      })),
-      carouselAPI.previewBlob(previewId).then((blob) => { const url = URL.createObjectURL(blob); urls.push(url); return url; }),
-    ]).then(([assets, preview]) => {
-      if (cancelled) return;
-      setAssetUrls(new Map(assets)); setPreviewUrl(preview);
-    }).catch(() => { if (!cancelled) { setAssetUrls(new Map()); setPreviewUrl(''); } });
-    return () => { cancelled = true; urls.forEach((url) => URL.revokeObjectURL?.(url)); };
+    let url = '';
+    carouselAPI.previewBlob(previewId).then((blob) => { url = URL.createObjectURL(blob); if (!cancelled) setPreviewUrl(url); }).catch(() => { if (!cancelled) setPreviewUrl(''); });
+    return () => { cancelled = true; if (url) URL.revokeObjectURL(url); };
   }, [device, slide]);
-  return { assetUrls, previewUrl };
+  return previewUrl;
 }
 
 const transitionVariants = {
@@ -59,7 +48,7 @@ export function HomeCarousel({ slides, loading = false }: { slides: PublishedCar
   const sectionRef = useRef<HTMLElement | null>(null);
   const usableSlides = useMemo(() => slides.filter((slide) => slide.published_desktop && slide.published_mobile), [slides]);
   const slide = usableSlides[activeIndex];
-  const { assetUrls, previewUrl } = useSlideResources(slide, device);
+  const previewUrl = useSlideResources(slide, device);
 
   useEffect(() => { if (activeIndex >= usableSlides.length) setActiveIndex(0); }, [activeIndex, usableSlides.length]);
   useEffect(() => {
@@ -74,11 +63,10 @@ export function HomeCarousel({ slides, loading = false }: { slides: PublishedCar
     return () => window.clearInterval(timer);
   }, [inView, interacting, manualPause, reduceMotion, slide, usableSlides.length]);
 
-  if (loading) return <section aria-label="Loading homepage carousel" className="bg-background px-3 py-6 sm:px-6"><div className="mx-auto aspect-video max-w-7xl animate-pulse rounded-[2rem] bg-muted" /></section>;
+  if (loading) return <section aria-label="Loading homepage carousel" className="bg-background px-3 py-3 sm:px-6"><div className="mx-auto h-32 max-w-7xl animate-pulse rounded-2xl bg-muted sm:h-44" /></section>;
   if (!usableSlides.length || !slide) return null;
 
   const show = (index: number) => setActiveIndex(((index % usableSlides.length) + usableSlides.length) % usableSlides.length);
-  const document = device === 'mobile' ? slide.published_mobile : slide.published_desktop;
   const transition = transitionVariants[slide.transition_style] || transitionVariants.fade;
 
   return (
@@ -92,10 +80,10 @@ export function HomeCarousel({ slides, loading = false }: { slides: PublishedCar
       onPointerLeave={() => setInteracting(false)}
       onTouchStart={(event) => setTouchStart(event.touches[0]?.clientX ?? null)}
       onTouchEnd={(event) => { if (touchStart == null) return; const delta = event.changedTouches[0]?.clientX - touchStart; if (Math.abs(delta) > 45) show(activeIndex + (delta < 0 ? 1 : -1)); setTouchStart(null); }}
-      className="home-carousel relative overflow-hidden bg-background px-3 py-7 outline-none sm:px-6 sm:py-10 lg:px-8"
+      className="home-carousel relative overflow-hidden bg-background px-3 py-4 outline-none sm:px-6 sm:py-6 lg:px-8"
     >
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-3/4 w-3/4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 blur-[100px]" />
-      <div className={`relative mx-auto ${mobile ? 'max-w-[430px]' : 'max-w-7xl'}`}>
+      <div className="relative mx-auto max-w-[320px] md:max-w-6xl">
         <div className="mb-3 flex items-center justify-between px-2 sm:mb-4">
           <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[.18em] text-primary"><Sparkles className="h-4 w-4" />Premium stories</div>
           <button onClick={() => setManualPause((value) => !value)} className="vnw-interactive inline-flex h-9 items-center gap-2 rounded-full border border-border bg-card/90 px-3 text-xs font-bold text-foreground shadow-sm backdrop-blur" aria-label={manualPause ? 'Play carousel' : 'Pause carousel'}>{manualPause ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}{manualPause ? 'Play' : 'Pause'}</button>
@@ -111,12 +99,11 @@ export function HomeCarousel({ slides, loading = false }: { slides: PublishedCar
               animate="center"
               exit={reduceMotion ? 'center' : 'exit'}
               transition={{ duration: reduceMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}
-              className="relative overflow-hidden rounded-[1.35rem] bg-black sm:rounded-[1.8rem]"
-              style={{ aspectRatio: `${document.artboard.width}/${document.artboard.height}` }}
+              className="relative h-[min(400px,52svh)] overflow-hidden rounded-[1.35rem] bg-muted md:aspect-[20/7] md:h-auto md:max-h-[360px] md:rounded-[1.8rem]"
               aria-roledescription="slide"
               aria-label={`${activeIndex + 1} of ${usableSlides.length}: ${slide.name}`}
             >
-              <CarouselArtboard document={document} assetUrls={assetUrls} previewUrl={previewUrl} active={inView && !manualPause && !interacting} reducedMotion={Boolean(reduceMotion)} />
+              {previewUrl && <img src={previewUrl} alt={slide.name} className="h-full w-full object-contain md:object-cover" />}
             </motion.div>
           </AnimatePresence>
 

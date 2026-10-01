@@ -70,8 +70,18 @@ describe('HomeHero', () => {
     expect(container.querySelector('.brand-stage__slogan')).toBeInTheDocument();
     expect(container.querySelector('.brand-stage__pedestal')).toBeInTheDocument();
     expect(container.querySelectorAll('.brand-stage__number-plaque')).toHaveLength(8);
-    expect(screen.getByRole('link', { name: 'Browse Mirror numbers' })).toHaveAttribute('href', '/shop?category=mirror-numbers');
-    expect(screen.getByRole('link', { name: 'Browse Numerology numbers' })).toHaveAttribute('href', '/shop?category=without-248-numbers');
+    expect(screen.getByRole('link', { name: 'Browse Mirror numbers' })).toHaveAttribute('href', '/shop?category=customer-care-numbers');
+    expect(screen.getByRole('link', { name: 'Browse Numerology numbers' })).toHaveAttribute('href', '/shop?category=numerology-numbers');
+    expect(Array.from(container.querySelectorAll<HTMLAnchorElement>('.brand-stage__category-link')).map((link) => link.getAttribute('href'))).toEqual([
+      '/shop?category=customer-care-numbers',
+      '/shop?category=unforgettable-vip-number',
+      '/shop?category=numerology-numbers',
+      '/shop?category=vip-number-india',
+      '/shop?category=doublling-aabbcc',
+      '/shop?category=786-vip-mobile-numbers',
+      '/shop?category=ascending-descending-fancy-number',
+      '/shop?category=golden-mobile-number',
+    ]);
     expect(container.querySelector('.home-showcase__butterflies--ambient')).toHaveAttribute('aria-hidden', 'true');
     expect(container.querySelector('.home-showcase__butterflies--focus')).toHaveAttribute('aria-hidden', 'true');
     expect(container.querySelector('.home-showcase__butterflies--mobile-art')).not.toBeInTheDocument();
@@ -161,7 +171,7 @@ describe('HomeHero', () => {
       category_slug: null,
     };
     renderHero(<HomeHero deals={[unclassifiedDeal]} />);
-    expect(screen.getByText('Unique Numbers')).toBeInTheDocument();
+    expect(screen.getByText('VIP Number')).toBeInTheDocument();
     expect(screen.getByText('Lucky VIP Number')).toBeInTheDocument();
   });
 

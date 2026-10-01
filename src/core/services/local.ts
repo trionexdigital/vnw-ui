@@ -43,11 +43,12 @@ export class LocalService {
     return localStorage.getItem(key.trim().toLowerCase()) || '';
   }
 
-  public logout() {
+  public logout(returnPath?: string) {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.removeItem('remember_me_password');
-    window.location.href = '/';
+    window.location.href = returnPath && /^\/payments\/return(?:\?|$)/.test(returnPath)
+      ? '/login?return_to=' + encodeURIComponent(returnPath) : '/';
   }
 }
 

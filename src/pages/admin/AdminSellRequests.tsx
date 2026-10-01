@@ -12,13 +12,16 @@ export default function AdminSellRequests() {
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState('PENDING');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [total, setTotal] = useState(0);
   const [approve, setApprove] = useState<any | null>(null);
   const [offer, setOffer] = useState('');
   const [buy, setBuy] = useState('');
   const [note, setNote] = useState('');
 
-  const load = () => { setLoading(true); adminAPI.sellList({ status: tab }).then(setRows).catch(() => {}).finally(() => setLoading(false)); };
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [tab]);
+  const load = () => { setLoading(true); adminAPI.sellList({ status: tab, page, limit: pageSize }).then((data) => { setRows(data.items || []); setTotal(Number(data.total || 0)); }).catch(() => {}).finally(() => setLoading(false)); };
+  useEffect(() => { load(); /* eslint-disable-next-line */ }, [tab, page, pageSize]);
 
   const doApprove = async () => {
     try {
@@ -43,14 +46,14 @@ export default function AdminSellRequests() {
       <PageHeader title="Sell Requests" subtitle="Customers offering their numbers to the platform" />
       <div className="mb-4 flex flex-wrap gap-2">
         {STATUS_TABS.map((s) => (
-          <button key={s} onClick={() => setTab(s)}
+          <button key={s} onClick={() => { setTab(s); setPage(1); }}
             className={`rounded-full px-3 py-1.5 text-xs font-semibold ${tab === s ? 'gold-gradient-bg text-accent-foreground' : 'border border-card-border text-muted-foreground'}`}>{s}</button>
         ))}
       </div>
       {loading ? <Loader /> : rows.length === 0 ? (
         <EmptyState title="No requests" subtitle={`No ${tab.toLowerCase()} sell requests.`} />
       ) : (
-        <Table head={['Number', 'Customer', 'Asking', 'Status', 'Submitted', 'Actions']}>
+        <Table head={['Number', 'Customer', 'Asking', 'Status', 'Submitted', 'Actions']} pagination={{ page, pageSize, total, onPageChange: setPage, onPageSizeChange: (size) => { setPageSize(size); setPage(1); } }}>
           {rows.map((r) => (
             <tr key={r.request_id} className="border-b border-card-border last:border-0">
               <td className="px-4 py-3 text-foreground">{r.display_number}<br /><span className="text-xs text-muted-foreground">{getPrimaryCategory(r)?.name || 'Unique'}</span></td>

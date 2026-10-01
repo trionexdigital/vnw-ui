@@ -86,6 +86,12 @@ Object.defineProperty(window, 'matchMedia', {
   },
 });
 
+Object.defineProperty(window, 'scrollTo', {
+  configurable: true,
+  writable: true,
+  value: () => undefined,
+});
+
 Object.defineProperties(HTMLElement.prototype, {
   hasPointerCapture: {
     configurable: true,

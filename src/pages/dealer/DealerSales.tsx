@@ -5,13 +5,16 @@ import { PageHeader, Loader, StatusBadge, Money, EmptyState, Table } from '@/sha
 export default function DealerSales() {
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  useEffect(() => { dealerAPI.sales().then(setRows).catch(() => {}).finally(() => setLoading(false)); }, []);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [total, setTotal] = useState(0);
+  useEffect(() => { setLoading(true); dealerAPI.sales({ page, limit: pageSize }).then((data) => { setRows(data.items || []); setTotal(data.total || 0); }).catch(() => {}).finally(() => setLoading(false)); }, [page, pageSize]);
   if (loading) return <Loader />;
   return (
     <div>
       <PageHeader title="Sales" subtitle="Numbers you've sold and your earnings" />
       {rows.length === 0 ? <EmptyState title="No sales yet" subtitle="Your sold numbers will appear here." /> : (
-        <Table head={['Order', 'Number', 'Price', 'Commission', 'Net', 'Payment', 'Date']}>
+        <Table head={['Order', 'Number', 'Price', 'Commission', 'Net', 'Payment', 'Date']} pagination={{ page, pageSize, total, onPageChange: setPage, onPageSizeChange: (size) => { setPageSize(size); setPage(1); } }}>
           {rows.map((r) => (
             <tr key={r.order_item_id} className="border-b border-card-border last:border-0">
               <td className="px-4 py-3 text-foreground">{r.order_no}</td>

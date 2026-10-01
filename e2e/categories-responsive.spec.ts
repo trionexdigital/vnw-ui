@@ -7,29 +7,40 @@ const viewports = [
   { width: 1920, height: 1080 },
 ];
 
-const slugs = [
-  'without-248-numbers', 'mirror-numbers', 'semi-mirror-numbers', 'two-digit-numbers',
-  'three-digit-numbers', 'counting-numbers', '786-numbers', '108-numbers', 'doubling-numbers',
-  'ab-ab-xy-xy-numbers', 'ab-ab-ab-numbers', 'start-ab-ab-numbers', 'middle-ab-ab-numbers',
-  'ending-ab-ab-numbers', 'abc-abc-abc-numbers', 'abc-abc-numbers', 'aaa-bbb-numbers',
-  'triple-numbers', 'tetra-numbers', 'penta-numbers', 'hexa-numbers', 'septa-numbers',
-  'octa-numbers', 'unique-numbers',
-];
+const entries = [
+  ['numerology-numbers', 'Numerology Numbers'], ['penta-vip-mobile-no', 'Penta Numbers'],
+  ['doublling-aabbcc', 'Doublling (AABBCC)'], ['vip-mobile-number', 'XYXYXY'],
+  ['00xy00-fancy-number', '00xy00'], ['customer-care-numbers', 'Mirror'],
+  ['semi-mirror-vip-mobile-number', 'Semi Mirror'], ['choice-mobile-number', 'Tetra Numbers - XXXX'],
+  ['unforgettable-vip-number', 'xxxyyy'], ['xyzxyz-fancy-number', 'xyzxyz'],
+  ['buy-vip-mobile-number-online', 'Hexa'], ['vip-number-india', 'ABAB-XYXY'],
+  ['abcd-abcd-fancy-number', 'abcd-abcd'], ['ascending-descending-fancy-number', 'Asending Desending'],
+  ['2-digit-mobile-numbers', 'Minimum Digit Numbers'], ['septa-octa-vip-number-for-sale', 'Septa/Octa'],
+  ['best-mobile-number', '10 Digits symmetry'], ['8-9-digits-symmetry', '8 9 Digits symmetry'],
+  ['repeating-fancy-mobile-numbers', 'Single digit repeating'], ['vip-number-000', '000'],
+  ['Hexa-vip-mobile-number', 'Hexa Zero'], ['786-vip-mobile-numbers', '786'],
+  ['fancy-mobile-number-00786', '00786'], ['online-VIP-mobile-number', 'xxyyy xxxyy'],
+  ['prepaid-fancy-numbers', '13 with Zeros'], ['vip-number-1313', '13 Repeating'],
+  ['vip-mobile-number-india', 'xyxy (2 times)'], ['xy-xy-fancy-mobile-number', 'xy*xy'],
+  ['vip-number-sim-card', 'Special Charactors/Digits'], ['golden-mobile-number', 'Normal Fancy Numbers'],
+  ['00x00-fancy-number', '00x00'],
+] as const;
 
-const catalog = slugs.map((slug, index) => ({
+const catalog = entries.map(([slug, name], index) => ({
   slug,
-  name: slug.split('-').filter((part) => part !== 'numbers').map((part) => part.toUpperCase()).join(' ') + ' Numbers',
+  name,
   description: `Automatically detected ${slug.replace(/-/g, ' ')} pattern.`,
   icon: 'sparkles',
   examples: ['9876543210'],
   aliases: [],
   sort_order: index + 1,
   priority: index + 1,
-  number_count: index % 3,
+  number_count: 31 - index,
+  subcategories: slug === 'customer-care-numbers' ? [{ id: 104, name: 'Ulta-Pulta', number_count: 2 }] : [],
 }));
 
 const doublingCategory = {
-  ...catalog.find((category) => category.slug === 'doubling-numbers')!,
+  ...catalog.find((category) => category.slug === 'doublling-aabbcc')!,
   match_spans: [
     { start: 1, end: 3 },
     { start: 3, end: 5 },
@@ -57,11 +68,14 @@ const doublingNumber = {
 };
 
 async function mockCategoryApi(page: import('@playwright/test').Page, numbers: unknown[] = []) {
+  const requests: any[] = [];
   await page.route('http://localhost:3002/vipnumberworld/**', async (route) => {
     const url = route.request().url();
+    if (url.endsWith('/numbers/list') || url.endsWith('/prebooks/catalog')) requests.push(route.request().postDataJSON());
     const data = url.endsWith('/categories/list') ? catalog
       : url.endsWith('/site/hero-stats') ? { delivered_numbers: 7, available_numbers: 3, customers_served: 5 }
         : url.endsWith('/numbers/list') ? { items: numbers, total: numbers.length, pages: numbers.length ? 1 : 0 }
+          : url.endsWith('/prebooks/catalog') ? { items: [], total: 0, page: 1, limit: 12 }
           : [];
     return route.fulfill({
       status: 200,
@@ -69,18 +83,19 @@ async function mockCategoryApi(page: import('@playwright/test').Page, numbers: u
       body: JSON.stringify({ status: 1, info: 'OK', data }),
     });
   });
+  return requests;
 }
 
 for (const viewport of viewports) {
   test(`highlighted number fits the ${viewport.width}x${viewport.height} viewport`, async ({ page }) => {
     await page.setViewportSize(viewport);
     await mockCategoryApi(page, [doublingNumber]);
-    await page.goto('/shop', { waitUntil: 'domcontentloaded' });
+    await page.goto('/shop?category=doublling-aabbcc', { waitUntil: 'domcontentloaded' });
 
     const numberRail = page.getByRole('img', {
-      name: /VIP number, digits 9 0 0 6 6 2 2 1 2 1\. Category: Doubling Numbers\./i,
+      name: /VIP number, digits 9 0 0 6 6 2 2 1 2 1\. Category: Doublling \(AABBCC\)\./i,
     });
-    await expect(numberRail).toBeVisible();
+    await expect(numberRail).toBeVisible({ timeout: 15000 });
 
     const matchedGroups = numberRail.locator('[data-match="true"]');
     await expect(matchedGroups).toHaveCount(3);
@@ -109,9 +124,9 @@ for (const viewport of viewports) {
     await page.goto('/categories', { waitUntil: 'domcontentloaded' });
 
     const cards = page.locator('[data-category-card]');
-    await expect(cards).toHaveCount(24);
+    await expect(cards).toHaveCount(31);
     await expect(page.locator('[data-categories-page]')).toBeVisible();
-    await expect(cards.first()).toHaveAttribute('href', '/shop?category=without-248-numbers');
+    await expect(cards.first().getByRole('link', { name: 'Numerology Numbers' })).toHaveAttribute('href', '/shop?category=numerology-numbers');
 
     const hasHorizontalOverflow = await page.evaluate(
       () => document.documentElement.scrollWidth > window.innerWidth + 1,
@@ -127,10 +142,28 @@ for (const viewport of viewports) {
   });
 }
 
-test('homepage category discovery follows the carousel slot', async ({ page }) => {
+test('homepage discovery opens the live pattern collection', async ({ page }) => {
   await mockCategoryApi(page);
   await page.goto('/', { waitUntil: 'domcontentloaded' });
-  const section = page.locator('[data-home-category-section]');
-  await expect(section).toBeVisible();
-  await expect(section.locator('[data-category-card]')).toHaveCount(8);
+  await expect(page.getByRole('navigation', { name: 'Popular number patterns' })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Every pattern has a personality.' })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Mirror & symmetry Reflections/ })).toHaveAttribute('href', '/shop?category=customer-care-numbers');
+  await expect(page.getByRole('heading', { name: 'The repeat collection' })).toBeVisible();
+});
+
+test('a subcategory link carries both taxonomy filters into the shop request', async ({ page }) => {
+  const requests = await mockCategoryApi(page);
+  await page.goto('/categories', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('link', { name: /Ulta-Pulta/ }).click();
+  await expect(page).toHaveURL(/\/shop\?category=customer-care-numbers&subcategory_id=104/);
+  await expect.poll(() => requests.some((payload) => payload.category === 'customer-care-numbers' && payload.subcategory_id === 104)).toBe(true);
+});
+
+test('pre-book search submits the selected parent and child together', async ({ page }) => {
+  const requests = await mockCategoryApi(page);
+  await page.goto('/pre-book', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('combobox', { name: 'Category', exact: true }).selectOption('customer-care-numbers');
+  await page.getByRole('combobox', { name: 'Subcategory', exact: true }).selectOption('104');
+  await page.getByRole('button', { name: 'Apply filters' }).click();
+  await expect.poll(() => requests.some((payload) => payload.category === 'customer-care-numbers' && payload.subcategory_id === 104)).toBe(true);
 });

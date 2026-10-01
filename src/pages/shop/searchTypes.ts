@@ -245,10 +245,12 @@ export function listPayloadFromParams(params: URLSearchParams) {
 
   return {
     category: params.get('category') || undefined,
+    subcategory_id: params.get('subcategory_id') ? Number(params.get('subcategory_id')) : undefined,
     ...(q && scope === 'anywhere' ? { q } : {}),
     badge: params.get('badge') || undefined,
     numerology: params.get('numerology') || undefined,
     operator: params.get('operator') || undefined,
+    rtp_status: ['RTP', 'NON_RTP', 'RTA'].includes(params.get('rtp_status') || '') ? params.get('rtp_status') as 'RTP' | 'NON_RTP' | 'RTA' : undefined,
     is_premium: params.get('premium') === '1' ? 1 : undefined,
     sort: params.get('sort') || 'newest',
     page: Math.max(1, Number(params.get('page')) || 1),

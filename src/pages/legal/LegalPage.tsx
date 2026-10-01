@@ -30,7 +30,7 @@ const POLICIES: Record<string, Policy> = {
   ]},
   'refund-policy': { title: 'Refund and Cancellation Policy', summary: 'Eligibility and process for VIP-number refunds and pre-book cancellations.', sections: [
     { title: 'VIP number and pre-book refunds', paragraphs: ['A pre-book cancellation request can be made within 48 hours after booking confirmation. A full-refund review is available when we cannot provide the number because of recorded delivery, UPC, activation, eligibility, or number-availability failure attributable to the fulfilment process.', 'Change of mind after the cancellation window, failed customer identity checks, an expired customer-supplied UPC, or a port rejected for customer-side eligibility may not qualify unless consumer law requires otherwise.'] },
-    { title: 'Refund processing', paragraphs: ['Approved refunds are limited to the affected order amount, and duplicate or over-value refunds are prevented. Refund timing after approval depends on Razorpay, the issuing bank, and the original payment method.'] },
+    { title: 'Refund processing', paragraphs: ['Approved refunds are limited to the affected order amount, and duplicate or over-value refunds are prevented. Refund timing after approval depends on Cashfree, the issuing bank, and the original payment method.'] },
     { title: 'How to request help', paragraphs: ['Contact support with the order number, affected VIP number, reason, and relevant evidence. This policy does not restrict remedies available under the Consumer Protection Act, 2019 or other applicable law.'] },
   ]},
   'delivery-fulfilment-policy': { title: 'Delivery and Fulfilment Policy', summary: 'What to expect during VIP-number transfer, UPC handling, and activation fulfilment.', sections: [

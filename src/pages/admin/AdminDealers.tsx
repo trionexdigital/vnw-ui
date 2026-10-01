@@ -10,13 +10,17 @@ export default function AdminDealers() {
   const { toast } = useToast();
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [total, setTotal] = useState(0);
   const [catalog, setCatalog] = useState<any[]>([]);
   const [editing, setEditing] = useState<any | null>(null);
   const [perms, setPerms] = useState<Set<string>>(new Set());
   const [savingPerms, setSavingPerms] = useState(false);
 
-  const load = () => { setLoading(true); adminAPI.dealersList().then(setRows).catch(() => {}).finally(() => setLoading(false)); };
-  useEffect(() => { load(); adminAPI.permissionCatalog().then((c: any) => setCatalog((c || []).filter((p: any) => p.module === 'DEALER'))).catch(() => {}); }, []);
+  const load = () => { setLoading(true); adminAPI.dealersList({ page, limit: pageSize }).then((data) => { setRows(data.items || []); setTotal(Number(data.total || 0)); }).catch(() => {}).finally(() => setLoading(false)); };
+  useEffect(() => { load(); }, [page, pageSize]);
+  useEffect(() => { adminAPI.permissionCatalog().then((c: any) => setCatalog((c || []).filter((p: any) => p.module === 'DEALER'))).catch(() => {}); }, []);
 
   const kyc = async (dealer_id: number, kyc_status: string) => { try { await adminAPI.dealerKyc({ dealer_id, kyc_status }); toast({ title: 'KYC updated' }); load(); } catch (e: any) { toast({ title: 'Error', description: e.message, variant: 'destructive' }); } };
   const commission = async (dealer_id: number, pct: string) => { try { await adminAPI.dealerKyc({ dealer_id, kyc_status: rows.find((r) => r.dealer_id === dealer_id)?.kyc_status, commission_pct: Number(pct) }); toast({ title: 'Commission updated' }); } catch (e: any) { toast({ title: 'Error', description: e.message, variant: 'destructive' }); } };
@@ -40,7 +44,7 @@ export default function AdminDealers() {
     <div>
       <PageHeader title="Dealers" subtitle="Create dealers, map permissions, verify KYC & set commissions"
         action={<Link to="/admin/dealers/new" className="btn-gold inline-flex items-center gap-2"><Plus className="h-4 w-4" /> Create Dealer</Link>} />
-      <Table head={['Business', 'Contact', 'Listings', 'Commission %', 'KYC', 'Actions']}>
+      <Table head={['Business', 'Contact', 'Listings', 'Commission %', 'KYC', 'Actions']} pagination={{ page, pageSize, total, onPageChange: setPage, onPageSizeChange: (size) => { setPageSize(size); setPage(1); } }}>
         {rows.map((d) => (
           <tr key={d.dealer_id} className="border-b border-card-border last:border-0">
             <td className="px-4 py-3 text-foreground">{d.business_name || d.full_name}</td>

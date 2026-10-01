@@ -52,6 +52,7 @@ export default function OrderDetail() {
         <div className="mt-5 space-y-1 border-t border-card-border pt-4 text-sm">
           <div className="flex justify-between text-muted-foreground"><span>Subtotal</span><span>{<Money value={order.subtotal} />}</span></div>
           {Number(order.discount) > 0 && <div className="flex justify-between text-muted-foreground"><span>Discount{order.coupon_code ? ` (${order.coupon_code})` : ''}</span><span>- <Money value={order.discount} /></span></div>}
+          {Number(order.gst_amount) > 0 && <div className="flex justify-between text-muted-foreground"><span>GST ({order.gst_percent}%)</span><Money value={order.gst_amount} /></div>}
           <div className="flex justify-between text-base font-bold"><span className="text-foreground">Total</span><Money value={order.total} /></div>
         </div>
         <p className="mt-5 text-xs text-muted-foreground">Need help? Review the <Link to="/delivery-fulfilment-policy" className="text-primary">Delivery Policy</Link>, <Link to="/mnp-activation-policy" className="text-primary">MNP Policy</Link>, or <Link to="/refund-policy" className="text-primary">Refund Policy</Link>.</p>

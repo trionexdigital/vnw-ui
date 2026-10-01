@@ -1,3 +1,4 @@
+import { ThemedSelect } from '@/shared/ui/themed-select';
 import { useEffect, useMemo, useState } from 'react';
 import {
   ArrowDown,
@@ -191,24 +192,15 @@ export default function AdminDealsOfDay() {
 
   return (
     <div>
-      <PageHeader
-        title="Lucky Pick of the Day"
-        subtitle="Curate and order the premium numbers shown in the homepage hero"
-        action={(
-          <button type="button" onClick={openNew} className="btn-gold inline-flex items-center gap-2 text-sm">
-            <Plus className="h-4 w-4" /> Add Lucky Pick
-          </button>
-        )}
-      />
-
-      <div className="mb-5 rounded-xl border border-primary/20 bg-primary/10 p-4 text-sm text-foreground">
-        <div className="flex items-start gap-3">
+      <div className="mb-3 flex items-center gap-3 rounded-xl border border-primary/20 bg-primary/10 p-3 text-xs text-foreground">
+        <div className="flex min-w-0 flex-1 items-start gap-2">
           <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
           <p>
             Active, available numbers appear in this order. Sold or inactive catalog numbers are hidden automatically;
             premium curated catalog numbers fill the hero only when no curated Lucky Picks are eligible.
           </p>
         </div>
+        <button type="button" onClick={openNew} className="btn-gold shrink-0 px-3 text-xs"><Plus className="h-4 w-4" /> Add Lucky Pick</button>
       </div>
 
       {loading ? <Loader /> : items.length === 0 ? (
@@ -301,7 +293,7 @@ export default function AdminDealsOfDay() {
                   className={`${fieldClass} pl-9`}
                 />
               </div>
-              <select
+              <ThemedSelect
                 required
                 value={form.number_id || ''}
                 onChange={(event) => set('number_id', Number(event.target.value))}
@@ -317,7 +309,7 @@ export default function AdminDealsOfDay() {
                     {number.display_number} — {formatINR(number.offer_price)}
                   </option>
                 ))}
-              </select>
+              </ThemedSelect>
             </div>
 
             <div>

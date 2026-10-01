@@ -55,9 +55,7 @@ export const popularPatterns = [
 ];
 
 export function SectionHeader({
-  eyebrow,
   title,
-  description,
   action,
   centered = false,
 }: {
@@ -70,9 +68,7 @@ export function SectionHeader({
   return (
     <div data-public-section-header className={cn('public-section-heading mb-4 flex flex-col gap-2.5 sm:flex-row sm:items-end sm:justify-between', centered && 'public-section-heading--centered items-center text-center sm:items-center sm:justify-center')}>
       <div className={cn('max-w-2xl', centered && 'mx-auto')}>
-        {eyebrow && <p className="public-section-heading__eyebrow mb-1.5 text-[10px] font-black uppercase tracking-[.14em] text-primary">{eyebrow}</p>}
         <h2 className="public-section-heading__title text-lg font-black leading-tight text-foreground sm:text-xl">{title}</h2>
-        {description && <p className="public-section-heading__subtitle mt-1.5 text-xs leading-5 text-muted-foreground sm:text-sm">{description}</p>}
       </div>
       {action && <div className="public-section-heading__action shrink-0">{action}</div>}
     </div>
@@ -80,14 +76,14 @@ export function SectionHeader({
 }
 
 const orbitCategories = [
-  { label: 'Mirror', to: '/shop?category=mirror-numbers', left: '50%', top: '2%' },
-  { label: 'Triple', to: '/shop?category=triple-numbers', left: '84%', top: '22%' },
-  { label: 'Numerology', to: '/shop?category=without-248-numbers', left: '94%', top: '55%' },
-  { label: 'AB AB', to: '/shop?category=ab-ab-xy-xy-numbers', left: '79%', top: '82%' },
-  { label: 'Doubling', to: '/shop?category=doubling-numbers', left: '50%', top: '98%' },
-  { label: '786', to: '/shop?category=786-numbers', left: '17%', top: '82%' },
-  { label: 'Counting', to: '/shop?category=counting-numbers', left: '5%', top: '54%' },
-  { label: 'Unique', to: '/shop?category=unique-numbers', left: '18%', top: '22%' },
+  { label: 'Mirror', to: '/shop?category=customer-care-numbers', left: '50%', top: '2%' },
+  { label: 'Tripling', to: '/shop?category=unforgettable-vip-number', left: '84%', top: '22%' },
+  { label: 'Numerology', to: '/shop?category=numerology-numbers', left: '94%', top: '55%' },
+  { label: 'AB AB', to: '/shop?category=vip-number-india', left: '79%', top: '82%' },
+  { label: 'Doubling', to: '/shop?category=doublling-aabbcc', left: '50%', top: '98%' },
+  { label: '786', to: '/shop?category=786-vip-mobile-numbers', left: '17%', top: '82%' },
+  { label: 'Counting', to: '/shop?category=ascending-descending-fancy-number', left: '5%', top: '54%' },
+  { label: 'Fancy', to: '/shop?category=golden-mobile-number', left: '18%', top: '22%' },
 ];
 
 type HeroButterfly = {
@@ -391,14 +387,14 @@ export function HowItWorksSection() {
 }
 
 const FEATURED_CATEGORY_SLUGS = [
-  'mirror-numbers',
-  'semi-mirror-numbers',
-  'counting-numbers',
-  '786-numbers',
-  'ab-ab-xy-xy-numbers',
-  'triple-numbers',
-  'penta-numbers',
-  'without-248-numbers',
+  'customer-care-numbers',
+  'semi-mirror-vip-mobile-number',
+  'doublling-aabbcc',
+  '786-vip-mobile-numbers',
+  'vip-number-india',
+  'choice-mobile-number',
+  'penta-vip-mobile-no',
+  'numerology-numbers',
 ];
 
 export function CategorySection({ categories, loading = false }: { categories: NumberCategory[]; loading?: boolean }) {

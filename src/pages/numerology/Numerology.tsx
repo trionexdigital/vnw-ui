@@ -1,3 +1,4 @@
+import CompactPageHeader from '@/shared/components/CompactPageHeader';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -164,49 +165,10 @@ export default function Numerology() {
     : [];
 
   return (
-    <main className="overflow-hidden bg-background text-foreground">
-      <MotionSection className="public-page-hero relative border-b border-border bg-card px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_78%_20%,hsl(var(--primary)/.15),transparent_36%)]" />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-9 lg:grid-cols-[1.15fr_.85fr]">
-          <div className="text-center lg:text-left">
-            <span className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3 py-1.5 text-xs font-black uppercase tracking-[.14em] text-primary">
-              <Hexagon className="h-4 w-4" /> Free numerology tools
-            </span>
-            <h1 className="mt-5 text-4xl font-extrabold leading-tight sm:text-5xl" style={{ fontFamily: 'Playfair Display, serif' }}>
-              Find the numbers that <span className="text-gold">feel like you</span>
-            </h1>
-            <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base lg:mx-0">
-              Explore your mobile number root, personal numerology, and available VIP numbers aligned with your preferred sum.
-            </p>
-            <div className="mt-6 flex flex-wrap justify-center gap-2 text-xs font-bold text-muted-foreground lg:justify-start">
-              {['Instant calculation', 'Available VIP matches', 'Optional expert guidance'].map((item) => (
-                <span key={item} className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background/80 px-3 py-2">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-primary" /> {item}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <MotionReveal delay={.08} className="mx-auto w-full max-w-sm">
-            <div className="vnw-card relative overflow-hidden p-4">
-              <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-primary/10 blur-2xl" />
-              <div className="relative flex items-center justify-between gap-3">
-                <div><div className="text-[11px] font-black uppercase tracking-[.14em] text-primary">The nine roots</div><div className="mt-0.5 text-xs text-muted-foreground">Every result reduces to a single digit.</div></div>
-                <Sparkles className="h-5 w-5 text-primary" />
-              </div>
-              <MotionGrid className="relative mt-3 grid grid-cols-3 gap-2">
-                {Array.from({ length: 9 }, (_, index) => index + 1).map((number) => (
-                  <MotionGridItem key={number}>
-                    <button type="button" onClick={() => loadMatches(number)} aria-pressed={activeSum === number} className={`vnw-interactive grid h-11 w-full place-items-center rounded-xl border text-base font-black shadow-sm ${activeSum === number ? 'border-primary bg-primary text-primary-foreground' : 'border-primary/20 bg-background/80 text-primary'}`} aria-label={`Browse numerology sum ${number}`}>
-                      {number}
-                    </button>
-                  </MotionGridItem>
-                ))}
-              </MotionGrid>
-            </div>
-          </MotionReveal>
-        </div>
-      </MotionSection>
+    <main className="compact-content-page overflow-hidden bg-background text-foreground">
+      <div className="mx-auto max-w-7xl px-4 pt-4"><CompactPageHeader title="Numerology" subtitle="Explore your number root and discover VIP numbers aligned with your preferred sum." icon={Hexagon} />
+        <section className="commerce-panel mb-4 flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-sm font-black">Explore the nine roots</h2><p className="text-xs text-muted-foreground">Pick a root to see available matches.</p></div><div className="flex flex-wrap gap-1.5">{Array.from({ length: 9 }, (_, i) => i + 1).map(number => <button key={number} onClick={() => loadMatches(number)} aria-label={`Browse numerology sum ${number}`} aria-pressed={activeSum === number} className={`grid h-9 w-9 place-items-center rounded-lg border text-sm font-black transition ${activeSum === number ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-background hover:border-primary'}`}>{number}</button>)}</div></section>
+      </div>
 
       {activeSum !== null && (
         <MotionSection id="numerology-matches" className="scroll-mt-24 border-b border-border bg-card px-4 py-7 sm:px-6 lg:px-8">
@@ -226,17 +188,17 @@ export default function Numerology() {
         </MotionSection>
       )}
 
-      <MotionSection className="px-4 py-10 sm:px-6 lg:px-8">
+      <MotionSection className="px-4 py-6 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="text-center">
             <p className="text-xs font-black uppercase tracking-[.18em] text-primary">Choose your path</p>
             <h2 className="mt-2 text-2xl font-black sm:text-3xl">Numerology guidance for every stage</h2>
             <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">Start with a free calculation or ask our team for personal assistance.</p>
           </div>
-          <MotionGrid className="mt-7 grid gap-4 md:grid-cols-3">
+          <MotionGrid className="mt-4 grid gap-3 md:grid-cols-3">
             {SERVICES.map(({ icon: Icon, title, description }) => (
               <MotionGridItem key={title}>
-                <article className="vnw-card vnw-interactive group flex h-full flex-col p-5">
+                <article className="public-feature-card vnw-card vnw-interactive group flex h-full flex-col p-4">
                   <span className="grid h-11 w-11 place-items-center rounded-xl border border-primary/20 bg-primary/10 text-primary"><Icon className="h-5 w-5" /></span>
                   <h3 className="mt-4 text-lg font-black">{title}</h3>
                   <p className="mt-2 flex-1 text-sm leading-6 text-muted-foreground">{description}</p>
@@ -250,7 +212,7 @@ export default function Numerology() {
         </div>
       </MotionSection>
 
-      <MotionSection className="border-y border-border bg-card px-4 py-10 sm:px-6 lg:px-8">
+      <MotionSection className="border-y border-border bg-card px-4 py-6 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="mb-7 text-center">
             <p className="text-xs font-black uppercase tracking-[.18em] text-primary">Free calculators</p>
@@ -307,7 +269,7 @@ export default function Numerology() {
       </MotionSection>
 
       {result && (
-        <MotionSection id="numerology-profile-results" className="scroll-mt-32 px-4 py-10 sm:px-6 lg:px-8">
+        <MotionSection id="numerology-profile-results" className="scroll-mt-24 px-4 py-6 sm:px-6 lg:px-8">
           <div className="vnw-card mx-auto max-w-4xl overflow-hidden p-5 sm:p-7">
             <div className="text-center"><p className="text-xs font-black uppercase tracking-[.16em] text-primary">Your profile</p><h2 className="mt-2 text-2xl font-black">Your core numerology numbers</h2></div>
             <MotionGrid className="mx-auto mt-6 grid max-w-2xl gap-3 sm:grid-cols-3">
@@ -336,7 +298,7 @@ export default function Numerology() {
         </MotionSection>
       )}
 
-      <MotionSection id="numerology-enquiry" className="scroll-mt-28 px-4 py-10 sm:px-6 lg:px-8">
+      <MotionSection id="numerology-enquiry" className="scroll-mt-24 px-4 py-6 sm:px-6 lg:px-8">
         <div className="vnw-card mx-auto grid max-w-5xl overflow-hidden lg:grid-cols-[.8fr_1.2fr]">
           <div className="border-b border-border bg-primary/5 p-5 sm:p-7 lg:border-b-0 lg:border-r">
             <span className="grid h-11 w-11 place-items-center rounded-xl bg-primary/10 text-primary"><Send className="h-5 w-5" /></span>

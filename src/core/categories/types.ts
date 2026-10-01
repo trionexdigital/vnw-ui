@@ -4,6 +4,7 @@ export interface NumberMatchSpan {
 }
 
 export interface NumberCategoryMatch {
+  id?: number;
   slug: string;
   name: string;
   description?: string | null;
@@ -14,6 +15,7 @@ export interface NumberCategoryMatch {
   priority?: number;
   classifier_version?: number;
   match_spans?: NumberMatchSpan[];
+  subcategories?: Array<{ id: number; name: string; number_count?: number }>;
 }
 
 export interface NumberCategory extends NumberCategoryMatch {

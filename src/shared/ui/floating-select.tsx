@@ -1,5 +1,5 @@
+import { ThemedSelect } from './themed-select';
 import { cn } from "@/core/lib/utils";
-import { ChevronDown } from "lucide-react";
 import { FieldError } from "./field-error";
 
 export interface FloatingSelectOption {
@@ -25,7 +25,7 @@ export interface FloatingSelectProps {
 }
 
 /**
- * Generic native <select> with a floating label (always raised since a select
+ * Generic themed select with a floating label (always raised since a select
  * always has a value). Matches the PatientForm look.
  */
 export function FloatingSelect({
@@ -40,7 +40,7 @@ export function FloatingSelect({
             {icon}
           </span>
         )}
-        <select
+        <ThemedSelect
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onBlur={onBlur}
@@ -63,11 +63,10 @@ export function FloatingSelect({
                   : <option key={o.value} value={o.value}>{o.label}</option>
               )
             : children}
-        </select>
+        </ThemedSelect>
         <span className="pointer-events-none absolute left-3 top-0 z-10 -translate-y-1/2 select-none bg-background px-1 text-[0.65rem] font-medium text-primary">
           {label}
         </span>
-        <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-muted-foreground" />
       </div>
       <FieldError msg={error} />
     </div>

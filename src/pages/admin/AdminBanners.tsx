@@ -50,7 +50,7 @@ export default function AdminBanners() {
 
   const publish = async (item: CarouselProjectSummary) => {
     const response = await adminCarouselAPI.publishRaw(item.carousel_id, item.draft_revision);
-    if (response?.status !== 1) throw new Error(response?.info || 'Publish failed. Open the editor and generate both previews first.');
+    if (response?.status !== 1) throw new Error(response?.info || 'Publish failed. Add both images first.');
   };
 
   const move = async (sourceId: number, targetId: number) => {
@@ -74,17 +74,10 @@ export default function AdminBanners() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-6">
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-        <div>
-          <p className="text-xs font-black uppercase tracking-[.2em] text-primary">Homepage presentation</p>
-          <h1 className="mt-1 text-3xl font-black tracking-tight text-foreground">Carousel Studio</h1>
-          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">Build independent desktop and mobile stories, preview the real storefront card, and publish without exposing unfinished autosaves.</p>
-        </div>
-        <div className="flex gap-2">
+    <div className="mx-auto w-full max-w-7xl space-y-3">
+      <div className="flex justify-end gap-2">
           <button onClick={() => void load()} className="inline-flex h-11 items-center gap-2 rounded-xl border border-border bg-card px-4 text-sm font-bold text-foreground hover:bg-accent"><RefreshCw className="h-4 w-4" />Refresh</button>
           <button onClick={() => navigate('/admin/carousel/new')} className="inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-black text-primary-foreground shadow-lg shadow-primary/20 hover:brightness-110"><Plus className="h-4 w-4" />New carousel</button>
-        </div>
       </div>
 
       {error && <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-sm font-semibold text-destructive">{error}</div>}
@@ -95,7 +88,7 @@ export default function AdminBanners() {
         <div className="rounded-3xl border border-dashed border-border bg-card p-12 text-center">
           <Sparkles className="mx-auto h-10 w-10 text-primary" />
           <h2 className="mt-4 text-xl font-black text-foreground">Your new carousel is empty</h2>
-          <p className="mx-auto mt-2 max-w-lg text-sm text-muted-foreground">Legacy banner records were intentionally left alone. Start with one of six new templates or a blank Fabric artboard.</p>
+          <p className="mx-auto mt-2 max-w-lg text-sm text-muted-foreground">Add one desktop image and one mobile image for each carousel slide.</p>
           <button onClick={() => navigate('/admin/carousel/new')} className="mt-5 inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-black text-primary-foreground"><Plus className="h-4 w-4" />Create first carousel</button>
         </div>
       ) : (

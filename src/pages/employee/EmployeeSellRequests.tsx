@@ -11,9 +11,12 @@ export default function EmployeeSellRequests() {
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState('PENDING');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [total, setTotal] = useState(0);
 
-  const load = () => { setLoading(true); employeeAPI.sellList({ status: tab }).then(setRows).catch(() => {}).finally(() => setLoading(false)); };
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [tab]);
+  const load = () => { setLoading(true); employeeAPI.sellList({ status: tab, page, limit: pageSize }).then((data) => { setRows(data.items || []); setTotal(Number(data.total || 0)); }).catch(() => {}).finally(() => setLoading(false)); };
+  useEffect(() => { load(); /* eslint-disable-next-line */ }, [tab, page, pageSize]);
 
   const submit = async (action_key: string, payload: any, label: string) => {
     try { await employeeAPI.submit(action_key, payload); toast({ title: 'Submitted for approval', description: label }); }
@@ -25,14 +28,14 @@ export default function EmployeeSellRequests() {
       <PageHeader title="Sell Requests" subtitle="Approve/reject is submitted to admin for final sign-off" />
       <div className="mb-4 flex flex-wrap gap-2">
         {STATUS_TABS.map((s) => (
-          <button key={s} onClick={() => setTab(s)}
+          <button key={s} onClick={() => { setTab(s); setPage(1); }}
             className={`rounded-full px-3 py-1.5 text-xs font-semibold ${tab === s ? 'gold-gradient-bg text-accent-foreground' : 'border border-card-border text-muted-foreground'}`}>{s}</button>
         ))}
       </div>
       {loading ? <Loader /> : rows.length === 0 ? (
         <EmptyState title="No requests" subtitle={`No ${tab.toLowerCase()} sell requests.`} />
       ) : (
-        <Table head={['Number', 'Customer', 'Asking', 'Status', 'Actions']}>
+        <Table head={['Number', 'Customer', 'Asking', 'Status', 'Actions']} pagination={{ page, pageSize, total, onPageChange: setPage, onPageSizeChange: (size) => { setPageSize(size); setPage(1); } }}>
           {rows.map((r) => (
             <tr key={r.request_id} className="border-b border-card-border last:border-0">
               <td className="px-4 py-3 text-foreground">{r.display_number}</td>

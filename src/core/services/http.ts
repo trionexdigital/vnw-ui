@@ -79,6 +79,10 @@ export class HttpService {
   private handleError(error: any) {
     const status = error.response?.status;
     if (status === 401) {
+      if (window.location.pathname === '/payments/return') {
+        localService.logout(window.location.pathname + window.location.search);
+        throw error;
+      }
       alert("Session expired. Logging out.");
       localService.logout();
     }

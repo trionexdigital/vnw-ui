@@ -6,12 +6,17 @@ import { PageHeader, Loader, Table, EmptyState, StatCard } from '@/shared/compon
 export default function AdminSubscribers() {
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  useEffect(() => { adminAPI.newsletterList().then(setRows).catch(() => {}).finally(() => setLoading(false)); }, []);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [total, setTotal] = useState(0);
+  const [bySource, setBySource] = useState<Record<string, number>>({});
+  useEffect(() => { setLoading(true); adminAPI.newsletterList({ page, limit: pageSize }).then((data) => { setRows(data.items || []); setTotal(Number(data.total || 0)); setBySource(data.by_source || {}); }).catch(() => {}).finally(() => setLoading(false)); }, [page, pageSize]);
 
-  const exportCsv = () => {
-    const csv = 'email,source,date\n' + rows.map((r) => `${r.email},${r.source},${String(r.created_at).slice(0, 10)}`).join('\n');
+  const exportCsv = async () => {
+    const allRows = await adminAPI.newsletterList({ export_all: true });
+    const csv = 'email,source,date\n' + allRows.map((r: any) => `${r.email},${r.source},${String(r.created_at).slice(0, 10)}`).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'subscribers.csv'; a.click();
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'subscribers.csv'; a.click(); window.setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   };
 
   if (loading) return <Loader />;
@@ -19,14 +24,14 @@ export default function AdminSubscribers() {
   return (
     <div>
       <PageHeader title="Newsletter Subscribers" subtitle="Your marketing email list"
-        action={rows.length ? <button onClick={exportCsv} className="btn-gold-outline text-sm"><Download className="h-4 w-4" /> Export CSV</button> : undefined} />
+        action={total ? <button onClick={exportCsv} className="btn-gold-outline text-sm"><Download className="h-4 w-4" /> Export CSV</button> : undefined} />
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
-        <StatCard label="Total Subscribers" value={rows.length} accent />
-        <StatCard label="From Footer" value={rows.filter((r) => r.source === 'footer').length} />
-        <StatCard label="From Home" value={rows.filter((r) => r.source === 'home').length} />
+        <StatCard label="Total Subscribers" value={total} accent />
+        <StatCard label="From Footer" value={bySource.footer || 0} />
+        <StatCard label="From Home" value={bySource.home || 0} />
       </div>
       {rows.length === 0 ? <EmptyState title="No subscribers yet" subtitle="Newsletter signups will appear here." /> : (
-        <Table head={['Email', 'Source', 'Subscribed']}>
+        <Table head={['Email', 'Source', 'Subscribed']} pagination={{ page, pageSize, total, onPageChange: setPage, onPageSizeChange: (size) => { setPageSize(size); setPage(1); } }}>
           {rows.map((r) => (
             <tr key={r.id} className="border-b border-card-border last:border-0">
               <td className="px-4 py-3 text-foreground">{r.email}</td>

@@ -1,15 +1,20 @@
-import { Children, cloneElement, isValidElement, ReactElement, ReactNode } from 'react';
+import { Children, cloneElement, isValidElement, ReactElement, ReactNode, useEffect, useState } from 'react';
 import { Sparkles } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { cn } from '@/core/lib/utils';
 import { formatINR } from '@/core/lib/format';
+import { ThemedSelect } from '@/shared/ui/themed-select';
 
-export function PageHeader({ title, subtitle, action }: { title: string; subtitle?: string; action?: ReactNode }) {
+export function PageHeader({ title, subtitle, description, action }: { title: string; subtitle?: string; description?: string; action?: ReactNode }) {
+  const { pathname } = useLocation();
+  if (pathname === '/admin' || pathname.startsWith('/admin/')) {
+    return action ? <div className="admin-page-actions mb-3 flex justify-end">{action}</div> : null;
+  }
   return (
     <div className="vip-page-header mb-4 flex flex-wrap items-center justify-between gap-3">
       <div className="relative z-10">
         <h1 className="text-xl font-black text-foreground sm:text-2xl">{title}</h1>
-        {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
+        {(subtitle || description) && <p className="mt-1 text-sm text-muted-foreground">{subtitle || description}</p>}
       </div>
       {action && <div className="relative z-10">{action}</div>}
     </div>
@@ -41,6 +46,10 @@ const STATUS_COLORS: Record<string, string> = {
   PENDING: 'bg-warning-soft text-warning border-warning/25',
   PENDING_APPROVAL: 'bg-warning-soft text-warning border-warning/25',
   PAID: 'bg-success-soft text-success border-success/25',
+  SUCCESS: 'bg-success-soft text-success border-success/25',
+  PROCESSED: 'bg-success-soft text-success border-success/25',
+  REVIEW: 'bg-warning-soft text-warning border-warning/25',
+  USER_DROPPED: 'bg-muted text-muted-foreground border-border',
   PROCESSING: 'bg-info-soft text-info border-info/25',
   COMPLETED: 'bg-success-soft text-success border-success/25',
   SOLD: 'bg-muted text-muted-foreground border-border',
@@ -130,16 +139,16 @@ function TableWire({ rows = 6, cols = 5 }: { rows?: number; cols?: number }) {
 
 function CardGridWire({ count = 8, wide = false }: { count?: number; wide?: boolean }) {
   return (
-    <div className={cn('grid gap-4 sm:grid-cols-2 lg:grid-cols-4', wide && 'md:grid-cols-3 xl:grid-cols-4')}>
+    <div data-wireframe="number-cards" className={cn('number-card-grid', wide && 'w-full')}>
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="vnw-card p-4">
-          <Wire className="h-8 w-36" />
-          <Wire className="mt-3 h-4 w-24 rounded-full" />
-          <div className="mt-5 grid grid-cols-2 gap-2">
-            <Wire className="h-9 rounded-2xl" />
-            <Wire className="h-9 rounded-2xl" />
+        <div key={i} className="rounded-xl border border-[#dfcfaa] bg-card p-1.5 shadow-sm">
+          <div className="rounded-lg bg-[#fbefd5] p-2">
+            <div className="flex justify-between"><Wire className="h-6 w-20 rounded-full" /><Wire className="h-6 w-12 rounded-full" /><Wire className="h-6 w-6 rounded-full" /></div>
+            <Wire className="mx-auto mt-3 h-5 w-28" /><Wire className="mx-auto mt-2 h-7 w-[85%]" /><Wire className="mx-auto mt-2 h-3 w-24" />
           </div>
-          <Wire className="mt-4 h-11 rounded-2xl" />
+          <div className="mt-1.5 grid grid-cols-2 gap-1"><Wire className="h-9 rounded-lg" /><Wire className="h-9 rounded-lg" /></div>
+          <Wire className="mt-1.5 h-11 rounded-lg" />
+          <div className="mt-1.5 grid grid-cols-[1.1fr_1fr_2rem] gap-1"><Wire className="h-9 rounded-lg" /><Wire className="h-9 rounded-lg" /><Wire className="h-9 rounded-lg" /></div>
         </div>
       ))}
     </div>
@@ -148,19 +157,36 @@ function CardGridWire({ count = 8, wide = false }: { count?: number; wide?: bool
 
 function FamilyPackWire() {
   return (
-    <div data-wireframe="family-packs" className="grid gap-3 lg:grid-cols-3">
-      {Array.from({ length: 3 }).map((_, card) => (
-        <div key={card} className="vnw-card p-3">
-          <div className="flex items-start justify-between"><div><Wire className="h-6 w-28 rounded-full" /><Wire className="mt-2 h-5 w-36 rounded-full" /></div><Wire className="h-8 w-8 rounded-xl" /></div>
-          <Wire className="mt-2 h-3 w-3/4 rounded-full" />
-          <div className="mt-3 grid gap-2">
-            {Array.from({ length: 3 }).map((_, row) => <Wire key={row} className="h-14 rounded-2xl" />)}
+    <div data-wireframe="family-packs" className="grid items-start gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {Array.from({ length: 4 }).map((_, card) => (
+        <div key={card} className="rounded-xl border border-[#dfcfaa] bg-card p-1.5">
+          <div className="rounded-lg bg-[#fbefd5] p-2"><div className="flex justify-between"><Wire className="h-6 w-24 rounded-full" /><Wire className="h-8 w-8 rounded-lg" /></div><Wire className="mt-2 h-5 w-36" /><Wire className="mt-1 h-3 w-4/5" /></div>
+          <div className="mt-1.5 grid gap-px overflow-hidden rounded-lg border border-border">
+            {Array.from({ length: 3 }).map((_, row) => <Wire key={row} className="h-12 rounded-none" />)}
           </div>
-          <Wire className="mt-3 h-16 rounded-2xl" />
+          <Wire className="mt-1.5 h-10 rounded-lg" />
+          <div className="mt-1.5 grid grid-cols-2 gap-1"><Wire className="h-9 rounded-lg" /><Wire className="h-9 rounded-lg" /></div>
         </div>
       ))}
     </div>
   );
+}
+
+function HomeWire() {
+  return <div data-wireframe="home" className="mx-auto max-w-[1320px] space-y-5">
+    <div className="grid gap-3 rounded-2xl bg-[#faf0df] p-4 lg:grid-cols-2"><div className="space-y-3"><Wire className="h-5 w-44" /><Wire className="h-12 w-4/5" /><Wire className="h-5 w-3/5" /><Wire className="h-9 w-32" /></div><Wire className="h-44 rounded-2xl" /></div>
+    <Wire className="h-11 w-full rounded-xl" />
+    <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">{Array.from({ length: 4 }).map((_, index) => <Wire key={index} className="h-28 rounded-xl" />)}</div>
+    <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">{Array.from({ length: 4 }).map((_, index) => <Wire key={index} className="h-40 rounded-xl" />)}</div>
+    <Wire className="h-7 w-48" /><CardGridWire count={4} />
+  </div>;
+}
+
+function StaticPageWire() {
+  return <div data-wireframe="static-page" className="mx-auto max-w-7xl space-y-4">
+    <div className="rounded-xl border border-border bg-card p-5"><Wire className="h-5 w-28" /><Wire className="mt-2 h-8 w-2/3 max-w-lg" /><Wire className="mt-2 h-4 w-4/5 max-w-xl" /></div>
+    <div className="grid gap-3 md:grid-cols-2">{Array.from({ length: 4 }).map((_, index) => <Wire key={index} className="h-32 rounded-xl" />)}</div>
+  </div>;
 }
 
 function FaqWire() {
@@ -269,10 +295,12 @@ function GenericWire({ label }: { label?: string }) {
   );
 }
 
-export function Loader({ label, variant }: { label?: string; variant?: 'dashboard' | 'table' | 'cards' | 'packs' | 'faq' | 'detail' | 'form' | 'shop' | 'generic' }) {
+export function Loader({ label, variant }: { label?: string; variant?: 'home' | 'static' | 'dashboard' | 'table' | 'cards' | 'packs' | 'faq' | 'detail' | 'form' | 'shop' | 'generic' }) {
   const { pathname } = useLocation();
   const inferred = variant
-    || (pathname === '/' || pathname.includes('/shop') || pathname.includes('/wishlist') || pathname === '/pre-book' || pathname === '/newly-added-vip-numbers' || pathname === '/premium-numbers' ? 'shop'
+    || (pathname === '/' ? 'home'
+      : ['/about', '/contact', '/how-it-works', '/numerology'].includes(pathname) ? 'static'
+      : pathname.includes('/shop') || pathname.includes('/wishlist') || pathname === '/pre-book' || pathname === '/newly-added-vip-numbers' || pathname === '/premium-numbers' ? 'shop'
       : pathname.includes('/number/') || pathname.includes('/orders/') || pathname === '/cart' || pathname === '/compare' ? 'detail'
         : pathname === '/family-pack' ? 'packs'
             : pathname === '/faq' ? 'faq'
@@ -284,6 +312,8 @@ export function Loader({ label, variant }: { label?: string; variant?: 'dashboar
 
   return (
     <div className="animate-rise-in py-2" aria-busy="true" aria-live="polite" aria-label={label || 'Loading content'}>
+      {inferred === 'home' && <HomeWire />}
+      {inferred === 'static' && <StaticPageWire />}
       {inferred === 'dashboard' && <DashboardWire />}
       {inferred === 'table' && <TableWire />}
       {inferred === 'cards' && <CardGridWire count={10} wide />}
@@ -297,12 +327,12 @@ export function Loader({ label, variant }: { label?: string; variant?: 'dashboar
   );
 }
 
-export function EmptyState({ title, subtitle, action }: { title: string; subtitle?: string; action?: ReactNode }) {
+export function EmptyState({ title, subtitle, description, action }: { title: string; subtitle?: string; description?: string; action?: ReactNode }) {
   return (
-    <div className="vnw-card flex flex-col items-center gap-2 py-16 text-center">
+    <div className="vnw-card flex flex-col items-center gap-2 px-4 py-8 text-center sm:py-10">
       <p className="text-lg font-black text-foreground">{title}</p>
-      {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
-      {action && <div className="mt-3">{action}</div>}
+      {(subtitle || description) && <p className="text-sm text-muted-foreground">{subtitle || description}</p>}
+      {action && <div className="mt-2">{action}</div>}
     </div>
   );
 }
@@ -336,8 +366,29 @@ function labelTableCells(node: ReactNode, head: string[]): ReactNode {
   });
 }
 
-export function Table({ head, children }: { head: string[]; children: ReactNode }) {
-  const labeledChildren = labelTableCells(children, head);
+export type TablePagination = { page: number; pageSize: number; total: number; onPageChange: (page: number) => void; onPageSizeChange: (size: number) => void };
+
+function TablePager({ page, pageSize, total, onPageChange, onPageSizeChange }: TablePagination) {
+  const pages = Math.max(1, Math.ceil(total / pageSize));
+  return <div className="table-pager" role="navigation" aria-label="Table pagination">
+    <span>{total ? `${(page - 1) * pageSize + 1}–${Math.min(page * pageSize, total)} of ${total}` : '0 results'}</span>
+    <label>Rows <ThemedSelect aria-label="Rows per page" value={String(pageSize)} onChange={(event) => onPageSizeChange(Number(event.target.value))} className="table-pager__size">{Array.from(new Set([10, 25, 50, 100, 500, 1000, pageSize])).sort((a, b) => a - b).map((size) => <option key={size} value={size}>{size}</option>)}</ThemedSelect></label>
+    <button type="button" aria-label="Previous page" disabled={page <= 1} onClick={() => onPageChange(page - 1)}>‹</button>
+    <span>Page {page} of {pages}</span>
+    <button type="button" aria-label="Next page" disabled={page >= pages} onClick={() => onPageChange(page + 1)}>›</button>
+  </div>;
+}
+
+export function Table({ head, children, pagination }: { head: string[]; children: ReactNode; pagination?: TablePagination }) {
+  const [localPage, setLocalPage] = useState(1);
+  const [localPageSize, setLocalPageSize] = useState(25);
+  const rows = Children.toArray(children);
+  const page = pagination?.page ?? localPage;
+  const pageSize = pagination?.pageSize ?? localPageSize;
+  const total = pagination?.total ?? rows.length;
+  const visibleRows = pagination ? children : rows.slice((localPage - 1) * localPageSize, localPage * localPageSize);
+  const labeledChildren = labelTableCells(visibleRows, head);
+  useEffect(() => { if (!pagination && localPage > Math.max(1, Math.ceil(rows.length / localPageSize))) setLocalPage(1); }, [localPage, localPageSize, pagination, rows.length]);
   return (
     <div className="vnw-card overflow-hidden p-0">
       <table className="admin-responsive-table w-full text-sm">
@@ -348,6 +399,7 @@ export function Table({ head, children }: { head: string[]; children: ReactNode 
         </thead>
         <tbody className="[&_tr]:border-border [&_td]:align-middle">{labeledChildren}</tbody>
       </table>
+      {(pagination || total > localPageSize) && <TablePager page={page} pageSize={pageSize} total={total} onPageChange={pagination?.onPageChange ?? setLocalPage} onPageSizeChange={pagination?.onPageSizeChange ?? ((size) => { setLocalPageSize(size); setLocalPage(1); })} />}
     </div>
   );
 }
