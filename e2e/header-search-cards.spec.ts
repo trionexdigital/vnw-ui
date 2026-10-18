@@ -63,12 +63,12 @@ test('mobile homepage places live search above the hero, outside the menu', asyn
   await page.getByRole('button', { name: 'Open navigation menu' }).click();
   const drawer = page.locator('.public-header__drawer');
   await expect(drawer.getByRole('link', { name: 'Sign In' })).toBeVisible();
-  await expect(drawer.getByRole('link', { name: 'Sign Up' })).toBeVisible();
+  await expect(drawer.getByRole('link', { name: 'Register' })).toBeVisible();
   await expect(drawer.getByText('Menu', { exact: true })).toHaveCount(0);
   await expect(drawer.getByRole('link', { name: 'Compare Numbers' })).toBeVisible();
-  const signup = await drawer.getByRole('link', { name: 'Sign Up' }).boundingBox();
+  const signup = await drawer.getByRole('link', { name: 'Register' }).boundingBox();
   await expect(drawer.getByRole('radiogroup', { name: 'Color theme' })).toHaveCount(0);
-  await expect(page.locator('.public-header__panel').getByRole('radiogroup', { name: 'Color theme' })).toBeVisible();
+  await expect(page.locator('.public-header__panel').getByRole('radiogroup', { name: 'Color theme' })).toHaveCount(0);
   expect(signup!.width).toBeGreaterThanOrEqual(96);
   const signin = await drawer.getByRole('link', { name: 'Sign In' }).boundingBox();
   expect(signin!.width).toBeGreaterThanOrEqual(96);
@@ -96,20 +96,20 @@ test('navigation and search fit mobile through wide desktop headers', async ({ p
       await expect(page.locator('.public-header__panel').getByRole('textbox', { name: 'Search all VIP numbers' })).toBeHidden();
       await page.getByRole('button', { name: 'Open navigation menu' }).click();
       await expect(page.locator('.public-header__drawer').getByRole('link', { name: 'Sign In' })).toBeVisible();
-      await expect(page.locator('.public-header__drawer').getByRole('link', { name: 'Sign Up' })).toBeVisible();
+      await expect(page.locator('.public-header__drawer').getByRole('link', { name: 'Register' })).toBeVisible();
       await expect(page.locator('.public-header__drawer').getByRole('link', { name: 'Compare Numbers' })).toBeVisible();
       const drawer = page.locator('.public-header__drawer');
-      const authActions = await drawer.getByRole('link', { name: 'Sign Up' }).boundingBox();
+      const authActions = await drawer.getByRole('link', { name: 'Register' }).boundingBox();
       await expect(drawer.getByRole('radiogroup', { name: 'Color theme' })).toHaveCount(0);
-      await expect(page.locator('.public-header__panel').getByRole('radiogroup', { name: 'Color theme' })).toBeVisible();
+      await expect(page.locator('.public-header__panel').getByRole('radiogroup', { name: 'Color theme' })).toHaveCount(0);
       expect(authActions!.width).toBeGreaterThanOrEqual(96);
       const drawerWidth = await drawer.evaluate((element) => element.scrollWidth - element.clientWidth);
       expect(drawerWidth).toBeLessThanOrEqual(1);
       if (width === 320 || width === 375) await drawer.screenshot({ path: testInfo.outputPath(`mobile-menu-${width}.png`) });
       await expect(page.locator('.public-header__drawer').getByRole('textbox', { name: 'Search all VIP numbers' })).toHaveCount(0);
-      await expect(page.locator('.public-home-mobile-search').getByRole('textbox', { name: 'Search all VIP numbers' })).toBeVisible();
-      await expect(page.getByRole('link', { name: 'Pre-book VIP Numbers' })).toBeVisible();
+      await expect(drawer.getByRole('link', { name: 'Pre-book VIP Numbers' })).toBeVisible();
       await page.getByRole('button', { name: 'Close navigation menu' }).click();
+      await expect(page.locator('.public-home-mobile-search').getByRole('textbox', { name: 'Search all VIP numbers' })).toBeVisible();
     } else {
       await expect(page.locator('.public-header__panel').getByRole('link', { name: 'Sign In' })).toBeVisible();
       await expect(page.locator('.public-header__panel').getByRole('link', { name: 'Register' })).toBeVisible();
@@ -121,9 +121,12 @@ test('navigation and search fit mobile through wide desktop headers', async ({ p
       expect(bounds!.x).toBeGreaterThanOrEqual(0);
       expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width);
       expect(bounds!.width).toBeLessThanOrEqual(320);
-      const contact = await page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name: 'Contact' }).boundingBox();
+      const navigation = page.locator('[data-primary-navigation]');
+      await expect(navigation.locator('a')).toHaveCount(4);
+      await expect(navigation.locator('a[href="/about"]')).toHaveCount(0);
+      const lastPrimaryLink = await navigation.getByRole('link', { name: 'Numerology' }).boundingBox();
       const search = await page.locator('.public-header__panel .header-number-search').boundingBox();
-      expect(contact!.x + contact!.width).toBeLessThanOrEqual(search!.x);
+      expect(lastPrimaryLink!.x + lastPrimaryLink!.width).toBeLessThanOrEqual(search!.x);
     }
     const headerWidth = await page.locator('.public-header__panel').evaluate((element) => element.scrollWidth - element.clientWidth);
     expect(headerWidth).toBeLessThanOrEqual(1);

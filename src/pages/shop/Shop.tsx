@@ -1,4 +1,6 @@
 import { ThemedSelect } from '@/shared/ui/themed-select';
+import { contentQueryKey } from '@/shared/language/searchParams';
+import { useLanguage } from '@/shared/language/LanguageContext';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import {
@@ -52,6 +54,7 @@ const SORT_OPTIONS = [
 ];
 
 export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {}) {
+  const { t } = useLanguage();
   const [params, setParams] = useSearchParams();
   const [categories, setCategories] = useState<NumberCategory[]>([]);
   const [items, setItems] = useState<NumberItem[]>([]);
@@ -67,7 +70,7 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
   const filterButtonRef = useRef<HTMLButtonElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const filterDialogRef = useRef<HTMLDivElement>(null);
-  const paramsKey = params.toString();
+  const paramsKey = contentQueryKey(params);
 
   const category = params.get('category') || '';
   const subcategoryId = params.get('subcategory_id') || '';
@@ -88,7 +91,7 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
     setParams(next);
   };
 
-  const resetAll = () => setParams(new URLSearchParams());
+  const resetAll = () => setParams(params.get('lang') ? new URLSearchParams({lang:params.get('lang')!}) : new URLSearchParams());
 
   useEffect(() => {
     categoriesAPI.list().then(setCategories).catch(() => setCategories([]));
@@ -169,14 +172,14 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
     const categoryItem = categories.find((item) => item.slug === category);
     if (category) filters.push({
       id: 'category',
-      label: `Category: ${categoryItem?.name || category}`,
+      label: t('Category: {category}', {category:t(categoryItem?.name || category)}),
       keys: ['category', 'subcategory_id'],
     });
     if (subcategoryId) {
       const subcategory = categoryItem?.subcategories?.find((item) => String(item.id) === subcategoryId);
-      filters.push({ id: 'subcategory_id', label: `Subcategory: ${subcategory?.name || subcategoryId}`, keys: ['subcategory_id'] });
+      filters.push({ id: 'subcategory_id', label: t('Subcategory: {subcategory}', {subcategory:t(subcategory?.name || subcategoryId)}), keys: ['subcategory_id'] });
     }
-    if (ai) filters.push({ id: 'ai', label: `AI: ${ai}`, keys: ['ai', 'mode'] });
+    if (ai) filters.push({ id: 'ai', label: t('AI: {query}', {query:ai}), keys: ['ai', 'mode'] });
     const q = params.get('q');
     if (q) {
       const scopeLabel = params.get('global_scope') === 'starts_with'
@@ -184,11 +187,11 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
         : params.get('global_scope') === 'ends_with'
           ? 'Ends with'
           : 'Contains';
-      filters.push({ id: 'q', label: `${scopeLabel}: ${q}`, keys: ['q', 'global_scope', 'mode'] });
+      filters.push({ id: 'q', label: t('{label}: {value}', {label:t(scopeLabel),value:q}), keys: ['q', 'global_scope', 'mode'] });
     }
     if (priceMin || priceMax) filters.push({
       id: 'price',
-      label: selectedPrice?.label || `${priceMin ? `From ${formatPrice(priceMin)}` : 'Any minimum'} · ${priceMax ? `to ${formatPrice(priceMax)}` : 'Any maximum'}`,
+      label: selectedPrice ? t(selectedPrice.label) : `${priceMin ? t('From {price}',{price:formatPrice(priceMin)}) : t('Any minimum')} · ${priceMax ? t('to {price}',{price:formatPrice(priceMax)}) : t('Any maximum')}`,
       keys: ['price_min', 'price_max'],
     });
     const patternLabels = new Map(PATTERN_PRESETS.map((preset) => [preset.value, preset.label]));
@@ -205,32 +208,32 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
     ];
     direct.forEach(({ key, label }) => {
       const value = params.get(key);
-      if (value) filters.push({ id: key, label: `${label}: ${value}`, keys: [key] });
+      if (value) filters.push({ id: key, label: t('{label}: {value}',{label:t(label),value}), keys: [key] });
     });
     ['starts_with_pattern', 'ends_with_pattern'].forEach((key) => {
       const value = params.get(key);
       if (value) filters.push({
         id: key,
-        label: `${key.startsWith('starts') ? 'Starts' : 'Ends'}: ${patternLabels.get(value as any) || value}`,
+        label: t('{label}: {value}',{label:t(key.startsWith('starts') ? 'Starts' : 'Ends'),value:t(patternLabels.get(value as any) || value)}),
         keys: [key],
       });
     });
     const frequency = params.get('frequencies');
     if (frequency) filters.push({ id: 'frequencies', label: 'Digit frequency', keys: ['frequencies'] });
     const numerology = params.get('numerology');
-    if (numerology) filters.push({ id: 'numerology', label: `Numerology: ${numerology}`, keys: ['numerology'] });
+    if (numerology) filters.push({ id: 'numerology', label: t('{label}: {value}',{label:t('Numerology'),value:numerology}), keys: ['numerology'] });
     const badge = params.get('badge');
     if (badge) filters.push({
       id: 'badge',
-      label: `Badge: ${badgeOptions.find((item) => item.value === badge)?.label || badge}`,
+      label: t('{label}: {value}',{label:t('Badge'),value:t(badgeOptions.find((item) => item.value === badge)?.label || badge)}),
       keys: ['badge'],
     });
     const operator = params.get('operator');
-    if (operator) filters.push({ id: 'operator', label: `Operator: ${operator}`, keys: ['operator'] });
+    if (operator) filters.push({ id: 'operator', label: t('{label}: {value}',{label:t('Operator'),value:operator}), keys: ['operator'] });
     const readiness = params.get('rtp_status');
     if (readiness) filters.push({ id: 'rtp_status', label: readiness === 'RTA' ? 'Ready to activate' : readiness === 'RTP' ? 'Ready to port' : 'Pre-book', keys: ['rtp_status'] });
     return filters;
-  }, [paramsKey, categories, category, subcategoryId, ai, priceMin, priceMax, selectedPrice?.label]);
+  }, [paramsKey, categories, category, subcategoryId, ai, priceMin, priceMax, selectedPrice?.label, t]);
 
   const removeChip = (keys: string[]) => {
     const next = new URLSearchParams(params);

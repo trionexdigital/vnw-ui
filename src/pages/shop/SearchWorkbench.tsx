@@ -1,4 +1,5 @@
 import { ThemedSelect } from '@/shared/ui/themed-select';
+import { contentQueryKey } from '@/shared/language/searchParams';
 import { FormEvent, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
@@ -167,7 +168,7 @@ export default function SearchWorkbench({
   const advancedFirstInputRef = useRef<HTMLInputElement>(null);
   const advancedTriggerRef = useRef<HTMLButtonElement>(null);
   const modeBeforeAdvanced = useRef<SearchMode>(initialState.mode);
-  const paramsKey = params.toString();
+  const paramsKey = contentQueryKey(params);
 
   useEffect(() => {
     if (!isShop) return;

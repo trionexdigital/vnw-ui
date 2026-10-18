@@ -1,0 +1,794 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - generic:
+          - generic:
+            - generic: "93"
+            - generic: "39"
+          - generic:
+            - generic: "78"
+            - generic: "87"
+          - generic:
+            - generic: "7"
+            - generic: "7"
+        - link "VIP Number World" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e7] [cursor=pointer]:
+            - img "VIP Number World" [ref=e8] [cursor=pointer]
+            - img "VIP Number World - Premium Numbers. Premium Identity." [ref=e9] [cursor=pointer]
+        - navigation "Primary navigation" [ref=e10]:
+          - link "Home" [ref=e11] [cursor=pointer]:
+            - /url: /
+          - link "Family Pack" [ref=e12] [cursor=pointer]:
+            - /url: /family-pack
+          - link "Corporate Pack" [ref=e13] [cursor=pointer]:
+            - /url: /corporate-numbers
+          - link "Numerology" [ref=e14] [cursor=pointer]:
+            - /url: /numerology
+          - button "More" [ref=e15] [cursor=pointer]:
+            - generic [ref=e16] [cursor=pointer]: More
+            - img [ref=e17] [cursor=pointer]
+        - search [ref=e21]:
+          - textbox "Search all VIP numbers" [ref=e22]: "9876"
+          - button "Clear search" [ref=e23] [cursor=pointer]: Clear
+          - button "View search results" [ref=e24] [cursor=pointer]: Search
+        - generic [ref=e25]:
+          - button "Choose language" [ref=e27] [cursor=pointer]:
+            - img [ref=e28] [cursor=pointer]
+          - link "Compare numbers" [ref=e32] [cursor=pointer]:
+            - /url: /compare
+            - img [ref=e33] [cursor=pointer]
+          - button "Account" [ref=e41] [cursor=pointer]:
+            - img [ref=e42] [cursor=pointer]
+    - main [ref=e46]:
+      - generic [ref=e50]:
+        - region "Your Number. Your Identity." [ref=e51]:
+          - generic:
+            - generic:
+              - generic: "93"
+              - generic: "39"
+            - generic:
+              - generic: "11"
+              - generic: "22"
+            - generic:
+              - generic: "78"
+              - generic: "87"
+            - generic:
+              - generic: "55"
+              - generic: "99"
+            - generic:
+              - generic: "7"
+              - generic: "77"
+            - generic:
+              - generic: "108"
+              - generic: "801"
+            - generic:
+              - generic: "99"
+              - generic: "66"
+            - generic:
+              - generic: "131"
+              - generic: "313"
+            - generic:
+              - generic: "786"
+              - generic: "687"
+            - generic:
+              - generic: "0001"
+              - generic: "1000"
+            - generic:
+              - generic: "909"
+              - generic: "909"
+            - generic:
+              - generic: "911"
+              - generic: "1911"
+            - generic:
+              - generic: "24"
+              - generic: "42"
+            - generic:
+              - generic: "121"
+              - generic: "121"
+            - generic:
+              - generic: "999"
+              - generic: "999"
+          - generic:
+            - generic:
+              - generic: "93"
+              - generic: "39"
+            - generic:
+              - generic: "11"
+              - generic: "22"
+            - generic:
+              - generic: "78"
+              - generic: "87"
+            - generic:
+              - generic: "55"
+              - generic: "99"
+            - generic:
+              - generic: "7"
+              - generic: "77"
+            - generic:
+              - generic: "108"
+              - generic: "801"
+            - generic:
+              - generic: "99"
+              - generic: "66"
+            - generic:
+              - generic: "131"
+              - generic: "313"
+            - generic:
+              - generic: "786"
+              - generic: "687"
+            - generic:
+              - generic: "0001"
+              - generic: "1000"
+            - generic:
+              - generic: "909"
+              - generic: "909"
+            - generic:
+              - generic: "911"
+              - generic: "1911"
+            - generic:
+              - generic: "24"
+              - generic: "42"
+            - generic:
+              - generic: "121"
+              - generic: "121"
+            - generic:
+              - generic: "999"
+              - generic: "999"
+          - generic [ref=e53]:
+            - region "Lucky Pick of the Day VIP numbers" [ref=e55]:
+              - generic [ref=e56]:
+                - paragraph [ref=e57]: India's Premium VIP Number Marketplace
+                - heading "Your Number. Your Identity." [level=1] [ref=e60]: Your Number. Your Identity.
+              - status [ref=e68]:
+                - img [ref=e69]
+                - strong [ref=e71]: Discover your signature pattern
+                - generic [ref=e72]: Start with a collection that feels like you.
+                - link "Explore Numbers" [ref=e73] [cursor=pointer]:
+                  - /url: /shop
+                  - text: Explore Numbers
+                  - img [ref=e74] [cursor=pointer]
+                - generic "Popular patterns" [ref=e76]:
+                  - link "Mirror" [ref=e77] [cursor=pointer]:
+                    - /url: /shop?category=customer-care-numbers
+                  - link "Penta" [ref=e78] [cursor=pointer]:
+                    - /url: /shop?category=penta-vip-mobile-no
+                  - link "786" [ref=e79] [cursor=pointer]:
+                    - /url: /shop?category=786-vip-mobile-numbers
+            - generic [ref=e86]:
+              - link "Browse Mirror numbers" [ref=e88] [cursor=pointer]:
+                - /url: /shop?category=customer-care-numbers
+                - generic [ref=e89] [cursor=pointer]:
+                  - img [ref=e90] [cursor=pointer]
+                  - text: Mirror
+              - link "Browse Tripling numbers" [ref=e93] [cursor=pointer]:
+                - /url: /shop?category=unforgettable-vip-number
+                - generic [ref=e94] [cursor=pointer]:
+                  - img [ref=e95] [cursor=pointer]
+                  - text: Tripling
+              - link "Browse Numerology numbers" [ref=e98] [cursor=pointer]:
+                - /url: /shop?category=numerology-numbers
+                - generic [ref=e99] [cursor=pointer]:
+                  - img [ref=e100] [cursor=pointer]
+                  - text: Numerology
+              - link "Browse AB AB numbers" [ref=e103] [cursor=pointer]:
+                - /url: /shop?category=vip-number-india
+                - generic [ref=e104] [cursor=pointer]:
+                  - img [ref=e105] [cursor=pointer]
+                  - text: AB AB
+              - link "Browse Doubling numbers" [ref=e108] [cursor=pointer]:
+                - /url: /shop?category=doublling-aabbcc
+                - generic [ref=e109] [cursor=pointer]:
+                  - img [ref=e110] [cursor=pointer]
+                  - text: Doubling
+              - link "Browse 786 numbers" [ref=e113] [cursor=pointer]:
+                - /url: /shop?category=786-vip-mobile-numbers
+                - generic [ref=e114] [cursor=pointer]:
+                  - img [ref=e115] [cursor=pointer]
+                  - text: "786"
+              - link "Browse Counting numbers" [ref=e118] [cursor=pointer]:
+                - /url: /shop?category=ascending-descending-fancy-number
+                - generic [ref=e119] [cursor=pointer]:
+                  - img [ref=e120] [cursor=pointer]
+                  - text: Counting
+              - link "Browse Fancy numbers" [ref=e123] [cursor=pointer]:
+                - /url: /shop?category=golden-mobile-number
+                - generic [ref=e124] [cursor=pointer]:
+                  - img [ref=e125] [cursor=pointer]
+                  - text: Fancy
+        - region "Find your signature VIP number" [ref=e132]:
+          - generic [ref=e134]:
+            - generic [ref=e135]:
+              - generic [ref=e137]:
+                - img [ref=e139]
+                - heading "Find your signature VIP number" [level=2] [ref=e142]
+              - tablist "VIP number search modes" [ref=e143]:
+                - tab "AI Search" [selected] [ref=e144] [cursor=pointer]:
+                  - img [ref=e145] [cursor=pointer]
+                  - text: AI Search
+                - tab "Global Search" [ref=e157] [cursor=pointer]:
+                  - img [ref=e158] [cursor=pointer]
+                  - text: Global Search
+                - tab "Search by Price" [ref=e161] [cursor=pointer]:
+                  - img [ref=e162] [cursor=pointer]
+                  - text: Search by Price
+                - tab "Advanced Search" [ref=e165] [cursor=pointer]:
+                  - img [ref=e166] [cursor=pointer]
+                  - text: Advanced Search
+              - text: 786 / 999 / 7
+            - tabpanel "AI Search" [ref=e170]:
+              - generic [ref=e171]:
+                - generic [ref=e172]:
+                  - generic [ref=e173]:
+                    - generic [ref=e174]: Describe the number you want
+                    - textbox "Describe the number you want" [ref=e175]
+                  - button "Ask AI" [ref=e176] [cursor=pointer]:
+                    - img [ref=e177] [cursor=pointer]
+                    - text: Ask AI
+                - generic [ref=e189]:
+                  - generic [ref=e190]: "Try:"
+                  - button "786 at the end under ₹30,000" [ref=e191] [cursor=pointer]
+                  - button "mirror with root sum 9" [ref=e192] [cursor=pointer]
+        - generic [ref=e195]:
+          - generic [ref=e196]:
+            - img [ref=e197]
+            - text: Clear prices
+          - generic [ref=e200]:
+            - img [ref=e201]
+            - text: Search live public stock
+          - generic [ref=e204]:
+            - img [ref=e205]
+            - text: Save and compare favourites
+          - generic [ref=e207]:
+            - img [ref=e208]
+            - text: Help when you need it
+        - navigation "Popular number patterns" [ref=e213]:
+          - generic [ref=e214]:
+            - strong [ref=e215]: Explore popular patterns
+            - generic [ref=e216]:
+              - link "Mirror" [ref=e217] [cursor=pointer]:
+                - /url: /shop?category=customer-care-numbers
+                - text: Mirror
+                - img [ref=e218] [cursor=pointer]
+              - link "2-digit" [ref=e220] [cursor=pointer]:
+                - /url: /shop?category=2-digit-mobile-numbers
+                - text: 2-digit
+                - img [ref=e221] [cursor=pointer]
+              - link "Penta" [ref=e223] [cursor=pointer]:
+                - /url: /shop?category=penta-vip-mobile-no
+                - text: Penta
+                - img [ref=e224] [cursor=pointer]
+              - link "ABCD" [ref=e226] [cursor=pointer]:
+                - /url: /shop?category=abcd-abcd-fancy-number
+                - text: ABCD
+                - img [ref=e227] [cursor=pointer]
+              - link "786" [ref=e229] [cursor=pointer]:
+                - /url: /shop?category=786-vip-mobile-numbers
+                - text: "786"
+                - img [ref=e230] [cursor=pointer]
+              - link "0000" [ref=e232] [cursor=pointer]:
+                - /url: /shop?category=vip-number-000
+                - text: "0000"
+                - img [ref=e233] [cursor=pointer]
+            - link "All categories" [ref=e235] [cursor=pointer]:
+              - /url: /categories
+              - text: All categories
+              - img [ref=e236] [cursor=pointer]
+        - region "What matters most to you?" [ref=e238]:
+          - generic [ref=e239]:
+            - heading "What matters most to you?" [level=2] [ref=e241]
+            - generic [ref=e242]:
+              - link "RTA Ready to activate Explore numbers prepared for the activation process." [ref=e243] [cursor=pointer]:
+                - /url: /shop?rtp_status=RTA
+                - img [ref=e245] [cursor=pointer]
+                - generic [ref=e247] [cursor=pointer]: RTA
+                - strong [ref=e248] [cursor=pointer]: Ready to activate
+                - generic [ref=e249] [cursor=pointer]: Explore numbers prepared for the activation process.
+                - img [ref=e250] [cursor=pointer]
+              - link "RTP Ready to port Begin the porting journey for an eligible number." [ref=e252] [cursor=pointer]:
+                - /url: /shop?rtp_status=RTP
+                - img [ref=e254] [cursor=pointer]
+                - generic [ref=e257] [cursor=pointer]: RTP
+                - strong [ref=e258] [cursor=pointer]: Ready to port
+                - generic [ref=e259] [cursor=pointer]: Begin the porting journey for an eligible number.
+                - img [ref=e260] [cursor=pointer]
+              - link "NON-RTP Pre-book a number See upcoming numbers and their ready-to-port dates." [ref=e262] [cursor=pointer]:
+                - /url: /pre-book
+                - img [ref=e264] [cursor=pointer]
+                - generic [ref=e267] [cursor=pointer]: NON-RTP
+                - strong [ref=e268] [cursor=pointer]: Pre-book a number
+                - generic [ref=e269] [cursor=pointer]: See upcoming numbers and their ready-to-port dates.
+                - img [ref=e270] [cursor=pointer]
+              - link "PACKS Match a whole group Coordinate numbers for a family or business." [ref=e272] [cursor=pointer]:
+                - /url: /family-pack
+                - img [ref=e274] [cursor=pointer]
+                - generic [ref=e279] [cursor=pointer]: PACKS
+                - strong [ref=e280] [cursor=pointer]: Match a whole group
+                - generic [ref=e281] [cursor=pointer]: Coordinate numbers for a family or business.
+                - img [ref=e282] [cursor=pointer]
+        - region "Premium numbers" [ref=e284]:
+          - generic [ref=e286]:
+            - generic [ref=e287]:
+              - heading "Premium numbers" [level=2] [ref=e288]
+              - generic [ref=e289]:
+                - generic [ref=e290]: 0 shown
+                - button "Scroll Premium numbers numbers left" [ref=e291] [cursor=pointer]:
+                  - img [ref=e292] [cursor=pointer]
+                - button "Scroll Premium numbers numbers right" [ref=e294] [cursor=pointer]:
+                  - img [ref=e295] [cursor=pointer]
+                - link "View all" [ref=e297] [cursor=pointer]:
+                  - /url: /premium-numbers
+                  - text: View all
+                  - img [ref=e298] [cursor=pointer]
+            - generic [ref=e300]: No public numbers are available in this selection right now. Try another pattern or view the full shop.
+        - region "Mirror & symmetry" [ref=e301]:
+          - generic [ref=e303]:
+            - generic [ref=e304]:
+              - heading "Mirror & symmetry" [level=2] [ref=e305]
+              - group "Explore Mirror & symmetry" [ref=e307]:
+                - button "Mirror" [pressed] [ref=e308] [cursor=pointer]:
+                  - strong [ref=e309] [cursor=pointer]: Mirror
+                - button "Semi Mirror" [ref=e310] [cursor=pointer]:
+                  - strong [ref=e311] [cursor=pointer]: Semi Mirror
+                - button "10-digit symmetry" [ref=e312] [cursor=pointer]:
+                  - strong [ref=e313] [cursor=pointer]: 10-digit symmetry
+                - button "Semi Mirror with 00" [ref=e314] [cursor=pointer]:
+                  - strong [ref=e315] [cursor=pointer]: Semi Mirror with 00
+              - generic [ref=e316]:
+                - generic [ref=e317]: 0 shown
+                - button "Scroll Mirror & symmetry numbers left" [ref=e318] [cursor=pointer]:
+                  - img [ref=e319] [cursor=pointer]
+                - button "Scroll Mirror & symmetry numbers right" [ref=e321] [cursor=pointer]:
+                  - img [ref=e322] [cursor=pointer]
+                - link "View all" [ref=e324] [cursor=pointer]:
+                  - /url: /shop?category=customer-care-numbers
+                  - text: View all
+                  - img [ref=e325] [cursor=pointer]
+            - generic [ref=e327]: No public numbers are available in this selection right now. Try another pattern or view the full shop.
+        - region "The repeat collection" [ref=e328]:
+          - generic [ref=e330]:
+            - generic [ref=e331]:
+              - heading "The repeat collection" [level=2] [ref=e332]
+              - group "Explore The repeat collection" [ref=e334]:
+                - button "Tetra · 4" [pressed] [ref=e335] [cursor=pointer]:
+                  - strong [ref=e336] [cursor=pointer]: Tetra · 4
+                - button "Penta · 5" [ref=e337] [cursor=pointer]:
+                  - strong [ref=e338] [cursor=pointer]: Penta · 5
+                - button "Hexa · 6" [ref=e339] [cursor=pointer]:
+                  - strong [ref=e340] [cursor=pointer]: Hexa · 6
+                - button "Septa / Octa" [ref=e341] [cursor=pointer]:
+                  - strong [ref=e342] [cursor=pointer]: Septa / Octa
+              - generic [ref=e343]:
+                - generic [ref=e344]: 0 shown
+                - button "Scroll The repeat collection numbers left" [ref=e345] [cursor=pointer]:
+                  - img [ref=e346] [cursor=pointer]
+                - button "Scroll The repeat collection numbers right" [ref=e348] [cursor=pointer]:
+                  - img [ref=e349] [cursor=pointer]
+                - link "View all" [ref=e351] [cursor=pointer]:
+                  - /url: /shop?category=choice-mobile-number
+                  - text: View all
+                  - img [ref=e352] [cursor=pointer]
+            - generic [ref=e354]: No public numbers are available in this selection right now. Try another pattern or view the full shop.
+        - region "Family packs" [ref=e355]:
+          - generic [ref=e357]:
+            - generic [ref=e358]:
+              - heading "Family packs" [level=2] [ref=e359]
+              - generic [ref=e361]:
+                - group "Family pack matching style" [ref=e362]:
+                  - button "All Mixed" [pressed] [ref=e363] [cursor=pointer]
+                  - button "In Series" [ref=e364] [cursor=pointer]
+                  - button "Similar Start" [ref=e365] [cursor=pointer]
+                  - button "Similar End" [ref=e366] [cursor=pointer]
+                  - button "Both Ends" [ref=e367] [cursor=pointer]
+                - generic [ref=e368]:
+                  - text: Pack of
+                  - combobox "Pack of" [ref=e369] [cursor=pointer]:
+                    - generic: "2"
+                    - img [ref=e370] [cursor=pointer]
+              - generic [ref=e372]:
+                - generic [ref=e373]: 0 shown
+                - button "Scroll Family and business packs left" [ref=e374] [cursor=pointer]:
+                  - img [ref=e375] [cursor=pointer]
+                - button "Scroll Family and business packs right" [ref=e377] [cursor=pointer]:
+                  - img [ref=e378] [cursor=pointer]
+                - link "View all packs" [ref=e380] [cursor=pointer]:
+                  - /url: /family-pack
+                  - text: View all packs
+                  - img [ref=e381] [cursor=pointer]
+            - generic [ref=e383]: No public numbers are available in this selection right now. Try another pattern or view the full shop.
+        - region "Corporate Numbers" [ref=e384]:
+          - generic [ref=e385]:
+            - generic [ref=e386]:
+              - heading "Corporate Numbers" [level=2] [ref=e387]
+              - link "View all" [ref=e388] [cursor=pointer]:
+                - /url: /corporate-numbers
+                - text: View all
+                - img [ref=e389] [cursor=pointer]
+            - generic [ref=e391]:
+              - generic [ref=e392]:
+                - text: Matching style
+                - combobox "Corporate matching style" [ref=e393] [cursor=pointer]:
+                  - generic: Numbers in Series
+                  - img [ref=e394] [cursor=pointer]
+              - generic [ref=e396]:
+                - text: Pack of
+                - combobox "Corporate pack size" [ref=e397] [cursor=pointer]:
+                  - generic: 10 numbers
+                  - img [ref=e398] [cursor=pointer]
+              - generic [ref=e400]:
+                - text: Category
+                - combobox "Corporate category" [ref=e401] [cursor=pointer]:
+                  - generic: All categories
+                  - img [ref=e402] [cursor=pointer]
+            - generic [ref=e404]:
+              - img [ref=e405]
+              - heading "No complete matching packs available" [level=3] [ref=e409]
+              - paragraph [ref=e410]: Try a smaller pack, another category, or a different matching style.
+              - link "Request a corporate pack" [ref=e411] [cursor=pointer]:
+                - /url: /contact?subject=corporate-numbers
+                - text: Request a corporate pack
+                - img [ref=e412] [cursor=pointer]
+        - region "Two-digit & minimal" [ref=e414]:
+          - generic [ref=e416]:
+            - generic [ref=e417]:
+              - heading "Two-digit & minimal" [level=2] [ref=e418]
+              - group "Explore Two-digit & minimal" [ref=e420]:
+                - button "2-digit numbers" [pressed] [ref=e421] [cursor=pointer]:
+                  - strong [ref=e422] [cursor=pointer]: 2-digit numbers
+                - button "3-digit numbers" [ref=e423] [cursor=pointer]:
+                  - strong [ref=e424] [cursor=pointer]: 3-digit numbers
+                - button "3 digits with 0" [ref=e425] [cursor=pointer]:
+                  - strong [ref=e426] [cursor=pointer]: 3 digits with 0
+              - generic [ref=e427]:
+                - generic [ref=e428]: 0 shown
+                - button "Scroll Two-digit & minimal numbers left" [ref=e429] [cursor=pointer]:
+                  - img [ref=e430] [cursor=pointer]
+                - button "Scroll Two-digit & minimal numbers right" [ref=e432] [cursor=pointer]:
+                  - img [ref=e433] [cursor=pointer]
+                - link "View all" [ref=e435] [cursor=pointer]:
+                  - /url: /shop?category=2-digit-mobile-numbers&subcategory_id=49
+                  - text: View all
+                  - img [ref=e436] [cursor=pointer]
+            - generic [ref=e438]: No public numbers are available in this selection right now. Try another pattern or view the full shop.
+        - region "The zero collection" [ref=e439]:
+          - generic [ref=e441]:
+            - generic [ref=e442]:
+              - heading "The zero collection" [level=2] [ref=e443]
+              - group "Explore The zero collection" [ref=e445]:
+                - button "000" [pressed] [ref=e446] [cursor=pointer]:
+                  - strong [ref=e447] [cursor=pointer]: "000"
+                - button "0000 ending" [ref=e448] [cursor=pointer]:
+                  - strong [ref=e449] [cursor=pointer]: 0000 ending
+                - button "00000 ending" [ref=e450] [cursor=pointer]:
+                  - strong [ref=e451] [cursor=pointer]: 00000 ending
+                - button "00x00" [ref=e452] [cursor=pointer]:
+                  - strong [ref=e453] [cursor=pointer]: 00x00
+                - button "00xy00" [ref=e454] [cursor=pointer]:
+                  - strong [ref=e455] [cursor=pointer]: 00xy00
+              - generic [ref=e456]:
+                - generic [ref=e457]: 0 shown
+                - button "Scroll The zero collection numbers left" [ref=e458] [cursor=pointer]:
+                  - img [ref=e459] [cursor=pointer]
+                - button "Scroll The zero collection numbers right" [ref=e461] [cursor=pointer]:
+                  - img [ref=e462] [cursor=pointer]
+                - link "View all" [ref=e464] [cursor=pointer]:
+                  - /url: /shop?category=vip-number-000
+                  - text: View all
+                  - img [ref=e465] [cursor=pointer]
+            - generic [ref=e467]: No public numbers are available in this selection right now. Try another pattern or view the full shop.
+        - region "Sequences worth remembering" [ref=e468]:
+          - generic [ref=e470]:
+            - generic [ref=e471]:
+              - heading "Sequences worth remembering" [level=2] [ref=e472]
+              - group "Explore Sequences worth remembering" [ref=e474]:
+                - button "Doubling" [pressed] [ref=e475] [cursor=pointer]:
+                  - strong [ref=e476] [cursor=pointer]: Doubling
+                - button "Tripling" [ref=e477] [cursor=pointer]:
+                  - strong [ref=e478] [cursor=pointer]: Tripling
+                - button "XYXYXY" [ref=e479] [cursor=pointer]:
+                  - strong [ref=e480] [cursor=pointer]: XYXYXY
+                - button "XYZXYZ" [ref=e481] [cursor=pointer]:
+                  - strong [ref=e482] [cursor=pointer]: XYZXYZ
+                - button "Counting" [ref=e483] [cursor=pointer]:
+                  - strong [ref=e484] [cursor=pointer]: Counting
+              - generic [ref=e485]:
+                - generic [ref=e486]: 0 shown
+                - button "Scroll Sequences worth remembering numbers left" [ref=e487] [cursor=pointer]:
+                  - img [ref=e488] [cursor=pointer]
+                - button "Scroll Sequences worth remembering numbers right" [ref=e490] [cursor=pointer]:
+                  - img [ref=e491] [cursor=pointer]
+                - link "View all" [ref=e493] [cursor=pointer]:
+                  - /url: /shop?category=doublling-aabbcc
+                  - text: View all
+                  - img [ref=e494] [cursor=pointer]
+            - generic [ref=e496]: No public numbers are available in this selection right now. Try another pattern or view the full shop.
+        - region "Business-ready patterns" [ref=e497]:
+          - generic [ref=e499]:
+            - generic [ref=e500]:
+              - heading "Business-ready patterns" [level=2] [ref=e501]
+              - group "Explore Business-ready patterns" [ref=e503]:
+                - button "ABAB · XYXY" [pressed] [ref=e504] [cursor=pointer]:
+                  - strong [ref=e505] [cursor=pointer]: ABAB · XYXY
+                - button "ABCD · ABCD" [ref=e506] [cursor=pointer]:
+                  - strong [ref=e507] [cursor=pointer]: ABCD · ABCD
+                - button "8/9-digit symmetry" [ref=e508] [cursor=pointer]:
+                  - strong [ref=e509] [cursor=pointer]: 8/9-digit symmetry
+              - generic [ref=e510]:
+                - generic [ref=e511]: 0 shown
+                - button "Scroll Business-ready patterns numbers left" [ref=e512] [cursor=pointer]:
+                  - img [ref=e513] [cursor=pointer]
+                - button "Scroll Business-ready patterns numbers right" [ref=e515] [cursor=pointer]:
+                  - img [ref=e516] [cursor=pointer]
+                - link "View all" [ref=e518] [cursor=pointer]:
+                  - /url: /shop?category=vip-number-india
+                  - text: View all
+                  - img [ref=e519] [cursor=pointer]
+            - generic [ref=e521]: No public numbers are available in this selection right now. Try another pattern or view the full shop.
+        - region "A number for every budget" [ref=e522]:
+          - generic [ref=e524]:
+            - generic [ref=e525]:
+              - heading "A number for every budget" [level=2] [ref=e526]
+              - group "Explore A number for every budget" [ref=e528]:
+                - button "Under ₹5,000" [pressed] [ref=e529] [cursor=pointer]:
+                  - strong [ref=e530] [cursor=pointer]: Under ₹5,000
+                - button "₹5,000–₹20,000" [ref=e531] [cursor=pointer]:
+                  - strong [ref=e532] [cursor=pointer]: ₹5,000–₹20,000
+                - button "₹20,000–₹50,000" [ref=e533] [cursor=pointer]:
+                  - strong [ref=e534] [cursor=pointer]: ₹20,000–₹50,000
+                - button "₹50,000+" [ref=e535] [cursor=pointer]:
+                  - strong [ref=e536] [cursor=pointer]: ₹50,000+
+              - generic [ref=e537]:
+                - generic [ref=e538]: 0 shown
+                - button "Scroll A number for every budget numbers left" [ref=e539] [cursor=pointer]:
+                  - img [ref=e540] [cursor=pointer]
+                - button "Scroll A number for every budget numbers right" [ref=e542] [cursor=pointer]:
+                  - img [ref=e543] [cursor=pointer]
+                - link "View all" [ref=e545] [cursor=pointer]:
+                  - /url: /shop?price_max=5000&sort=price_asc
+                  - text: View all
+                  - img [ref=e546] [cursor=pointer]
+            - generic [ref=e548]: No public numbers are available in this selection right now. Try another pattern or view the full shop.
+        - region "Numbers that mean more" [ref=e549]:
+          - generic [ref=e551]:
+            - generic [ref=e552]:
+              - heading "Numbers that mean more" [level=2] [ref=e553]
+              - group "Explore Numbers that mean more" [ref=e555]:
+                - button "786" [pressed] [ref=e556] [cursor=pointer]:
+                  - strong [ref=e557] [cursor=pointer]: "786"
+                - button "13 repeating" [ref=e558] [cursor=pointer]:
+                  - strong [ref=e559] [cursor=pointer]: 13 repeating
+                - button "Numerology" [ref=e560] [cursor=pointer]:
+                  - strong [ref=e561] [cursor=pointer]: Numerology
+              - generic [ref=e562]:
+                - generic [ref=e563]: 0 shown
+                - button "Scroll Numbers that mean more numbers left" [ref=e564] [cursor=pointer]:
+                  - img [ref=e565] [cursor=pointer]
+                - button "Scroll Numbers that mean more numbers right" [ref=e567] [cursor=pointer]:
+                  - img [ref=e568] [cursor=pointer]
+                - link "View all" [ref=e570] [cursor=pointer]:
+                  - /url: /shop?category=786-vip-mobile-numbers
+                  - text: View all
+                  - img [ref=e571] [cursor=pointer]
+            - generic [ref=e573]: No public numbers are available in this selection right now. Try another pattern or view the full shop.
+        - region "Fresh from the collection" [ref=e574]:
+          - generic [ref=e576]:
+            - generic [ref=e577]:
+              - heading "Fresh from the collection" [level=2] [ref=e578]
+              - generic [ref=e579]:
+                - generic [ref=e580]: 0 shown
+                - button "Scroll Fresh from the collection numbers left" [ref=e581] [cursor=pointer]:
+                  - img [ref=e582] [cursor=pointer]
+                - button "Scroll Fresh from the collection numbers right" [ref=e584] [cursor=pointer]:
+                  - img [ref=e585] [cursor=pointer]
+                - link "View all" [ref=e587] [cursor=pointer]:
+                  - /url: /newly-added-vip-numbers
+                  - text: View all
+                  - img [ref=e588] [cursor=pointer]
+            - generic [ref=e590]: No public numbers are available in this selection right now. Try another pattern or view the full shop.
+        - region "Every pattern has a personality." [ref=e591]:
+          - generic [ref=e592]:
+            - generic [ref=e593]:
+              - heading "Every pattern has a personality." [level=2] [ref=e594]
+              - link "Explore all patterns" [ref=e595] [cursor=pointer]:
+                - /url: /categories
+                - text: Explore all patterns
+                - img [ref=e596] [cursor=pointer]
+            - generic [ref=e598]:
+              - link "AB CDE · AB CDE Mirror & symmetry Reflections and balanced digits" [ref=e599] [cursor=pointer]:
+                - /url: /shop?category=customer-care-numbers
+                - img [ref=e600] [cursor=pointer]
+                - strong [ref=e609] [cursor=pointer]: AB CDE · AB CDE
+                - generic [ref=e610] [cursor=pointer]:
+                  - generic [ref=e611] [cursor=pointer]:
+                    - generic [ref=e612] [cursor=pointer]: Mirror & symmetry
+                    - generic [ref=e613] [cursor=pointer]: Reflections and balanced digits
+                  - img [ref=e614] [cursor=pointer]
+              - link "7777 · 88888 Repeating royalty Tetra, Penta, Hexa and beyond" [ref=e616] [cursor=pointer]:
+                - /url: /shop?category=choice-mobile-number
+                - img [ref=e617] [cursor=pointer]
+                - strong [ref=e619] [cursor=pointer]: 7777 · 88888
+                - generic [ref=e620] [cursor=pointer]:
+                  - generic [ref=e621] [cursor=pointer]:
+                    - generic [ref=e622] [cursor=pointer]: Repeating royalty
+                    - generic [ref=e623] [cursor=pointer]: Tetra, Penta, Hexa and beyond
+                  - img [ref=e624] [cursor=pointer]
+              - link "0000 · 00x00 Zeros & endings Minimal patterns with impact" [ref=e626] [cursor=pointer]:
+                - /url: /shop?category=vip-number-000
+                - img [ref=e627] [cursor=pointer]
+                - strong [ref=e631] [cursor=pointer]: 0000 · 00x00
+                - generic [ref=e632] [cursor=pointer]:
+                  - generic [ref=e633] [cursor=pointer]:
+                    - generic [ref=e634] [cursor=pointer]: Zeros & endings
+                    - generic [ref=e635] [cursor=pointer]: Minimal patterns with impact
+                  - img [ref=e636] [cursor=pointer]
+              - link "XYXY · XYZXYZ Rhythm & sequences Pairs and progressions" [ref=e638] [cursor=pointer]:
+                - /url: /shop?category=vip-mobile-number
+                - img [ref=e639] [cursor=pointer]
+                - strong [ref=e641] [cursor=pointer]: XYXY · XYZXYZ
+                - generic [ref=e642] [cursor=pointer]:
+                  - generic [ref=e643] [cursor=pointer]:
+                    - generic [ref=e644] [cursor=pointer]: Rhythm & sequences
+                    - generic [ref=e645] [cursor=pointer]: Pairs and progressions
+                  - img [ref=e646] [cursor=pointer]
+        - generic [ref=e649]:
+          - generic [ref=e650]:
+            - heading "From checkout to confident activation" [level=2] [ref=e652]
+            - link "See the full journey" [ref=e654] [cursor=pointer]:
+              - /url: /how-it-works
+              - text: See the full journey
+              - img [ref=e655] [cursor=pointer]
+          - generic [ref=e657]:
+            - article [ref=e659]:
+              - generic [ref=e661]: Step 1
+              - heading "Secure Payment" [level=3] [ref=e662]
+              - paragraph [ref=e663]: Review the listing and complete checkout through the existing protected payment flow.
+            - article [ref=e664]:
+              - generic [ref=e666]: Step 2
+              - heading "UPC Delivery" [level=3] [ref=e667]
+              - paragraph [ref=e668]: Receive order guidance and the information needed to begin your number transfer.
+            - article [ref=e669]:
+              - generic [ref=e671]: Step 3
+              - heading "MNP Initiation" [level=3] [ref=e672]
+              - paragraph [ref=e673]: Follow the supported mobile number portability steps with your chosen operator.
+            - article [ref=e674]:
+              - generic [ref=e676]: Step 4
+              - heading "SIM Activation" [level=3] [ref=e677]
+              - paragraph [ref=e678]: Complete operator verification and activate your premium number on the new SIM.
+            - article [ref=e679]:
+              - generic [ref=e681]: Step 5
+              - heading "100% Money Back" [level=3] [ref=e682]
+              - paragraph [ref=e683]: Guaranteed full refund if you encounter any issues with UPC delivery or number activation.
+        - generic [ref=e685]:
+          - img [ref=e686]
+          - heading "Ready to make your number memorable?" [level=2] [ref=e691]
+          - generic [ref=e692]:
+            - link "Browse Premium Numbers" [ref=e693] [cursor=pointer]:
+              - /url: /premium-numbers
+              - text: Browse Premium Numbers
+              - img [ref=e694] [cursor=pointer]
+            - link "Talk to an expert" [ref=e696] [cursor=pointer]:
+              - /url: /contact
+              - img [ref=e697] [cursor=pointer]
+              - text: Talk to an expert
+    - contentinfo [ref=e699]:
+      - generic [ref=e700]:
+        - generic:
+          - generic:
+            - generic: "93"
+            - generic: "39"
+          - generic:
+            - generic: "78"
+            - generic: "87"
+          - generic:
+            - generic: "7"
+            - generic: "7"
+        - generic [ref=e701]:
+          - generic [ref=e702]:
+            - link "VIP Number World VIP Number World - Premium Numbers. Premium Identity." [ref=e703] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e704] [cursor=pointer]:
+                - img "VIP Number World" [ref=e705] [cursor=pointer]
+                - img "VIP Number World - Premium Numbers. Premium Identity." [ref=e706] [cursor=pointer]
+            - paragraph [ref=e707]: India's trusted VIP number marketplace with genuine numbers, secure payments, and pan-India delivery.
+            - generic [ref=e708]:
+              - img [ref=e710]
+              - img [ref=e713]
+              - img [ref=e717]
+              - img [ref=e720]
+          - generic [ref=e723]:
+            - heading "Quick Links" [level=4] [ref=e724]
+            - list [ref=e725]:
+              - listitem [ref=e726]:
+                - link "VIP Numbers" [ref=e727] [cursor=pointer]:
+                  - /url: /shop
+              - listitem [ref=e728]:
+                - link "Premium Numbers" [ref=e729] [cursor=pointer]:
+                  - /url: /premium-numbers
+              - listitem [ref=e730]:
+                - link "Family Pack" [ref=e731] [cursor=pointer]:
+                  - /url: /family-pack
+              - listitem [ref=e732]:
+                - link "Corporate Numbers" [ref=e733] [cursor=pointer]:
+                  - /url: /corporate-numbers
+              - listitem [ref=e734]:
+                - link "Number Categories" [ref=e735] [cursor=pointer]:
+                  - /url: /categories
+              - listitem [ref=e736]:
+                - link "How It Works" [ref=e737] [cursor=pointer]:
+                  - /url: /how-it-works
+              - listitem [ref=e738]:
+                - link "Numerology" [ref=e739] [cursor=pointer]:
+                  - /url: /numerology
+              - listitem [ref=e740]:
+                - link "FAQs" [ref=e741] [cursor=pointer]:
+                  - /url: /faq
+              - listitem [ref=e742]:
+                - link "About & Contact" [ref=e743] [cursor=pointer]:
+                  - /url: /about
+          - generic [ref=e744]:
+            - heading "Legal" [level=4] [ref=e745]
+            - list [ref=e746]:
+              - listitem [ref=e747]:
+                - link "Terms & Conditions" [ref=e748] [cursor=pointer]:
+                  - /url: /terms-and-conditions
+              - listitem [ref=e749]:
+                - link "Privacy Policy" [ref=e750] [cursor=pointer]:
+                  - /url: /privacy-policy
+              - listitem [ref=e751]:
+                - link "Refund Policy" [ref=e752] [cursor=pointer]:
+                  - /url: /refund-policy
+              - listitem [ref=e753]:
+                - link "Delivery & Fulfilment" [ref=e754] [cursor=pointer]:
+                  - /url: /delivery-fulfilment-policy
+              - listitem [ref=e755]:
+                - link "Cookie Policy" [ref=e756] [cursor=pointer]:
+                  - /url: /cookie-policy
+              - listitem [ref=e757]:
+                - link "MNP & Activation" [ref=e758] [cursor=pointer]:
+                  - /url: /mnp-activation-policy
+              - listitem [ref=e759]:
+                - link "Disclaimer" [ref=e760] [cursor=pointer]:
+                  - /url: /disclaimer
+              - listitem [ref=e761]:
+                - link "Grievance Redressal" [ref=e762] [cursor=pointer]:
+                  - /url: /grievance-redressal
+          - generic [ref=e763]:
+            - heading "Contact" [level=4] [ref=e764]
+            - list [ref=e765]:
+              - listitem [ref=e766]:
+                - img [ref=e767]
+                - link "+91 90000 00000" [ref=e769] [cursor=pointer]:
+                  - /url: tel:+91 90000 00000
+              - listitem [ref=e770]:
+                - img [ref=e771]
+                - link "support@vipnumberworld.com" [ref=e774] [cursor=pointer]:
+                  - /url: mailto:support@vipnumberworld.com
+              - listitem [ref=e775]:
+                - img [ref=e776]
+                - text: vipnumberworld.com
+              - listitem [ref=e779]:
+                - img [ref=e780]
+                - text: Pan India Delivery
+          - generic [ref=e783]:
+            - heading "Exclusive Drops" [level=4] [ref=e784]
+            - paragraph [ref=e785]: Get premium number alerts and limited deals.
+            - generic [ref=e786]:
+              - textbox "Enter your email" [ref=e787]
+              - button "Subscribe" [ref=e788] [cursor=pointer]:
+                - img [ref=e789] [cursor=pointer]
+                - text: Subscribe
+        - generic [ref=e792]:
+          - generic [ref=e793]: © 2026 VNW - VIP Number World. All rights reserved.
+          - generic [ref=e794]:
+            - img [ref=e795]
+            - text: Follow Us
+    - link "WhatsApp" [ref=e798] [cursor=pointer]:
+      - /url: https://wa.me/919000000000?text=Hi!%20I%20am%20interested%20in%20a%20VIP%20number.
+      - img [ref=e799] [cursor=pointer]
+```

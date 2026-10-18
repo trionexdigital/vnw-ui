@@ -135,7 +135,7 @@ export default function Settings() {
                 <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => pickImage(e.target.files?.[0])} />
               </div>
               <div className="min-w-0">
-                <div className="text-xl font-black text-foreground">{profile.name || user?.name || 'VNW Administrator'}</div>
+                <div translate="no" className="text-xl font-black text-foreground">{profile.name || user?.name || 'VNW Administrator'}</div>
                 <div className="mt-1 truncate text-sm text-muted-foreground">{user?.email || 'admin@vipnumberworld.com'}</div>
                 <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-accent/10 px-3 py-1 text-xs font-black text-accent">
                   <UserRound className="h-3.5 w-3.5" /> {user?.role || 'USER'} account
@@ -185,6 +185,7 @@ export default function Settings() {
             {menu.map((item) => {
               const Icon = item.icon;
               if (item.label === 'Appearance') {
+                if (user?.role !== 'ADMIN') return null;
                 return (
                   <div key={item.label} className="flex items-center gap-3 rounded-2xl border border-border bg-muted/55 p-3">
                     <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-accent/10 text-accent"><Icon className="h-4 w-4" /></span>

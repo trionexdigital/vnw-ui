@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { CorporatePackPreview, FaqAccordion, JourneyPreview, OperatorSection } from '@/pages/home/components/MarketplaceSections';
 import FamilyPack from '@/pages/corporate/CorporateElitePack';
 import { siteAPI } from '@/core/api/vnwAPI';
-import { cartAPI, numbersAPI, type CorporatePack } from '@/core/api/vnwAPI';
+import { cartAPI, wishlistAPI, numbersAPI, type CorporatePack } from '@/core/api/vnwAPI';
 import { listPayloadFromParams } from '@/pages/shop/searchTypes';
 import FamilyPackCard from '@/shared/components/FamilyPackCard';
 import { localService } from '@/core/services/local';
@@ -93,6 +93,7 @@ describe('marketplace expansion', () => {
     vi.spyOn(localService, 'getToken').mockReturnValue('token');
     const addMany = vi.spyOn(cartAPI, 'addMany').mockResolvedValue({});
     vi.spyOn(cartAPI, 'list').mockResolvedValue({ count: 1 });
+    vi.spyOn(wishlistAPI, 'list').mockResolvedValue({ count: 0 });
 
     const { container } = render(<MemoryRouter><FamilyPackCard pack={pack} /></MemoryRouter>);
 

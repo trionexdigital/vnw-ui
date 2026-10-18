@@ -165,7 +165,7 @@
 .home-rail__controls { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, auto) minmax(0, 1fr); align-items: center; }
 .home-rail__controls h2 { max-width: none; }
 .home-rail__filters { min-width: 0; justify-content: center; }
-.home-rail__actions { justify-self: end; }
+.home-rail__actions { grid-column:-2 / -1; justify-self: end; }
 .home-rail__filters .home-number-shelf__choices { gap: 4px; max-width: 48vw; margin: 0; padding: 0; }
 .home-rail__filters .home-number-shelf__choice { width: auto; min-height: 30px; padding: 5px 9px; white-space: nowrap; }
 .home-rail__filters .home-number-shelf__choice small { display: none; }
@@ -210,3 +210,21 @@
   .home-rail__actions .home-family-shelf__mobile-size .themed-select svg { width: 12px; }
 }
 @media (min-width: 430px) and (max-width: 767px) { .home-family-shelf__mobile-size > span { position: static; width: auto; height: auto; overflow: visible; clip: auto; } }
+
+/* Keep headings and complete cards inside the same page gutters at every width. */
+.home-rail { min-width:0; container-type:inline-size; }
+.home-rail__track { --rail-columns:2; --rail-gap:var(--number-card-gap,10px); min-width:0; max-width:100%; gap:var(--rail-gap); padding-inline:0; scroll-snap-type:x mandatory; }
+.home-rail__track--family { --rail-columns:1; }
+.home-rail__track > :is(.home-rail__item,.home-rail__skeleton,.home-rail__more) { flex:0 0 calc((100% - (var(--rail-columns) - 1) * var(--rail-gap)) / var(--rail-columns)); }
+@container (min-width:650px) { .home-rail__track--number { --rail-columns:3; } }
+@container (min-width:870px) { .home-rail__track--number { --rail-columns:4; } }
+@container (min-width:1090px) { .home-rail__track--number { --rail-columns:5; } }
+@container (min-width:1310px) { .home-rail__track--number { --rail-columns:6; } }
+@container (min-width:1530px) { .home-rail__track--number { --rail-columns:7; } }
+@container (min-width:1750px) { .home-rail__track--number { --rail-columns:8; } }
+@container (min-width:1970px) { .home-rail__track--number { --rail-columns:9; } }
+@container (min-width:600px) { .home-rail__track--family { --rail-columns:2; } }
+@container (min-width:900px) { .home-rail__track--family { --rail-columns:3; } }
+@container (min-width:1200px) { .home-rail__track--family { --rail-columns:4; } }
+@container (min-width:1500px) { .home-rail__track--family { --rail-columns:5; } }
+@container (min-width:1800px) { .home-rail__track--family { --rail-columns:6; } }

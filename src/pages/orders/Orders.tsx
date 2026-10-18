@@ -20,7 +20,7 @@ export default function Orders() {
         <Table head={['Order No', 'Items', 'Total', 'Payment', 'Status', 'Date', '']}>
           {orders.map((o) => (
             <tr key={o.order_id} className="border-b border-card-border last:border-0">
-              <td className="px-4 py-3 font-medium text-foreground">{o.order_no}</td>
+              <td translate="no" className="px-4 py-3 font-medium text-foreground">{o.order_no}</td>
               <td className="px-4 py-3 text-muted-foreground">{o.item_count}</td>
               <td className="px-4 py-3"><Money value={o.total} /></td>
               <td className="px-4 py-3"><StatusBadge status={o.payment_status} /></td>

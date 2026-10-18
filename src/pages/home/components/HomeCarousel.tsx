@@ -83,7 +83,7 @@ export function HomeCarousel({ slides, loading = false }: { slides: PublishedCar
       className="home-carousel relative overflow-hidden bg-background px-3 py-4 outline-none sm:px-6 sm:py-6 lg:px-8"
     >
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-3/4 w-3/4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 blur-[100px]" />
-      <div className="relative mx-auto max-w-[320px] md:max-w-6xl">
+      <div className="relative mx-auto w-full">
         <div className="mb-3 flex items-center justify-between px-2 sm:mb-4">
           <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[.18em] text-primary"><Sparkles className="h-4 w-4" />Premium stories</div>
           <button onClick={() => setManualPause((value) => !value)} className="vnw-interactive inline-flex h-9 items-center gap-2 rounded-full border border-border bg-card/90 px-3 text-xs font-bold text-foreground shadow-sm backdrop-blur" aria-label={manualPause ? 'Play carousel' : 'Pause carousel'}>{manualPause ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}{manualPause ? 'Play' : 'Pause'}</button>

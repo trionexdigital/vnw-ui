@@ -29,7 +29,7 @@ const slide = {
 };
 
 for (const viewport of viewports) {
-  test(`contains the complete artboard at ${viewport.width}x${viewport.height}`, async ({ page }) => {
+  test(`published carousel fits the viewport at ${viewport.width}x${viewport.height}`, async ({ page }) => {
     await page.setViewportSize(viewport);
     await page.route('http://localhost:3002/vipnumberworld/**', async (route) => {
       const url = route.request().url();
@@ -43,16 +43,17 @@ for (const viewport of viewports) {
       return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 1, info: 'OK', data }) });
     });
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    const artboard = page.locator('[data-carousel-artboard]').first();
-    await artboard.scrollIntoViewIfNeeded();
-    await expect(artboard).toBeVisible();
-    const box = await artboard.boundingBox();
-    const canvasBox = await artboard.locator('canvas').boundingBox();
-    expect(box).not.toBeNull(); expect(canvasBox).not.toBeNull();
-    const expectedRatio = viewport.width < 768 ? 1080 / 1920 : 1600 / 900;
-    expect(Math.abs((box!.width / box!.height) - expectedRatio)).toBeLessThan(0.015);
-    expect(Math.abs(canvasBox!.width - box!.width)).toBeLessThan(2);
-    expect(Math.abs(canvasBox!.height - box!.height)).toBeLessThan(2);
+    const slideFrame = page.locator('.home-carousel [aria-roledescription="slide"]').first();
+    await slideFrame.scrollIntoViewIfNeeded();
+    const image = slideFrame.getByRole('img', { name: 'Responsive proof' });
+    await expect(image).toBeVisible();
+    await expect.poll(() => image.evaluate((item: HTMLImageElement) => item.naturalWidth)).toBe(1);
+    await expect(image).toHaveCSS('object-fit', viewport.width < 768 ? 'contain' : 'cover');
+    const box = await slideFrame.boundingBox();
+    const imageBox = await image.boundingBox();
+    expect(box).not.toBeNull(); expect(imageBox).not.toBeNull();
+    expect(Math.abs(imageBox!.width - box!.width)).toBeLessThan(2);
+    expect(Math.abs(imageBox!.height - box!.height)).toBeLessThan(2);
     expect(box!.x).toBeGreaterThanOrEqual(0);
     expect(box!.x + box!.width).toBeLessThanOrEqual(viewport.width + 1);
   });

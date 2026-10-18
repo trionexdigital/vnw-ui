@@ -68,7 +68,7 @@ export function CorporatePackCard({ pack }: { pack: CorporatePack }) {
         <span className="grid h-11 min-w-11 place-items-center rounded-xl border border-border bg-muted text-sm font-black text-primary">{pack.size}</span>
       </div>
       {pack.description && <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">{pack.description}</p>}
-      <div className="mt-4 grid gap-2 sm:grid-cols-2">
+      <div className="mt-4 grid max-h-64 gap-2 overflow-y-auto overscroll-contain pr-1 sm:grid-cols-2" tabIndex={0} aria-label={`${pack.title} numbers`}>
         {pack.numbers.map((number) => (
           <Link key={number.number_id} to={`/number/${number.number_id}`} className="rounded-xl border border-border bg-background px-3 py-2 transition hover:border-primary">
             <div className="vnw-card-numeral tracking-wide text-foreground">{number.display_number}</div>

@@ -5,6 +5,7 @@ import path from 'node:path';
 const output = path.resolve('../output/family-pack-refinement-2026-09-29');
 const captureStyle = '.fixed:has([aria-label="WhatsApp"]), nav.fixed { visibility: hidden !important; }';
 async function mockPacks(page: Page) {
+  await page.addInitScript(() => localStorage.setItem('vnw_language', 'en'));
   await page.route('**/vipnumberworld/**', async (route) => {
     const payload = route.request().postDataJSON?.() || {};
     const size = payload.size || 3;
@@ -65,7 +66,8 @@ test('ten-number packs stay readable and preserve the palette in dark mode', asy
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await mockPacks(page);
   await page.goto('/family-pack');
-  await page.getByRole('combobox', { name: 'Numbers in pack' }).selectOption('10');
+  await page.getByRole('combobox', { name: 'Pack of' }).click();
+  await page.getByRole('option', { name: '10 numbers', exact: true }).click();
   const card = page.getByTestId('family-pack-card').first();
   await expect(card.locator('.reference-family__row')).toHaveCount(10);
   await expect(card.getByText('10 of 10 selected')).toBeVisible();

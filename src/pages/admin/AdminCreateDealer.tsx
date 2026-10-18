@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { adminAPI } from '@/core/api/vnwAPI';
 import { useToast } from '@/shared/hooks/use-toast';
 import { PageHeader, Panel, Loader } from '@/shared/components/ui-bits';
@@ -11,6 +11,7 @@ const DEFAULT_DEALER_PERMS = [
 
 export default function AdminCreateDealer() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const [catalog, setCatalog] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +34,7 @@ export default function AdminCreateDealer() {
     try {
       const res: any = await adminAPI.dealerCreate({ ...f, commission_pct: Number(f.commission_pct), permissions: Array.from(perms) });
       toast({ title: 'Dealer created', description: `Account ready (#${res.user_id}).` });
-      navigate('/admin/dealers');
+      navigate(searchParams.get('returnTo') === 'purchases' ? '/admin/dealer-purchases' : '/admin/dealers');
     } catch (e: any) { toast({ title: 'Error', description: e.message, variant: 'destructive' }); }
     finally { setBusy(false); }
   };

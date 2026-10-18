@@ -12,6 +12,7 @@
 import { createRoot } from 'react-dom/client';
 import App from './App';
 import './index.css';
+import './shared/layout/PageLayout.css';
 // import { setupServiceWorker } from './pwa/sw-lifecycle';
 
 // ── 1. Mount React ───────────────────────────────────────────────

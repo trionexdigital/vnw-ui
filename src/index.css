@@ -1760,10 +1760,6 @@
   @media (min-width: 1024px) {
     .public-header.is-scrolled { padding-inline: 1rem; }
   }
-  @media (max-width: 639px) {
-    .public-header.is-scrolled { padding: 0; }
-    .public-header.is-scrolled .public-header__panel { border-radius: 0 !important; }
-  }
   .public-header__register,
   .home-showcase__primary-cta {
     background: linear-gradient(145deg, #c88710 0%, #a16207 52%, #854d0e 100%);

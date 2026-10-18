@@ -92,3 +92,6 @@
 .reference-family .reference-family__clear { display: grid; place-items: center; width: 32px; height: 32px; min-height: 32px; padding: 0; color: #8d5509; }
 .reference-family__clear svg { width: 16px; height: 16px; }
 .reference-family--compact .reference-family__header { padding: 6px 8px; }
+.reference-family .reference-family__select { width: 22px; height: 22px; min-height: 22px; padding: 0; }
+.reference-family .reference-family__select svg { width: 12px; height: 12px; }
+.reference-family__row, .reference-family--compact .reference-family__row { grid-template-columns: 22px minmax(0, 1fr) auto; }

@@ -8,6 +8,7 @@ import type { NumberItem } from '@/shared/components/NumberCard';
 import NumberCard from '@/shared/components/NumberCard';
 import FamilyPackCard from '@/shared/components/FamilyPackCard';
 import './HomeDiscovery.css';
+import { useLanguage } from '@/shared/language/LanguageContext';
 
 const BATCH_SIZE = 7;
 
@@ -167,10 +168,22 @@ function HorizontalRail<T>({ items, render, loading, error, hasMore, loadingMore
   viewAllHref: string;
   viewAllLabel?: string;
 }) {
+  const { t } = useLanguage();
   const railRef = useRef<HTMLDivElement>(null);
   const previousCount = useRef<number | null>(null);
   const railId = useId();
-  const move = (direction: number) => railRef.current?.scrollBy({ left: direction * Math.max(250, railRef.current.clientWidth * .8), behavior: 'smooth' });
+  const move = (direction: number) => {
+    const rail=railRef.current;
+    if(!rail || !rail.firstElementChild)return;
+    const children=Array.from(rail.children) as HTMLElement[];
+    const origin=children[0].getBoundingClientRect().left;
+    const positions=children.map(child=>child.getBoundingClientRect().left-origin);
+    const current=positions.reduce((nearest,position,index)=>Math.abs(position-rail.scrollLeft)<Math.abs(positions[nearest]-rail.scrollLeft)?index:nearest,0);
+    const step=positions[1]||rail.clientWidth;
+    const visible=Math.max(1,Math.round((rail.clientWidth+parseFloat(getComputedStyle(rail).columnGap))/step));
+    const target=Math.max(0,Math.min(children.length-visible,current+direction*visible));
+    rail.scrollTo({left:positions[target],behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+  };
   const loadMore = () => {
     previousCount.current = items.length;
     onMore?.();
@@ -183,10 +196,10 @@ function HorizontalRail<T>({ items, render, loading, error, hasMore, loadingMore
     next?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
   }, [items.length]);
   return <div className="home-rail" data-testid="home-rail">
-    <div className="home-rail__controls"><h2 id={titleId}>{title}</h2>{filters && <div className="home-rail__filters">{filters}</div>}<div className="home-rail__actions"><span className="home-rail__count">{loading ? 'Finding…' : `${items.length} shown`}</span>{mobileBeforeArrows && <div className="home-rail__mobile-before-arrows">{mobileBeforeArrows}</div>}<button type="button" onClick={() => move(-1)} aria-label={`Scroll ${label} left`} aria-controls={railId}><ChevronLeft size={19} /></button><button type="button" onClick={() => move(1)} aria-label={`Scroll ${label} right`} aria-controls={railId}><ChevronRight size={19} /></button><Link to={viewAllHref} className="home-discovery-view-all">{viewAllLabel} <ArrowRight size={15} /></Link>{mobileFilter}</div></div>
-    {error ? <p className="home-rail__message" role="status">{error}</p> : loading ? <div className={`home-rail__track home-rail__track--${size} home-rail__track--loading`} aria-label={`Loading ${label}`}>{Array.from({ length: 3 }, (_, index) => <div key={index} className={`home-rail__skeleton home-rail__skeleton--${size}`}><div className="home-rail__skeleton-hero"><span /><span /><span /></div><div className="home-rail__skeleton-stats"><span /><span /></div>{size === 'family' && <div className="home-rail__skeleton-row" />}<div className="home-rail__skeleton-price" /><div className="home-rail__skeleton-actions"><span /><span /></div></div>)}</div> : items.length ? <div id={railId} ref={railRef} className={`home-rail__track home-rail__track--${size}`} role="region" aria-label={label} tabIndex={0}>
+    <div className="home-rail__controls"><h2 id={titleId}>{title}</h2>{filters && <div className="home-rail__filters">{filters}</div>}<div className="home-rail__actions"><span className="home-rail__count">{loading ? 'Finding…' : t('{count} shown',{count:items.length})}</span>{mobileBeforeArrows && <div className="home-rail__mobile-before-arrows">{mobileBeforeArrows}</div>}<button type="button" onClick={() => move(-1)} aria-label={t('Scroll {label} left',{label:t(label)})} aria-controls={railId}><ChevronLeft size={19} /></button><button type="button" onClick={() => move(1)} aria-label={t('Scroll {label} right',{label:t(label)})} aria-controls={railId}><ChevronRight size={19} /></button><Link to={viewAllHref} className="home-discovery-view-all">{viewAllLabel} <ArrowRight size={15} /></Link>{mobileFilter}</div></div>
+    {error ? <p className="home-rail__message" role="status">{error}</p> : loading ? <div className={`home-rail__track home-rail__track--${size} home-rail__track--loading`} aria-label={t('Loading {label}',{label:t(label)})}>{Array.from({ length: 3 }, (_, index) => <div key={index} className={`home-rail__skeleton home-rail__skeleton--${size}`}><div className="home-rail__skeleton-hero"><span /><span /><span /></div><div className="home-rail__skeleton-stats"><span /><span /></div>{size === 'family' && <div className="home-rail__skeleton-row" />}<div className="home-rail__skeleton-price" /><div className="home-rail__skeleton-actions"><span /><span /></div></div>)}</div> : items.length ? <div id={railId} ref={railRef} className={`home-rail__track home-rail__track--${size}`} role="region" aria-label={label} tabIndex={0}>
       {items.map(render)}
-      {hasMore && <button type="button" className="home-rail__more" onClick={loadMore} disabled={loadingMore}><span><ArrowRight size={24} /></span><strong>{loadingMore ? 'Loading more…' : `Show ${BATCH_SIZE} more`}</strong><small>Keep exploring this collection</small></button>}
+      {hasMore && <button type="button" className="home-rail__more" onClick={loadMore} disabled={loadingMore}><span><ArrowRight size={24} /></span><strong>{loadingMore ? 'Loading more…' : t('Show {count} more',{count:BATCH_SIZE})}</strong><small>Keep exploring this collection</small></button>}
     </div> : <div className="home-rail__message">No public numbers are available in this selection right now. Try another pattern or view the full shop.</div>}
   </div>;
 }

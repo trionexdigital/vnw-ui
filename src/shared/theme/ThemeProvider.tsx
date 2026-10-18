@@ -9,6 +9,7 @@ import {
   useState,
 } from 'react';
 
+
 export type ThemeMode = 'system' | 'light' | 'dark';
 export type ResolvedTheme = 'light' | 'dark';
 
@@ -77,11 +78,11 @@ function applyTheme(theme: ResolvedTheme) {
 
 const useIsomorphicLayoutEffect = canUseDOM() ? useLayoutEffect : useEffect;
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+export function ThemeProvider({ children, allowAppearance = true }: { children: ReactNode; allowAppearance?: boolean }) {
   const [theme, setThemeState] = useState<ThemeMode>(readStoredTheme);
   const [systemTheme, setSystemTheme] = useState<ResolvedTheme>(readSystemTheme);
 
-  const resolvedTheme: ResolvedTheme = theme === 'system' ? systemTheme : theme;
+  const resolvedTheme: ResolvedTheme = allowAppearance ? (theme === 'system' ? systemTheme : theme) : 'light';
 
   const setTheme = useCallback((nextTheme: ThemeMode) => {
     if (!isThemeMode(nextTheme)) return;

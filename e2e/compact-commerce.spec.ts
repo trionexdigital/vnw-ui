@@ -56,10 +56,10 @@ test('comparison card action pops the header cue and profile photos are consiste
   await expect(page.getByRole('status').filter({ hasText: 'Added to comparison' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Compare numbers', exact: true })).toHaveClass(/comparison-cue/);
   await expect(page.getByRole('link', { name: 'My Pre-books', exact: true })).not.toBeVisible();
-  await expect(page.getByRole('radiogroup', { name: 'Color theme' }).first()).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Open account menu' }).locator('img')).toHaveAttribute('src', avatar);
+  await expect(page.getByRole('radiogroup', { name: 'Color theme' })).toHaveCount(0);
+  await expect(page.locator('header').getByRole('button', { name: 'Account', exact:true })).toBeVisible();
   await page.setViewportSize({ width: 375, height: 812 }); await page.getByRole('button', { name: 'Open navigation menu' }).click();
-  await expect(page.locator('.public-header__drawer img').first()).toHaveAttribute('src', avatar);
+  await expect(page.locator('.public-header__drawer').getByAltText('VNW Administrator profile')).toHaveAttribute('src', avatar);
 });
 test('carousel crops both frames before upload and admin sidebar uses the saved photo and name', async ({ page }, info) => {
   await mocks(page, 'ADMIN'); await page.setViewportSize({ width: 1440, height: 900 }); await page.goto('/admin/carousel/new');

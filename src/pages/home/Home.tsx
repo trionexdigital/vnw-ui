@@ -14,6 +14,8 @@ import {
 } from './components/HomeDiscovery';
 import HomeCarousel from './components/HomeCarousel';
 import ReviewScreenshots from './components/ReviewScreenshots';
+import CorporateNumbers from '@/pages/corporate/CorporateNumbers';
+import HomeDeliveryCities from './components/HomeDeliveryCities';
 import SearchWorkbench from '@/pages/shop/SearchWorkbench';
 
 export default function Home() {
@@ -60,17 +62,19 @@ export default function Home() {
       <HomeTrustStrip />
       <HomeCategoryShortcuts />
       <HomeReadinessPaths />
-      <HomePatternGallery />
       <HomeCarousel slides={carouselSlides} loading={carouselLoading} />
       <HomeNumberShelf id="home-premium" eyebrow="Handpicked for you" title="Premium numbers" description="Distinctive numbers with presence, personality and a pattern you will remember." query={{ is_premium: 1, sort: 'popular' }} href="/premium-numbers" tone="cream" />
       {homeShelves.slice(0, 2).map((shelf) => <HomeNumberShelf key={shelf.id} {...shelf} />)}
       <HomeFamilyShelf />
+      <CorporateNumbers preview />
+      <HomeDeliveryCities />
       <HomeNumberShelf {...homeShelves[5]} />
       {homeShelves.slice(2, 4).map((shelf) => <HomeNumberShelf key={shelf.id} {...shelf} />)}
       <HomeNumberShelf {...homeShelves[6]} />
       <HomeNumberShelf id="home-budget" eyebrow="Find your sweet spot" title="A number for every budget" description="Choose a price range and see available numbers without digging through filters." choices={budgetChoices} tone="light" />
       <HomeNumberShelf {...homeShelves[4]} />
       <HomeNumberShelf id="home-new" eyebrow="Just added" title="Fresh from the collection" description="Newly listed public numbers, ready for you to explore." query={{ sort: 'newest' }} href="/newly-added-vip-numbers" tone="cream" />
+      <HomePatternGallery />
       <JourneyPreview />
       <TrustedClientsSection clients={clients} />
       <ReviewScreenshots />

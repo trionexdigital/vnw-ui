@@ -41,6 +41,16 @@ afterEach(() => {
 });
 
 describe('ThemeProvider', () => {
+  it('keeps public screens light and restores the saved admin preference', () => {
+    window.localStorage.setItem(THEME_STORAGE_KEY, 'dark');
+    const view = render(<ThemeProvider allowAppearance={false}><ThemeProbe /></ThemeProvider>);
+    expect(screen.getByLabelText('resolved theme')).toHaveTextContent('light');
+    expect(document.documentElement).not.toHaveClass('dark');
+    expect(window.localStorage.getItem(THEME_STORAGE_KEY)).toBe('dark');
+    view.rerender(<ThemeProvider allowAppearance><ThemeProbe /></ThemeProvider>);
+    expect(screen.getByLabelText('resolved theme')).toHaveTextContent('dark');
+    expect(document.documentElement).toHaveClass('dark');
+  });
   it('defaults to the system preference and applies the resolved light theme', () => {
     renderProvider();
 

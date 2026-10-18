@@ -207,7 +207,41 @@
   }
 }
 .reference-card__digit { transition-duration: .3s; transition-delay: calc(var(--digit-index) * 22ms); }
+.reference-card .reference-card__price[data-large-price] { grid-template-columns: .9fr 1.1fr; row-gap: 3px; }
+.reference-card .reference-card__price[data-large-price] .reference-card__price-cell--discount { grid-column: 1 / -1; text-align: center; border-left: 0; }
+.reference-card .reference-card__price[data-large-price] .reference-card__mrp { font-size: clamp(6px, 3.8cqw, 9px); }
+.reference-card .reference-card__price[data-large-price] .reference-card__offer { font-size: clamp(7px, 4.8cqw, 11px); }
+
+/* Two-column mobile cards retain every action without overflowing narrow frames. */
+@media (max-width: 767px) {
+  .reference-card, .reference-card--compact { gap: 3px; padding: 4px; border-radius: 12px; }
+  .reference-card .reference-card__hero { padding: 4px 3px 6px; }
+  .reference-card .reference-card__toolbar { gap: 2px; }
+  .reference-card .reference-card__badge { padding: 3px 2px; font-size: 3.2cqw; letter-spacing: 0; }
+  .reference-card .reference-card__similar { padding: 3px; min-height: 27px; font-size: 3.5cqw; }
+  .reference-card .reference-card__wish { width: 27px; height: 27px; min-height: 27px; }
+  .reference-card .reference-card__digits { font-size: 10.3cqw; gap: 2.2cqw; letter-spacing: 0; }
+  .reference-card .reference-card__title { font-size: 4cqw; }
+  .reference-card .reference-card__category, .reference-card .reference-card__readiness { font-size: 4.2cqw; }
+  .reference-card .reference-card__metric dt, .reference-card .reference-card__price-label { font-size: 4.3cqw; }
+  .reference-card .reference-card__metric dd { font-size: 6.5cqw; }
+  .reference-card .reference-card__mrp { font-size: 4.7cqw; }
+  .reference-card .reference-card__offer { font-size: 6cqw; }
+  .reference-card .reference-card__price[data-large-price] .reference-card__offer { font-size: 4.8cqw; }
+  .reference-card .reference-card__discount { padding: 3px 1px; font-size: 3.8cqw; }
+  .reference-card .reference-card__discount svg { width: 3.8cqw; height: 3.8cqw; }
+  .reference-card .reference-card__actions { gap: 3px; }
+  .reference-card .reference-card__actions button { min-height: 36px; gap: 2px; padding-inline: 1px; font-size: 4cqw; }
+  .reference-card .reference-card__actions :is(.reference-card__buy,.reference-card__cart) { font-size: 5cqw; }
+  .reference-card .reference-card__actions svg { width: 4.5cqw; height: 4.5cqw; }
+}
 @media (prefers-reduced-motion: reduce) {
   .reference-card:hover .reference-card__digit,
   .reference-card__number-link:focus-visible .reference-card__digit { color: inherit; text-shadow: none; }
 }
+
+/* Regional scripts need wrapping while telecom digits and prices retain their geometry. */
+html:not([lang="en"]) .reference-card :is(.reference-card__actions button,.reference-card__actions span,.reference-card__price-label,.reference-card__discount,.reference-card__title,.reference-card__category,.reference-card__readiness) { white-space: normal; overflow-wrap: anywhere; line-height: 1.25; }
+html:not([lang="en"]) .reference-card__actions span { min-width: 0; }
+html:not([lang="en"]) .reference-card__actions svg { flex-shrink: 0; }
+html:not([lang="en"]) .reference-card :is(.reference-card__hero,.reference-card__identity) { height: auto; min-height: initial; }

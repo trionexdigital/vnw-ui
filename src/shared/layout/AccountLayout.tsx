@@ -1,7 +1,7 @@
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import {
-  Crown, LayoutDashboard, ShoppingBag, Heart, Users2, User, LogOut, Store, ListPlus,
+  Globe, Crown, LayoutDashboard, ShoppingBag, Heart, Users2, User, LogOut, Store, ListPlus,
   Tag, BadgeIndianRupee, Star, Image, MessageSquare, Settings, Gift, Menu, ArrowLeft, ListChecks, X, Ticket, Mail,
   ClipboardList, Inbox, Bell, ChevronRight, PanelLeftClose, PanelLeftOpen, ShieldCheck, UserCircle, Sparkles, Handshake, CircleHelp, CalendarClock, KeyRound, PackageSearch,
 } from 'lucide-react';
@@ -10,9 +10,10 @@ import { logout } from '@/app/authSlice';
 import { cn } from '@/core/lib/utils';
 import { hasPermission } from '@/core/lib/permissions';
 import UserAvatar from '@/shared/components/UserAvatar';
+import { Loader } from '@/shared/components/ui-bits';
 import { BrandLockup } from '@/shared/components/Logo';
-import { ThemeControl } from '@/shared/components/ThemeControl';
-import { AnimatePresence, motion } from 'framer-motion';
+import { contentQueryKey } from '@/shared/language/searchParams';
+import { Sheet, SheetContent, SheetTitle } from '@/shared/ui/sheet';
 import { MotionPage } from '@/shared/motion/MotionPrimitives';
 import { notificationsAPI } from '@/core/api/vnwAPI';
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover';
@@ -48,6 +49,7 @@ const ADMIN_MENU: MenuItem[] = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/admin/numbers', label: 'Numbers', icon: Crown },
   { to: '/admin/private-links', label: 'Offline Catalog Link', icon: KeyRound },
+  { to: '/admin/delivery-cities', label: 'Home Delivery Cities', icon: Store },
   { to: '/admin/home-premium', label: 'Premium Homepage', icon: Star },
   { to: '/admin/deals-of-day', label: 'Lucky Pick of the Day', icon: Sparkles },
   { to: '/admin/orders', label: 'Orders', icon: ShoppingBag },
@@ -68,15 +70,16 @@ const ADMIN_MENU: MenuItem[] = [
   { to: '/admin/subscribers', label: 'Subscribers', icon: Mail },
   { to: '/admin/messages', label: 'Messages', icon: MessageSquare },
   { to: '/admin/settings', label: 'Settings', icon: Settings },
+  { to: '/admin/languages', label: 'Languages', icon: Globe },
   { to: '/account', label: 'Profile', icon: User },
 ];
 
 const ADMIN_GROUPS = [
   { label: 'Overview', items: ['Dashboard'] },
-  { label: 'Catalog', items: ['Numbers', 'Offline Catalog Link', 'Premium Homepage', 'Lucky Pick of the Day', 'Carousel', 'Coupons'] },
+  { label: 'Catalog', items: ['Numbers', 'Offline Catalog Link', 'Premium Homepage', 'Home Delivery Cities', 'Lucky Pick of the Day', 'Carousel', 'Coupons'] },
   { label: 'Operations', items: ['Orders', 'Payments', 'Dealer Purchases', 'Pre-books & Refunds', 'Sell Requests', 'Approvals', 'Payouts'] },
   { label: 'People', items: ['Users', 'Dealers', 'Subscribers'] },
-  { label: 'Trust', items: ['Reviews', 'Testimonials', 'Trusted Clients', 'FAQs', 'Messages', 'Settings', 'Profile'] },
+  { label: 'Trust', items: ['Reviews', 'Testimonials', 'Trusted Clients', 'FAQs', 'Messages', 'Settings', 'Languages', 'Profile'] },
 ];
 
 const ROLE_HOME: Record<string, string> = {
@@ -101,6 +104,7 @@ export default function AccountLayout() {
   const baseMenu = role === 'ADMIN' ? ADMIN_MENU : role === 'EMPLOYEE' ? EMPLOYEE_MENU : role === 'DEALER' ? DEALER_MENU : USER_MENU;
   // Hide items the user lacks permission for (ADMIN/EMPLOYEE bypass via hasPermission).
   const menu = baseMenu.filter((m) => !m.perm || hasPermission(user, m.perm));
+  const sidebarTrigger = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -112,7 +116,7 @@ export default function AccountLayout() {
   const current = [...menu].sort((a, b) => b.to.length - a.to.length).find((m) => (
     m.end ? location.pathname === m.to : location.pathname === m.to || location.pathname.startsWith(`${m.to}/`)
   ));
-  const pageLabel = current?.label || EXTRA_LABELS[location.pathname] || 'Dashboard';
+  const pageLabel = location.pathname === '/admin/numbers/recycle' ? 'Recycle' : current?.label || EXTRA_LABELS[location.pathname] || 'Dashboard';
   const homePath = ROLE_HOME[role] || '/dashboard';
   const isAdmin = role === 'ADMIN';
   const userName = user?.name || user?.full_name || 'User';
@@ -124,6 +128,14 @@ export default function AccountLayout() {
     : [{ label: role === 'USER' ? 'Account' : `${role.toLowerCase()} panel`, links: menu }];
 
   const doLogout = () => dispatch(logout());
+
+  useEffect(() => { setOpen(false); }, [location.pathname]);
+  useEffect(() => {
+    const desktop = window.matchMedia('(min-width: 1024px)');
+    const closeOnDesktop = () => { if (desktop.matches) setOpen(false); };
+    desktop.addEventListener('change', closeOnDesktop);
+    return () => desktop.removeEventListener('change', closeOnDesktop);
+  }, []);
 
   useEffect(() => {
     if (!notificationsOpen) return;
@@ -138,8 +150,8 @@ export default function AccountLayout() {
     return () => { active = false; };
   }, [notificationsOpen]);
 
-  const NavList = ({ onItem, compact = false }: { onItem?: () => void; compact?: boolean }) => (
-    <nav className="flex-1 overflow-y-auto px-2.5 py-2 [scrollbar-width:thin]">
+  const renderNavList = ({ onItem, compact = false }: { onItem?: () => void; compact?: boolean }) => (
+    <nav className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2.5 py-2 [scrollbar-width:thin]">
       {groupedMenu.map((group) => (
         <div key={group.label} className="mb-2 last:mb-0">
           {!compact && (
@@ -173,7 +185,7 @@ export default function AccountLayout() {
     </nav>
   );
 
-  const SidebarInner = ({ onItem, mobile = false }: { onItem?: () => void; mobile?: boolean }) => (
+  const renderSidebar = ({ onItem, mobile = false }: { onItem?: () => void; mobile?: boolean } = {}) => (
     <div className={cn(
       'flex h-full flex-col overflow-hidden border-r border-sidebar-border bg-sidebar text-sidebar-foreground shadow-sm',
       mobile ? 'rounded-r-[1.6rem]' : 'rounded-none'
@@ -184,18 +196,18 @@ export default function AccountLayout() {
             ? <BrandLockup className="dark:px-1" logoClassName="sm:h-10 sm:w-10" sloganClassName="hidden" />
             : <BrandLockup logoClassName="sm:h-10 sm:w-10" sloganClassName="h-8 w-[132px] sm:h-8 sm:w-[132px] xl:w-[132px] 2xl:w-[132px]" />}
         </Link>
-        {mobile && <button onClick={onItem} className="grid h-10 w-10 place-items-center rounded-2xl bg-sidebar-accent text-sidebar-accent-foreground"><X className="h-5 w-5" /></button>}
+        {mobile && <button aria-label="Close sidebar" onClick={onItem} className="grid h-10 w-10 place-items-center rounded-2xl bg-sidebar-accent text-sidebar-accent-foreground"><X className="h-5 w-5" /></button>}
       </div>
 
-      <NavList onItem={onItem} compact={collapsed && !mobile} />
+      {renderNavList({ onItem, compact: collapsed && !mobile })}
 
       <div className="space-y-1 p-2">
         {(!collapsed || mobile) && (
           <Link to="/account" onClick={onItem} className="flex items-center gap-3 rounded-2xl border border-sidebar-border bg-sidebar-accent p-2 shadow-sm transition hover:bg-sidebar-accent/80">
             <UserAvatar user={user} className="h-8 w-8" />
             <span className="min-w-0">
-              <span className="block truncate text-sm font-black text-sidebar-foreground">{userName}</span>
-              <span className="block truncate text-xs text-muted-foreground">{userEmail}</span>
+              <span translate="no" className="block truncate text-sm font-black text-sidebar-foreground">{userName}</span>
+              <span translate="no" className="block truncate text-xs text-muted-foreground">{userEmail}</span>
             </span>
           </Link>
         )}
@@ -229,25 +241,21 @@ export default function AccountLayout() {
   return (
     <div className={cn('customer-motion-scope app-shell-bg flex min-h-screen bg-background text-foreground', isAdmin && 'admin-shell')}>
       <aside className={cn('sticky top-0 hidden h-screen shrink-0 transition-[width] duration-300 lg:block', collapsed ? 'w-[68px]' : 'w-[224px]')}>
-        <SidebarInner />
+        {renderSidebar()}
       </aside>
 
-      <AnimatePresence>
-      {open && (
-        <motion.div className="fixed inset-0 z-50 lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-          <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} />
-          <motion.div className="absolute left-0 top-0 h-full w-[min(300px,84vw)] p-2 pr-0" initial={{ x: -28 }} animate={{ x: 0 }} exit={{ x: -28 }} transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}>
-            <SidebarInner onItem={() => setOpen(false)} mobile />
-          </motion.div>
-        </motion.div>
-      )}
-      </AnimatePresence>
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetContent side="left" onCloseAutoFocus={(event) => { event.preventDefault(); sidebarTrigger.current?.focus({ preventScroll: true }); }} aria-describedby={undefined} className="admin-sidebar-drawer z-[60] h-[100dvh] w-[min(320px,88vw)] overflow-hidden rounded-r-[1.6rem] border-0 bg-sidebar p-0 [&>button:last-child]:hidden">
+          <SheetTitle className="sr-only">Account navigation</SheetTitle>
+          {renderSidebar({ onItem: () => setOpen(false), mobile: true })}
+        </SheetContent>
+      </Sheet>
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="vip-account-header sticky top-0 z-30 border-b border-border bg-background/95 px-3 py-2 shadow-sm backdrop-blur-lg lg:px-4">
           <div className="flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
-              <button onClick={() => setOpen(true)} className="grid h-10 w-10 place-items-center rounded-2xl border border-border bg-card text-foreground shadow-sm lg:hidden" aria-label="Open sidebar">
+              <button ref={sidebarTrigger} onClick={() => setOpen(true)} className="grid h-10 w-10 place-items-center rounded-2xl border border-border bg-card text-foreground shadow-sm lg:hidden" aria-label="Open sidebar">
                 <Menu className="h-5 w-5" />
               </button>
               <button onClick={() => setCollapsed((v) => !v)} className="hidden h-10 w-10 place-items-center rounded-2xl border border-border bg-card text-foreground shadow-sm transition hover:-translate-y-0.5 lg:grid" aria-label="Toggle sidebar">
@@ -264,7 +272,7 @@ export default function AccountLayout() {
             </div>
 
             <div className="flex shrink-0 items-center gap-2">
-              <ThemeControl />
+
 
               <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
                 <PopoverTrigger asChild><button aria-label="Notifications" aria-expanded={notificationsOpen} className="relative grid h-10 w-10 place-items-center rounded-2xl border border-border bg-card text-foreground shadow-sm transition hover:-translate-y-0.5">
@@ -301,7 +309,7 @@ export default function AccountLayout() {
                 <button aria-label="Open profile" onClick={() => { navigate('/account'); setNotificationsOpen(false); }} className="flex h-10 min-w-10 items-center gap-2 rounded-2xl border border-border bg-card px-1.5 pr-2.5 shadow-sm transition hover:-translate-y-0.5 md:min-w-[176px] lg:min-w-[205px]">
                   <UserAvatar user={user} className="h-8 w-8" />
                   <span className="hidden text-left leading-tight md:block">
-                    <span className="block max-w-[150px] truncate text-xs font-black text-foreground">{userName}</span>
+                    <span translate="no" className="block max-w-[150px] truncate text-xs font-black text-foreground">{userName}</span>
                     <span className="block text-[10px] font-bold text-muted-foreground">{role}</span>
                   </span>
                 </button>
@@ -310,9 +318,9 @@ export default function AccountLayout() {
           </div>
         </header>
 
-        <main className="flex-1 p-3 pb-24 sm:p-4 lg:p-5 lg:pb-5">
-          <MotionPage routeKey={location.pathname + location.search}>
-            <Outlet />
+        <main className="account-content flex-1 py-4 pb-24 lg:pb-5">
+          <MotionPage routeKey={location.pathname + contentQueryKey(new URLSearchParams(location.search))}>
+            <Suspense fallback={<Loader label="Loading screen" />}><Outlet /></Suspense>
           </MotionPage>
         </main>
       </div>

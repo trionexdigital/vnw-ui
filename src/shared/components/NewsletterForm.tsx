@@ -19,9 +19,9 @@ export default function NewsletterForm({ dark, source = 'footer' }: { dark?: boo
   };
 
   return (
-    <form onSubmit={submit} className="flex w-full gap-2">
+    <form onSubmit={submit} className="newsletter-form flex w-full flex-wrap gap-2">
       <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email"
-        className={`min-w-0 flex-1 rounded-lg px-3 py-2.5 text-sm outline-none ${dark ? 'border border-white/20 bg-white/10 text-white placeholder:text-white/50 focus:border-gold' : 'border border-card-border bg-secondary/60 focus:border-gold'}`} />
+        className={`min-w-0 w-0 flex-[1_1_120px] rounded-lg px-3 py-2.5 text-sm outline-none ${dark ? 'border border-white/20 bg-white/10 text-white placeholder:text-white/50 focus:border-gold' : 'border border-card-border bg-secondary/60 focus:border-gold'}`} />
       <button disabled={busy} className="btn-gold shrink-0"><Send className="h-4 w-4" /> {busy ? '...' : 'Subscribe'}</button>
     </form>
   );

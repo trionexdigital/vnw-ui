@@ -391,14 +391,14 @@ export function Table({ head, children, pagination }: { head: string[]; children
   useEffect(() => { if (!pagination && localPage > Math.max(1, Math.ceil(rows.length / localPageSize))) setLocalPage(1); }, [localPage, localPageSize, pagination, rows.length]);
   return (
     <div className="vnw-card overflow-hidden p-0">
-      <table className="admin-responsive-table w-full text-sm">
+      <div className="overflow-x-auto"><table className="admin-responsive-table w-full text-sm">
         <thead>
           <tr className="border-b border-border bg-muted/60 text-left text-xs uppercase text-muted-foreground">
             {head.map((h) => <th key={h} className="px-4 py-3 font-black">{h}</th>)}
           </tr>
         </thead>
         <tbody className="[&_tr]:border-border [&_td]:align-middle">{labeledChildren}</tbody>
-      </table>
+      </table></div>
       {(pagination || total > localPageSize) && <TablePager page={page} pageSize={pageSize} total={total} onPageChange={pagination?.onPageChange ?? setLocalPage} onPageSizeChange={pagination?.onPageSizeChange ?? ((size) => { setLocalPageSize(size); setLocalPage(1); })} />}
     </div>
   );

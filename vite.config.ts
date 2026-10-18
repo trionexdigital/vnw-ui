@@ -15,6 +15,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import { configDefaults } from 'vitest/config';
+import reactLocalization from './scripts/react-localization-plugin.mjs';
 // import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
@@ -30,7 +31,7 @@ export default defineConfig({
   // ── 2. Plugins ──────────────────────────────────────────────────
   plugins: [
     // React — enables JSX transform and Fast Refresh in development.
-    react(),
+    react({ babel: { plugins: [reactLocalization] } }),
 
     // PWA plugin removed
   ],

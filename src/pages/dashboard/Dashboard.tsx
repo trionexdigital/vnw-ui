@@ -34,7 +34,7 @@ export default function Dashboard() {
             <tbody>
               {d.recent_orders.map((o: any) => (
                 <tr key={o.order_id} className="border-b border-card-border last:border-0">
-                  <td className="px-4 py-3 font-medium text-foreground">{o.order_no}</td>
+                  <td translate="no" className="px-4 py-3 font-medium text-foreground">{o.order_no}</td>
                   <td className="px-4 py-3"><Money value={o.total} /></td>
                   <td className="px-4 py-3"><StatusBadge status={o.status} /></td>
                   <td className="px-4 py-3 text-muted-foreground">{String(o.created_at).slice(0, 10)}</td>

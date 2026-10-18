@@ -25,6 +25,9 @@ const PreBookCheckout = lazy(() => import('@/pages/prebook/PreBookCheckout'));
 const About = lazy(() => import('@/pages/static/About'));
 const Numerology = lazy(() => import('@/pages/numerology/Numerology'));
 const HowItWorks = lazy(() => import('@/pages/static/HowItWorks'));
+const CorporateNumbers = lazy(() => import('@/pages/corporate/CorporateNumbers'));
+const AdminDeliveryCities = lazy(() => import('@/pages/admin/AdminDeliveryCities'));
+const AdminLanguages = lazy(() => import('@/pages/admin/AdminLanguages'));
 const FamilyPack = lazy(() => import('@/pages/corporate/CorporateElitePack'));
 const Faq = lazy(() => import('@/pages/static/Faq'));
 const LegalPage = lazy(() => import('@/pages/legal/LegalPage'));
@@ -53,6 +56,7 @@ const DealerPayouts = lazy(() => import('@/pages/dealer/DealerPayouts'));
 const DealerProfile = lazy(() => import('@/pages/dealer/DealerProfile'));
 
 const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'));
+const AdminNumberRecycle = lazy(() => import('@/pages/admin/AdminNumberRecycle'));
 const AdminNumbers = lazy(() => import('@/pages/admin/AdminNumbers'));
 const AdminDealsOfDay = lazy(() => import('@/pages/admin/AdminDealsOfDay'));
 const AdminTrustedClients = lazy(() => import('@/pages/admin/AdminTrustedClients'));
@@ -113,7 +117,8 @@ export default function AppRoutes() {
         <Route path="/numerology" element={<Numerology />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/family-pack" element={<FamilyPack />} />
-        <Route path="/corporate-elite-pack" element={<Navigate to="/family-pack" replace />} />
+        <Route path="/corporate-numbers" element={<CorporateNumbers />} />
+        <Route path="/corporate-elite-pack" element={<Navigate to="/corporate-numbers" replace />} />
         <Route path="/faq" element={<Faq />} />
         <Route path="/terms-and-conditions" element={<LegalPage policyKey="terms-and-conditions" />} />
         <Route path="/privacy-policy" element={<LegalPage policyKey="privacy-policy" />} />
@@ -169,10 +174,13 @@ export default function AppRoutes() {
         <Route path="/admin/dealer-purchases" element={<RoleGuard roles={adminRoles}><AdminDealerPurchases /></RoleGuard>} />
         <Route path="/admin/deals-of-day" element={<RoleGuard roles={adminRoles}><AdminDealsOfDay /></RoleGuard>} />
         <Route path="/admin/categories" element={<RoleGuard roles={adminRoles}><Navigate to="/admin/numbers?notice=automatic-categories" replace /></RoleGuard>} />
+        <Route path="/admin/numbers/recycle" element={<RoleGuard roles={adminRoles}><AdminNumberRecycle /></RoleGuard>} />
         <Route path="/admin/orders" element={<RoleGuard roles={adminRoles}><AdminOrders /></RoleGuard>} />
         <Route path="/admin/prebooks" element={<RoleGuard roles={adminRoles}><AdminPrebooks /></RoleGuard>} />
         <Route path="/admin/payments" element={<RoleGuard roles={adminRoles}><AdminPayments /></RoleGuard>} />
         <Route path="/admin/users" element={<RoleGuard roles={adminRoles}><AdminUsers /></RoleGuard>} />
+        <Route path="/admin/delivery-cities" element={<RoleGuard roles={adminRoles}><AdminDeliveryCities /></RoleGuard>} />
+        <Route path="/admin/languages" element={<RoleGuard roles={adminRoles}><AdminLanguages /></RoleGuard>} />
         <Route path="/admin/dealers" element={<RoleGuard roles={adminRoles}><AdminDealers /></RoleGuard>} />
         <Route path="/admin/dealers/new" element={<RoleGuard roles={adminRoles}><AdminCreateDealer /></RoleGuard>} />
         <Route path="/admin/sell-requests" element={<RoleGuard roles={adminRoles}><AdminSellRequests /></RoleGuard>} />

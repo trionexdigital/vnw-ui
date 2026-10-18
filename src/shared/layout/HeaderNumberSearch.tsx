@@ -1,10 +1,11 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowRight, Search, X } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { categoriesAPI, numbersAPI, type NumberCatalogItem } from '@/core/api/vnwAPI';
 import type { NumberCategory } from '@/core/categories/types';
 import { formatINR } from '@/core/lib/format';
 import './HeaderNumberSearch.css';
+import { contentQueryKey } from '@/shared/language/searchParams';
 
 const PAGE_SIZE = 10;
 type SearchTarget = { category?: string; subcategory_id?: number; q?: string };
@@ -64,7 +65,8 @@ export default function HeaderNumberSearch() {
   const viewAll = allPath(query, target);
 
   useEffect(() => { categoriesAPI.list().then(setCategories).catch(() => undefined); }, []);
-  useEffect(() => { setOpen(false); }, [location.pathname, location.search]);
+  const queryKey=contentQueryKey(new URLSearchParams(location.search));
+  useEffect(() => { setOpen(false); }, [location.pathname, queryKey]);
   useEffect(() => {
     const closeOutside = (event: PointerEvent) => {
       if (root.current && !root.current.contains(event.target as Node)) setOpen(false);
@@ -110,13 +112,12 @@ export default function HeaderNumberSearch() {
 
   return <div ref={root} className="header-number-search">
     <form className="header-number-search__form" role="search" onSubmit={(event) => { event.preventDefault(); setOpen(false); navigate(viewAll); }}>
-      <Search size={19} aria-hidden="true" />
       <input ref={input} value={query} onChange={(event) => { setQuery(event.target.value); setOpen(true); }}
         onFocus={() => setOpen(true)} onKeyDown={(event) => { if (event.key === 'Escape') { setOpen(false); input.current?.blur(); } }}
         aria-label="Search all VIP numbers" aria-expanded={open} aria-controls={resultsId}
         placeholder="Search any number" autoComplete="off" />
-      {query && <button type="button" className="header-number-search__clear" aria-label="Clear search" onClick={() => { setQuery(''); input.current?.focus(); }}><X size={16} /></button>}
-      <button type="submit" className="header-number-search__submit" aria-label="View search results"><ArrowRight size={18} /></button>
+      {query && <button type="button" className="header-number-search__clear" aria-label="Clear search" onClick={() => { setQuery(''); input.current?.focus(); }}>Clear</button>}
+      <button type="submit" className="header-number-search__submit" aria-label="View search results">Search</button>
     </form>
     {open && <div id={resultsId} className="header-number-search__panel" role="region" aria-label="Instant VIP number results">
       <div className="header-number-search__heading"><strong>{query.trim() ? 'Matching numbers' : 'Recently added'}</strong><span>{loading ? 'Searching…' : total ? total.toLocaleString('en-IN') : ''}</span></div>

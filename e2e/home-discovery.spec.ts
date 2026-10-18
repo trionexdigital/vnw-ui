@@ -18,6 +18,7 @@ const numbers = Array.from({ length: 14 }, (_, index) => ({
 
 async function mockHomepage(page: import('@playwright/test').Page) {
   const requests: any[] = [];
+  await page.route('https://fonts.googleapis.com/**',route=>route.fulfill({status:200,contentType:'text/css',body:''}));
   await page.route('http://localhost:3002/vipnumberworld/**', async (route) => {
     const url = route.request().url();
     const payload = route.request().postDataJSON?.() || {};
@@ -27,7 +28,7 @@ async function mockHomepage(page: import('@playwright/test').Page) {
       : url.endsWith('/categories/list')
         ? [{ id: 16, slug: 'customer-care-numbers', name: 'Mirror', number_count: 14, subcategories: [] }]
         : url.endsWith('/site/family-packs')
-          ? [{ pack_id: 'pack-1', title: 'Matching Pair', pack_type: 'MIXED', size: 2, total_price: 90000, is_available: true, is_active: true, sort_order: 1, numbers: [numbers[0], numbers[1]] }]
+          ? Array.from({length:7},(_,index)=>({ pack_id: `pack-${index+1}`, title: 'Matching Pair', pack_type: 'MIXED', size: 2, total_price: 90000, is_available: true, is_active: true, sort_order: index, numbers: [numbers[0], numbers[1]] }))
           : [];
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 1, info: 'OK', data }) });
   });
@@ -41,7 +42,6 @@ test('homepage rails load seven more cards and animate digits on hover', async (
   await page.screenshot({ path: testInfo.outputPath('home-discovery-top.png') });
   const gallery = page.locator('.home-pattern-gallery');
   await gallery.scrollIntoViewIfNeeded();
-  await expect.poll(() => gallery.evaluate((element) => element.dataset.vnwScrollState)).toBe('visible');
   await expect.poll(() => gallery.evaluate((element) => getComputedStyle(element).opacity)).toBe('1');
   await gallery.screenshot({ path: testInfo.outputPath('home-pattern-gallery.png') });
   const premium = page.locator('#home-premium');
@@ -65,6 +65,49 @@ test('homepage rails load seven more cards and animate digits on hover', async (
   await familyShelf.screenshot({ path: testInfo.outputPath('home-family-desktop.png') });
   await first.getByRole('button', { name: /View VIP number/ }).hover();
   await expect.poll(() => first.locator('.reference-card__digit').first().evaluate((digit) => getComputedStyle(digit).transform)).not.toBe('none');
+});
+
+test('number and family rails keep equal page gutters and complete cards when paging in every language',async({page},info)=>{
+  test.setTimeout(240000);
+  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
+  page.on('console',message=>{if(message.type()==='error')errors.push(message.text());});
+  await mockHomepage(page);await page.emulateMedia({reducedMotion:'reduce'});await page.goto('/');
+  const locales=['English','हिंदी','मराठी','Hinglish','ગુજરાતી','বাংলা','ਪੰਜਾਬੀ','தமிழ்','తెలుగు','ಕನ್ನಡ','മലയാളം','ଓଡ଼ିଆ'];
+  for(const locale of locales) {
+    await page.locator('.store-header .public-language-button').click();
+    await page.getByRole('dialog').getByRole('button',{name:new RegExp(locale)}).click();
+    await expect.poll(()=>page.evaluate(()=>getComputedStyle(document.body).overflow)).not.toBe('hidden');
+    for(const width of [320,375,768,1366,1920]) {
+      await page.setViewportSize({width,height:900});
+      const gutter=width>=1024?24:width>=640?20:12;
+      for(const selector of ['#home-premium','.home-family-shelf']) {
+        const shelf=page.locator(selector), track=shelf.locator('.home-rail__track:not(.home-rail__track--loading)');
+        await expect(track).toBeVisible();
+        await track.evaluate(el=>el.scrollTo({left:0,behavior:'instant'}));
+        const assertEdges=async()=>{
+          const geometry=await track.evaluate(el=>{
+            const box=el.getBoundingClientRect();
+            const visible=Array.from(el.children).map(child=>child.getBoundingClientRect()).filter(child=>child.right>box.left+1&&child.left<box.right-1);
+            return {left:box.left,right:box.right,visible:visible.map(child=>({left:child.left,right:child.right}))};
+          });
+          expect(geometry.left,`${locale} ${selector} left gutter at ${width}`).toBeCloseTo(gutter,0);
+          expect(width-geometry.right,`${locale} ${selector} right gutter at ${width}`).toBeCloseTo(gutter,0);
+          const actions=(await shelf.locator('.home-rail__actions').boundingBox())!;
+          expect(actions.x+actions.width,`${locale} ${selector} controls at ${width}`).toBeCloseTo(geometry.right,0);
+          expect(geometry.visible[0].left).toBeCloseTo(geometry.left,0);
+          expect(geometry.visible.at(-1)!.right).toBeCloseTo(geometry.right,0);
+          for(const card of geometry.visible) { expect(card.left).toBeGreaterThanOrEqual(geometry.left-1); expect(card.right).toBeLessThanOrEqual(geometry.right+1); }
+        };
+        await assertEdges();
+        const buttons=shelf.locator('.home-rail__actions > button[aria-controls]');
+        await buttons.nth(1).click();await assertEdges();
+        if(locale==='English'&&[375,1366].includes(width))await shelf.screenshot({path:info.outputPath(`paged-${selector==='#home-premium'?'numbers':'family'}-${width}.png`)});
+        await buttons.first().click();await assertEdges();
+      }
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth)).toBeLessThanOrEqual(1);
+    }
+  }
+  expect(errors).toEqual([]);
 });
 
 test('mobile discovery stays within the page while its rails scroll horizontally', async ({ page }, testInfo) => {

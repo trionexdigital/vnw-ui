@@ -32,7 +32,7 @@ export default function OrderDetail() {
       <div className="vnw-card p-6">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h1 className="text-xl font-bold text-foreground">Order {order.order_no}</h1>
+            <h1 className="text-xl font-bold text-foreground">Order <span translate="no">{order.order_no}</span></h1>
             <p className="text-sm text-muted-foreground">{String(order.created_at).slice(0, 16).replace('T', ' ')}</p>
           </div>
           <div className="flex gap-2"><StatusBadge status={order.payment_status} /><StatusBadge status={order.status} /></div>

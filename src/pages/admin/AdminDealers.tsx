@@ -5,6 +5,7 @@ import { adminAPI } from '@/core/api/vnwAPI';
 import { useToast } from '@/shared/hooks/use-toast';
 import { PageHeader, Loader, StatusBadge, Table } from '@/shared/components/ui-bits';
 import Modal from '@/shared/components/Modal';
+import Combobox from '@/shared/ui/combobox';
 
 export default function AdminDealers() {
   const { toast } = useToast();
@@ -17,9 +18,24 @@ export default function AdminDealers() {
   const [editing, setEditing] = useState<any | null>(null);
   const [perms, setPerms] = useState<Set<string>>(new Set());
   const [savingPerms, setSavingPerms] = useState(false);
+  const [unlinked, setUnlinked] = useState<any[]>([]);
+  const [accounts, setAccounts] = useState<any[]>([]);
+  const [legacy, setLegacy] = useState('');
+  const [account, setAccount] = useState('');
+  const [linking, setLinking] = useState(false);
 
   const load = () => { setLoading(true); adminAPI.dealersList({ page, limit: pageSize }).then((data) => { setRows(data.items || []); setTotal(Number(data.total || 0)); }).catch(() => {}).finally(() => setLoading(false)); };
   useEffect(() => { load(); }, [page, pageSize]);
+  useEffect(() => {
+    adminAPI.unlinkedDealers().then(setUnlinked).catch((error) => toast({ title: 'Could not load historical suppliers', description: error.message, variant: 'destructive' }));
+    adminAPI.usersList({ role: 'DEALER', limit: 1000 }).then((data) => setAccounts((data.items || []).filter((user: any) => user.status === 'ACTIVE'))).catch(() => undefined);
+  }, []);
+  const linkSupplier = async () => {
+    setLinking(true);
+    try { await adminAPI.dealerSupplierLink(Number(legacy), Number(account)); setUnlinked(await adminAPI.unlinkedDealers()); setLegacy(''); setAccount(''); toast({ title: 'Supplier linked', description: 'Purchase and payment history preserved.' }); load(); }
+    catch (error: any) { toast({ title: 'Could not link supplier', description: error.message, variant: 'destructive' }); }
+    finally { setLinking(false); }
+  };
   useEffect(() => { adminAPI.permissionCatalog().then((c: any) => setCatalog((c || []).filter((p: any) => p.module === 'DEALER'))).catch(() => {}); }, []);
 
   const kyc = async (dealer_id: number, kyc_status: string) => { try { await adminAPI.dealerKyc({ dealer_id, kyc_status }); toast({ title: 'KYC updated' }); load(); } catch (e: any) { toast({ title: 'Error', description: e.message, variant: 'destructive' }); } };
@@ -44,6 +60,7 @@ export default function AdminDealers() {
     <div>
       <PageHeader title="Dealers" subtitle="Create dealers, map permissions, verify KYC & set commissions"
         action={<Link to="/admin/dealers/new" className="btn-gold inline-flex items-center gap-2"><Plus className="h-4 w-4" /> Create Dealer</Link>} />
+      {unlinked.length > 0 && <section className="mb-4 rounded-2xl border border-border bg-card p-4"><h2 className="text-sm font-black">Link historical suppliers to dealer accounts</h2><p className="mt-1 mb-4 text-xs text-muted-foreground">Select the correct account to keep existing purchases and payments under that dealer.</p><div className="grid items-end gap-3 sm:grid-cols-[1fr_1fr_auto]"><Combobox label="Historical supplier" items={unlinked} value={legacy} onChange={setLegacy} getKey={(item) => String(item.external_dealer_id)} getLabel={(item) => `${item.name} · ${item.email || item.phone || '#' + item.external_dealer_id}`} /><Combobox label="Dealer account" items={accounts} value={account} onChange={setAccount} getKey={(item) => String(item.user_id)} getLabel={(item) => `${item.full_name} · ${item.email}`} /><button disabled={!legacy || !account || linking} onClick={linkSupplier} className="btn-gold disabled:opacity-50">{linking ? 'Linking…' : 'Link account'}</button></div></section>}
       <Table head={['Business', 'Contact', 'Listings', 'Commission %', 'KYC', 'Actions']} pagination={{ page, pageSize, total, onPageChange: setPage, onPageSizeChange: (size) => { setPageSize(size); setPage(1); } }}>
         {rows.map((d) => (
           <tr key={d.dealer_id} className="border-b border-card-border last:border-0">

@@ -51,7 +51,7 @@ export default function PrivateCollection() {
       </section>
       <form className="mb-4 flex max-w-lg gap-2" onSubmit={(event) => { event.preventDefault(); setPage(1); setSearch(query.trim()); }}><input aria-label="Search offline catalog" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search a number" className="h-10 min-w-0 flex-1 rounded-xl border border-border bg-card px-3" /><button className="rounded-xl bg-primary px-4 text-sm font-bold text-primary-foreground">Search</button></form>
       {items.length ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="number-card-grid">
           {items.map((item) => <NumberCard key={item.number_id} item={item} />)}
         </div>
       ) : <EmptyState title="No available numbers" subtitle="This collection currently has no numbers available for purchase." />}

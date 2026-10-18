@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" translate="no">
 
 <head>
   <meta charset="UTF-8" />
@@ -37,6 +37,8 @@
           resolvedTheme = 'light';
         }
       }
+
+      if (!/^\/admin(?:\/|$)/.test(window.location.pathname)) resolvedTheme = 'light';
 
       var root = document.documentElement;
       root.classList.toggle('dark', resolvedTheme === 'dark');

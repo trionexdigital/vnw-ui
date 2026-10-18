@@ -301,7 +301,7 @@ export default function DealOfDayShowcase({
 
   return (
     <div
-      className="deal-showcase"
+      className={`deal-showcase${deals.length ? ' has-deals' : ''}`}
       role="region"
       aria-roledescription="carousel"
       aria-label="Lucky Pick of the Day VIP numbers"

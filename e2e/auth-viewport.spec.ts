@@ -7,7 +7,7 @@ for (const [route, title] of [['/login', 'Sign In'], ['/register', 'Create Accou
       await page.goto(route, { waitUntil: 'domcontentloaded' });
       await expect(page.getByRole('heading', { name: title, exact: true })).toBeVisible();
       await expect(page.getByRole('link', { name: 'Back to store' })).toBeVisible();
-      await expect(page.getByRole('radiogroup', { name: 'Color theme' })).toBeVisible();
+      await expect(page.getByRole('radiogroup', { name: 'Color theme' })).toHaveCount(0);
       await page.getByRole('button', { name: title, exact: true }).scrollIntoViewIfNeeded();
       const dimensions = await page.evaluate(() => ({ width: document.documentElement.scrollWidth, height: document.documentElement.scrollHeight, viewportWidth: innerWidth, viewportHeight: innerHeight }));
       expect(dimensions.width).toBeLessThanOrEqual(dimensions.viewportWidth + 1);

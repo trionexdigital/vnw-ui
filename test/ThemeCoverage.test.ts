@@ -91,22 +91,24 @@ describe('theme coverage', () => {
     const app = readFileSync(resolve(sourceRoot, 'App.tsx'), 'utf8');
     const routes = readFileSync(resolve(sourceRoot, 'app/router/AppRoutes.tsx'), 'utf8');
     const publicLayout = readFileSync(resolve(sourceRoot, 'shared/layout/PublicLayout.tsx'), 'utf8');
+    const storeHeader = readFileSync(resolve(sourceRoot, 'shared/layout/StoreHeader.tsx'), 'utf8');
     const accountLayout = readFileSync(resolve(sourceRoot, 'shared/layout/AccountLayout.tsx'), 'utf8');
     const auth = readFileSync(resolve(sourceRoot, 'pages/auth/Auth.tsx'), 'utf8');
     const declaredPaths = [...routes.matchAll(/<Route path="([^"]+)"/g)].map((match) => match[1]);
 
-    expect(app).toContain('<ThemeProvider>');
+    expect(app).toContain('<ThemeProvider allowAppearance={allowAppearance}>');
     expect(routes).toContain('<Route element={<PublicLayout />}>');
     expect(routes).toContain('<Route element={<RoleGuard><AccountLayout /></RoleGuard>}>');
     expect(declaredPaths).toEqual(expect.arrayContaining(['/', '/login', '/dashboard', '/employee', '/dealer', '/admin']));
     expect(declaredPaths.length).toBeGreaterThanOrEqual(45);
-    expect(publicLayout).toContain('<ThemeControl');
-    expect(publicLayout).toContain('to="/compare"');
+    expect(publicLayout).not.toContain('<ThemeControl');
+    expect(publicLayout).toContain('<StoreHeader />');
+    expect(storeHeader).toContain('to="/compare"');
     expect(publicLayout).toContain('<HeaderNumberSearch />');
-    expect(publicLayout).toContain('<HeaderIconTooltip');
     expect(publicLayout).not.toContain('aria-label="Notifications"');
-    expect(accountLayout).toContain('<ThemeControl');
-    expect(auth).toContain('<ThemeControl');
+    expect(accountLayout).not.toContain('<ThemeControl');
+    expect(auth).not.toContain('<ThemeControl');
+    expect(readFileSync(resolve(sourceRoot, 'pages/settings/Settings.tsx'), 'utf8')).toContain('<ThemeControl');
   });
 
   it('applies the stored or system theme before the application entry script', () => {

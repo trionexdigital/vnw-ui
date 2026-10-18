@@ -338,6 +338,7 @@ export interface CorporatePackQuery {
   pack_type: CorporatePackType;
   size: number;
   limit?: number;
+  category_slug?: string;
 }
 
 export interface CorporatePack {
@@ -359,6 +360,8 @@ export interface CorporatePack {
     operator?: string | null;
   }>;
 }
+
+export interface DeliveryCity { city_id: number; city_name: string; state_name: string; description?: string | null; is_highlighted: boolean | number; is_active: boolean | number; sort_order: number; }
 
 export interface OperatorFacet { operator: string; count: number; }
 
@@ -388,8 +391,9 @@ export const siteAPI = {
   heroStats: () => post<HeroStats>('site/hero-stats', {}),
   dealsOfDay: () => post<DealOfDayResponse>('site/deals-of-day', {}),
   familyPacks: (p: CorporatePackQuery) => post<CorporatePack[]>('site/family-packs', p),
-  // Legacy alias retained for integrations that still call the previous API name.
-  corporatePacks: (p: CorporatePackQuery) => post<CorporatePack[]>('site/family-packs', p),
+  // Corporate packs have a separate bulk-size and category-filter contract.
+  corporatePacks: (p: CorporatePackQuery) => post<CorporatePack[]>('site/corporate-packs', p),
+  deliveryCities: () => post<DeliveryCity[]>('site/delivery-cities', {}),
   operators: () => post<OperatorFacet[]>('site/operators', {}),
   trustedClients: () => post<TrustedClient[]>('site/trusted-clients', {}),
   trustedClientLogoUrl: (clientId: number, version?: string) => BASE_URL + `site/trusted-clients/${clientId}/logo${version ? `?v=${encodeURIComponent(version)}` : ''}`,
@@ -397,6 +401,18 @@ export const siteAPI = {
   homePremiumNumbers: () => post<any[]>('site/home-premium-numbers', {}),
   subscribe: (email: string, source = 'footer') => postRaw('site/newsletter', { email, source }),
   enquiry: (p: any) => postRaw('site/enquiry', p),
+};
+
+export interface LanguageEntry { source_hash?:string; source:string; context?:string; translation:string; published_text?:string|null; revision:number; }
+export interface LanguageList { language:string; items:LanguageEntry[]; total:number; page:number; limit:number; version:string; summary:{total:number;published:number;missing:number;drafts:number}; }
+export interface LanguageDocument { format:'vnw-language-v1'; language:string; entries:Array<{source:string;translation:string}>; }
+export const languagesAPI = {
+  list:(p:{language:string;page:number;limit:number;q:string;missing_only:boolean})=>post<LanguageList>('admin/languages/list',p),
+  save:(language:string,entry:LanguageEntry)=>post('admin/languages/save',{language,...entry}),
+  export:(language:string)=>post<LanguageDocument>('admin/languages/export',{language}),
+  import:(document:LanguageDocument)=>post<{saved:number}>('admin/languages/import',{...document,confirm:true}),
+  publish:(language:string,version:string)=>post('admin/languages/publish',{language,version,confirm:true}),
+  sync:()=>post<{added:number}>('admin/languages/sync-content'),
 };
 
 export const notificationsAPI = {
@@ -459,6 +475,9 @@ export const employeeAPI = {
 };
 
 export const adminAPI = {
+  deliveryCitiesList: () => post<DeliveryCity[]>('admin/delivery-cities/list', {}),
+  deliveryCitySave: (p: Partial<DeliveryCity>) => post('admin/delivery-cities/save', p),
+  deliveryCityDelete: (city_id: number) => post('admin/delivery-cities/delete', { city_id }),
   dashboard: () => post('admin/dashboard', {}),
   numbersList: (p: any = {}) => post('admin/numbers/list', p),
   numberSave: (p: any) => post('admin/numbers/save', p),
@@ -472,7 +491,11 @@ export const adminAPI = {
   numbersImport: (analysis_token: string) => post<{ imported: number; rejected: number; rows: NumberAnalysis['rows'] }>('admin/numbers/import/commit', { analysis_token }),
   numbersTemplate: () => post<NumberWorkbook>('admin/numbers/import/template', {}),
   numbersExport: (filters: any) => post<NumberWorkbook>('admin/numbers/export', filters),
-  numberDelete: (number_id: number) => post('admin/numbers/delete', { number_id }),
+  numberDeleteValidate: (numbers: string) => post('admin/numbers/delete/validate', { numbers }),
+  numberDelete: (numbers: string, validation_token: string) => post('admin/numbers/delete', { numbers, validation_token, confirm: true }),
+  recycledNumbersList: (p: any = {}) => post('admin/numbers/recycle/list', p),
+  restoreNumbers: (number_ids: number[]) => post('admin/numbers/recycle/restore', { number_ids }),
+  permanentlyDeleteNumbers: (number_ids: number[]) => post('admin/numbers/recycle/permanent-delete', { number_ids, confirm: true }),
   numberApprove: (number_id: number) => post('admin/numbers/approve', { number_id }),
   numberReject: (number_id: number) => post('admin/numbers/reject', { number_id }),
   privateLinksList: (params: { page?: number; limit?: number } = {}) => post<{ items: PrivateCollection[]; total: number }>('admin/private-links/list', params),
@@ -492,7 +515,8 @@ export const adminAPI = {
   privateLinkRotate: (private_link_id: number) => post<{ private_link_id: number; token: string }>('admin/private-links/rotate', { private_link_id }),
   privateLinkRevoke: (private_link_id: number) => post('admin/private-links/revoke', { private_link_id }),
   externalDealersList: () => post('admin/dealer-purchases/dealers/list', {}),
-  externalDealerCreate: (p: any) => post('admin/dealer-purchases/dealers/create', p),
+  unlinkedDealers: () => post<any[]>('admin/dealer-purchases/dealers/unlinked', {}),
+  dealerSupplierLink: (external_dealer_id: number, dealer_user_id: number) => post('admin/dealer-purchases/dealers/link', { external_dealer_id, dealer_user_id }),
   dealerPurchasesSummary: (external_dealer_id?: number) => post('admin/dealer-purchases/summary', { external_dealer_id }),
   dealerPurchasesList: (p: any) => post('admin/dealer-purchases/list', p),
   dealerPurchasesCreate: (p: any) => post('admin/dealer-purchases/create', p),

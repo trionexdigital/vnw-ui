@@ -24,18 +24,15 @@ export function MotionPage({
   const reduceMotion = useReducedMotion();
 
   return (
-    <AnimatePresence mode="wait" initial={false}>
       <motion.div
         key={routeKey}
         className={className}
-        initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+        initial={reduceMotion ? false : { opacity: 1, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={reduceMotion ? undefined : { opacity: 0, y: -4 }}
         transition={{ duration: reduceMotion ? 0 : 0.28, ease }}
       >
         {children}
       </motion.div>
-    </AnimatePresence>
   );
 }
 

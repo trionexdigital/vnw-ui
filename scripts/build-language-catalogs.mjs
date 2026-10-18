@@ -1,0 +1,45 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { createHash } from 'node:crypto';
+import { fileURLToPath } from 'node:url';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+const server=path.resolve(root,'../vnw-server');
+const codes=['hi','mr','hg','gu','bn','pa','ta','te','kn','ml','or'];
+const catalog={};
+for(const filename of ['catalog.tsv','storefront.tsv']) for(const line of fs.readFileSync(path.join(root,'src/shared/language',filename),'utf8').split(/\r?\n/)) {
+  if(!line || line.startsWith('#')) continue;
+  const [source,...values]=line.split('|');
+  if(values.length!==11 || values.some(s=>!s.trim())) throw new Error('Incomplete language row: '+source);
+  const tokens=s=>(s.match(/\{[a-zA-Z]\w*\}/g)||[]).sort().join('|');
+  if(values.some(s=>tokens(s)!==tokens(source))) throw new Error('Mismatched placeholders: '+source);
+  catalog[source]=Object.fromEntries(codes.map((code,i)=>[code,values[i]]));
+}
+const aliases={'Terms & Conditions':'Terms and Conditions','Refund Policy':'Refund and Cancellation Policy','Delivery Policy':'Delivery and Fulfilment Policy','MNP & Activation Policy':'MNP and Activation Policy','MNP and Activation':'MNP and Activation Policy','FAQ':'Frequently Asked Questions','FAQs':'Frequently Asked Questions','About':'About Us','Log in':'Sign In','Login':'Sign In','Create account':'Register','Create an account':'Register','Sign in to your account':'Sign In','Your name':'Name','Email address':'Email','Mobile number':'Phone','Total price':'Total','Number':'VIP Number','Go to checkout':'Proceed to checkout','Loading...':'Loading…','Browse categories':'Categories','All VIP Numbers':'VIP Number','VIP Numbers':'VIP Number'};
+for(const [source,key] of Object.entries(aliases)) catalog[source]??=catalog[key];
+for(const [source,key] of Object.entries({'Terms':'Terms and Conditions','Delivery & Fulfilment':'Delivery and Fulfilment Policy','MNP & Activation':'MNP and Activation Policy','Grievance Redressal Policy':'Grievance Redressal','MNP & Activation Policy':'MNP and Activation Policy'})) catalog[source]=catalog[key];
+// These are structured catalog labels, with canonical pattern codes retained verbatim.
+for(const [source,keys] of Object.entries({'Numerology Numbers':['Numerology','numbers'],'Penta Numbers':['Penta','numbers'],'Fancy VIP Number':['Fancy','VIP Number'],'Premium VIP Number':['Premium','VIP Number'],'Business VIP Number':['Business','VIP Number']}))catalog[source]=Object.fromEntries(codes.map(code=>[code,keys.map(key=>catalog[key][code]).join(' ')]));
+for(const source of ['Doubling (AABBCC)','Doublling (AABBCC)'])catalog[source]=Object.fromEntries(codes.map(code=>[code,catalog.Doubling[code]+' (AABBCC)']));
+catalog['Tetra Numbers - XXXX']=Object.fromEntries(codes.map(code=>[code,catalog.Tetra[code]+' '+catalog.numbers[code]+' - XXXX']));
+catalog['VIP Numbers']=Object.fromEntries(codes.map(code=>[code,'VIP '+catalog.numbers[code]]));
+for(const [label,number] of [['Tetra',4],['Penta',5],['Hexa',6]])catalog[`${label} · ${number}`]=Object.fromEntries(codes.map(code=>[code,`${catalog[label][code]} · ${number}`]));
+for(const [code,key] of [['RTA','Ready to activate'],['RTP','Ready to port']]) catalog[`${code} · ${key}`]=Object.fromEntries(codes.map(language=>[language,`${code} · ${catalog[key][language]}`]));
+for(const code of codes) fs.writeFileSync(path.join(root,`src/shared/language/${code}.json`),JSON.stringify(Object.fromEntries(Object.entries(catalog).map(([s,v])=>[s,v[code]])),null,2)+'\n');
+fs.writeFileSync(path.join(server,'src/server/pixels/api/site/languageCatalog.json'),JSON.stringify(catalog,null,2)+'\n');
+const hash=s=>createHash('sha256').update(s.replace(/\s+/g,' ').trim().toLowerCase()).digest('hex');
+const sources=new Map(JSON.parse(fs.readFileSync(path.join(server,'src/server/pixels/api/site/languageSources.json'),'utf8')).map(s=>[hash(s.source),s]));
+for(const source of Object.keys(catalog)) if(!sources.has(hash(source))) sources.set(hash(source),{source,context:'shared/language/catalog.tsv'});
+const quote=s=>"CONVERT(X'"+Buffer.from(s,'utf8').toString('hex')+"' USING utf8mb4)";
+const schema=fs.readFileSync(path.join(server,'database/schema/language_management.sql'),'utf8');
+let sql='-- Custom application language management. No external translation credentials or services.\n-- Re-runnable: existing administrator translations are preserved.\nSET NAMES utf8mb4;\n\n'+schema+'\n';
+for(const [key,s] of sources) sql+=`INSERT IGNORE INTO language_sources(source_hash,source_text,context) VALUES ('${key}',${quote(s.source)},${quote(s.context)});\n`;
+const unique=new Map();
+for(const [source,values] of Object.entries(catalog)) for(const code of codes) unique.set(hash(source)+'|'+code,{source,code,value:values[code]});
+for(const {source,code,value} of unique.values()) sql+=`INSERT IGNORE INTO language_translations(source_hash,language,draft_text,published_text) VALUES ('${hash(source)}','${code}',${quote(value)},${quote(value)});\n`;
+sql+=`\nCREATE TABLE IF NOT EXISTS schema_migrations (migration_key VARCHAR(128) NOT NULL PRIMARY KEY,classifier_version SMALLINT UNSIGNED NULL,details TEXT,applied_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;\nINSERT INTO schema_migrations(migration_key,details) VALUES ('20261012_custom_language_management','App-owned catalogs, draft/publish translations, revision checks and source coverage.') ON DUPLICATE KEY UPDATE details=VALUES(details);\n`;
+fs.writeFileSync(path.join(server,'database/migrations/20261012_custom_language_management_sqlyog.sql'),sql);
+fs.writeFileSync(path.join(server,'database/migrations/20261013_storefront_languages_sqlyog.sql'),'-- Storefront React localization and expanded interface catalogs (2026-10-13).\n-- Run with the application database selected. Existing administrator edits are preserved.\n'+sql);
+const old=fs.readFileSync(path.join(server,'database/migrations/20261011_corporate_delivery_dealer_ui_sqlyog.sql'),'utf8');
+const recycle=fs.readFileSync(path.join(server,'database/migrations/20261012_recycle_languages_sqlyog.sql'),'utf8');
+fs.writeFileSync(path.join(server,'database/migrations/20261012_all_requested_changes_sqlyog.sql'),'-- All requested marketplace, recycle and custom language changes.\n\n'+old+'\n'+recycle+'\n'+sql);
+console.log(`Built ${unique.size} local translations and ${sources.size} editable source strings.`);

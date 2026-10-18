@@ -9,7 +9,6 @@ import { useToast } from '@/shared/hooks/use-toast';
 import { localService } from '@/core/services/local';
 import { roleHome } from '@/core/lib/permissions';
 import { APP_CONFIG } from '@/core/config/app.config';
-import { ThemeControl } from '@/shared/components/ThemeControl';
 import './Auth.css';
 
 type Mode = 'login' | 'register' | 'forgot';
@@ -32,7 +31,7 @@ export default function Auth({ mode }: { mode: Mode }) {
   const [form, setForm] = useState({
     email: '', password: '', full_name: '', phone: '', confirm_password: '',
     ref_code: params.get('ref') || '', reason: '',
-    role: params.get('role') === 'DEALER' ? 'DEALER' : 'USER',
+    role: 'USER',
   });
 
   useEffect(() => { if (localService.getToken()) navigate(loginDestination || roleHome(user?.role)); }, []);
@@ -75,9 +74,6 @@ export default function Auth({ mode }: { mode: Mode }) {
   return (
     <div className="auth-screen app-shell-bg relative grid h-[100dvh] overflow-hidden bg-background p-2 text-foreground lg:grid-cols-2 lg:gap-3 lg:p-3">
       <Link to="/" className="auth-mobile-back absolute left-3 top-3 z-20 inline-flex h-9 items-center gap-1.5 rounded-xl border border-border bg-card px-3 text-xs font-bold text-foreground shadow-sm lg:hidden"><ArrowLeft className="h-4 w-4" /> Back to store</Link>
-      <div className="absolute right-3 top-3 z-20 lg:right-5 lg:top-5">
-        <ThemeControl />
-      </div>
       <div className="auth-side vip-auth-panel glass-panel relative hidden min-h-0 flex-col justify-between overflow-hidden rounded-[1.75rem] p-7 lg:flex xl:p-10">
         <div className="relative z-10">
           <Link to="/" className="inline-flex items-center rounded-xl bg-card p-2"><BrandLockup logoClassName="h-11 w-11" sloganClassName="h-9 w-52" /></Link>
@@ -100,7 +96,7 @@ export default function Auth({ mode }: { mode: Mode }) {
           </Link>
           <h1 className="text-2xl font-black text-foreground sm:text-3xl">{title}</h1>
           <p className="mb-4 mt-1 text-sm text-muted-foreground">
-            {mode === 'login' ? 'Sign in to your account' : mode === 'register' ? (form.role === 'DEALER' ? 'Register as a dealer to sell numbers' : 'Join VIP Number World') : 'We will review your request'}
+            {mode === 'login' ? 'Sign in to your account' : mode === 'register' ? 'Join VIP Number World' : 'We will review your request'}
           </p>
 
           <div className="space-y-3">
@@ -123,14 +119,6 @@ export default function Auth({ mode }: { mode: Mode }) {
               <>
                 <input required type="password" placeholder="Confirm password" className={input} value={form.confirm_password} onChange={(e) => set('confirm_password', e.target.value)} />
                 <input placeholder="Referral code (optional)" className={input} value={form.ref_code} onChange={(e) => set('ref_code', e.target.value)} />
-                <div className="flex gap-2 text-xs">
-                  {['USER', 'DEALER'].map((r) => (
-                    <button type="button" key={r} onClick={() => set('role', r)}
-                      className={`flex-1 rounded-2xl border px-3 py-2 font-bold ${form.role === r ? 'border-accent bg-accent/10 text-accent' : 'border-border bg-card/40 text-muted-foreground hover:bg-muted'}`}>
-                      {r === 'USER' ? 'Buyer' : 'Dealer / Seller'}
-                    </button>
-                  ))}
-                </div>
               </>
             )}
             {mode === 'forgot' && <textarea placeholder="Reason for reset" rows={3} className={input} value={form.reason} onChange={(e) => set('reason', e.target.value)} />}

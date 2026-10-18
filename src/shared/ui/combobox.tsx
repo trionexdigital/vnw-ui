@@ -17,6 +17,7 @@ export interface ComboboxProps<T> {
   placeholder?: string;
   /** optional sticky row at the top of the menu (e.g. "+ New Patient").
    *  May be a render-prop receiving a `close()` to dismiss the menu. */
+  footer?: React.ReactNode | ((close: () => void) => React.ReactNode);
   header?: React.ReactNode | ((close: () => void) => React.ReactNode);
   /** shown when there are no matches; render-prop variant gets the query + close. */
   emptyContent?: (query: string, close: () => void) => React.ReactNode;
@@ -33,7 +34,7 @@ export interface ComboboxProps<T> {
  */
 export function Combobox<T>({
   label, items, value, onChange, getKey, getLabel, renderOption, filterItem,
-  icon, error, placeholder, header, emptyContent, emptyText, disabled, dense = false, containerClassName, onBlur,
+  icon, error, placeholder, header, footer, emptyContent, emptyText, disabled, dense = false, containerClassName, onBlur,
 }: ComboboxProps<T>) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
@@ -68,10 +69,15 @@ export function Combobox<T>({
           </span>
         )}
         <input
+          aria-label={label}
           value={displayVal}
           disabled={disabled}
           onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
           onFocus={() => setOpen(true)}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') { event.stopPropagation(); close(); }
+            if (event.key === 'ArrowDown') { event.preventDefault(); setOpen(true); wrapRef.current?.querySelector<HTMLButtonElement>('[data-combobox-option]')?.focus(); }
+          }}
           onBlur={onBlur}
           placeholder=" "
           className={cn(
@@ -96,15 +102,16 @@ export function Combobox<T>({
           {label}
         </label>
 
-        {open && (header || filtered.length > 0 || query) && (
+        {open && (header || footer || filtered.length > 0 || query) && (
           <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-56 overflow-auto rounded-lg border border-popover-border bg-popover text-popover-foreground shadow-lg">
             {typeof header === "function" ? header(close) : header}
             {filtered.map((it) => (
               <button
                 key={getKey(it)}
                 type="button"
-                onMouseDown={(e) => {
-                  e.preventDefault();
+                data-combobox-option
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
                   onChange(getKey(it));
                   setQuery("");
                   setOpen(false);
@@ -114,11 +121,12 @@ export function Combobox<T>({
                 {renderOption ? renderOption(it) : getLabel(it)}
               </button>
             ))}
-            {query && filtered.length === 0 && (
+            {filtered.length === 0 && (
               emptyContent ? emptyContent(query, close)
                 : emptyText ? <div className="px-3 py-2 text-sm text-muted-foreground">{emptyText}</div>
                 : null
             )}
+            {typeof footer === "function" ? footer(close) : footer}
           </div>
         )}
       </div>
