@@ -8,7 +8,7 @@ export default defineConfig({
   use: {
     baseURL: 'http://127.0.0.1:5173',
     channel: 'chrome',
-    storageState: { cookies: [], origins: [{ origin: 'http://127.0.0.1:5173', localStorage: [{ name: 'vnw_language', value: 'en' }] }] },
+    storageState: { cookies: [], origins: [{ origin: 'http://127.0.0.1:5173', localStorage: [{ name: 'vnw_language', value: 'en' }, { name: 'vnw_location_prompt_seen', value: '1' }] }] },
     trace: 'retain-on-failure',
   },
 });

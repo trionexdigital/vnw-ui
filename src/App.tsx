@@ -1,3 +1,4 @@
+import LocationProvider from '@/shared/location/LocationProvider';
 import { BrowserRouter, useLocation } from "react-router-dom";
 import { Toaster } from "@/shared/ui/toaster";
 import { TooltipProvider } from "@/shared/ui/tooltip";
@@ -25,11 +26,13 @@ export default function App() {
         <Provider store={store}>
           <RouteThemeProvider>
             <LanguageProvider>
+            <LocationProvider>
             <ScrollToTop />
             <TooltipProvider>
               <Toaster />
               <AppRoutes />
             </TooltipProvider>
+            </LocationProvider>
             </LanguageProvider>
           </RouteThemeProvider>
         </Provider>

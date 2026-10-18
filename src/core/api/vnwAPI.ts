@@ -50,6 +50,8 @@ export interface NumberSearchRequest {
 }
 
 export interface NumberListRequest {
+  pin_code?: string;
+  show_all_rta?: boolean;
   category?: string;
   subcategory_id?: number;
   q?: string;
@@ -75,6 +77,7 @@ export interface NumberListRequest {
 }
 
 export interface NumberCatalogItem extends CategorizedNumber {
+  serviceable_pin_codes?: string[];
   number_id: number;
   number_value?: string;
   display_number: string;
@@ -435,7 +438,7 @@ export const privateCollectionsAPI = {
 
 export const dealerAPI = {
   dashboard: () => post('dealer/dashboard', {}),
-  listings: (params: { page?: number; limit?: number } = {}) => post('dealer/listings', params),
+  listings: (params: { page?: number; limit?: number; number_id?: number } = {}) => post('dealer/listings', params),
   createListing: (p: any) => post('dealer/listing/create', p),
   updateListing: (p: any) => post('dealer/listing/update', p),
   deleteListing: (number_id: number) => post('dealer/listing/delete', { number_id }),
@@ -598,3 +601,5 @@ export const adminAPI = {
   homePremiumReorder: (homepage_premium_ids: number[]) => post('admin/home-premium/reorder', { homepage_premium_ids }),
   homePremiumRemove: (homepage_premium_id: number) => post('admin/home-premium/remove', { homepage_premium_id }),
 };
+
+export const locationAPI = { pincode: (latitude: number, longitude: number) => post<{ pin_code: string | null; reason?: string }>('site/location/pincode', { latitude, longitude }) };

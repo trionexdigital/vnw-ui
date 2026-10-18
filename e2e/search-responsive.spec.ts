@@ -87,7 +87,8 @@ test('mobile sheet locks background scrolling and sends the selected global pred
   await page.goto('/shop', { waitUntil: 'domcontentloaded' });
 
   await page.getByRole('tab', { name: 'Global Search' }).click();
-  await page.getByLabel('Match position').selectOption('ends_with');
+  await page.getByRole('combobox', { name: 'Match position' }).click();
+  await page.getByRole('option', { name: 'Ends With', exact: true }).click();
   await page.getByRole('textbox', { name: 'Digits' }).fill('786');
   await page.getByRole('button', { name: 'Search' }).click();
   await expect(page).toHaveURL(/global_scope=ends_with.*q=786/);

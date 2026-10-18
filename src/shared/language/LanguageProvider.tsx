@@ -62,7 +62,7 @@ export default function LanguageProvider({children}:{children:ReactNode}) {
     return ()=>{stopped=true;controller.abort();window.removeEventListener('focus',onFocus);};
   },[language,consoleRoute]);
   const choose=(code:string)=>{setLanguage(code);setOpen(false);try{localStorage.setItem('vnw_language',code);}catch{}const next=new URLSearchParams(params);next.set('lang',code);setParams(next,{replace:true});};
-  return <LanguageContext.Provider value={{language,openChooser:()=>setOpen(true),t}}>
+  return <LanguageContext.Provider value={{language,chooserOpen:open,consoleRoute,openChooser:()=>setOpen(true),t}}>
     {children}
     {!consoleRoute && (location.pathname==='/login'||location.pathname==='/register'||/^\/(account|orders|dashboard|referrals|sell|change-password|notifications)(\/|$)/.test(location.pathname)) && <div className="fixed bottom-20 right-3 z-50"><LanguageButton /></div>}
     {!consoleRoute && open && <Modal open onClose={()=>choose(language)} title="Choose your language" wide><div translate="no" data-no-translate>

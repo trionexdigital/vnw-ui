@@ -1,3 +1,4 @@
+import { LocationButton } from '@/shared/location/LocationProvider';
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { BookOpen, Building2, CalendarClock, ChevronDown, Heart, House, Hash, LayoutDashboard, LogIn, LogOut, Menu, PhoneCall, ShoppingCart, User, UserPlus, UsersRound, X, GitCompareArrows } from 'lucide-react';
@@ -89,7 +90,7 @@ export default function StoreHeader() {
         <div className="public-header__desktop-search store-header__search"><HeaderNumberSearch/></div>
         <div className="store-header__actions">
           {!signedIn && <div className="store-header__auth">{authLinks()}</div>}
-          <div className="store-header__language"><LanguageButton compact iconOnly/></div>
+          <div className="store-header__language"><LanguageButton compact iconOnly/></div><LocationButton/>
           <Link to="/compare" aria-label="Compare numbers" title="Compare numbers" className={`store-header__button store-header__icon ${compareCue?'comparison-cue':''}`}><GitCompareArrows aria-hidden="true"/>{compare.length?<span translate="no" className="store-header__count">{compare.length}</span>:null}</Link>
           {signedIn && <div className="store-header__desktop-account">
             <DropdownMenu open={accountOpen} onOpenChange={setAccountOpen}>

@@ -1,3 +1,4 @@
+import { RtaLocationControls, useLocationPreference } from '@/shared/location/LocationProvider';
 import { ThemedSelect } from '@/shared/ui/themed-select';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/shared/ui/select';
 import { useEffect, useId, useRef, useState } from 'react';
@@ -150,7 +151,9 @@ function MobileChoiceMenu({ label, value, onChange, options }: { label: string; 
   </Select>;
 }
 
-function HorizontalRail<T>({ items, render, loading, error, hasMore, loadingMore, onMore, label, size = 'number', title, titleId, filters, mobileFilter, mobileBeforeArrows, viewAllHref, viewAllLabel = 'View all' }: {
+function HorizontalRail<T>({ items, render, loading, error, hasMore, loadingMore, onMore, label, size = 'number', title, titleId, filters, mobileFilter, mobileBeforeArrows, viewAllHref, viewAllLabel = 'View all', emptyMessage, aboveTrack }: {
+  aboveTrack?: React.ReactNode;
+  emptyMessage?: string;
   items: T[];
   render: (item: T) => React.ReactNode;
   loading: boolean;
@@ -197,10 +200,11 @@ function HorizontalRail<T>({ items, render, loading, error, hasMore, loadingMore
   }, [items.length]);
   return <div className="home-rail" data-testid="home-rail">
     <div className="home-rail__controls"><h2 id={titleId}>{title}</h2>{filters && <div className="home-rail__filters">{filters}</div>}<div className="home-rail__actions"><span className="home-rail__count">{loading ? 'Finding…' : t('{count} shown',{count:items.length})}</span>{mobileBeforeArrows && <div className="home-rail__mobile-before-arrows">{mobileBeforeArrows}</div>}<button type="button" onClick={() => move(-1)} aria-label={t('Scroll {label} left',{label:t(label)})} aria-controls={railId}><ChevronLeft size={19} /></button><button type="button" onClick={() => move(1)} aria-label={t('Scroll {label} right',{label:t(label)})} aria-controls={railId}><ChevronRight size={19} /></button><Link to={viewAllHref} className="home-discovery-view-all">{viewAllLabel} <ArrowRight size={15} /></Link>{mobileFilter}</div></div>
+    {aboveTrack}
     {error ? <p className="home-rail__message" role="status">{error}</p> : loading ? <div className={`home-rail__track home-rail__track--${size} home-rail__track--loading`} aria-label={t('Loading {label}',{label:t(label)})}>{Array.from({ length: 3 }, (_, index) => <div key={index} className={`home-rail__skeleton home-rail__skeleton--${size}`}><div className="home-rail__skeleton-hero"><span /><span /><span /></div><div className="home-rail__skeleton-stats"><span /><span /></div>{size === 'family' && <div className="home-rail__skeleton-row" />}<div className="home-rail__skeleton-price" /><div className="home-rail__skeleton-actions"><span /><span /></div></div>)}</div> : items.length ? <div id={railId} ref={railRef} className={`home-rail__track home-rail__track--${size}`} role="region" aria-label={label} tabIndex={0}>
       {items.map(render)}
       {hasMore && <button type="button" className="home-rail__more" onClick={loadMore} disabled={loadingMore}><span><ArrowRight size={24} /></span><strong>{loadingMore ? 'Loading more…' : t('Show {count} more',{count:BATCH_SIZE})}</strong><small>Keep exploring this collection</small></button>}
-    </div> : <div className="home-rail__message">No public numbers are available in this selection right now. Try another pattern or view the full shop.</div>}
+    </div> : <div className="home-rail__message">{emptyMessage ? t(emptyMessage) : t('No public numbers are available in this selection right now. Try another pattern or view the full shop.')}</div>}
   </div>;
 }
 
@@ -294,4 +298,38 @@ export const budgetChoices: ShelfChoice[] = [
 
 export function HomeTrustStrip() {
   return <div className="home-trust-strip"><div className="home-discovery-container"><span><ShieldCheck size={17} /> Clear prices</span><span><Search size={17} /> Search live public stock</span><span><Heart size={17} /> Save and compare favourites</span><span><Users size={17} /> Help when you need it</span></div></div>;
+}
+
+export function HomeRtaSection() {
+  const { pin, showAll, revision } = useLocationPreference();
+  const key = `${pin}:${showAll}:${revision}`;
+  const request = useRef(0);
+  const [data, setData] = useState<{items: NumberItem[]; total: number; page: number}>({items: [], total: 0, page: 1});
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [error, setError] = useState('');
+  const [retryToken, setRetryToken] = useState(0);
+  useEffect(() => {
+    const id = ++request.current;
+    setData({items: [], total: 0, page: 1}); setError(''); setLoading(true); setLoadingMore(false);
+    numbersAPI.list({rtp_status: 'RTA', pin_code: pin || undefined, show_all_rta: showAll, page: 1, limit: BATCH_SIZE})
+      .then(result => { if (id === request.current) setData({items: result.items || [], total: Number(result.total || 0), page: 1}); })
+      .catch(() => { if (id === request.current) setError('Could not load RTA numbers. Please try again.'); })
+      .finally(() => { if (id === request.current) setLoading(false); });
+    return () => { request.current++; };
+  }, [key, retryToken]);
+  const loadMore = async () => {
+    if (loading || loadingMore || data.items.length >= data.total) return;
+    const id = request.current;
+    setLoadingMore(true); setError('');
+    try {
+      const result = await numbersAPI.list({rtp_status: 'RTA', pin_code: pin || undefined, show_all_rta: showAll, page: data.page + 1, limit: BATCH_SIZE});
+      if (id === request.current) setData(current => ({items: [...current.items, ...(result.items || []).filter((item: NumberItem) => !current.items.some(existing => existing.number_id === item.number_id))], total: Number(result.total || 0), page: current.page + 1}));
+    } catch { if (id === request.current) setError('Could not load RTA numbers. Please try again.'); }
+    finally { if (id === request.current) setLoadingMore(false); }
+  };
+  return <section id="home-rta" className="home-number-shelf home-number-shelf--light" aria-labelledby="home-rta-title"><div className="home-discovery-container">
+    <HorizontalRail aboveTrack={<RtaLocationControls home total={data.total} loading={loading || !!error} />} title="Numbers ready to activate in minutes" titleId="home-rta-title" viewAllHref="/shop?rtp_status=RTA" items={data.items} render={item => <div key={item.number_id} className="home-rail__item"><NumberCard item={item} compact /></div>} loading={loading} error={error} hasMore={data.items.length < data.total} loadingMore={loadingMore} onMore={() => void loadMore()} label="Ready to activate" emptyMessage={showAll ? 'No available numbers' : 'Choose your location or show all RTA numbers to keep exploring.'} />
+    {error && <button type="button" className="btn-gold-outline" onClick={() => { if (data.items.length) void loadMore(); else setRetryToken(value => value + 1); }}>Try again</button>}
+  </div></section>;
 }

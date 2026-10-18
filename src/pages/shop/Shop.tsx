@@ -1,3 +1,4 @@
+import { RtaLocationControls, useLocationPreference } from '@/shared/location/LocationProvider';
 import { ThemedSelect } from '@/shared/ui/themed-select';
 import { contentQueryKey } from '@/shared/language/searchParams';
 import { useLanguage } from '@/shared/language/LanguageContext';
@@ -55,6 +56,7 @@ const SORT_OPTIONS = [
 
 export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {}) {
   const { t } = useLanguage();
+  const locationPreference = useLocationPreference();
   const [params, setParams] = useSearchParams();
   const [categories, setCategories] = useState<NumberCategory[]>([]);
   const [items, setItems] = useState<NumberItem[]>([]);
@@ -72,6 +74,9 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
   const filterDialogRef = useRef<HTMLDivElement>(null);
   const paramsKey = contentQueryKey(params);
 
+  const isRta = !preset && params.get('rtp_status') === 'RTA';
+  const locationKey = isRta ? `${locationPreference.pin}:${locationPreference.showAll}:${locationPreference.revision}` : '';
+  const previousLocationKey = useRef(locationKey);
   const category = params.get('category') || '';
   const subcategoryId = params.get('subcategory_id') || '';
   const ai = params.get('ai') || '';
@@ -101,8 +106,14 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
     let cancelled = false;
     setLoading(true);
     setError('');
+    const locationChanged = previousLocationKey.current !== locationKey;
+    previousLocationKey.current = locationKey;
+    if (locationChanged && params.has('page')) {
+      const next = new URLSearchParams(params); next.delete('page'); setParams(next, { replace: true }); return;
+    }
     const listingPayload = {
       ...listPayloadFromParams(params),
+      ...(isRta ? { pin_code: locationPreference.pin || undefined, show_all_rta: locationPreference.showAll } : { rtp_status: params.get('rtp_status') === 'RTA' ? undefined : listPayloadFromParams(params).rtp_status }),
       ...(preset === 'newest' ? { sort: 'newest' } : {}),
       ...(preset === 'premium' ? { is_premium: 1 } : {}),
     };
@@ -131,7 +142,7 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [paramsKey, retryToken, preset]);
+  }, [paramsKey, retryToken, preset, locationKey]);
 
   useEffect(() => {
     if (!filtersOpen) return;
@@ -397,6 +408,13 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
   return (
     <main className="mx-auto max-w-7xl overflow-x-clip px-4 py-6 sm:px-6 lg:px-8">
       <SearchWorkbench placement="shop" loading={loading} error={error} />
+      {!preset && <div className="mx-auto max-w-7xl px-3 py-3">
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Number readiness">
+          <button type="button" className="btn-gold-outline min-h-9 px-3 text-xs" aria-pressed={!isRta} onClick={() => update({ rtp_status: '' })}>Browse numbers</button>
+          <button type="button" className="btn-gold-outline min-h-9 px-3 text-xs" aria-pressed={isRta} onClick={() => update({ rtp_status: 'RTA' })}>Ready to activate</button>
+        </div>
+        {isRta && <RtaLocationControls loading={loading || !!error} total={total} />}
+      </div>}
 
       <div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
         <div>

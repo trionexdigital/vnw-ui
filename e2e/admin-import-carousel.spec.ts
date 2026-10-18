@@ -29,10 +29,12 @@ test('bulk numbers are analyzed by the API before accepted rows can be saved', a
   await expect(page.getByRole('button', { name: 'Add 0 accepted' })).toBeDisabled();
   await page.getByRole('textbox', { name: 'Mobile numbers' }).fill('9876543210,8123456789\n123');
   await page.getByRole('textbox', { name: 'MRP (₹)' }).fill('4999');
+  await page.getByRole('textbox', { name: 'Serviceable PIN codes' }).fill('400001,400002');
   await page.getByRole('button', { name: 'Validate', exact: true }).click();
   await expect(page.getByRole('region', { name: 'Number validation results' })).toContainText('1 ready');
   await expect(page.getByText('Number already exists in the catalog.', { exact: true })).toBeVisible();
   expect(requests.find((request) => request.url.endsWith('/analyze'))?.body.numbers).toBe('9876543210,8123456789\n123');
+  expect(requests.find((request) => request.url.endsWith('/analyze'))?.body.serviceable_pin_codes).toEqual(['400001', '400002']);
   await page.screenshot({ path: info.outputPath('bulk-number-analysis.png') });
   await page.getByRole('button', { name: 'Add 1 accepted' }).click();
   await expect(page.getByRole('textbox', { name: 'Mobile numbers' })).toHaveCount(0);
@@ -54,7 +56,7 @@ test('file import sends the original file, displays server rejections, and impor
   });
   await page.goto('/admin/numbers');
   await page.getByRole('button', { name: 'Import', exact: true }).click();
-  await page.getByLabel('Numbers file').setInputFiles({ name: 'numbers.csv', mimeType: 'text/csv', buffer: Buffer.from('number,mrp\n9876543210,4999\n123,1000') });
+  await page.getByLabel('Numbers file').setInputFiles({ name: 'numbers.csv', mimeType: 'text/csv', buffer: Buffer.from('number,mrp,serviceable_pin_codes\n9876543210,4999,400001\n123,1000,400001') });
   await page.getByRole('button', { name: 'Analyze file' }).click();
   await expect(page.getByText('Invalid mobile number.', { exact: true })).toBeVisible();
   expect(uploaded).toContain('numbers.csv'); expect(uploaded).toContain('123,1000');

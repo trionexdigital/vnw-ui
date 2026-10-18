@@ -12,7 +12,7 @@ import NumberEditor from './NumberEditor';
 import NumberImportDialog, { downloadNumberWorkbook } from './NumberImportDialog';
 import { getPrimaryCategory } from '@/core/categories/types';
 
-const empty = { display_number: '', title_label: 'VIP Number', badge: 'NONE', mrp: '', numerology_sum: '', description: '', stock: 1, status: 'AVAILABLE', visibility_type: 'ONLINE', private_link_ids: [] as number[], is_featured: false, rtp_status: 'RTA', rtp_available_date: '' };
+const empty = { display_number: '', title_label: 'VIP Number', badge: 'NONE', mrp: '', numerology_sum: '', description: '', stock: 1, status: 'AVAILABLE', visibility_type: 'ONLINE', private_link_ids: [] as number[], is_featured: false, rtp_status: 'RTA', serviceable_pin_codes: [] as string[], rtp_available_date: '' };
 
 const toIstDateInput = (value?: string | null) => value
   ? new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(value.endsWith('Z') ? value : `${value}Z`))
@@ -75,7 +75,7 @@ export default function AdminNumbers() {
               <td className="px-4 py-3"><StatusBadge status={n.visibility_type || 'ONLINE'} /></td>
               <td className="px-4 py-3"><Money value={n.mrp} /></td>
               <td className="px-4 py-3"><Money value={n.offer_price} /></td>
-              <td className="px-4 py-3"><span className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-black ${n.rtp_status === 'NON_RTP' ? 'bg-amber-500/15 text-amber-700' : n.rtp_status === 'RTA' ? 'bg-success/10 text-success' : 'bg-blue-500/10 text-blue-700'}`}><CalendarClock className="h-3 w-3" />{n.rtp_status === 'NON_RTP' ? 'NON-RTP · PRE-BOOK' : n.rtp_status === 'RTA' ? 'RTA · ACTIVATE' : 'RTP · PORT'}{n.rtp_status === 'NON_RTP' && n.rtp_available_at ? ` · ${toIstDateInput(n.rtp_available_at)}` : ''}</span></td>
+              <td className="px-4 py-3"><span className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-black ${n.rtp_status === 'NON_RTP' ? 'bg-amber-500/15 text-amber-700' : n.rtp_status === 'RTA' ? 'bg-success/10 text-success' : 'bg-blue-500/10 text-blue-700'}`}><CalendarClock className="h-3 w-3" />{n.rtp_status === 'NON_RTP' ? 'NON-RTP · PRE-BOOK' : n.rtp_status === 'RTA' ? 'RTA · ACTIVATE' : 'RTP · PORT'}{n.rtp_status === 'NON_RTP' && n.rtp_available_at ? ` · ${toIstDateInput(n.rtp_available_at)}` : ''}</span>{n.rtp_status === 'RTA' && <div className="mt-1 text-xs text-muted-foreground">{n.serviceable_pin_codes?.length ? n.serviceable_pin_codes.join(', ') : 'PIN codes not assigned'}</div>}</td>
               <td className="px-4 py-3"><StatusBadge status={n.status} /></td>
               <td className="px-4 py-3">
                 <div className="flex justify-end gap-2">

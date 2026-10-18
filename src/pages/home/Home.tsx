@@ -1,3 +1,4 @@
+import { HomeRtaSection } from './components/HomeDiscovery';
 import { useEffect, useState } from 'react';
 import {
   numbersAPI, siteAPI, carouselAPI,
@@ -62,6 +63,7 @@ export default function Home() {
       <HomeTrustStrip />
       <HomeCategoryShortcuts />
       <HomeReadinessPaths />
+      <HomeRtaSection />
       <HomeCarousel slides={carouselSlides} loading={carouselLoading} />
       <HomeNumberShelf id="home-premium" eyebrow="Handpicked for you" title="Premium numbers" description="Distinctive numbers with presence, personality and a pattern you will remember." query={{ is_premium: 1, sort: 'popular' }} href="/premium-numbers" tone="cream" />
       {homeShelves.slice(0, 2).map((shelf) => <HomeNumberShelf key={shelf.id} {...shelf} />)}

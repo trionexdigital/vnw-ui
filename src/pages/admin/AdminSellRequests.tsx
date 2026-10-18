@@ -19,6 +19,8 @@ export default function AdminSellRequests() {
   const [offer, setOffer] = useState('');
   const [buy, setBuy] = useState('');
   const [note, setNote] = useState('');
+  const [readiness, setReadiness] = useState('RTA');
+  const [pins, setPins] = useState('');
 
   const load = () => { setLoading(true); adminAPI.sellList({ status: tab, page, limit: pageSize }).then((data) => { setRows(data.items || []); setTotal(Number(data.total || 0)); }).catch(() => {}).finally(() => setLoading(false)); };
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [tab, page, pageSize]);
@@ -27,12 +29,13 @@ export default function AdminSellRequests() {
     try {
       await adminAPI.sellApprove({
         request_id: approve.request_id,
+        rtp_status: readiness, serviceable_pin_codes: pins.split(/[,;\s]+/).filter(Boolean),
         mrp: Number(offer) || undefined,
         buy_price: Number(buy) || undefined,
         admin_note: note || undefined,
       });
       toast({ title: 'Approved', description: 'Seller paid to wallet; listing created.' });
-      setApprove(null); setOffer(''); setBuy(''); setNote(''); load();
+      setApprove(null); setOffer(''); setBuy(''); setNote(''); setPins(''); setReadiness('RTA'); load();
     } catch (e: any) { toast({ title: 'Error', description: e.message, variant: 'destructive' }); }
   };
   const doReject = async (request_id: number) => {
@@ -64,7 +67,7 @@ export default function AdminSellRequests() {
               <td className="px-4 py-3">
                 {r.status === 'PENDING' ? (
                   <div className="flex gap-2 text-xs">
-                    <button onClick={() => { setApprove(r); setOffer(String(r.asking_price)); setBuy(String(r.asking_price)); }} className="text-success hover:underline">Approve</button>
+                    <button onClick={() => { setPins(''); setReadiness('RTA'); setApprove(r); setOffer(String(r.asking_price)); setBuy(String(r.asking_price)); }} className="text-success hover:underline">Approve</button>
                     <button onClick={() => doReject(r.request_id)} className="text-destructive hover:underline">Reject</button>
                   </div>
                 ) : <span className="text-xs text-muted-foreground">{r.admin_note || '—'}</span>}
@@ -84,9 +87,11 @@ export default function AdminSellRequests() {
               <input type="number" value={offer} onChange={(e) => setOffer(e.target.value)} className="w-full rounded-lg border border-card-border bg-secondary px-3 py-2.5 text-sm outline-none" /></div>
             <div><label className="mb-1 block text-xs text-muted-foreground">Note to customer (optional)</label>
               <textarea rows={2} value={note} onChange={(e) => setNote(e.target.value)} className="w-full rounded-lg border border-card-border bg-secondary px-3 py-2.5 text-sm outline-none" /></div>
-            <div className="flex gap-2">
-              <button onClick={doApprove} className="btn-gold">Approve & List</button>
-              <button onClick={() => setApprove(null)} className="btn-gold-outline">Cancel</button>
+            <div className="grid gap-3">
+              <label className="grid gap-1 text-xs">Readiness<select className="rounded-lg border border-border bg-background p-2" value={readiness} onChange={event=>setReadiness(event.target.value)}><option value="RTA">RTA · Ready to activate</option><option value="RTP">RTP · Ready to port</option></select></label>
+              {readiness === 'RTA' && <label className="grid gap-1 text-xs">Serviceable PIN codes<textarea className="rounded-lg border border-border bg-background p-2" value={pins} onChange={event=>setPins(event.target.value)} placeholder="400001, 400002" /></label>}
+              <div className="flex flex-wrap gap-2"><button onClick={doApprove} className="btn-gold">Approve & List</button>
+              <button onClick={() => setApprove(null)} className="btn-gold-outline">Cancel</button></div>
             </div>
           </div>
         </Modal>
