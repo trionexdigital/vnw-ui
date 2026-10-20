@@ -1,3 +1,5 @@
+import { getPrimaryCategory } from '@/core/categories/types';
+import { formatNumberDisplay } from '@/core/categories/numberDisplay';
 import { ThemedSelect } from '@/shared/ui/themed-select';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CalendarClock, ChevronLeft, ChevronRight, Clock3, Filter, RotateCcw, Search, ShieldCheck } from 'lucide-react';
@@ -68,7 +70,7 @@ export default function PreBook() {
   const pages = Math.max(1, Math.ceil(total / limit));
   const reset = () => { setFilters(blankFilters); setApplied(blankFilters); setPage(1); };
   const cancel = async (record: PrebookRecord) => {
-    if (!window.confirm(`Request a 100% refund for ${record.display_number}?`)) return;
+    if (!window.confirm(`Request a 100% refund for ${formatNumberDisplay(record.display_number, getPrimaryCategory(record))}?`)) return;
     setBusy(record.prebook_id);
     try { await prebooksAPI.cancel(record.prebook_id, 'Cancellation requested within the 48-hour policy.'); toast({ title: 'Cancellation submitted', description: 'An admin will review the full refund.' }); await loadMine(); }
     catch (e: any) { toast({ title: 'Could not request cancellation', description: e.message, variant: 'destructive' }); }
@@ -124,7 +126,7 @@ export default function PreBook() {
       <section id="mine" className="mt-12 scroll-mt-28">
         <div className="mb-4"><span className="text-xs font-black uppercase tracking-wider text-primary">Your reservations</span><h2 className="text-2xl font-black text-foreground">My Pre-booked Numbers</h2></div>
         {!loggedIn ? <div className="rounded-2xl border border-border bg-card p-6 text-center text-sm text-muted-foreground">Sign in to see your reserved numbers, cancellation countdowns, and refund progress.</div> : mineLoading ? <Loader /> : adjustedMine.length === 0 ? <EmptyState title="No pre-books yet" subtitle="Choose a NON-RTP number above to reserve it exclusively." /> : <div className="grid gap-3 lg:grid-cols-2">{adjustedMine.map((record) => <article key={record.prebook_id} className="rounded-2xl border border-border bg-card p-4 shadow-sm">
-          <div className="flex items-start justify-between gap-3"><div><div className="vnw-card-numeral text-xl tracking-wider text-foreground">{record.display_number}</div><div className="mt-1 text-xs text-muted-foreground">{record.order_no} · {record.operator || 'Any operator'}</div></div><StatusBadge status={record.refund_status || record.status} /></div>
+          <div className="flex items-start justify-between gap-3"><div><div className="vnw-card-numeral text-xl tracking-wider text-foreground"><span data-no-translate>{formatNumberDisplay(record.display_number, getPrimaryCategory(record))}</span></div><div className="mt-1 text-xs text-muted-foreground">{record.order_no} · {record.operator || 'Any operator'}</div></div><StatusBadge status={record.refund_status || record.status} /></div>
           <div className="mt-4 grid grid-cols-2 gap-2 text-sm"><div className="rounded-xl bg-muted p-3"><div className="text-xs text-muted-foreground">Ready to port</div><b>{formatRtpDate(record.rtp_available_at)}</b></div><div className="rounded-xl bg-muted p-3"><div className="text-xs text-muted-foreground">Paid amount</div><b>{formatINR(record.total)}</b></div></div>
           {record.can_cancel && <p className="mt-3 text-xs font-bold text-primary"><Clock3 className="mr-1 inline h-3.5 w-3.5" />{countdown(record.cancellation_seconds_remaining)}</p>}
           {record.refund_status && <p className="mt-3 rounded-xl bg-primary/10 px-3 py-2 text-xs font-bold text-primary">Refund: {record.refund_status.replace(/_/g, ' ')}{record.reason_type ? ` · ${record.reason_type.replace(/_/g, ' ')}` : ''}</p>}

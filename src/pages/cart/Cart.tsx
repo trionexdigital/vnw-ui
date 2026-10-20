@@ -1,3 +1,4 @@
+import { formatNumberDisplay } from '@/core/categories/numberDisplay';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Trash2, ShoppingCart, Sigma, ShieldCheck } from 'lucide-react';
@@ -41,7 +42,7 @@ export default function Cart() {
             {data.items.map((it: any) => (
               <div key={it.number_id} className="commerce-panel flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <Link to={`/number/${it.number_id}`} className="text-lg font-black text-foreground">{it.display_number}</Link>
+                  <Link to={`/number/${it.number_id}`} className="text-lg font-black text-foreground"><span data-no-translate>{formatNumberDisplay(it.display_number, getPrimaryCategory(it))}</span></Link>
                   <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
                     <span>{it.title_label || getPrimaryCategory(it)?.name || 'VIP Number'}</span>
                     <span className="flex items-center gap-1"><Sigma className="h-3 w-3" /> Sum {it.numerology_sum}</span>
@@ -49,7 +50,7 @@ export default function Cart() {
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="text-right"><strong className="text-sm text-primary">{formatINR(it.line_total ?? it.offer_price)}</strong><del className="block text-[11px] text-muted-foreground">{formatINR(it.mrp)}</del></div>
-                  <button disabled={removing === it.number_id} aria-label={`Remove ${it.display_number}`} onClick={() => remove(it)} className="grid h-11 w-11 place-items-center text-muted-foreground hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
+                  <button disabled={removing === it.number_id} aria-label={`Remove ${formatNumberDisplay(it.display_number, getPrimaryCategory(it))}`} onClick={() => remove(it)} className="grid h-11 w-11 place-items-center text-muted-foreground hover:text-rose-400"><Trash2 className="h-4 w-4" /></button>
                 </div>
               </div>
             ))}

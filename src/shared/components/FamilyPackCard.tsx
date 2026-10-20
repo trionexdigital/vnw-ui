@@ -85,7 +85,7 @@ export default function FamilyPackCard({ pack, compact = false }: {
                 aria-label={`${selected ? 'Deselect' : 'Select'} ${number.display_number}`} aria-pressed={selected}
                 className="reference-family__select"><Check aria-hidden="true" /></button>
               <Link to={`/number/${number.number_id}`} className="reference-family__number-link">
-                <span className="reference-family__number">{display}</span>
+                <span className="reference-family__number" data-no-translate>{display}</span>
               </Link>
               <span className="reference-family__price">{formatINR(number.offer_price)}</span>
             </div>

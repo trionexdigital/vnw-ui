@@ -8,9 +8,10 @@ interface HighlightedNumberProps {
   category?: NumberCategoryMatch | null;
   className?: string;
   appearance?: 'default' | 'reference';
+  highlightDigits?: boolean;
 }
 
-export default function HighlightedNumber({ number, category, className, appearance = 'default' }: HighlightedNumberProps) {
+export default function HighlightedNumber({ number, category, className, appearance = 'default', highlightDigits = true }: HighlightedNumberProps) {
   const model = buildHighlightedNumberModel(number, category?.match_spans);
   const reference = appearance === 'reference';
   let offset = 0;
@@ -23,6 +24,7 @@ export default function HighlightedNumber({ number, category, className, appeara
   return (
     <span
       role="img"
+      data-no-translate
       aria-label={createNumberAriaLabel(model, category?.name)}
       className={cn(
         reference ? 'reference-card__number' : 'inline-flex w-full min-w-0 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 px-1.5 py-2 shadow-sm',
@@ -36,10 +38,10 @@ export default function HighlightedNumber({ number, category, className, appeara
         {segments.map((segment, index) => (
           <span
             key={`${segment.start}-${segment.end}-${index}`}
-            data-match={segment.matched ? 'true' : 'false'}
+            data-match={highlightDigits && segment.matched ? 'true' : 'false'}
             className={cn(
               reference ? 'reference-card__digit-group' : 'inline-flex min-h-[1.55em] items-center justify-center rounded-md border border-transparent px-[0.08em]',
-              !reference && segment.matched && 'border-primary bg-primary px-[0.2em] text-primary-foreground shadow-sm ring-1 ring-primary/25',
+              !reference && highlightDigits && segment.matched && 'border-primary bg-primary px-[0.2em] text-primary-foreground shadow-sm ring-1 ring-primary/25',
             )}
           >
             {reference

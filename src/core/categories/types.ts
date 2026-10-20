@@ -69,6 +69,7 @@ export function getPrimaryCategory(value: CategorizedNumber | null | undefined):
   const primary = value?.primary_category;
   if (primary && String(primary.slug || '').trim() && String(primary.name || '').trim()) {
     return {
+      ...value?.categories?.find((category) => category.slug === String(primary.slug).trim()),
       ...primary,
       slug: String(primary.slug).trim(),
       name: String(primary.name).trim(),

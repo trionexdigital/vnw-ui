@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Copy, KeyRound, RefreshCw, ShieldOff } from 'lucide-react';
 import { adminAPI, type PrivateCollection } from '@/core/api/vnwAPI';
 import { useToast } from '@/shared/hooks/use-toast';
+import './AdminOfflineLink.css';
 
 export default function AdminOfflineLink() {
   const { toast } = useToast();
@@ -30,9 +31,26 @@ export default function AdminOfflineLink() {
     } catch (error: any) { toast({ title: 'Could not update link', description: error.message, variant: 'destructive' }); }
     finally { setBusy(false); }
   };
-  return <div className="max-w-3xl rounded-2xl border border-border bg-card p-5 shadow-sm">
-    <div className="flex flex-wrap items-center justify-between gap-3"><div className="flex items-center gap-3"><KeyRound className="h-6 w-6 text-primary" /><div><h1 className="text-lg font-black">Offline catalog link</h1><p className="text-sm text-muted-foreground">One link shows all available Online and Offline numbers. The normal store shows Online numbers only.</p></div></div><span className="rounded-full bg-muted px-3 py-1 text-xs font-bold">{loading ? 'Loading' : !link ? 'Not created' : link.revoked_at ? 'Revoked' : 'Active'}</span></div>
-    {url && <div className="mt-4 flex items-center gap-2 rounded-xl border border-primary/25 bg-primary/5 p-3"><span className="min-w-0 flex-1 break-all text-sm font-semibold">{url}</span><button aria-label="Copy offline catalog link" title="Copy link" onClick={() => navigator.clipboard.writeText(url)} className="rounded-lg border border-border bg-card p-2"><Copy className="h-4 w-4" /></button></div>}
-    <div className="mt-4 flex flex-wrap gap-2">{!link ? <button disabled={busy} onClick={() => void run('create')} className="btn-gold">Create link</button> : <><button disabled={busy} onClick={() => void run('rotate')} className="btn-gold"><RefreshCw className="h-4 w-4" /> {link.revoked_at ? 'Reactivate with new URL' : 'Rotate URL'}</button>{!link.revoked_at && <button disabled={busy} onClick={() => void run('revoke')} className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2 text-sm font-bold text-destructive"><ShieldOff className="h-4 w-4" /> Revoke</button>}</>}</div>
-  </div>;
+  return <section className="admin-offline-link rounded-2xl border border-border bg-card shadow-sm" aria-labelledby="offline-catalog-title">
+    <div className="admin-offline-link__header">
+      <div className="admin-offline-link__identity">
+        <span className="admin-offline-link__icon"><KeyRound aria-hidden="true" className="h-4 w-4" /></span>
+        <div className="min-w-0">
+          <h1 id="offline-catalog-title" className="admin-offline-link__title">Offline catalog link</h1>
+          <p className="admin-offline-link__description">One link shows all available Online and Offline numbers. The normal store shows Online numbers only.</p>
+        </div>
+      </div>
+      <span className="admin-offline-link__status rounded-full bg-muted font-bold">{loading ? 'Loading' : !link ? 'Not created' : link.revoked_at ? 'Revoked' : 'Active'}</span>
+    </div>
+    {url && <div className="admin-offline-link__url rounded-xl border border-primary/25 bg-primary/5">
+      <span translate="no" className="min-w-0 flex-1 break-all text-xs font-semibold">{url}</span>
+      <button aria-label="Copy offline catalog link" title="Copy link" onClick={() => navigator.clipboard.writeText(url)} className="admin-offline-link__copy rounded-lg border border-border bg-card"><Copy className="h-4 w-4" /></button>
+    </div>}
+    <div className="admin-offline-link__actions">
+      {!link ? <button disabled={busy} onClick={() => void run('create')} className="btn-gold inline-flex items-center justify-center gap-2">Create link</button> : <>
+        <button disabled={busy} onClick={() => void run('rotate')} className="btn-gold inline-flex items-center justify-center gap-2"><RefreshCw className="h-4 w-4" /> {link.revoked_at ? 'Reactivate with new URL' : 'Rotate URL'}</button>
+        {!link.revoked_at && <button disabled={busy} onClick={() => void run('revoke')} className="btn-gold-outline inline-flex items-center justify-center gap-2 text-destructive"><ShieldOff className="h-4 w-4" /> Revoke</button>}
+      </>}
+    </div>
+  </section>;
 }

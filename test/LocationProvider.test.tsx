@@ -73,3 +73,18 @@ it('keeps a confirmed PIN after GPS denial or an unavailable lookup',async()=>{
   await userEvent.click(screen.getByRole('button',{name:'Skip'}));
   expect(localStorage.getItem('vnw_pin_code')).toBe('400001');
 });
+
+it('requests an accurate GPS fix and distinguishes a busy or unavailable lookup from a missing postcode',async()=>{
+  const getCurrentPosition=vi.fn((success:any,_failure:any,options:any)=>{expect(options.enableHighAccuracy).toBe(true);success({coords:{latitude:19,longitude:72}});});
+  Object.defineProperty(navigator,'geolocation',{configurable:true,value:{getCurrentPosition}});
+  api.pincode.mockResolvedValue({pin_code:null,reason:'BUSY'});mount();
+  await userEvent.click(await screen.findByRole('button',{name:'Use my location'}));
+  expect(await screen.findByRole('alert')).toHaveTextContent('Location lookup is busy. Please wait a moment and try again.');
+  api.pincode.mockResolvedValue({pin_code:null,reason:'UNAVAILABLE'});
+  await userEvent.click(screen.getByRole('button',{name:'Use my location'}));
+  expect(await screen.findByRole('alert')).toHaveTextContent('Location lookup is temporarily unavailable.');
+  api.pincode.mockRejectedValue(new Error('Network error'));
+  await userEvent.click(screen.getByRole('button',{name:'Use my location'}));
+  expect(await screen.findByRole('alert')).toHaveTextContent('Location lookup is temporarily unavailable.');
+  expect(screen.queryByText('Location access failed or was denied. Enter your PIN code manually.')).not.toBeInTheDocument();
+});

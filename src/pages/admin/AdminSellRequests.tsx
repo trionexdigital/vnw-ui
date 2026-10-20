@@ -1,3 +1,4 @@
+import NumberPricingPreview from './NumberPricingPreview';
 import { useEffect, useState } from 'react';
 import { adminAPI } from '@/core/api/vnwAPI';
 import { useToast } from '@/shared/hooks/use-toast';
@@ -17,6 +18,7 @@ export default function AdminSellRequests() {
   const [total, setTotal] = useState(0);
   const [approve, setApprove] = useState<any | null>(null);
   const [offer, setOffer] = useState('');
+  const [additional, setAdditional] = useState('');
   const [buy, setBuy] = useState('');
   const [note, setNote] = useState('');
   const [readiness, setReadiness] = useState('RTA');
@@ -30,12 +32,13 @@ export default function AdminSellRequests() {
       await adminAPI.sellApprove({
         request_id: approve.request_id,
         rtp_status: readiness, serviceable_pin_codes: pins.split(/[,;\s]+/).filter(Boolean),
-        mrp: Number(offer) || undefined,
+        base_price: offer || undefined,
+        additional_discount_pct: additional,
         buy_price: Number(buy) || undefined,
         admin_note: note || undefined,
       });
       toast({ title: 'Approved', description: 'Seller paid to wallet; listing created.' });
-      setApprove(null); setOffer(''); setBuy(''); setNote(''); setPins(''); setReadiness('RTA'); load();
+      setApprove(null); setOffer(''); setAdditional(''); setBuy(''); setNote(''); setPins(''); setReadiness('RTA'); load();
     } catch (e: any) { toast({ title: 'Error', description: e.message, variant: 'destructive' }); }
   };
   const doReject = async (request_id: number) => {
@@ -67,7 +70,7 @@ export default function AdminSellRequests() {
               <td className="px-4 py-3">
                 {r.status === 'PENDING' ? (
                   <div className="flex gap-2 text-xs">
-                    <button onClick={() => { setPins(''); setReadiness('RTA'); setApprove(r); setOffer(String(r.asking_price)); setBuy(String(r.asking_price)); }} className="text-success hover:underline">Approve</button>
+                    <button onClick={() => { setPins(''); setReadiness('RTA'); setApprove(r); setOffer(String(r.asking_price)); setAdditional(''); setBuy(String(r.asking_price)); }} className="text-success hover:underline">Approve</button>
                     <button onClick={() => doReject(r.request_id)} className="text-destructive hover:underline">Reject</button>
                   </div>
                 ) : <span className="text-xs text-muted-foreground">{r.admin_note || '—'}</span>}
@@ -83,8 +86,10 @@ export default function AdminSellRequests() {
             <p className="text-sm text-muted-foreground">Approving pays the seller into their wallet and creates a live catalog listing owned by the platform.</p>
             <div><label className="mb-1 block text-xs text-muted-foreground">Buy Price — paid to seller's wallet (₹)</label>
               <input type="number" value={buy} onChange={(e) => setBuy(e.target.value)} className="w-full rounded-lg border border-card-border bg-secondary px-3 py-2.5 text-sm outline-none" /></div>
-            <div><label className="mb-1 block text-xs text-muted-foreground">MRP — store discount is applied automatically (₹)</label>
-              <input type="number" value={offer} onChange={(e) => setOffer(e.target.value)} className="w-full rounded-lg border border-card-border bg-secondary px-3 py-2.5 text-sm outline-none" /></div>
+            <div><label className="mb-1 block text-xs text-muted-foreground">Base price (₹)</label>
+              <input type="number" min="0.01" step="0.01" value={offer} onChange={(e) => setOffer(e.target.value)} className="w-full rounded-lg border border-card-border bg-secondary px-3 py-2.5 text-sm outline-none" /></div>
+            <label className="grid gap-1 text-xs text-muted-foreground">Additional discount (%)<input type="number" min="0" max="99.99" step="0.01" value={additional} placeholder="0" onChange={e => setAdditional(e.target.value)} className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm" /></label>
+            <NumberPricingPreview base={offer} additional={additional} />
             <div><label className="mb-1 block text-xs text-muted-foreground">Note to customer (optional)</label>
               <textarea rows={2} value={note} onChange={(e) => setNote(e.target.value)} className="w-full rounded-lg border border-card-border bg-secondary px-3 py-2.5 text-sm outline-none" /></div>
             <div className="grid gap-3">

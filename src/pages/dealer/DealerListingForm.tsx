@@ -1,3 +1,4 @@
+import NumberPricingPreview from '@/pages/admin/NumberPricingPreview';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { dealerAPI } from '@/core/api/vnwAPI';
@@ -15,7 +16,7 @@ export default function DealerListingForm() {
   const [pinsDirty, setPinsDirty] = useState(false);
   const [legacyPins, setLegacyPins] = useState(false);
   const [f, setF] = useState<any>({
-    display_number: '', title_label: 'Fancy VIP Number', sale_price: '',
+    display_number: '', title_label: 'Fancy VIP Number', sale_price: '', additional_discount_pct: '',
     numerology_sum: '', description: '', rtp_status: 'RTA', rtp_available_date: '', serviceable_pin_codes: '',
   });
 
@@ -23,7 +24,7 @@ export default function DealerListingForm() {
     if (editing) dealerAPI.listings({number_id: Number(id), limit: 1}).then(data => {
       const n = data.items?.[0]; if (!n) throw new Error('Listing not found.');
       setLegacyPins(n.rtp_status === 'RTA' && !n.serviceable_pin_codes?.length);
-      setF({display_number: n.display_number, title_label: n.title_label, sale_price: n.mrp, numerology_sum: n.numerology_sum || '', description: n.description || '', rtp_status: n.rtp_status, rtp_available_date: n.rtp_available_at ? new Intl.DateTimeFormat('en-CA', {timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(n.rtp_available_at.endsWith('Z') ? n.rtp_available_at : n.rtp_available_at+'Z')) : '', serviceable_pin_codes: (n.serviceable_pin_codes || []).join(', ')});
+      setF({display_number: n.display_number, title_label: n.title_label, sale_price: n.base_price ?? n.mrp, additional_discount_pct: n.additional_discount_pct ?? '', numerology_sum: n.numerology_sum || '', description: n.description || '', rtp_status: n.rtp_status, rtp_available_date: n.rtp_available_at ? new Intl.DateTimeFormat('en-CA', {timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(n.rtp_available_at.endsWith('Z') ? n.rtp_available_at : n.rtp_available_at+'Z')) : '', serviceable_pin_codes: (n.serviceable_pin_codes || []).join(', ')});
     }).catch(() => { toast({title:'Could not load listing',variant:'destructive'}); navigate('/dealer/listings'); });
   }, [id]);
 
@@ -43,7 +44,8 @@ export default function DealerListingForm() {
         title_label: f.title_label,
         description: f.description,
         numerology_sum: f.numerology_sum || numerologySum(f.display_number),
-        mrp: salePrice,
+        base_price: f.sale_price,
+        additional_discount_pct: f.additional_discount_pct,
         rtp_status: f.rtp_status, rtp_available_date: f.rtp_available_date,
         serviceable_pin_codes: editing && legacyPins && !pinsDirty ? undefined : f.serviceable_pin_codes.split(/[,;\s]+/).filter(Boolean),
       };
@@ -64,8 +66,10 @@ export default function DealerListingForm() {
           <DetectedCategories number={f.display_number} className="sm:col-span-2" />
           <div><label className="mb-1 block text-xs text-muted-foreground">Label</label>
             <input className={input} value={f.title_label} onChange={(e) => set('title_label', e.target.value)} /></div>
-          <div><label className="mb-1 block text-xs text-muted-foreground">MRP (₹)</label>
-            <input required type="number" min="1" className={input} value={f.sale_price} onChange={(e) => set('sale_price', e.target.value)} /><p className="mt-1 text-[11px] text-muted-foreground">The store-wide discount is applied automatically.</p></div>
+          <div><label htmlFor="dealer-base-price" className="mb-1 block text-xs text-muted-foreground">Base price (₹)</label>
+            <input id="dealer-base-price" required type="number" min="0.01" step="0.01" className={input} value={f.sale_price} onChange={(e) => set('sale_price', e.target.value)} /></div>
+          <label className="grid gap-1 text-xs text-muted-foreground">Additional discount (%)<input type="number" min="0" max="99.99" step="0.01" className={input} value={f.additional_discount_pct} placeholder="0" onChange={e => set('additional_discount_pct', e.target.value)} /></label>
+          <NumberPricingPreview base={f.sale_price} additional={f.additional_discount_pct} />
           <div><label className="mb-1 block text-xs text-muted-foreground">Numerology Sum (auto)</label>
             <input type="number" className={input} placeholder={String(numerologySum(f.display_number) || '')} value={f.numerology_sum} onChange={(e) => set('numerology_sum', e.target.value)} /></div>
 

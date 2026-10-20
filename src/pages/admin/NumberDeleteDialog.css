@@ -1,0 +1,35 @@
+.number-delete-dialog { display: flex; flex-direction: column; max-width: 600px; max-height: min(90dvh, 760px); padding: 0; overflow: hidden; border-radius: 16px; }
+.number-delete-dialog > div:first-child { flex: none; gap: 12px; margin: 0; padding: 14px 18px; border-bottom: 1px solid hsl(var(--border)); }
+.number-delete-dialog > div:first-child h2 { font-size: 16px; line-height: 1.3; }
+.number-delete-dialog > div:first-child button { width: 30px; height: 30px; border-radius: 9px; }
+.number-delete-dialog > div:first-child button svg { width: 17px; height: 17px; }
+.number-delete-dialog__body { min-height: 0; padding: 16px 18px; overflow-y: auto; overscroll-behavior: contain; }
+.number-delete-dialog__description { margin-bottom: 14px; color: hsl(var(--muted-foreground)); font-size: 12px; line-height: 1.55; }
+.number-delete-dialog__label { display: block; font-size: 12px; line-height: 1.4; font-weight: 800; }
+.number-delete-dialog__input { display: block; width: 100%; height: 90px; min-height: 70px; max-height: 180px; margin-top: 6px; padding: 10px 12px; resize: vertical; border: 1px solid hsl(var(--border)); border-radius: 10px; background: hsl(var(--muted) / .2); color: hsl(var(--foreground)); font-size: 13px; line-height: 1.5; font-variant-numeric: tabular-nums; }
+.number-delete-dialog__input:focus { border-color: hsl(var(--primary)); outline: 2px solid hsl(var(--primary) / .16); outline-offset: 1px; }
+.number-delete-dialog__input:disabled { opacity: .65; }
+.number-delete-dialog__validate { display: flex; justify-content: flex-end; margin-top: 8px; }
+.number-delete-dialog :is(.btn-gold, .btn-gold-outline) { min-height: 34px; padding: 7px 14px; border-radius: 9px; font-size: 12px; line-height: 1.3; }
+.number-delete-dialog__results { display: grid; gap: 12px; margin-top: 12px; }
+.number-delete-dialog__summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.number-delete-dialog__stat { display: flex; flex-direction: column; justify-content: space-between; gap: 4px; min-width: 0; padding: 9px 10px; border: 1px solid hsl(var(--border)); border-radius: 9px; background: hsl(var(--muted) / .3); }
+.number-delete-dialog__stat > span { color: hsl(var(--muted-foreground)); font-size: 10px; line-height: 1.3; font-weight: 600; overflow-wrap: anywhere; }
+.number-delete-dialog__stat > strong { font-size: 20px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.number-delete-dialog__stat[data-stat='Ready to recycle'] { border-color: hsl(var(--primary) / .3); background: hsl(var(--primary) / .07); }
+.number-delete-dialog__stat[data-stat='Ready to recycle'] > :is(span, strong) { color: hsl(var(--primary)); }
+.number-delete-dialog__notice { max-height: 100px; overflow: auto; padding: 9px 10px; border: 1px solid hsl(var(--border)); border-radius: 9px; background: hsl(var(--muted) / .2); font-size: 11px; line-height: 1.5; overflow-wrap: anywhere; }
+.number-delete-dialog__notice strong { display: block; margin-bottom: 3px; }
+.number-delete-dialog__list { max-height: 144px; margin-top: 6px; overflow-y: auto; border: 1px solid hsl(var(--border)); border-radius: 10px; font-size: 12px; }
+.number-delete-dialog__list > li { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 36px; padding: 8px 10px; overflow-wrap: anywhere; }
+.number-delete-dialog__list > li + li { border-top: 1px solid hsl(var(--border)); }
+.number-delete-dialog__list > li:nth-child(even) { background: hsl(var(--muted) / .2); }
+.number-delete-dialog__status { flex: none; padding: 3px 6px; border-radius: 6px; background: hsl(var(--muted)); color: hsl(var(--muted-foreground)); font-size: 9px; font-weight: 700; }
+.number-delete-dialog__confirmation { max-height: 240px; font-weight: 700; }
+.number-delete-dialog__footer { display: flex; flex: none; flex-wrap: wrap; justify-content: flex-end; gap: 8px; padding: 12px 18px; border-top: 1px solid hsl(var(--border)); background: hsl(var(--muted) / .2); }
+@media (max-width: 539px) {
+  .number-delete-dialog { width: calc(100% - 24px); }
+  .number-delete-dialog > div:first-child, .number-delete-dialog__body, .number-delete-dialog__footer { padding-inline: 14px; }
+  .number-delete-dialog__summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .number-delete-dialog__stat { padding: 8px; }
+}

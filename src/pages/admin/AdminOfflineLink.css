@@ -1,0 +1,37 @@
+/* Keep this card's gutters and typography independent of page-level overrides. */
+.admin-shell .account-content .admin-offline-link {
+  width:100%; min-width:0; padding:16px;
+}
+.admin-offline-link__header {
+  display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:12px;
+}
+.admin-offline-link__identity {
+  display:flex; align-items:flex-start; gap:10px; flex:1 1 240px; min-width:0;
+}
+.admin-offline-link__icon {
+  display:grid; place-items:center; flex:none; width:32px; height:32px; border-radius:10px;
+  color:hsl(var(--primary)); background:hsl(var(--primary)/.1);
+}
+.admin-shell .account-content .admin-offline-link__title {
+  margin:0; max-width:none; font-size:18px; font-weight:900; line-height:1.35; letter-spacing:-.02em; text-wrap:initial;
+}
+.admin-shell .account-content .admin-offline-link__description {
+  margin:4px 0 0; max-width:60rem; font-size:12px; line-height:1.6; color:hsl(var(--muted-foreground));
+}
+.admin-offline-link__status { flex:none; padding:4px 10px; font-size:11px; line-height:1.5; }
+.admin-offline-link__actions {
+  display:flex; flex-wrap:wrap; align-items:center; gap:8px;
+  margin-top:16px; padding-top:12px; border-top:1px solid hsl(var(--border));
+}
+.admin-offline-link__url {
+  display:flex; align-items:center; gap:10px; min-width:0; margin-top:16px; padding:10px 12px;
+}
+.admin-offline-link__copy { display:grid; place-items:center; flex:none; width:34px; height:34px; }
+.admin-offline-link__actions .text-destructive { color:hsl(var(--destructive)); }
+@media(max-width:479px) {
+  .admin-shell .account-content .admin-offline-link { padding:14px; }
+  .admin-offline-link__identity { flex-basis:100%; }
+  .admin-shell .account-content .admin-offline-link__title { font-size:16px; }
+  .admin-offline-link__status { margin-left:42px; }
+  .admin-offline-link__actions > button { flex:1 1 auto; }
+}

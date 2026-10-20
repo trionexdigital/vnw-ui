@@ -28,7 +28,11 @@ test('bulk numbers are analyzed by the API before accepted rows can be saved', a
   await page.getByRole('button', { name: 'Add Number', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Add 0 accepted' })).toBeDisabled();
   await page.getByRole('textbox', { name: 'Mobile numbers' }).fill('9876543210,8123456789\n123');
-  await page.getByRole('textbox', { name: 'MRP (₹)' }).fill('4999');
+  await page.getByRole('textbox', { name: 'Base price (₹)' }).fill('4999');
+  await page.getByRole('dialog').getByRole('combobox', { name: 'Visibility', exact: true }).click();
+  await page.getByRole('option', { name: 'Online · public catalog', exact: true }).click();
+  await page.getByRole('dialog').getByRole('combobox', { name: 'Porting / activation readiness', exact: true }).click();
+  await page.getByRole('option', { name: 'RTA · ready to activate', exact: true }).click();
   await page.getByRole('textbox', { name: 'Serviceable PIN codes' }).fill('400001,400002');
   await page.getByRole('button', { name: 'Validate', exact: true }).click();
   await expect(page.getByRole('region', { name: 'Number validation results' })).toContainText('1 ready');

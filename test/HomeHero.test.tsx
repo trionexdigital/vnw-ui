@@ -58,7 +58,7 @@ describe('HomeHero', () => {
 
     expect(screen.getByRole('heading', { name: /lucky pick of the day/i })).toBeInTheDocument();
     expect(screen.getByRole('region', { name: /lucky pick of the day vip numbers/i })).toHaveAttribute('aria-roledescription', 'carousel');
-    expect(screen.getByRole('link', { name: '969595 1155' })).toHaveAttribute('href', '/number/1');
+    expect(screen.getByRole('link', { name: '9695 951 155' })).toHaveAttribute('href', '/number/1');
     expect(screen.getByRole('link', { name: /buy now/i })).toHaveAttribute('href', '/checkout?number_id=1');
     expect(screen.getByText('Numerology Special')).toBeInTheDocument();
     expect(screen.getAllByText('VIP Category')).toHaveLength(3);
@@ -96,7 +96,7 @@ describe('HomeHero', () => {
     expect(ring).toHaveAttribute('data-rotation', '0');
 
     await user.click(screen.getByRole('button', { name: 'Next Lucky Pick' }));
-    await waitFor(() => expect(screen.getByRole('link', { name: '999997 1155' })).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('link', { name: '9999 971 155' })).toBeInTheDocument());
     expect(ring).toHaveAttribute('data-rotation', '60');
   });
 
@@ -133,7 +133,7 @@ describe('HomeHero', () => {
     expect(pair.container.querySelectorAll('.deal-hero-card')).toHaveLength(2);
     expect(pair.container.querySelector('[data-position="previous"]')).not.toBeInTheDocument();
     fireEvent.keyDown(screen.getByRole('region', { name: /lucky pick of the day vip numbers/i }), { key: 'ArrowLeft' });
-    expect(screen.getByRole('link', { name: '999997 1155' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '9999 971 155' })).toBeInTheDocument();
     expect(pair.container.querySelector('.deal-showcase__base-ring--inner')).toHaveAttribute('data-rotation', '-60');
   });
 
@@ -145,7 +145,7 @@ describe('HomeHero', () => {
   it('keeps the catalog number visible when its formatted display value is missing', () => {
     const fallbackDeal = { ...deals[0], display_number: '', number_value: '9695951155' };
     renderHero(<HomeHero deals={[fallbackDeal]} />);
-    expect(screen.getByRole('link', { name: '9695951155' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '9695 951 155' })).toBeInTheDocument();
   });
 
   it('keeps the authoritative category separate from an admin hero label', () => {

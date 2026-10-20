@@ -81,6 +81,8 @@ const AdminCreateDealer = lazy(() => import('@/pages/admin/AdminCreateDealer'));
 const AdminHomePremium = lazy(() => import('@/pages/admin/AdminHomePremium'));
 const AdminPrivateLinks = lazy(() => import('@/pages/admin/AdminOfflineLink'));
 const AdminDealerPurchases = lazy(() => import('@/pages/admin/AdminDealerPurchases'));
+const StandaloneDealerManagement = lazy(() => import('@/pages/admin/dealerManagement/DealerManagement'));
+const StandaloneDealerStatement = lazy(() => import('@/pages/dealerManagement/Statement'));
 
 const dealerRoles = ['DEALER', 'ADMIN'];
 const adminRoles = ['ADMIN'];
@@ -147,6 +149,9 @@ export default function AppRoutes() {
         <Route path="/orders/:id" element={<OrderDetail />} />
         <Route path="/account" element={<Profile />} />
         <Route path="/account/change-password" element={<ChangePassword />} />
+        <Route path="/dealer-statement" element={<StandaloneDealerStatement />} />
+        <Route path="/admin/dealer-management" element={<RoleGuard roles={adminRoles}><StandaloneDealerManagement /></RoleGuard>} />
+        <Route path="/employee/dealer-management" element={<RoleGuard roles={employeeRoles}><StandaloneDealerManagement /></RoleGuard>} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/referrals" element={<Referrals />} />
         <Route path="/sell" element={<RoleGuard permission="user.sell"><SellNumber /></RoleGuard>} />

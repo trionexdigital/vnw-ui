@@ -199,7 +199,7 @@ describe('NumberCard automatic category badges', () => {
     expect(screen.queryByRole('button', { name: 'Mirror Numbers' })).not.toBeInTheDocument();
     expect(screen.queryByText(/^\+\d+$/)).not.toBeInTheDocument();
     expect(screen.getAllByText('Doubling Numbers')).toHaveLength(1);
-    expect(screen.getByText('VIP Number')).toBeInTheDocument();
+    expect(screen.queryByText('VIP Number')).not.toBeInTheDocument();
     expect(container.querySelectorAll('.reference-card__metric')[0]).toHaveTextContent('Total29');
     expect(container.querySelectorAll('.reference-card__metric')[1]).toHaveTextContent('Root sum2');
     expect(screen.getByTestId('number-card')).toHaveClass('reference-card');
@@ -252,7 +252,7 @@ describe('NumberCard automatic category badges', () => {
 
     expect(container.querySelectorAll('[data-match="true"]')).toHaveLength(0);
     expect(screen.getByRole('img', {
-      name: 'VIP number, digits 9 0 0 6 6 2 2 1 2 1. Category: Doubling Numbers.',
+        name: 'VIP number, digits 9 0 0 6 6 2 2 1 2 1. Category: Doubling Numbers. Matching digits: 00, 66, 22.',
     })).toBeInTheDocument();
   });
 

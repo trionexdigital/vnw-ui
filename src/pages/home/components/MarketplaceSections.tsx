@@ -1,3 +1,5 @@
+import { getPrimaryCategory } from '@/core/categories/types';
+import { formatNumberDisplay } from '@/core/categories/numberDisplay';
 import { ThemedSelect } from '@/shared/ui/themed-select';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -71,7 +73,7 @@ export function CorporatePackCard({ pack }: { pack: CorporatePack }) {
       <div className="mt-4 grid max-h-64 gap-2 overflow-y-auto overscroll-contain pr-1 sm:grid-cols-2" tabIndex={0} aria-label={`${pack.title} numbers`}>
         {pack.numbers.map((number) => (
           <Link key={number.number_id} to={`/number/${number.number_id}`} className="rounded-xl border border-border bg-background px-3 py-2 transition hover:border-primary">
-            <div className="vnw-card-numeral tracking-wide text-foreground">{number.display_number}</div>
+            <div className="vnw-card-numeral tracking-wide text-foreground"><span data-no-translate>{formatNumberDisplay(number.display_number, getPrimaryCategory(number))}</span></div>
             <div className="mt-0.5 flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
               <span>VIP number</span><span>{formatINR(number.offer_price)}</span>
             </div>
@@ -274,11 +276,11 @@ export function FaqPreview({ faqs }: { faqs: FaqItem[] }) {
 export function MarketplaceCta() {
   return (
     <section className="bg-background px-4 py-5 sm:px-6 lg:px-8">
-      <div className="relative mx-auto max-w-7xl overflow-hidden rounded-3xl border border-primary/30 bg-card px-6 py-6 text-center shadow-xl sm:px-10">
+      <div className="marketplace-cta__card relative mx-auto max-w-7xl overflow-hidden rounded-3xl border border-primary/30 bg-card px-6 py-6 text-center shadow-xl sm:px-10">
         <div className="pointer-events-none absolute -left-16 -top-16 h-52 w-52 rounded-full bg-primary/10 blur-3xl" />
         <Network className="mx-auto h-9 w-9 text-primary" />
         <h2 className="mt-3 text-3xl font-black text-foreground">Ready to make your number memorable?</h2>
-        <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+        <div className="marketplace-cta__actions mt-6 flex flex-col justify-center gap-3 sm:flex-row">
           <Link to="/premium-numbers" className="btn-gold">Browse Premium Numbers <ArrowRight className="h-4 w-4" /></Link>
           <Link to="/contact" className="btn-gold-outline"><Headphones className="h-4 w-4" /> Talk to an expert</Link>
         </div>

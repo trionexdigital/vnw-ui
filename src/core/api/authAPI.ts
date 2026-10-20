@@ -12,7 +12,7 @@ const CHANGE_PASSWORD_URL = BASE_URL + 'auth/change-password';
 export const mapUser = (data: any) => ({
   id: data.user_id,
   user_id: data.user_id,
-  email: data.email,
+  email: data.email || '',
   name: data.full_name || data.name,
   full_name: data.full_name,
   role: data.role,
@@ -24,7 +24,7 @@ export const mapUser = (data: any) => ({
   permissions: Array.isArray(data.permissions) ? data.permissions : [],
 });
 
-export const login = async (payload: { email: string; password: string }) => {
+export const login = async (payload: { email?: string; identifier?: string; password: string }) => {
   const response = await httpService.postRequest(LOGIN_URL, payload);
   if (response && response.status === 1) {
     delete response.data.password;

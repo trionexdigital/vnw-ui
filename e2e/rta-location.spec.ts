@@ -1,9 +1,10 @@
 import { expect, test, type Page } from '@playwright/test';
+import { readFileSync } from 'node:fs';
 
 const languages = ['en','hi','mr','hg','gu','bn','pa','ta','te','kn','ml','or'];
 const widths = [320,375,768,1366,1920];
 const inventory = Array.from({length:14},(_,i)=>({number_id:i+1,number_value:`987654${String(i).padStart(4,'0')}`,display_number:`987654${String(i).padStart(4,'0')}`,mrp:1000,offer_price:900,discount_pct:10,status:'AVAILABLE',stock:1,rtp_status:'RTA'}));
-async function mock(page:Page){
+async function mock(page:Page, lookup = () => ({pin_code:'400001'} as {pin_code:string|null;reason?:string})){
   const requests:any[]=[];
   await page.route('https://fonts.googleapis.com/**',route=>route.fulfill({status:200,contentType:'text/css',body:''}));
   await page.route('**/vipnumberworld/**',async route=>{
@@ -16,11 +17,43 @@ async function mock(page:Page){
       data={items:eligible.slice((page-1)*limit,page*limit),total:eligible.length,pages:Math.ceil(eligible.length/limit)};
     }else if(url.endsWith('/site/settings'))data={};
     else if(url.endsWith('/site/languages/catalog'))data={language:payload.language,translations:{}};
-    else if(url.endsWith('/site/location/pincode'))data={pin_code:'400001'};
+    else if(url.endsWith('/site/location/pincode'))data=lookup();
     await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({status:1,info:'OK',data})});
   });
   return requests;
 }
+
+test('GPS service failures remain distinct and readable in all locales without clearing the saved PIN',async({page})=>{
+  test.setTimeout(180_000);
+  let reason='BUSY';
+  await mock(page,()=>({pin_code:null,reason}));
+  await page.addInitScript(()=>{
+    localStorage.setItem('vnw_location_prompt_seen','1');localStorage.setItem('vnw_pin_code','400001');
+    Object.defineProperty(navigator,'geolocation',{configurable:true,value:{getCurrentPosition:(success:any)=>success({coords:{latitude:19.0761,longitude:72.8777}})}});
+  });
+  for(const lang of languages){
+    const catalog=lang==='en'?{}:JSON.parse(readFileSync(new URL(`../src/shared/language/${lang}.json`,import.meta.url),'utf8'));
+    await page.goto(`/?lang=${lang}`);
+    for(const width of widths){
+      await page.setViewportSize({width,height:900});
+      await page.locator('[data-location-button]').click();
+      const dialog=page.getByRole('dialog');await expect(dialog).toHaveCSS('opacity','1');
+      for(const [code,source] of [
+        ['BUSY','Location lookup is busy. Please wait a moment and try again.'],
+        ['UNAVAILABLE','Location lookup is temporarily unavailable. Please try again or enter your PIN code.'],
+        ['NO_INDIAN_PIN','We could not detect an Indian PIN code. Enter it manually or try again.'],
+      ]){
+        reason=code;
+        await dialog.locator('form button[type="button"]').first().click();
+        await expect(dialog.getByRole('alert')).toHaveText(catalog[source]||source);
+        await expect(page.locator('[data-location-pin]')).toHaveValue('400001');
+        expect(await dialog.evaluate(el=>el.scrollWidth<=el.clientWidth+1)).toBe(true);
+      }
+      await page.keyboard.press('Escape');await expect(dialog).toHaveCount(0);
+      expect(await page.evaluate(()=>localStorage.getItem('vnw_pin_code'))).toBe('400001');
+    }
+  }
+});
 
 for(const signedIn of [false,true])test(`${signedIn?'customer':'guest'}: first visit, local RTA, show all, pagination and search share one preference`,async({page})=>{
   const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));

@@ -77,6 +77,9 @@ export interface NumberListRequest {
 }
 
 export interface NumberCatalogItem extends CategorizedNumber {
+  /** Management endpoints only; omitted from public catalog responses. */
+  base_price?: string | number | null;
+  additional_discount_pct?: string | number;
   serviceable_pin_codes?: string[];
   number_id: number;
   number_value?: string;
@@ -189,7 +192,7 @@ export const bannersAPI = {
 export type RtpStatus = 'RTP' | 'NON_RTP' | 'RTA';
 export type PrebookStatus = 'PENDING_PAYMENT' | 'BOOKED' | 'READY' | 'CANCEL_REQUESTED' | 'REFUND_PENDING' | 'REFUNDED' | 'FULFILLED' | 'FAILED';
 
-export interface PrebookRecord {
+export interface PrebookRecord extends CategorizedNumber {
   prebook_id: number;
   order_id: number;
   order_no: string;

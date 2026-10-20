@@ -408,15 +408,7 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
   return (
     <main className="mx-auto max-w-7xl overflow-x-clip px-4 py-6 sm:px-6 lg:px-8">
       <SearchWorkbench placement="shop" loading={loading} error={error} />
-      {!preset && <div className="mx-auto max-w-7xl px-3 py-3">
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Number readiness">
-          <button type="button" className="btn-gold-outline min-h-9 px-3 text-xs" aria-pressed={!isRta} onClick={() => update({ rtp_status: '' })}>Browse numbers</button>
-          <button type="button" className="btn-gold-outline min-h-9 px-3 text-xs" aria-pressed={isRta} onClick={() => update({ rtp_status: 'RTA' })}>Ready to activate</button>
-        </div>
-        {isRta && <RtaLocationControls loading={loading || !!error} total={total} />}
-      </div>}
-
-      <div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+      <div className="shop-results-heading mb-4 mt-4 flex items-center justify-between gap-3">
         <div>
           <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-black uppercase tracking-[.12em] text-primary">
             {preset === 'newest' ? 'Just added' : preset === 'premium' ? 'Curated collection' : 'Premium marketplace'}
@@ -426,58 +418,39 @@ export default function Shop({ preset }: { preset?: 'newest' | 'premium' } = {})
               : preset === 'premium' ? <>Premium <span className="text-primary">VIP numbers</span></>
                 : <>VIP number <span className="text-primary">results</span></>}
           </h1>
-          <p aria-live="polite" className="mt-1 text-sm text-muted-foreground">
-            {loading ? 'Searching available numbers…' : `${total.toLocaleString('en-IN')} exact ${total === 1 ? 'match' : 'matches'}`}
-          </p>
         </div>
-        <div className="flex gap-2 lg:hidden">
-          <button
-            ref={filterButtonRef}
-            type="button"
-            onClick={() => setFiltersOpen(true)}
-            className="btn-gold-outline min-h-11 flex-1 text-sm sm:min-w-36"
-            aria-haspopup="dialog"
-          >
-            <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
-            Filters{activeFilters.length ? ` (${activeFilters.length})` : ''}
-          </button>
-          <label className="min-w-0 flex-1 sm:min-w-52">
-            <span className="sr-only">Sort results</span>
-            <ThemedSelect
-              value={sort}
-              onChange={(event) => update({ sort: event.target.value })}
-              className="input-luxury h-11 w-full text-base"
-            >
-              {SORT_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-            </ThemedSelect>
-          </label>
-        </div>
+        {!preset && <div className="flex gap-2" role="group" aria-label="Number readiness">
+          <button type="button" className="btn-gold-outline min-h-9 px-3 text-xs" aria-pressed={!isRta} onClick={() => update({ rtp_status: '' })}>Browse numbers</button>
+          <button type="button" className="btn-gold-outline min-h-9 px-3 text-xs" aria-pressed={isRta} onClick={() => update({ rtp_status: 'RTA' })}>Ready to activate</button>
+        </div>}
       </div>
-
-      {activeFilters.length > 0 && (
-        <div className="mb-5 flex flex-wrap items-center gap-2" aria-label="Active filters">
+      {!preset && isRta && <RtaLocationControls loading={loading || !!error} total={total} />}
+      <div className="mb-3 flex gap-2 lg:hidden">
+        <button ref={filterButtonRef} type="button" onClick={() => setFiltersOpen(true)} className="btn-gold-outline min-h-11 flex-1 text-sm sm:min-w-36" aria-haspopup="dialog">
+          <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />Filters{activeFilters.length ? ` (${activeFilters.length})` : ''}
+        </button>
+        <label className="min-w-0 flex-1 sm:min-w-52">
+          <span className="sr-only">Sort results</span>
+          <ThemedSelect value={sort} onChange={(event) => update({ sort: event.target.value })} className="input-luxury h-11 w-full text-base">
+            {SORT_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+          </ThemedSelect>
+        </label>
+      </div>
+      <div className="shop-results-toolbar mb-5">
+        <div className="shop-results-chips" aria-label="Active filters">
           {activeFilters.map((filter) => (
-            <button
-              key={filter.id}
-              type="button"
-              onClick={() => removeChip(filter.keys)}
-              className="inline-flex min-h-9 max-w-full items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 text-left text-xs font-bold text-primary"
-            >
-              <span className="truncate">{filter.label}</span>
-              <X className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-              <span className="sr-only">Remove {filter.label}</span>
+            <button key={filter.id} type="button" onClick={() => removeChip(filter.keys)} className="inline-flex min-h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-primary/30 bg-primary/10 px-3 text-left text-xs font-bold text-primary">
+              <span>{filter.label}</span><X className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /><span className="sr-only">Remove {filter.label}</span>
             </button>
           ))}
-          <button
-            type="button"
-            onClick={resetAll}
-            className="inline-flex min-h-9 items-center gap-1.5 px-2 text-xs font-bold text-muted-foreground hover:text-foreground"
-          >
-            <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" /> Reset all
-          </button>
         </div>
-      )}
-
+        <div className="shop-results-summary">
+          <p aria-live="polite" className="shop-results-count text-xs text-muted-foreground">
+            {loading ? 'Searching available numbers…' : `${total.toLocaleString('en-IN')} exact ${total === 1 ? 'match' : 'matches'}`}
+          </p>
+          <button type="button" onClick={resetAll} className="inline-flex min-h-9 items-center gap-1.5 px-2 text-xs font-bold text-muted-foreground hover:text-foreground"><RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />Reset all</button>
+        </div>
+      </div>
       <div className="grid items-start gap-5 lg:grid-cols-[248px_minmax(0,1fr)]">
         <aside className="sticky top-24 hidden max-h-[calc(100vh-7rem)] min-h-[420px] self-start overflow-hidden lg:block">
           <div className="vnw-card flex h-full max-h-[calc(100vh-7rem)] min-h-[420px] flex-col overflow-hidden">

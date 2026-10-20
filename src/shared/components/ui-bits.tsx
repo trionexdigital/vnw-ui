@@ -379,7 +379,7 @@ function TablePager({ page, pageSize, total, onPageChange, onPageSizeChange }: T
   </div>;
 }
 
-export function Table({ head, children, pagination }: { head: string[]; children: ReactNode; pagination?: TablePagination }) {
+export function Table({ head, children, pagination, headerContent = {} }: { head: string[]; children: ReactNode; pagination?: TablePagination; headerContent?: Record<string, ReactNode> }) {
   const [localPage, setLocalPage] = useState(1);
   const [localPageSize, setLocalPageSize] = useState(25);
   const rows = Children.toArray(children);
@@ -394,7 +394,7 @@ export function Table({ head, children, pagination }: { head: string[]; children
       <div className="overflow-x-auto"><table className="admin-responsive-table w-full text-sm">
         <thead>
           <tr className="border-b border-border bg-muted/60 text-left text-xs uppercase text-muted-foreground">
-            {head.map((h) => <th key={h} className="px-4 py-3 font-black">{h}</th>)}
+            {head.map((h) => <th key={h} className="px-4 py-3 font-black">{headerContent[h] ?? h}</th>)}
           </tr>
         </thead>
         <tbody className="[&_tr]:border-border [&_td]:align-middle">{labeledChildren}</tbody>

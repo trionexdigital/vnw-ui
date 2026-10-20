@@ -1,3 +1,5 @@
+import { getPrimaryCategory } from '@/core/categories/types';
+import { formatNumberDisplay } from '@/core/categories/numberDisplay';
 import { loadCashfree, openCashfreeCheckout } from '@/core/payments/cashfree';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -9,11 +11,15 @@ import { formatINR } from '@/core/lib/format';
 import CompactPageHeader from '@/shared/components/CompactPageHeader';
 import BillingSummary from '@/shared/components/BillingSummary';
 import { formatRtpDate, getNumberPurchaseMode } from '@/core/lib/numberPurchaseMode';
+import { useAppSelector } from '@/app/hooks';
+import { hasBillingPhone } from '@/core/lib/billingPhone';
 
 export default function PreBookCheckout() {
   const { numberId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const user = useAppSelector(s => s.auth.user);
+  const needsPhone = !hasBillingPhone(user?.phone);
   const [number, setNumber] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [paying, setPaying] = useState(false);
@@ -26,6 +32,7 @@ export default function PreBookCheckout() {
   }, [numberId]);
 
   const pay = async () => {
+    if (needsPhone) return;
     setPaying(true);
     try {
       await loadCashfree();
@@ -46,7 +53,7 @@ export default function PreBookCheckout() {
       <CompactPageHeader title="Pre-book checkout" subtitle="Reserve your number with a secure payment." icon={CalendarClock} />
       <div className="grid gap-5 lg:grid-cols-[1.15fr_.85fr]">
         <section className="overflow-hidden rounded-2xl border border-primary/25 bg-gradient-to-br from-card via-card to-primary/10 p-4 shadow-sm">
-          <div className="flex items-start justify-between gap-3"><div><div className="text-sm font-bold text-muted-foreground">Pre-book VIP number</div><div className="mt-2 text-2xl font-black text-foreground sm:text-3xl">{number.display_number}</div></div><span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-black text-primary">PRE-BOOK</span></div>
+          <div className="flex items-start justify-between gap-3"><div><div className="text-sm font-bold text-muted-foreground">Pre-book VIP number</div><div className="mt-2 text-2xl font-black text-foreground sm:text-3xl"><span data-no-translate>{formatNumberDisplay(number.display_number, getPrimaryCategory(number))}</span></div></div><span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-black text-primary">PRE-BOOK</span></div>
           <div className="mt-4 grid gap-3 sm:grid-cols-2"><div className="rounded-2xl border border-border bg-background/70 p-4"><div className="flex items-center gap-2 text-xs font-bold text-muted-foreground"><CalendarClock className="h-4 w-4 text-primary" /> Ready to port</div><div className="mt-1 text-lg font-black text-foreground">{formatRtpDate(number.rtp_available_at)}</div></div><div className="rounded-2xl border border-border bg-background/70 p-4"><div className="text-xs font-bold text-muted-foreground">Full payment</div><div className="mt-1 text-2xl font-black text-foreground">{formatINR(billing.total)}</div></div></div>
           <div className="mt-5 border-t border-border pt-5"><h2 className="font-black text-foreground">What happens next</h2><div className="mt-3 grid gap-3 text-sm text-muted-foreground">
             <p className="flex gap-2"><LockKeyhole className="mt-0.5 h-4 w-4 shrink-0 text-primary" /><span>Starting payment creates a 20-minute exclusive hold. Successful full payment keeps the number reserved only for you.</span></p>
@@ -56,7 +63,8 @@ export default function PreBookCheckout() {
         </section>
         <aside className="h-fit rounded-2xl border border-border bg-card p-4 shadow-sm">
           <h2 className="mb-4 text-sm font-black">Payment summary</h2><BillingSummary billing={billing} />
-          <button onClick={pay} disabled={paying} className="btn-gold mt-5 w-full">{paying ? <><Loader2 className="h-4 w-4 animate-spin" /> Opening payment…</> : 'Pay & reserve exclusively'}</button>
+          {needsPhone && <p role="status" className="mt-4 text-xs leading-relaxed text-muted-foreground">Please add a valid mobile number to your profile before paying. <Link to="/account" className="font-bold text-primary">Edit profile</Link></p>}
+          <button onClick={pay} disabled={paying || needsPhone} className="btn-gold mt-5 w-full">{paying ? <><Loader2 className="h-4 w-4 animate-spin" /> Opening payment…</> : 'Pay & reserve exclusively'}</button>
           <p className="mt-3 text-center text-xs text-muted-foreground">The 48-hour cancellation and fulfilment-failure rules are explained in our <Link to="/refund-policy" className="text-primary">Refund Policy</Link> and <Link to="/mnp-activation-policy" className="text-primary">MNP Policy</Link>.</p>
           {reservation && <p className="mt-2 text-center text-xs font-bold text-primary"><Clock3 className="mr-1 inline h-3.5 w-3.5" />Payment hold created for 20 minutes</p>}
           <div className="mt-5 space-y-3 rounded-2xl bg-muted p-4 text-xs leading-5 text-muted-foreground"><p><b className="text-foreground">48-hour cancellation:</b> request cancellation within exactly 48 hours of successful payment for a 100% refund, subject to admin approval.</p><p><b className="text-foreground">100% issue guarantee:</b> if delivery, UPC, activation, or number availability fails before fulfilment, report it for a full refund review.</p><p><ShieldCheck className="mr-1 inline h-4 w-4 text-primary" />Refunds return to the original payment method. Bank processing time may vary.</p></div>

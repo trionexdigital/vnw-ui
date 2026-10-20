@@ -64,7 +64,7 @@ export default function LanguageProvider({children}:{children:ReactNode}) {
   const choose=(code:string)=>{setLanguage(code);setOpen(false);try{localStorage.setItem('vnw_language',code);}catch{}const next=new URLSearchParams(params);next.set('lang',code);setParams(next,{replace:true});};
   return <LanguageContext.Provider value={{language,chooserOpen:open,consoleRoute,openChooser:()=>setOpen(true),t}}>
     {children}
-    {!consoleRoute && (location.pathname==='/login'||location.pathname==='/register'||/^\/(account|orders|dashboard|referrals|sell|change-password|notifications)(\/|$)/.test(location.pathname)) && <div className="fixed bottom-20 right-3 z-50"><LanguageButton /></div>}
+    {!consoleRoute && /^\/(account|orders|dashboard|referrals|sell|change-password|notifications)(\/|$)/.test(location.pathname) && <div className="fixed bottom-20 right-3 z-50"><LanguageButton /></div>}
     {!consoleRoute && open && <Modal open onClose={()=>choose(language)} title="Choose your language" wide><div translate="no" data-no-translate>
       <div className="mb-4 flex justify-center"><BrandLockup /></div><p className="mb-4 text-center text-sm text-muted-foreground">You can change your language anytime using the language button.</p>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">{languages.map(l=><button type="button" key={l.code} onClick={()=>choose(l.code)} aria-pressed={language===l.code} className="min-h-16 rounded-xl border border-border bg-muted/30 px-2 py-3 text-center font-bold text-foreground transition hover:border-primary hover:bg-primary/10"><span className="block text-base">{l.name}</span><span className="mt-1 block text-[10px] text-muted-foreground">{l.code.toUpperCase()}</span></button>)}</div>

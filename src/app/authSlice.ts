@@ -27,7 +27,7 @@ interface AuthState {
 
 const getStoredUser = (): User | null => {
   const userData = localService.getUser();
-  try { const u = userData ? JSON.parse(userData) : null; return u ? { ...u, id: u.id || u.user_id, name: u.name || u.full_name } : null; } catch { return null; }
+  try { const u = userData ? JSON.parse(userData) : null; return u ? { ...u, email: u.email || '', id: u.id || u.user_id, name: u.name || u.full_name } : null; } catch { return null; }
 };
 
 const initialState: AuthState = {
@@ -40,7 +40,7 @@ const initialState: AuthState = {
 
 export const login = createAsyncThunk(
   'auth/login',
-  async (payload: { email: string; password: string }, thunkAPI) => {
+  async (payload: { email?: string; identifier?: string; password: string }, thunkAPI) => {
     try {
       const response = await loginAPI(payload);
       return response.user;

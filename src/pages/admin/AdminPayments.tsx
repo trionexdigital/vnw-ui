@@ -94,7 +94,7 @@ export default function AdminPayments() {
       </Table>
       {!data?.items?.length && <p className="py-4 text-center text-sm text-muted-foreground">No transactions match these filters.</p>}
     </>}
-    <Dialog open={selected !== null} onOpenChange={(open) => { if (!open) setSelected(null); }}><DialogContent className="max-h-[90dvh] max-w-5xl overflow-y-auto">
+    <Dialog open={selected !== null} onOpenChange={(open) => { if (!open) setSelected(null); }}><DialogContent className="admin-dialog max-h-[90dvh] max-w-5xl overflow-y-auto">
       <DialogHeader className="pr-5"><DialogTitle className="break-words">Transaction history{detail ? ` · ${detail.order.order_no}` : ''}</DialogTitle><DialogDescription>Billing, gateway attempts, refunds and processing events. Times shown in IST.</DialogDescription></DialogHeader>
       {detailError && <p role="alert" className="text-sm text-destructive">{detailError}</p>}
       {!detail && !detailError ? <Loader /> : detail && <div className="space-y-5">

@@ -67,7 +67,7 @@ test('homepage rails load seven more cards and animate digits on hover', async (
   await expect.poll(() => first.locator('.reference-card__digit').first().evaluate((digit) => getComputedStyle(digit).transform)).not.toBe('none');
 });
 
-test('number and family rails keep equal page gutters and complete cards when paging in every language',async({page},info)=>{
+test('number and family rails span the viewport and keep aligned cards when paging in every language',async({page},info)=>{
   test.setTimeout(240000);
   const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
   page.on('console',message=>{if(message.type()==='error')errors.push(message.text());});
@@ -87,9 +87,12 @@ test('number and family rails keep equal page gutters and complete cards when pa
         const assertEdges=async()=>{
           const geometry=await track.evaluate(el=>{
             const box=el.getBoundingClientRect();
-            const visible=Array.from(el.children).map(child=>child.getBoundingClientRect()).filter(child=>child.right>box.left+1&&child.left<box.right-1);
-            return {left:box.left,right:box.right,visible:visible.map(child=>({left:child.left,right:child.right}))};
+            const css=getComputedStyle(el), left=box.left+parseFloat(css.paddingLeft),right=box.right-parseFloat(css.paddingRight);
+            const visible=Array.from(el.children).map(child=>child.getBoundingClientRect()).filter(child=>child.right>left+1&&child.left<right-1);
+            return {edgeLeft:box.left,edgeRight:box.right,left,right,visible:visible.map(child=>({left:child.left,right:child.right}))};
           });
+          expect(geometry.edgeLeft).toBeCloseTo(0,0);
+          expect(geometry.edgeRight).toBeCloseTo(width,0);
           expect(geometry.left,`${locale} ${selector} left gutter at ${width}`).toBeCloseTo(gutter,0);
           expect(width-geometry.right,`${locale} ${selector} right gutter at ${width}`).toBeCloseTo(gutter,0);
           const actions=(await shelf.locator('.home-rail__actions').boundingBox())!;

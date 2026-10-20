@@ -1,3 +1,4 @@
+import { formatNumberDisplay } from '@/core/categories/numberDisplay';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { X, GitCompareArrows } from 'lucide-react';
@@ -57,8 +58,8 @@ export default function Compare() {
               {items.map((n) => (
                 <th key={n.number_id} className="min-w-40 bg-primary/5 px-3 py-3 text-center">
                   <div className="flex flex-col items-center gap-2">
-                    <button onClick={() => toggleCompare(n.number_id)} aria-label={`Remove ${n.display_number} from comparison`} className="self-end text-muted-foreground hover:text-rose-400"><X className="h-4 w-4" /></button>
-                    <button onClick={() => navigate(`/number/${n.number_id}`)} className="whitespace-nowrap text-base font-black text-foreground">{n.display_number}</button>
+                    <button onClick={() => toggleCompare(n.number_id)} aria-label={`Remove ${formatNumberDisplay(n.display_number, getPrimaryCategory(n))} from comparison`} className="self-end text-muted-foreground hover:text-rose-400"><X className="h-4 w-4" /></button>
+                    <button onClick={() => navigate(`/number/${n.number_id}`)} className="whitespace-nowrap text-base font-black text-foreground"><span data-no-translate>{formatNumberDisplay(n.display_number, getPrimaryCategory(n))}</span></button>
                   </div>
                 </th>
               ))}

@@ -10,6 +10,8 @@ vi.mock('@/core/api/vnwAPI', () => ({
   siteAPI: { settings: vi.fn(async () => ({})) },
 }));
 import NumberCard, { type NumberItem } from '@/shared/components/NumberCard';
+import FamilyPackCard from '@/shared/components/FamilyPackCard';
+import type { CorporatePack } from '@/core/api/vnwAPI';
 import { useStore } from '@/shared/store/useStore';
 
 const base: NumberItem = {
@@ -24,6 +26,34 @@ beforeEach(() => { vi.clearAllMocks(); localStorage.clear(); useStore.setState({
 afterEach(cleanup);
 
 describe('reference number card', () => {
+  it('hides omitted title/badge and displays the sequential effective discount without adding it twice', () => {
+    const { container } = card({ title_label: '', badge: 'NONE', mrp: 3125, offer_price: 2671.88, discount_pct: 14.5 });
+    expect(container.querySelector('.reference-card__title')).toBeNull();
+    expect(container.querySelector('.reference-card__badge')).toBeNull();
+    expect(container.querySelector('.reference-card__discount')).toHaveTextContent('14.5% OFF');
+    expect(container.querySelector('.reference-card__offer')).toHaveTextContent('₹2,671.88');
+  });
+  it('family and corporate pack selections total the saved final prices without applying another discount', async () => {
+    const pack: CorporatePack = { pack_id: 'pricing', title: 'Pack', pack_type: 'MIXED', size: 2, total_price: 5640.63, is_available: true, is_active: true, sort_order: 1,
+      numbers: [{ number_id: 1, display_number: '8008005413', offer_price: 2968.75, status: 'AVAILABLE', stock: 1 }, { number_id: 2, display_number: '8008009307', offer_price: 2671.88, status: 'AVAILABLE', stock: 1 }] };
+    const { container } = render(<MemoryRouter><FamilyPackCard pack={pack} /></MemoryRouter>);
+    expect(container.querySelector('.reference-family__total')).toHaveTextContent('₹5,640.63');
+    expect(container.querySelectorAll('.reference-family__price')[1]).toHaveTextContent('₹2,671.88');
+    await userEvent.click(screen.getByRole('button', { name: 'Deselect 8008005413' }));
+    expect(container.querySelector('.reference-family__total')).toHaveTextContent('₹2,671.88');
+  });
+
+  it('keeps category spacing identical when search highlighting is toggled', () => {
+    const primary_category = { slug: 'doublling-aabbcc', name: 'Doublling (AABBCC)', match_spans: [{ start: 0, end: 3 }, { start: 3, end: 6 }] };
+    const item = { ...base, number_value: '8008005413', primary_category };
+    const { container, rerender } = render(<MemoryRouter><NumberCard item={item} /></MemoryRouter>);
+    const groups = () => Array.from(container.querySelectorAll('.reference-card__digit-group')).map((group) => group.textContent);
+    expect(groups()).toEqual(['800', '800', '5413']);
+    expect(container.querySelector('[data-match="true"]')).toBeNull();
+    rerender(<MemoryRouter><NumberCard item={item} highlightDigits /></MemoryRouter>);
+    expect(groups()).toEqual(['800', '800', '5413']);
+    expect(container.querySelectorAll('[data-match="true"]')).toHaveLength(2);
+  });
   it.each([
     ['9988 998 877', 82, 1], ['+91 9988 998 877', 82, 1],
     ['9006-622-121', 29, 2], ['9999 999 999', 90, 9], ['9000 000 000', 9, 9],

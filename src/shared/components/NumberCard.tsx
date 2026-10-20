@@ -41,15 +41,14 @@ export default function NumberCard({ item, onWishlistChange, highlightDigits = f
   const unavailable = purchaseMode === 'UNAVAILABLE';
   const isPrebook = purchaseMode === 'PREBOOK';
   const isNonRtp = item.rtp_status === 'NON_RTP';
-  const discountPct = item.discount_pct ?? (Number(item.mrp) > 0
+  const discountPct = item.discount_pct != null ? Number(item.discount_pct) : (Number(item.mrp) > 0
     ? Math.round(((Number(item.mrp) - Number(item.offer_price)) / Number(item.mrp)) * 100) : 0);
   const primaryCategory = getPrimaryCategory(item);
   const displayCategory: NumberCategoryMatch | null = groupingCategory
     ? item.categories?.find((category) => category.slug === groupingCategory) || primaryCategory
     : primaryCategory;
   const titleLabel = String(item.title_label || '').trim();
-  const displayTitle = titleLabel && titleLabel.toLowerCase() !== primaryCategory?.name.toLowerCase()
-    ? titleLabel : 'VIP Number';
+  const displayTitle = titleLabel.toLowerCase() !== primaryCategory?.name.toLowerCase() ? titleLabel : '';
   const rtpDate = formatRtpDate(item.rtp_available_at);
 
   const requireAuth = (): boolean => {
@@ -82,9 +81,9 @@ export default function NumberCard({ item, onWishlistChange, highlightDigits = f
     <article className={cn('reference-card', compact && 'reference-card--compact')} data-testid="number-card">
       <div className="reference-card__hero">
         <div className="reference-card__toolbar">
-          <span className="reference-card__badge" data-badge={item.badge || 'NONE'}>
-            <Star aria-hidden="true" fill="currentColor" />{badge.label || 'VIP Collection'}
-          </span>
+          {item.badge && item.badge !== 'NONE' && badge.label && <span className="reference-card__badge" data-badge={item.badge}>
+            <Star aria-hidden="true" fill="currentColor" />{badge.label}
+          </span>}
           <button type="button" onClick={() => navigate(`/number/${item.number_id}/similar`)}
             className="reference-card__similar" aria-label={`Find numbers similar to ${item.display_number}`}>
             <GitFork aria-hidden="true" /><span>Similar</span>
@@ -95,16 +94,16 @@ export default function NumberCard({ item, onWishlistChange, highlightDigits = f
             <Heart aria-hidden="true" fill={wished ? 'currentColor' : 'none'} />
           </button>
         </div>
-        <div className="reference-card__title"><Crown aria-hidden="true" /><span>{displayTitle}</span></div>
+        {displayTitle && <div className="reference-card__title"><Crown aria-hidden="true" /><span>{displayTitle}</span></div>}
         <button type="button" onClick={() => navigate(`/number/${item.number_id}`)}
           className="reference-card__number-link" aria-label={`View VIP number ${item.display_number}`}>
-          <HighlightedNumber number={number} category={displayCategory && !highlightDigits ? { ...displayCategory, match_spans: [] } : displayCategory} appearance="reference" />
+          <HighlightedNumber number={number} category={displayCategory} highlightDigits={highlightDigits} appearance="reference" />
         </button>
         <div className="reference-card__identity">
-          {primaryCategory ? (
-            <button type="button" title={primaryCategory.name} className="reference-card__category"
-              onClick={() => navigate(`/shop?category=${encodeURIComponent(primaryCategory.slug)}`)}>
-              {primaryCategory.name}
+          {displayCategory ? (
+            <button type="button" title={displayCategory.name} className="reference-card__category"
+              onClick={() => navigate(`/shop?category=${encodeURIComponent(displayCategory.slug)}`)}>
+              {displayCategory.name}
             </button>
           ) : <span className="reference-card__category">VIP Collection</span>}
           {isNonRtp

@@ -136,7 +136,7 @@ export default function Settings() {
               </div>
               <div className="min-w-0">
                 <div translate="no" className="text-xl font-black text-foreground">{profile.name || user?.name || 'VNW Administrator'}</div>
-                <div className="mt-1 truncate text-sm text-muted-foreground">{user?.email || 'admin@vipnumberworld.com'}</div>
+                <div translate="no" className="mt-1 truncate text-sm text-muted-foreground">{user?.email || user?.phone || ''}</div>
                 <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-accent/10 px-3 py-1 text-xs font-black text-accent">
                   <UserRound className="h-3.5 w-3.5" /> {user?.role || 'USER'} account
                 </div>

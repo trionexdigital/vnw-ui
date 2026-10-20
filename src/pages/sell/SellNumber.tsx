@@ -1,3 +1,5 @@
+import { getPrimaryCategory } from '@/core/categories/types';
+import { formatNumberDisplay } from '@/core/categories/numberDisplay';
 import { useEffect, useState } from 'react';
 import { sellAPI } from '@/core/api/vnwAPI';
 import { useToast } from '@/shared/hooks/use-toast';
@@ -69,7 +71,7 @@ export default function SellNumber() {
         <Table head={['Number', 'Asking', 'Offer', 'Status', 'Submitted', 'Action']}>
           {rows.map((r) => (
             <tr key={r.request_id} className="border-b border-card-border last:border-0">
-              <td className="px-4 py-3 text-foreground">{r.display_number}</td>
+              <td className="px-4 py-3 text-foreground"><span data-no-translate>{formatNumberDisplay(r.display_number, getPrimaryCategory(r))}</span></td>
               <td className="px-4 py-3"><Money value={r.asking_price} /></td>
               <td className="px-4 py-3">{r.offer_price ? <Money value={r.offer_price} /> : '—'}</td>
               <td className="px-4 py-3"><StatusBadge status={r.status} /></td>

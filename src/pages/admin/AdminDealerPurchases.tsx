@@ -1,3 +1,4 @@
+import NumberPricingPreview from './NumberPricingPreview';
 import { ThemedSelect } from '@/shared/ui/themed-select';
 import { Link } from 'react-router-dom';
 import Combobox from '@/shared/ui/combobox';
@@ -43,7 +44,7 @@ export default function AdminDealerPurchases() {
   const [paymentTotal, setPaymentTotal] = useState(0);
   const [voidPaymentId, setVoidPaymentId] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
-  const emptyPurchaseForm = { numbers: '', external_dealer_id: '', visibility_type: 'ONLINE', rtp_status: 'RTA', serviceable_pin_codes: '', rtp_available_date: '', private_link_ids: [] as number[], purchase_price: '', intended_sale_price: '' };
+  const emptyPurchaseForm = { numbers: '', external_dealer_id: '', visibility_type: 'ONLINE', rtp_status: 'RTA', serviceable_pin_codes: '', rtp_available_date: '', private_link_ids: [] as number[], purchase_price: '', intended_sale_price: '', additional_discount_pct: '' };
   const [form, setForm] = useState(emptyPurchaseForm);
   const [payment, setPayment] = useState({ external_dealer_id: '', amount: '', payment_method: 'BANK_TRANSFER', reference_no: '', notes: '', paid_at: todayLocal() });
   const [sale, setSale] = useState({ actual_sale_price: '', sold_at: todayLocal() });
@@ -79,7 +80,7 @@ export default function AdminDealerPurchases() {
     try {
       const externalDealerId = Number(form.external_dealer_id);
       if (!externalDealerId) throw new Error('Select an active dealer account.');
-      await adminAPI.dealerPurchasesCreate({ ...form, serviceable_pin_codes: form.serviceable_pin_codes.split(/[,;\s]+/).filter(Boolean), external_dealer_id: externalDealerId, purchase_price: Number(form.purchase_price), intended_sale_price: Number(form.intended_sale_price) });
+      await adminAPI.dealerPurchasesCreate({ ...form, serviceable_pin_codes: form.serviceable_pin_codes.split(/[,;\s]+/).filter(Boolean), external_dealer_id: externalDealerId, purchase_price: Number(form.purchase_price), intended_sale_price: form.intended_sale_price, additional_discount_pct: form.additional_discount_pct });
       setAddOpen(false); setForm(emptyPurchaseForm); await refresh('Dealer numbers added');
     } catch (error: any) { toast({ title: 'Could not add dealer numbers', description: error.message, variant: 'destructive' }); }
     finally { setBusy(false); }
@@ -162,7 +163,9 @@ export default function AdminDealerPurchases() {
       <div className="grid gap-3 sm:grid-cols-2"><label className="grid gap-1 text-sm font-black">Stock visibility<ThemedSelect value={form.visibility_type} onChange={(e) => setForm({ ...form, visibility_type: e.target.value, private_link_ids: [] })} className="h-11 rounded-xl border border-border bg-background px-3"><option value="ONLINE">Online · Public</option><option value="OFFLINE">Offline · Private</option></ThemedSelect></label><label className="grid gap-1 text-sm font-black">Porting / activation readiness<ThemedSelect value={form.rtp_status} onChange={(e) => setForm({ ...form, rtp_status: e.target.value, rtp_available_date: e.target.value === 'NON_RTP' ? form.rtp_available_date : '' })} className="h-11 rounded-xl border border-border bg-background px-3"><option value="RTP">RTP · Ready to port</option><option value="NON_RTP">NON-RTP · Pre-book</option><option value="RTA">RTA · Ready to activate</option></ThemedSelect></label></div>
       {form.rtp_status === 'RTA' && <label className="grid gap-1 text-sm font-black">Serviceable PIN codes<textarea className="rounded-xl border border-border bg-background px-3 py-2 text-sm" value={form.serviceable_pin_codes} onChange={event => setForm({ ...form, serviceable_pin_codes: event.target.value })} placeholder="400001, 400002" /></label>}
       {form.rtp_status === 'NON_RTP' && <label className="grid gap-1 text-sm font-black">Ready-to-port date (India)<input required type="date" min={new Date(Date.now() + 86400000).toISOString().slice(0, 10)} value={form.rtp_available_date} onChange={(e) => setForm({ ...form, rtp_available_date: e.target.value })} className="h-11 rounded-xl border border-border bg-background px-3" /></label>}
-      <div className="grid gap-3 sm:grid-cols-2"><label className="grid gap-1 text-sm font-black">Purchase price<input type="number" min="0" value={form.purchase_price} onChange={(e) => setForm({ ...form, purchase_price: e.target.value })} className="h-11 rounded-xl border border-border bg-background px-3" /></label><label className="grid gap-1 text-sm font-black">Intended sale price (MRP)<input type="number" min="1" value={form.intended_sale_price} onChange={(e) => setForm({ ...form, intended_sale_price: e.target.value })} className="h-11 rounded-xl border border-border bg-background px-3" /><span className="text-xs font-medium text-muted-foreground">The storefront discount is applied automatically from Settings.</span></label></div>
+      <div className="grid gap-3 sm:grid-cols-2"><label className="grid gap-1 text-sm font-black">Purchase price<input type="number" min="0" value={form.purchase_price} onChange={(e) => setForm({ ...form, purchase_price: e.target.value })} className="h-11 rounded-xl border border-border bg-background px-3" /></label><label className="grid gap-1 text-sm font-black">Base price (₹)<input type="number" min="0.01" step="0.01" value={form.intended_sale_price} onChange={(e) => setForm({ ...form, intended_sale_price: e.target.value })} className="h-11 rounded-xl border border-border bg-background px-3" /></label></div>
+      <label className="grid gap-1 text-sm font-black">Additional discount (%)<input type="number" min="0" max="99.99" step="0.01" value={form.additional_discount_pct} placeholder="0" onChange={e => setForm({ ...form, additional_discount_pct: e.target.value })} className="h-11 rounded-xl border border-border bg-background px-3" /></label>
+      <NumberPricingPreview base={form.intended_sale_price} additional={form.additional_discount_pct} />
       {form.visibility_type === 'OFFLINE' && <p className="text-xs text-muted-foreground">This stock appears through the single Offline catalog link.</p>}
       <button disabled={busy} onClick={createPurchases} className="h-11 rounded-xl bg-primary font-black text-primary-foreground disabled:opacity-50">{busy ? 'Adding…' : 'Add Purchase'}</button>
     </div></Modal>

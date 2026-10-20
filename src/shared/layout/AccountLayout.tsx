@@ -16,7 +16,9 @@ import { contentQueryKey } from '@/shared/language/searchParams';
 import { Sheet, SheetContent, SheetTitle } from '@/shared/ui/sheet';
 import { MotionPage } from '@/shared/motion/MotionPrimitives';
 import { notificationsAPI } from '@/core/api/vnwAPI';
+import { dm, type ModuleAccess } from '@/core/api/dealerManagement';
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover';
+import '@/pages/admin/AdminControls.css';
 
 interface MenuItem { to: string; label: string; icon: any; end?: boolean; perm?: string; }
 
@@ -101,7 +103,18 @@ export default function AccountLayout() {
   const location = useLocation();
   const { user } = useAppSelector((s) => s.auth);
   const role = (user?.role || 'USER').toUpperCase();
-  const baseMenu = role === 'ADMIN' ? ADMIN_MENU : role === 'EMPLOYEE' ? EMPLOYEE_MENU : role === 'DEALER' ? DEALER_MENU : USER_MENU;
+  const [moduleAccess, setModuleAccess] = useState<ModuleAccess | null>(null);
+  useEffect(() => {
+    let active = true;
+    setModuleAccess(null);
+    dm<ModuleAccess>('capabilities').then(result => { if (active) setModuleAccess(result); }).catch(() => undefined);
+    return () => { active = false; };
+  }, [user?.user_id]);
+  const existingMenu = role === 'ADMIN' ? ADMIN_MENU : role === 'EMPLOYEE' ? EMPLOYEE_MENU : role === 'DEALER' ? DEALER_MENU : USER_MENU;
+  const moduleMenu: MenuItem[] = [];
+  if (moduleAccess?.enabled && (moduleAccess.admin || (role === 'EMPLOYEE' && moduleAccess.permissions.length))) moduleMenu.push({ to: role === 'ADMIN' ? '/admin/dealer-management' : '/employee/dealer-management', label: 'Dealer Management', icon: Handshake });
+  if (moduleAccess?.enabled && moduleAccess.statement) moduleMenu.push({ to: '/dealer-statement', label: 'Dealer Statement', icon: ClipboardList });
+  const baseMenu = [...existingMenu, ...moduleMenu];
   // Hide items the user lacks permission for (ADMIN/EMPLOYEE bypass via hasPermission).
   const menu = baseMenu.filter((m) => !m.perm || hasPermission(user, m.perm));
   const sidebarTrigger = useRef<HTMLButtonElement>(null);
@@ -124,7 +137,7 @@ export default function AccountLayout() {
   const initials = userName.split(' ').map((p) => p[0]).join('').slice(0, 2).toUpperCase() || role.slice(0, 2);
 
   const groupedMenu = isAdmin
-    ? ADMIN_GROUPS.map((g) => ({ ...g, links: menu.filter((m) => g.items.includes(m.label)) })).filter((g) => g.links.length)
+    ? [...ADMIN_GROUPS, { label: 'Standalone Dealer Module', items: ['Dealer Management', 'Dealer Statement'] }].map((g) => ({ ...g, links: menu.filter((m) => g.items.includes(m.label)) })).filter((g) => g.links.length)
     : [{ label: role === 'USER' ? 'Account' : `${role.toLowerCase()} panel`, links: menu }];
 
   const doLogout = () => dispatch(logout());

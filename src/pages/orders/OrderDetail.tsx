@@ -1,3 +1,4 @@
+import { formatNumberDisplay } from '@/core/categories/numberDisplay';
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { CheckCircle2, ArrowLeft } from 'lucide-react';
@@ -42,7 +43,7 @@ export default function OrderDetail() {
           {order.items?.map((it: any) => (
             <div key={it.order_item_id} className="flex flex-wrap items-center justify-between gap-3 py-3">
               <div>
-                <div className="vnw-card-numeral text-lg text-foreground">{it.display_number}</div><div className="text-xs text-muted-foreground">{getPrimaryCategory(it)?.name || 'Unique'} · <StatusBadge status={it.item_status} /></div>
+                <div className="vnw-card-numeral text-lg text-foreground"><span data-no-translate>{formatNumberDisplay(it.display_number, getPrimaryCategory(it))}</span></div><div className="text-xs text-muted-foreground">{getPrimaryCategory(it)?.name || 'Unique'} · <StatusBadge status={it.item_status} /></div>
               </div>
               <div className="text-right"><Money value={it.line_total ?? it.price}/></div>
             </div>

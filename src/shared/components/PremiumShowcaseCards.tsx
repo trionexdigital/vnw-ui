@@ -42,7 +42,7 @@ export function PremiumNumberShowcaseCard({
         </button>
       </div>
       <div className="flex items-center justify-center gap-2 text-lg font-semibold text-foreground"><Crown className="h-6 w-6 text-primary" /> {title}</div>
-      <h1 className="vnw-card-numeral mt-4 text-[clamp(1.8rem,5vw,4.5rem)] tracking-normal text-foreground">{formatNumberDisplay(number, categorySlug ? { slug: categorySlug } : null)}</h1>
+      <h1 className="vnw-card-numeral mt-4 text-[clamp(1.8rem,5vw,4.5rem)] tracking-normal text-foreground"><span data-no-translate>{formatNumberDisplay(number, categorySlug ? { slug: categorySlug } : null)}</span></h1>
       <div className="mx-auto my-6 flex max-w-3xl items-center justify-center gap-4 text-primary">
         <span className="h-px flex-1 bg-gradient-to-r from-transparent via-primary to-primary/20" />
         <span className="text-2xl font-semibold">{pattern}</span>

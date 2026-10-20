@@ -13,6 +13,7 @@ import PublicScrollMotion from '@/shared/motion/PublicScrollMotion';
 import HeaderNumberSearch from './HeaderNumberSearch';
 
 import StoreHeader from './StoreHeader';
+import FirstVisitTour from '@/shared/components/FirstVisitTour';
 
 function Logo() {
   return (
@@ -102,8 +103,8 @@ function Footer() {
             <NewsletterForm />
           </div>
         </div>
-        <div className="relative z-10 flex flex-col items-center justify-between gap-3 border-t border-border px-6 py-4 text-xs text-muted-foreground sm:flex-row">
-          <span>&copy; {new Date().getFullYear()} VNW - VIP Number World. All rights reserved.</span>
+        <div className="store-footer__bottom relative z-10 flex flex-col items-center gap-2 border-t border-border px-4 py-4 text-xs text-muted-foreground">
+          <span className="store-footer__copyright">&copy; {new Date().getFullYear()} VNW - VIP Number World. All rights reserved.</span>
           <span className="flex items-center gap-1"><Sparkles className="h-3.5 w-3.5 text-primary" /> Follow Us</span>
         </div>
       </div>
@@ -183,7 +184,7 @@ export default function PublicLayout() {
         {location.pathname === '/' && <div className="public-home-mobile-search min-[1200px]:hidden"><HeaderNumberSearch /></div>}
         {location.pathname === '/' && <PromoBar />}
       </div>
-      <main className="flex-1 pb-20 lg:pb-0">
+      <main className="flex-1">
         <MotionPage routeKey={location.pathname}>
           <PublicScrollMotion routeKey={location.pathname}>
             <div className="public-route-content"><Suspense fallback={<div className="py-4"><Loader label="Loading screen" /></div>}><Outlet /></Suspense></div>
@@ -193,6 +194,7 @@ export default function PublicLayout() {
       <Footer />
       <FloatingActions />
       <BottomNav />
+      <FirstVisitTour />
     </div>
   );
 }

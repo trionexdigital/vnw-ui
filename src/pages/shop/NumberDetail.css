@@ -1,0 +1,36 @@
+.number-detail-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(290px, 340px); align-items: start; gap: 18px; }
+.number-detail-content, .number-detail-sidebar { display: grid; min-width: 0; gap: 16px; }
+.number-detail-sidebar { position: sticky; top: 100px; }
+.number-detail-identity { container-type: inline-size; display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 8px; min-width: 0; min-height: 315px; padding: 6px; border: 1px solid #dfcfaa; border-radius: 18px; background: #fff; box-shadow: 0 5px 15px rgb(75 43 7 / 7%); }
+.number-detail-identity__hero { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; padding: 46px 20px 22px; border-radius: 12px; background: radial-gradient(circle at 48% 52%, #fff8e9, #f7e9c8 100%); color: #191518; text-align: center; }
+.number-detail-title { display: flex; align-items: center; justify-content: center; gap: 7px; font-size: 12px; font-weight: 800; text-transform: uppercase; }
+.number-detail-title svg { flex: none; color: #9b5a05; }
+.number-detail-category { max-width: 100%; color: #373137; font-size: 13px; font-weight: 800; overflow-wrap: anywhere; }
+.number-detail-status { position: absolute; top: 12px; right: 12px; max-width: calc(100% - 24px); border-radius: 20px; padding: 5px 9px; background: hsl(var(--muted)); color: hsl(var(--muted-foreground)); font-size: 10px; font-weight: 800; }
+.number-detail-status.is-available { background: hsl(var(--success-soft)); color: hsl(var(--success)); }
+.number-detail-digits { width: 100%; margin: 8px 0 6px; font-family: 'VNW Card Inter', Inter, Arial, sans-serif; font-weight: 900; font-size: clamp(20px, 7cqw, 56px); line-height: 1.15; letter-spacing: -.035em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.number-detail-readiness { display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 5px; color: #85530d; font-size: 12px; font-weight: 800; }
+.number-detail-readiness svg { flex: none; }
+.number-detail-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.number-detail-metrics > div { min-width: 0; padding: 7px 12px; border: 1px solid #e5ded1; border-radius: 10px; background: #f8f6f2; text-align: center; }
+.number-detail-metrics dt { color: #5b5651; font-size: 12px; font-weight: 800; }
+.number-detail-metrics dd { color: #100d11; font-size: 22px; font-weight: 900; line-height: 1.1; }
+.number-detail-information.commerce-panel, .number-detail-sidebar .commerce-panel { padding: 20px; }
+.number-detail-patterns { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 185px), 1fr)); gap: 8px; margin-top: 10px; }
+.number-detail-pattern { min-width: 0; padding: 10px 12px; border: 1px solid hsl(var(--border)); border-radius: 10px; background: hsl(var(--muted) / .35); overflow-wrap: anywhere; }
+.number-detail-trust { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 20px; border-top: 1px solid hsl(var(--border)); padding-top: 16px; color: hsl(var(--muted-foreground)); font-size: 11px; font-weight: 600; }
+.number-detail-trust span { display: inline-flex; align-items: center; gap: 5px; }
+.number-detail-trust svg { color: hsl(var(--primary)); }
+.number-detail-contact .input-luxury { min-height: 42px; padding: 10px 12px; font-size: 13px; }
+.number-detail-whatsapp { display: flex; min-height: 44px; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; padding: 10px 12px; border: 1px solid #b7dfc6; border-radius: 10px; background: #edf9f1; color: #176a3a; font-size: 13px; font-weight: 800; text-align: center; transition: background .2s; }
+.number-detail-whatsapp:hover { background: #daf1e2; }
+@media (max-width: 767px) {
+  .number-detail-layout { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .number-detail-content, .number-detail-sidebar { display: contents; }
+  .number-detail-identity { order: 1; min-height: 260px; }
+  .number-detail-purchase { order: 2; }
+  .number-detail-information { order: 3; }
+  .number-detail-contact { order: 4; }
+  .number-detail-information.commerce-panel, .number-detail-sidebar .commerce-panel { padding: 16px; }
+  .number-detail-digits { font-size: clamp(20px, 7cqw, 48px); }
+}

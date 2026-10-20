@@ -55,7 +55,7 @@ describe('Similar Numbers page', () => {
     const user = userEvent.setup();
     renderPage();
 
-    expect(await screen.findByRole('heading', { name: /numbers similar to 9193 999 999/i })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /numbers similar to 9193 999999/i })).toBeInTheDocument();
     expect(screen.getByText('Hexa Pattern')).toBeInTheDocument();
     expect(screen.getByText('13 close matches')).toBeInTheDocument();
     expect(screen.getByTestId('similar-card')).toHaveTextContent('9193 999 998');

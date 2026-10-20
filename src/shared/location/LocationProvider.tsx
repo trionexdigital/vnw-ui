@@ -8,9 +8,14 @@ import { LanguageText } from '@/shared/language/LanguageText';
 import { locationAPI } from '@/core/api/vnwAPI';
 
 export const validPin = (value: string) => /^[1-9][0-9]{5}$/.test(value);
+export function lookupFailureMessage(reason?: string) {
+  if (reason === 'BUSY') return 'Location lookup is busy. Please wait a moment and try again.';
+  if (reason === 'UNAVAILABLE' || !reason) return 'Location lookup is temporarily unavailable. Please try again or enter your PIN code.';
+  return 'We could not detect an Indian PIN code. Enter it manually or try again.';
+}
 const read = (key: string, session = false) => { try { return (session ? sessionStorage : localStorage).getItem(key) || ''; } catch { return ''; } };
 const write = (key: string, value: string, session = false) => { try { (session ? sessionStorage : localStorage).setItem(key, value); } catch { /* In-memory preferences still work. */ } };
-const LocationContext = createContext({ pin: '', showAll: false, revision: 0, openChooser: () => {}, setShowAll: (_value: boolean) => {} });
+const LocationContext = createContext({ pin: '', showAll: false, revision: 0, chooserOpen: false, promptResolved: false, openChooser: () => {}, setShowAll: (_value: boolean) => {} });
 export const useLocationPreference = () => useContext(LocationContext);
 
 export function LocationButton() {
@@ -44,18 +49,20 @@ export default function LocationProvider({ children }: { children: ReactNode }) 
     setError(''); setDetected(false);
     if (!window.isSecureContext || !navigator.geolocation) { setError('GPS is unavailable. Enter your PIN code manually.'); return; }
     setBusy(true);
+    let stage: 'gps' | 'lookup' = 'gps';
     try {
-      const position = await new Promise<GeolocationPosition>((resolve, reject) => navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000, maximumAge: 0, enableHighAccuracy: false }));
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 15000, maximumAge: 0, enableHighAccuracy: true }));
       if (id !== request.current) return;
+      stage = 'lookup';
       const result = await locationAPI.pincode(position.coords.latitude, position.coords.longitude);
       if (id !== request.current) return;
       if (result.pin_code && validPin(result.pin_code)) { setDraft(result.pin_code); setDetected(true); }
-      else setError('We could not detect an Indian PIN code. Enter it manually or try again.');
-    } catch { if (id === request.current) setError('Location access failed or was denied. Enter your PIN code manually.'); }
+      else setError(lookupFailureMessage(result.reason));
+    } catch { if (id === request.current) setError(stage === 'gps' ? 'Location access failed or was denied. Enter your PIN code manually.' : lookupFailureMessage('UNAVAILABLE')); }
     finally { if (id === request.current) setBusy(false); }
   };
 
-  return <LocationContext.Provider value={{ pin, showAll, revision, openChooser, setShowAll }}>
+  return <LocationContext.Provider value={{ pin, showAll, revision, chooserOpen: open && !language.chooserOpen, promptResolved: seen, openChooser, setShowAll }}>
     {children}
     {!consoleRoute && !language.chooserOpen && <Modal open={open} onClose={dismiss} title="Choose your location">
       <form className="grid gap-4" onSubmit={event => { event.preventDefault(); if (!validPin(draft)) { setError('Enter a valid six-digit PIN code.'); return; } setPin(draft); setRevision(value => value + 1); write('vnw_pin_code', draft); setShowAll(false); dismiss(); }}>

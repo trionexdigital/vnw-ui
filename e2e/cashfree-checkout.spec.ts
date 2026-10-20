@@ -1,11 +1,11 @@
 import { test, expect, type Page } from '@playwright/test';
 const number = { number_id: 7, number_value: '9876543210', display_number: '98765 43210', mrp: 1999, offer_price: 999.99, stock: 1, status: 'AVAILABLE', rtp_status: 'RTP', title_label: 'VIP Number', badge: 'NONE' };
 const bill = { mrp_total: 1999, offer_savings: 999.01, subtotal: 999.99, discount: 0, taxable_amount: 999.99, gst_percent: 18, gst_amount: 180, total: 1179.99, items: [number] };
-async function setup(page: Page, status = 'PAID') {
-  await page.addInitScript(() => {
-    localStorage.setItem('token', 'test-token'); localStorage.setItem('user', JSON.stringify({ user_id: 1, full_name: 'Test Buyer', email: 'buyer@example.test', phone: '9999999999', role: 'USER' }));
+async function setup(page: Page, status = 'PAID', phone: string | null = '9999999999') {
+  await page.addInitScript((mobile) => {
+    localStorage.setItem('token', 'test-token'); localStorage.setItem('user', JSON.stringify({ user_id: 1, full_name: 'Test Buyer', email: 'buyer@example.test', phone: mobile, role: 'USER' }));
     (window as any).Cashfree = (options: any) => ({ checkout: async (params: any) => { (window as any).cashfreeCall = { options, params }; } });
-  });
+  }, phone);
   await page.route('http://localhost:3002/vipnumberworld/**', async route => {
     const url = route.request().url();
     const data = url.endsWith('/orders/quote') ? bill
@@ -13,7 +13,7 @@ async function setup(page: Page, status = 'PAID') {
       : url.endsWith('/numbers/detail') ? number
       : url.endsWith('/payments/cashfree/create-order') ? { order_id: 7, order_no: 'VNW-7', payment_status: 'PENDING', payment_session_id: 'session-fixture', environment: 'sandbox' }
       : url.endsWith('/payments/cashfree/verify') ? { order_id: 7, order_no: 'VNW-7', order_type: 'PURCHASE', payment_status: status }
-      : url.endsWith('/auth/me') ? { user_id: 1, full_name: 'Test Buyer', email: 'buyer@example.test', role: 'USER' }
+      : url.endsWith('/auth/me') ? { user_id: 1, full_name: 'Test Buyer', email: 'buyer@example.test', phone, role: 'USER' }
       : [];
     await route.fulfill({ json: { status: 1, data } });
   });
@@ -23,6 +23,22 @@ test('regular checkout sends only a Cashfree session to the sandbox SDK', async 
   await page.getByRole('button', { name: 'Pay ₹1,179.99' }).click();
   await expect.poll(() => page.evaluate(() => (window as any).cashfreeCall)).toEqual({ options: { mode: 'sandbox' }, params: { paymentSessionId: 'session-fixture', redirectTarget: '_self' } });
   await expect(page.getByText('Secure payment with Cashfree')).toBeVisible();
+});
+
+test('email-only accounts add a real mobile before creating a purchase or pre-book hold', async ({ page }) => {
+  await setup(page, 'PAID', null);
+  let reservations = 0;
+  await page.route('**/orders/create', async route => { reservations++; await route.abort(); });
+  await page.route('**/prebooks/create', async route => { reservations++; await route.abort(); });
+  await page.goto('/checkout?number_id=7');
+  await expect(page.getByRole('button', { name: 'Pay ₹1,179.99' })).toBeDisabled();
+  await expect(page.getByText('Please add a valid mobile number to your profile before paying.')).toBeVisible();
+  await page.route('**/numbers/detail', route => route.fulfill({ json: { status: 1, data: { ...number, rtp_status: 'NON_RTP', rtp_available_at: '2026-12-01 00:00:00' } } }));
+  await page.route('**/prebooks/quote', route => route.fulfill({ json: { status: 1, data: bill } }));
+  await page.goto('/pre-book/7/checkout');
+  await expect(page.getByRole('button', { name: 'Pay & reserve exclusively' })).toBeDisabled();
+  await expect(page.getByRole('link', { name: 'Edit profile', exact: true })).toHaveAttribute('href', '/account');
+  expect(reservations).toBe(0);
 });
 
 test('pre-book checkout uses Cashfree with the same server billing and reservation', async ({ page }) => {
@@ -72,7 +88,7 @@ test('an expired login returns to the same payment after signing in again', asyn
   });
   await page.goto('/payments/return?order_id=7');
   await expect(page).toHaveURL(/\/login\?return_to=/);
-  await page.getByPlaceholder('Email address').fill('buyer@example.test');
+  await page.getByLabel('Mobile number or email', { exact: true }).fill('buyer@example.test');
   await page.getByPlaceholder('Password', { exact: true }).fill('test-password');
   await page.getByRole('button', { name: 'Sign In', exact: true }).click();
   await expect(page).toHaveURL(/\/payments\/return\?order_id=7/);

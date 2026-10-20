@@ -1,3 +1,5 @@
+import { getPrimaryCategory } from '@/core/categories/types';
+import { formatNumberDisplay } from '@/core/categories/numberDisplay';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
@@ -125,7 +127,7 @@ export default function HeaderNumberSearch() {
         : error ? <p className="header-number-search__message" role="alert">{error}</p>
           : !target ? <p className="header-number-search__message">Search digits, or enter a category such as Mirror or Penta. Press Enter for more search options.</p>
             : items.length ? <div className="header-number-search__list">{items.map((item) => <Link key={item.number_id} to={`/number/${item.number_id}`} onClick={() => setOpen(false)} className="header-number-search__result">
-              <span><strong>{item.display_number}</strong><small>{item.primary_category?.name || item.title_label || 'VIP Number'}</small></span>
+              <span><strong><span data-no-translate>{formatNumberDisplay(item.display_number, getPrimaryCategory(item))}</span></strong><small>{item.primary_category?.name || item.title_label || 'VIP Number'}</small></span>
               <span className="header-number-search__price">{formatINR(item.offer_price)}<ArrowRight size={14} aria-hidden="true" /></span>
             </Link>)}</div>
               : <p className="header-number-search__message">No matching public numbers found. Try another pattern or open the full search.</p>}

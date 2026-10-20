@@ -1,3 +1,4 @@
+import { formatNumberDisplay } from '@/core/categories/numberDisplay';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -60,7 +61,7 @@ function dealDescription(item: DealOfDayItem) {
 }
 
 function dealNumber(item: DealOfDayItem) {
-  return String(item.display_number || item.number_value || '').trim() || 'VIP Number';
+  return formatNumberDisplay(item.number_value || item.display_number || '', getPrimaryCategory(item)) || 'VIP Number';
 }
 
 function positionMotion(position: CardPosition, count: number, reducedMotion = false) {
